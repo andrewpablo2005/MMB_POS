@@ -1,0 +1,83 @@
+@media (max-width: 768px) {
+
+    /* USERS TABLE */
+    .userstable th:nth-child(1),
+    .userstable td:nth-child(1),
+    .userstable th:nth-child(3),
+    .userstable td:nth-child(3) {
+        display: none;
+    }
+
+    /* REGISTRATION USERS TABLE */
+    .pendingtable th:nth-child(2),
+    .pendingtable th:nth-child(5),
+    .pendingtable td:nth-child(2),
+    .pendingtable td:nth-child(5) {
+    display: none; /* Hide Position and Contact on mobile */
+    }
+
+}
+
+
+.myTable td,
+.myTable th {
+    padding: 12px 16px;
+}
+
+/* Column widths */
+.col-id {
+    width: 70px;
+}
+
+.col-name {
+    min-width: 160px;
+}
+
+.col-position {
+    min-width: 140px;
+}
+
+.col-action {
+    min-width: 240px;
+}
+
+/* Button spacing */
+.col-action .btn {
+    margin-right: 5px;
+}
+
+/* Optional row height */
+.myTable tbody tr {
+    height: 60px;
+}
+
+
+/* Position name color*/
+.badge-uniform {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 90px;   /* same width */
+    height: 28px;      /* same height */
+
+    font-size: 12px;
+    padding: 0;        /* remove default bootstrap padding */
+}
+
+/* User management modals: stay still normally */
+.modal .modal-content {
+    transition: none;
+}
+
+/* Prevent user management view/edit buttons from shifting on hover/focus */
+.userstable .btn,
+.userstable .btn:hover,
+.userstable .btn:focus,
+.userstable .btn:active {
+    transform: none !important;
+    transition: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    border-width: 1px !important;
+}

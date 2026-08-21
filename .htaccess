@@ -1,0 +1,22 @@
+Options -Indexes
+
+RewriteEngine On
+
+# Remove .php extension
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}.php -f
+RewriteRule ^([^\.]+)$ $1.php [L]
+
+# Redirect .php to clean URL for non-POST requests only
+RewriteCond %{REQUEST_METHOD} !POST
+RewriteCond %{THE_REQUEST} \s([^.]+)\.php
+RewriteRule ^ %1 [R=301,L]
+
+# Block sensitive files
+<FilesMatch "(config\.php|\.env|\.ini|\.log|\.sql)">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Optional: block pages folder
+RewriteRule ^pages/ - [F,L]

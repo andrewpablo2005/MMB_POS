@@ -1,0 +1,141 @@
+/* ===================================
+   PHARMACY LOGIN PAGE STYLES
+   =================================== */
+
+/* Form Controls Styling */
+.form-control, .input-group-text {
+    border-radius: 8px !important;
+    border: 1.5px solid #e0e0e0 !important;
+    transition: all 0.3s ease !important;
+}
+
+.form-control:focus {
+    border-color: #4a90e2 !important;
+    box-shadow: 0 0 0 0.2rem rgba(74, 144, 226, 0.15) !important;
+}
+
+.input-group-text {
+    background-color: #f8f9fa !important;
+    border-right: none !important;
+}
+
+.input-group .form-control {
+    border-left: none !important;
+}
+
+/* Login Button Styling */
+.btn-login {
+    background: linear-gradient(135deg, #4a90e2 0%, #357abd 100%) !important;
+    border: none !important;
+    border-radius: 8px !important;
+    padding: 12px 24px !important;
+    font-weight: 600 !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 4px 12px rgba(74, 144, 226, 0.3) !important;
+}
+
+.btn-login:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 20px rgba(74, 144, 226, 0.4) !important;
+    background: linear-gradient(135deg, #357abd 0%, #2a5a8a 100%) !important;
+}
+
+.btn-login:active {
+    transform: translateY(0) !important;
+}
+
+/* Form Labels */
+.form-label {
+    font-size: 14px;
+    letter-spacing: 0.3px;
+    color: #2c3e50;
+    margin-bottom: 10px;
+}
+
+/* Checkbox Styling */
+.form-check-input:checked {
+    background-color: #4a90e2 !important;
+    border-color: #4a90e2 !important;
+}
+
+.form-check-input:focus {
+    border-color: #4a90e2 !important;
+    box-shadow: 0 0 0 0.25rem rgba(74, 144, 226, 0.25) !important;
+}
+
+/* Login Header */
+.login-header {
+    margin-bottom: 30px;
+    border-bottom: 2px solid #f0f0f0;
+    padding-bottom: 25px;
+}
+
+.login-header h2 {
+    font-size: 28px;
+    color: #2c3e50;
+    font-weight: 700;
+}
+
+.login-header p {
+    font-size: 15px;
+    color: #7f8c8d;
+    margin-bottom: 0;
+}
+
+/* Alert Styling */
+.alert-danger {
+    border-radius: 8px !important;
+    border: none !important;
+    background-color: #fee !important;
+    color: #c33 !important;
+    box-shadow: 0 2px 8px rgba(200, 50, 50, 0.1) !important;
+}
+
+/* Security Badge */
+.security-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    background-color: #f0f7ff;
+    color: #4a90e2;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+/* Floating Animation */
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(30px);
+    }
+}
+
+/* Responsive Adjustments */
+@media (max-width: 992px) {
+    .login-header {
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+    }
+
+    .login-header h2 {
+        font-size: 24px;
+    }
+
+    .form-label {
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 576px) {
+    .form-label {
+        font-size: 12px;
+    }
+
+    .btn-login {
+        padding: 10px 20px !important;
+    }
+}

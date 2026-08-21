@@ -1,0 +1,213 @@
+/* ─── Dashboard Scoped Styles ─── */
+.dash-wrapper {
+  background: #f0f4f8;
+  min-height: 100%;
+  padding: 28px 28px 40px;
+  font-family: 'Inter', sans-serif;
+}
+
+/* ─── Header ─── */
+.dash-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 28px;
+}
+.dash-header h4 {
+  font-size: 1.55rem;
+  font-weight: 700;
+  color: #1a2535;
+  margin: 0;
+}
+.dash-header .date-badge {
+  background: linear-gradient(135deg, #16a34a, #15803d);
+  color: #fff;
+  font-size: .8rem;
+  font-weight: 600;
+  padding: 6px 16px;
+  border-radius: 50px;
+  letter-spacing: .5px;
+}
+
+/* ─── Stat Cards ─── */
+.stat-card {
+  background: #fff;
+  border-radius: 18px;
+  padding: 24px;
+  box-shadow: 0 2px 12px rgba(0,0,0,.06);
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  transition: transform .18s ease, box-shadow .18s ease;
+  border: 1px solid rgba(0,0,0,.04);
+  height: 100%;
+}
+.stat-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0,0,0,.10);
+}
+.stat-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 1.4rem;
+}
+.stat-icon.blue  { background: #eff6ff; color: #2563eb; }
+.stat-icon.green { background: #f0fdf4; color: #16a34a; }
+.stat-icon.cyan  { background: #ecfeff; color: #0891b2; }
+.stat-icon.amber { background: #fffbeb; color: #d97706; }
+.stat-icon.purple { background: #faf5ff; color: #9333ea; }
+.stat-icon.orange { background: #fff7ed; color: #ea580c; }
+.stat-icon.teal  { background: #f0fdfa; color: #0d9488; }
+.stat-icon.indigo { background: #eef2ff; color: #4f46e5; }
+.stat-icon.rose  { background: #ffe4e6; color: #e11d48; }
+.stat-icon.lime  { background: #f7fee7; color: #65a30d; }
+.stat-icon.secondary { background: #f3f4f6; color: #6b7280; }
+.stat-icon.info { background: #cffafe; color: #0369a1; }
+.stat-icon.danger { background: #fee2e2; color: #dc2626; }
+.stat-icon.success { background: #dcfce7; color: #16a34a; }
+.stat-label {
+  font-size: .73rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .7px;
+  color: #94a3b8;
+  margin-bottom: 4px;
+}
+.stat-value {
+  font-size: 1.55rem;
+  font-weight: 800;
+  color: #1a2535;
+  line-height: 1;
+}
+.stat-sub {
+  font-size: .73rem;
+  color: #94a3b8;
+  margin-top: 4px;
+}
+
+/* ─── Section Cards ─── */
+.dash-card {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 2px 12px rgba(0,0,0,.06);
+  border: 1px solid rgba(0,0,0,.04);
+  overflow: hidden;
+  height: 100%;
+}
+.dash-card-header {
+  padding: 20px 24px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.dash-card-header h6 {
+  font-size: .95rem;
+  font-weight: 700;
+  color: #1a2535;
+  margin: 0;
+}
+.dash-card-body {
+  padding: 20px 24px;
+}
+
+/* ─── Chart ─── */
+.chart-wrapper {
+  position: relative;
+  height: 280px;
+}
+
+/* ─── Custom Table ─── */
+.dash-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .84rem;
+}
+.dash-table th {
+  text-transform: uppercase;
+  font-size: .7rem;
+  letter-spacing: .6px;
+  color: #94a3b8;
+  font-weight: 700;
+  padding: 0 0 10px;
+  border-bottom: 2px solid #f1f5f9;
+}
+.dash-table td {
+  padding: 12px 0;
+  color: #374151;
+  border-bottom: 1px solid #f8fafc;
+}
+.dash-table tr:last-child td { border-bottom: none; }
+.dash-table tr:hover td     { background: #fafbfc; }
+
+.ref-id     { font-weight: 700; color: #1a2535; font-size: .82rem; }
+.amount-pos { color: #16a34a; font-weight: 700; }
+.amount-neg { color: #ef4444; font-size: .82rem; }
+
+.pill {
+  padding: 3px 10px;
+  border-radius: 50px;
+  font-size: .72rem;
+  font-weight: 600;
+}
+.pill-gray  { background: #f1f5f9; color: #64748b; }
+.pill-green { background: #f0fdf4; color: #16a34a; }
+
+/* ─── Top Products ─── */
+.top-product-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 11px 0;
+  border-bottom: 1px solid #f8fafc;
+}
+.top-product-item:last-child { border-bottom: none; }
+.product-rank {
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  background: #f0fdf4;
+  color: #16a34a;
+  font-size: .72rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-right: 12px;
+}
+.top-product-item .product-name  { font-weight: 600; color: #1a2535; font-size: .85rem; }
+.top-product-item .product-sold  { font-size: .73rem; color: #94a3b8; }
+.top-product-item .product-price { font-weight: 700; color: #16a34a; font-size: .88rem; }
+
+/* ─── Alert Widgets ─── */
+.alert-card-warn {
+  border-left: 4px solid #f59e0b !important;
+  background: #fff !important;
+}
+.alert-card-warn .dash-card-header {
+  background: #fff;
+  border-bottom: 1px solid #fef3c7;
+}
+.alert-card-warn .dash-card-header h6 { color: #d97706; }
+
+.alert-card-danger {
+  border-left: 4px solid #ef4444 !important;
+  background: #fff !important;
+}
+.alert-card-danger .dash-card-header {
+  background: #fff;
+  border-bottom: 1px solid #fee2e2;
+}
+.alert-card-danger .dash-card-header h6 { color: #dc2626; }
+
+.badge-warn  { background: #fef3c7; color: #92400e; padding: 3px 10px; border-radius: 50px; font-size: .72rem; font-weight: 700; }
+.badge-danger{ background: #fee2e2; color: #991b1b; padding: 3px 10px; border-radius: 50px; font-size: .72rem; font-weight: 700; }
+
+/* ─── Empty State ─── */
+.empty-state { text-align: center; padding: 28px 0; color: #94a3b8; font-size: .85rem; }
+.empty-state i { font-size: 2rem; display: block; margin-bottom: 8px; opacity: .4; }

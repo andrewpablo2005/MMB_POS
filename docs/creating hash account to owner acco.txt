@@ -1,0 +1,83 @@
+creating hash account to owner account manually
+<?php
+$conn = new mysqli("localhost", "root", "", "mmbpos");
+
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+// Sample data
+$username = "andrew";
+$password = "newgun45";
+$position = "owner";
+
+// Hash password
+$hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+
+// Start transaction (IMPORTANT)
+$conn->begin_transaction();
+
+try {
+
+    // 1. Insert into users
+    $stmt = $conn->prepare("INSERT INTO users (username, password, position) VALUES (?, ?, ?)");
+    $stmt->bind_param("sss", $username, $hashedPassword, $position);
+    $stmt->execute();
+
+    // Get inserted user ID
+    $user_id = $conn->insert_id;
+
+    // 2. Insert into users_info
+    $stmt2 = $conn->prepare("INSERT INTO users_info (
+        user_id, firstname, middlename, lastname,
+        age, street, barangay, city, province, country,
+        email, contactnumber
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+
+    $firstname = "Andrew";
+    $middlename = "G";
+    $lastname = "Pablo";
+    $age = 22;
+    $street = "Sample Street";
+    $barangay = "Poblacion";
+    $city = "Bulacan";
+    $province = "Bulacan";
+    $country = "Philippines";
+    $email = "andrew@example.com";
+    $contact = "09123456789";
+
+    $stmt2->bind_param(
+        "isssisssssss",
+        $user_id,
+        $firstname,
+        $middlename,
+        $lastname,
+        $age,
+        $street,
+        $barangay,
+        $city,
+        $province,
+        $country,
+        $email,
+        $contact
+    );
+
+    $stmt2->execute();
+
+    // Commit if both succeed
+    $conn->commit();
+
+    echo "✅ User successfully created!<br>";
+    echo "User ID: " . $user_id . "<br>";
+    echo "Hashed Password: " . $hashedPassword;
+
+} catch (Exception $e) {
+
+    // Rollback if error
+    $conn->rollback();
+    echo "❌ Error: " . $e->getMessage();
+}
+
+$conn->close();
+?>
