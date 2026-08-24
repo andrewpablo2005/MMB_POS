@@ -26,9 +26,11 @@ $realRevenueToday = $data['realRevenueToday'];
 $realRevenueMonth = $data['realRevenueMonth'];
 $realRevenueYear = $data['realRevenueYear'];
 $totalSalesYear = $data['totalSalesYear'];
+$detailCashierId = isset($_GET['detail_cashier']) ? (int)$_GET['detail_cashier'] : 0;
 $detailPeriod = $_GET['detail_period'] ?? 'date';
 $detailValue = $_GET['detail_value'] ?? date('Y-m-d');
-$salesDetail = $report->getSalesDetailReport($detailPeriod, $detailValue);
+$cashierList = $report->getCashierList();
+$salesDetail = $report->getSalesDetailReport($detailPeriod, $detailValue, $detailCashierId);
 $salesDetailRows = $salesDetail['rows'];
 $registerClosings = $report->getRegisterClosings();
 $detailGrossTotal = 0.0;
@@ -149,6 +151,17 @@ foreach ($salesDetailRows as $detailRow) {
                                     <option value="date" <?= $salesDetail['period'] === 'date' ? 'selected' : '' ?>>Specific date</option>
                                     <option value="month" <?= $salesDetail['period'] === 'month' ? 'selected' : '' ?>>Month</option>
                                     <option value="year" <?= $salesDetail['period'] === 'year' ? 'selected' : '' ?>>Year</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="detail_cashier" class="form-label">Cashier</label>
+                                <select id="detail_cashier" name="detail_cashier" class="form-select">
+                                    <option value="0" <?= $salesDetail['cashier_id'] === 0 ? 'selected' : '' ?>>All cashiers</option>
+                                    <?php foreach ($cashierList as $cashier): ?>
+                                        <option value="<?= (int)$cashier['id'] ?>" <?= (int)$salesDetail['cashier_id'] === (int)$cashier['id'] ? 'selected' : '' ?>>
+                                            <?= htmlspecialchars($cashier['cashier_name'] ?? $cashier['username'] ?? 'Unknown') ?>
+                                        </option>
+                                    <?php endforeach; ?>
                                 </select>
                             </div>
                             <div class="col-md-4">
@@ -744,6 +757,7 @@ foreach ($salesDetailRows as $detailRow) {
     <script>
         (function () {
             const periodSelect = document.getElementById('detail_period');
+            const cashierSelect = document.getElementById('detail_cashier');
             const valueInput = document.getElementById('detail_value');
             const filterForm = document.getElementById('salesDetailFilterForm');
             if (!periodSelect || !valueInput || !filterForm) return;
@@ -780,6 +794,9 @@ foreach ($salesDetailRows as $detailRow) {
                 updatePeriodInput();
                 refreshReport();
             });
+            if (cashierSelect) {
+                cashierSelect.addEventListener('change', refreshReport);
+            }
             valueInput.addEventListener('change', refreshReport);
             updatePeriodInput();
         }());
