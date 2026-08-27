@@ -115,12 +115,16 @@ class Reports
 
     public function getCashierList(): array
     {
+       // 🐛 FIX: only ACTIVE accounts, deduped (a user with multiple
+       // users_info rows previously appeared twice in the dropdown).
        $stmt = $this->db->prepare("
            SELECT u.id,
                   u.username,
                   COALESCE(NULLIF(CONCAT_WS(' ', ui.firstname, ui.lastname), ''), u.username) AS cashier_name
            FROM users u
            LEFT JOIN users_info ui ON ui.user_id = u.id
+           WHERE u.status = 'active'
+           GROUP BY u.id, u.username, cashier_name
            ORDER BY cashier_name ASC, u.username ASC
        ");
        $stmt->execute();

@@ -14,6 +14,17 @@ let weposCustomerName = null;     // tracks customer name for senior/pwd custome
 let weposCustomerId = null;       // tracks customer ID linking to senior_customers/pwd_customers table
 let weposLastReceiptData = null;  // stores last receipt data for printing
 
+// 🔐 XSS guard: product/customer names are user-editable data and must be
+// escaped before being interpolated into innerHTML templates.
+function weposEscapeHtml(value) {
+    return String(value ?? '')
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     try {
         console.log('DOMContentLoaded event firing, initializing wePOS...');
@@ -314,7 +325,7 @@ function weposRequestVoidAuth(id, action) {
     pendingVoidTargetQty = action === 'set' ? pendingVoidTargetQty : null;
 
     document.getElementById('voidItemPreview').innerHTML =
-        `<strong>${item.name}</strong> &times; ${item.qty} &mdash; &#8369;${(item.price * item.qty).toFixed(2)}`;
+        `<strong>${weposEscapeHtml(item.name)}</strong> &times; ${item.qty} &mdash; &#8369;${(item.price * item.qty).toFixed(2)}`;
     const modalHead = document.querySelector('#voidAuthModal .wepos-modal-head h5');
     if (modalHead) {
         modalHead.innerHTML = '<i class="fas fa-trash-alt"></i> Void Authorization';
@@ -347,7 +358,7 @@ function weposRemoveItem(id) {
     pendingVoid = id;
     pendingVoidAction = 'delete';
     document.getElementById('voidItemPreview').innerHTML =
-        `<strong>${item.name}</strong> &times; ${item.qty} &mdash; &#8369;${(item.price * item.qty).toFixed(2)}`;
+        `<strong>${weposEscapeHtml(item.name)}</strong> &times; ${item.qty} &mdash; &#8369;${(item.price * item.qty).toFixed(2)}`;
     document.getElementById('voidAuthPin').value = '';
     document.getElementById('voidAuthError').style.display = 'none';
     const btn = document.getElementById('voidAuthBtn');
@@ -561,7 +572,7 @@ function weposUpdateCart() {
         html += `
             <tr class="wepos-cart-row">
                 <td class="wepos-col-name">
-                    <div class="wepos-cart-item-name" title="${item.name}">${item.name}${overrideBadge}</div>
+                    <div class="wepos-cart-item-name" title="${weposEscapeHtml(item.name)}">${weposEscapeHtml(item.name)}${overrideBadge}</div>
                 </td>
                 <td class="wepos-col-price text-muted">₱${item.price.toFixed(2)}</td>
                 <td class="wepos-col-qty">
@@ -746,7 +757,7 @@ function weposRenderCheckoutItems() {
     entries.forEach(item => {
         const c = weposCalcItem(item, dRate, isVatExempt, discountRule);
         const overrideLabel = item.override
-            ? `<span style="color:#00a32a; font-weight:600;">${(item.overrideRate*100).toFixed(0)}% OFF (by ${item.overrideApprover})</span>`
+            ? `<span style="color:#00a32a; font-weight:600;">${(item.overrideRate*100).toFixed(0)}% OFF (by ${weposEscapeHtml(item.overrideApprover)})</span>`
             : '';
         
         html += `<div style="display:flex; justify-content:space-between; align-items:center; padding:8px 12px; border-bottom:1px solid #f0f0f1;">
@@ -772,7 +783,7 @@ function weposRequestOverride(cartId) {
 
     // If already overridden, remove it
     if (item.override) {
-        if (confirm('Remove the override discount from "' + item.name + '"?')) {
+        if (confirm('Remove the override discount from "' + weposEscapeHtml(item.name) + '"?')) {
             item.override = false;
             item.overrideRate = 0;
             item.overrideApprover = null;
@@ -788,7 +799,7 @@ function weposRequestOverride(cartId) {
     // Open the PIN modal
     pendingOverride = { cartId };
     document.getElementById('overrideItemPreview').innerHTML =
-        `<strong>${item.name}</strong> — ₱${(item.price * item.qty).toFixed(2)} (${item.qty} × ₱${item.price.toFixed(2)})`;
+        `<strong>${weposEscapeHtml(item.name)}</strong> — ₱${(item.price * item.qty).toFixed(2)} (${item.qty} × ₱${item.price.toFixed(2)})`;
     document.getElementById('overrideReason').value = '';
     document.getElementById('overrideUsername').value = '';
     document.getElementById('overridePassword').value = '';
@@ -1041,7 +1052,7 @@ function weposShowReceipt(data) {
         const c = weposCalcItem(item, data.dRate, data.isVatExempt, data.discountRule || 'regular');
         itemsHtml += `<div style="display:flex; justify-content:space-between; margin-bottom:8px; align-items: flex-start;">
             <div style="flex:1; margin-right:8px;">
-                <div style="font-weight:500; line-height:1.2;">${item.name}</div>
+                <div style="font-weight:500; line-height:1.2;">${weposEscapeHtml(item.name)}</div>
                 <div style="font-size:11px; color:#64748b;">${item.qty} x &#8369;${item.price.toFixed(2)}</div>
             </div>
             <div style="font-weight:600; white-space:nowrap;">&#8369;${c.final.toFixed(2)}</div>
