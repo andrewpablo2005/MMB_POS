@@ -6,6 +6,13 @@ try {
     require_once __DIR__ . '/../conn/database.php';
     
     $db = Database::getConnection();
+
+    // 🔐 SECURITY: only authenticated Owner/Admin may manage suppliers
+    if (empty($_SESSION['user_id']) || !in_array(strtolower((string)($_SESSION['position'] ?? '')), ['owner', 'admin'], true)) {
+        http_response_code(403);
+        echo json_encode(['error' => 'Not authorized']);
+        exit;
+    }
     
     // Validate request method
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {

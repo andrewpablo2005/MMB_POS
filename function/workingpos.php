@@ -119,12 +119,132 @@ class Product {
         try {
             $this->conn->beginTransaction();
 
-            // Calculate totals
-            $grossTransactionAmount = 0;
+            // =========================================================
+            // 🔐 SECURITY: SERVER-SIDE VALIDATION
+            // The client (POS JS) computes prices/discounts for display,
+            // but the server re-derives them from the database so that a
+            // tampered request cannot buy stock at ₱0.01, use negative
+            // quantities, or apply inflated discounts.
+            // =========================================================
+
+            // 1) Fetch authoritative data for every product in the cart
+            $productData = [];   // id => ['base_price' => float, 'units_per_package' => int, 'senior' => bool, 'pwd' => bool]
             foreach ($cartItems as $item) {
-                $grossTransactionAmount += (float)($item['price'] ?? 0) * (int)($item['qty'] ?? 0); // qty here is 'packs'
+                $pid = (int)($item['id'] ?? 0);
+                if ($pid <= 0 || isset($productData[$pid])) {
+                    continue;
+                }
+                $prodStmt = $this->conn->prepare("
+                    SELECT p.id,
+                           COALESCE(p.units_per_package, 1) AS units_per_package,
+                           COALESCE(pc.senior_discount, 0) AS senior_eligible,
+                           COALESCE(pc.pwd_discount, 0) AS pwd_eligible,
+                           COALESCE((SELECT newest.sale_price
+                                     FROM inventory newest
+                                     WHERE newest.product_id = p.id
+                                     ORDER BY newest.date_received DESC, newest.id DESC
+                                     LIMIT 1), 0) AS base_price
+                    FROM products p
+                    LEFT JOIN product_categories pc ON p.category_id = pc.id
+                    WHERE p.id = ?
+                ");
+                $prodStmt->execute([$pid]);
+                $row = $prodStmt->fetch(PDO::FETCH_ASSOC);
+                if ($row) {
+                    $productData[$pid] = [
+                        'base_price'         => (float)$row['base_price'],
+                        'units_per_package'  => max(1, (int)$row['units_per_package']),
+                        'senior_eligible'    => (bool)$row['senior_eligible'],
+                        'pwd_eligible'       => (bool)$row['pwd_eligible'],
+                    ];
+                }
             }
 
+            // 2) Fetch manager price overrides logged by THIS cashier recently
+            //    (product_id => list of allowed discounted rates)
+            $overrideRates = [];
+            $cartIds = array_unique(array_filter(array_map(fn($i) => (int)($i['id'] ?? 0), $cartItems)));
+            if ($cartIds) {
+                $placeholders = implode(',', array_fill(0, count($cartIds), '?'));
+                $ovStmt = $this->conn->prepare("
+                    SELECT product_id, discount_percent
+                    FROM override_log
+                    WHERE cashier_id = ?
+                      AND product_id IN ($placeholders)
+                      AND created_at >= (NOW() - INTERVAL 2 HOUR)
+                    ORDER BY created_at DESC
+                ");
+                $ovStmt->execute(array_merge([(int)$userId], $cartIds));
+                foreach ($ovStmt->fetchAll(PDO::FETCH_ASSOC) as $ov) {
+                    $pid = (int)$ov['product_id'];
+                    $rate = round(max(0.0, min(100.0, (float)$ov['discount_percent'])) / 100.0, 4);
+                    if ($rate > 0 && !in_array($rate, $overrideRates[$pid] ?? [], true)) {
+                        $overrideRates[$pid][] = $rate;
+                    }
+                }
+            }
+
+            // 3) Validate & normalize cart items using server-side values
+            $serverCart = [];
+            foreach ($cartItems as $item) {
+                if (!is_array($item)) {
+                    throw new Exception('Invalid cart item');
+                }
+                $pid = (int)($item['id'] ?? 0);
+                $qty = (int)($item['qty'] ?? 0);
+
+                // 🔐 Reject zero/negative/fractional quantities (previously a
+                // negative qty zeroed the total while stock was still handed over)
+                if ($pid <= 0 || $qty <= 0) {
+                    throw new Exception('Invalid quantity for product ID ' . $pid);
+                }
+
+                if (!isset($productData[$pid])) {
+                    throw new Exception('Unknown product ID ' . $pid);
+                }
+
+                $data = $productData[$pid];
+                $clientPrice = (float)($item['price'] ?? 0);
+
+                // 🔐 Price binding: accept the client price ONLY when it matches
+                // the authoritative shelf price (or an authorized manager
+                // override price). Otherwise the server price wins.
+                $unitPrice = $data['base_price'];
+                if (abs($clientPrice - $data['base_price']) < 0.011) {
+                    $unitPrice = $data['base_price'];
+                } else {
+                    foreach ($overrideRates[$pid] ?? [] as $rate) {
+                        $allowedOverride = round($data['base_price'] * (1 - $rate), 2);
+                        if (abs($clientPrice - $allowedOverride) < 0.011) {
+                            $unitPrice = $allowedOverride;
+                            break;
+                        }
+                    }
+                }
+
+                // 🔐 pcs/units_per_package comes from the DB, never the client
+                $serverCart[] = [
+                    'id'    => $pid,
+                    'qty'   => $qty,
+                    'price' => $unitPrice,
+                    'pcs'   => $data['units_per_package'],
+                    'senior' => $data['senior_eligible'],
+                    'pwd'    => $data['pwd_eligible'],
+                    'eligible_for_discount' => $data['senior_eligible'] || $data['pwd_eligible'],
+                ];
+            }
+            $cartItems = $serverCart;
+
+            // Calculate totals (authoritative prices)
+            $grossTransactionAmount = 0;
+            foreach ($cartItems as $item) {
+                $grossTransactionAmount += (float)$item['price'] * (int)$item['qty']; // qty here is 'packs'
+            }
+
+            // =========================================================
+            // 🔐 DISCOUNT VALIDATION — the server caps whatever the client
+            // claims at what it computes itself as the maximum allowed.
+            // =========================================================
             $appliedDiscount = (float)$discountTotal;
             if ($appliedDiscount <= 0 && in_array(strtolower(trim((string)$customerType)), ['senior', 'pwd'], true)) {
                 $weekDiscountStmt = $this->conn->prepare(
@@ -148,6 +268,75 @@ class Product {
                 $discountDetails = self::calculateSpecialDiscount($cartItems, $customerType, $discountRule, $customerId, $weekDiscountTotal, $weekEligibleSubtotal);
                 $appliedDiscount = (float)$discountDetails['discount_total'];
             }
+
+            // 🔐 Cap the client-claimed discount at the maximum the server allows:
+            //    (a) statutory senior/PWD discount (with weekly caps), and/or
+            //    (b) the selected store discount rate from the discounts table, and/or
+            //    (c) manager price overrides logged for this cashier.
+            $allowedDiscount = 0.0;
+
+            // (a) statutory portion
+            $customerTypeNorm = strtolower(trim((string)$customerType));
+            if (in_array($customerTypeNorm, ['senior', 'pwd'], true)) {
+                $weekCapStmt = $this->conn->prepare(
+                    "SELECT COALESCE(SUM(discount_total), 0) AS week_discount_total
+                     FROM transactions
+                     WHERE customer_type = ? AND customer_id = ? AND YEARWEEK(created_at, 1) = YEARWEEK(CURDATE(), 1)"
+                );
+                $weekCapStmt->execute([$customerTypeNorm, $customerId]);
+                $weekCapRow = $weekCapStmt->fetch(PDO::FETCH_ASSOC);
+                $statutory = self::calculateSpecialDiscount($cartItems, $customerType, 'statutory', $customerId, (float)($weekCapRow['week_discount_total'] ?? 0), 0.0);
+                $allowedDiscount = max($allowedDiscount, (float)$statutory['discount_total']);
+            }
+
+            // (b) store discount portion
+            if ($discountId) {
+                $discStmt = $this->conn->prepare("SELECT discount_rate, discount_name FROM discounts WHERE id = ?");
+                $discStmt->execute([(int)$discountId]);
+                $discRow = $discStmt->fetch(PDO::FETCH_ASSOC);
+                if ($discRow) {
+                    $rate = (float)$discRow['discount_rate'];
+                    $rate = $rate > 1 ? $rate / 100.0 : $rate;
+                    $isStatutoryRow = stripos((string)$discRow['discount_name'], 'senior') !== false
+                                   || stripos((string)$discRow['discount_name'], 'pwd') !== false;
+                    if (!$isStatutoryRow && $rate > 0) {
+                        $regularDiscount = 0.0;
+                        foreach ($cartItems as $item) {
+                            $regularDiscount += (float)$item['price'] * (int)$item['qty'] * $rate;
+                        }
+                        $allowedDiscount = max($allowedDiscount, round($regularDiscount, 2));
+                    }
+                }
+            }
+
+            // (c) manager override portion (VAT-exclusive base, mirroring the POS UI)
+            $overrideAllowed = 0.0;
+            foreach ($cartItems as $item) {
+                foreach ($overrideRates[$item['id']] ?? [] as $rate) {
+                    $gross = (float)$item['price'] * (int)$item['qty'];
+                    $net = $gross / 1.12;
+                    $overrideAllowed += $net * $rate;
+                }
+            }
+            $allowedDiscount = round(max($allowedDiscount, $overrideAllowed), 2);
+
+            // Clamp the claimed discount to the allowed maximum
+            $appliedDiscount = round(min(max(0.0, $appliedDiscount), $allowedDiscount, $grossTransactionAmount), 2);
+
+            // 🔐 Cap the VAT exemption claim: only statutory-eligible items and
+            // manager-overridden items qualify (12% VAT-inclusive pricing).
+            $allowedVatExemption = 0.0;
+            foreach ($cartItems as $item) {
+                $isStatutoryEligible = in_array($customerTypeNorm, ['senior', 'pwd'], true)
+                    && ($item['senior'] || $item['pwd']);
+                $hasOverride = !empty($overrideRates[$item['id']]);
+                if ($isStatutoryEligible || $hasOverride) {
+                    $gross = (float)$item['price'] * (int)$item['qty'];
+                    $allowedVatExemption += $gross - ($gross / 1.12);
+                }
+            }
+            $allowedVatExemption = round($allowedVatExemption, 2);
+            $totalVatExemption = round(min(max(0.0, (float)$totalVatExemption), $allowedVatExemption), 2);
 
             $totalAmount = round(max(0.0, $grossTransactionAmount - $appliedDiscount - (float)$totalVatExemption), 2);
 
@@ -253,9 +442,12 @@ class Product {
 
             $this->conn->commit();
             return ['success' => true, 'transaction_id' => $transactionId, 'total' => $totalAmount];
-        } catch (Exception $e) {
-            $this->conn->rollBack();
-            return ['success' => false, 'error' => $e->getMessage()];
+        } catch (Throwable $e) {
+            if ($this->conn->inTransaction()) {
+                $this->conn->rollBack();
+            }
+            error_log('processTransaction failed: ' . $e->getMessage());
+            return ['success' => false, 'error' => 'Transaction failed: ' . $e->getMessage()];
         }
     }
 }
@@ -265,17 +457,30 @@ if (isset($_GET['action']) && $_GET['action'] === 'getProducts') {
     if (session_status() === PHP_SESSION_NONE) {
         session_start();
     }
-    
+
     require_once __DIR__ . '/../conn/database.php';
-    
+
     header('Content-Type: application/json');
-    
+
+    // 🔐 SECURITY: product catalog (prices, stock, cost) requires a login
+    if (empty($_SESSION['user_id'])) {
+        echo json_encode(['error' => 'Not authenticated']);
+        exit;
+    }
+
     try {
         $product = new Product($db);
         $products = $product->getProducts();
+        // 🔐 Strip purchase cost (net_price) — internal margin data must not
+        // be exposed to the browser; the POS UI does not use it.
+        foreach ($products as &$p) {
+            unset($p['net_price']);
+        }
+        unset($p);
         echo json_encode($products);
     } catch (Exception $e) {
-        echo json_encode(['error' => $e->getMessage()]);
+        error_log('getProducts endpoint error: ' . $e->getMessage());
+        echo json_encode(['error' => 'Failed to load products']);
     }
     exit;
 }

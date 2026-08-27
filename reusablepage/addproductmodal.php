@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/guard.php'; guard_require_roles(['owner','admin']);
 require_once __DIR__ . "/../function/addprodfunct.php";
 require_once __DIR__ . "/../conn/connection_links.php";
 

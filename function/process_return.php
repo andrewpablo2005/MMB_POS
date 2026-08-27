@@ -70,9 +70,29 @@ if (!preg_match('/^[0-9]{7}$/', $voidPin)) {
     exit;
 }
 
-$stmt = $db->prepare("SELECT u.id FROM users u WHERE u.void_password = ? AND u.position IN ('Owner', 'Admin') LIMIT 1");
-$stmt->execute([$voidPin]);
-$approver = $stmt->fetch(PDO::FETCH_ASSOC);
+// 🔐 Verify the manager Void PIN against hashed (and legacy plaintext) PINs
+$managerStmt = $db->prepare("
+    SELECT u.id, u.void_password
+    FROM users u
+    WHERE u.position IN ('Owner', 'Admin') AND u.status = 'active'
+");
+$managerStmt->execute();
+$approver = null;
+foreach ($managerStmt->fetchAll(PDO::FETCH_ASSOC) as $manager) {
+    $stored = (string)($manager['void_password'] ?? '');
+    if ($stored === '') {
+        continue;
+    }
+    if (preg_match('/^\$2[ay]?\$|^\$argon2/i', $stored)) {
+        if (password_verify($voidPin, $stored)) {
+            $approver = $manager;
+            break;
+        }
+    } elseif (hash_equals($stored, $voidPin)) {
+        $approver = $manager;
+        break;
+    }
+}
 
 if (!$approver) {
     echo json_encode(['success' => false, 'error' => 'Invalid Void PIN. Access denied.']);
@@ -82,7 +102,10 @@ if (!$approver) {
 try {
     $db->beginTransaction();
 
-    $stmtTx = $db->prepare("SELECT id FROM transactions WHERE id = ?");
+    // 🔐 Lock the original transaction row so two concurrent return requests
+    // for the same transaction cannot both pass the already-returned check
+    // (prevents double refunds / double restock).
+    $stmtTx = $db->prepare("SELECT id FROM transactions WHERE id = ? FOR UPDATE");
     $stmtTx->execute([$transactionId]);
     $transaction = $stmtTx->fetch(PDO::FETCH_ASSOC);
 
@@ -151,11 +174,12 @@ try {
             exit;
         }
 
-        if ($price !== (float)$original['price']) {
+        if (abs($price - (float)$original['price']) >= 0.011) {
             $db->rollBack();
             echo json_encode(['success' => false, 'error' => 'Return price mismatch for one or more items.']);
             exit;
         }
+        $price = (float)$original['price']; // server price is authoritative
 
         $returnedQty = $alreadyReturned[$productId] ?? 0;
         $availableQty = max(0, $original['quantity'] - $returnedQty);
@@ -186,23 +210,56 @@ try {
 
     $refundTotal = round($refundTotal, 2);
 
-    $stmtInsertReturn = $db->prepare("INSERT INTO return_transactions (original_transaction_id, user_id, refund_amount, reason, refund_method, created_at)
-        VALUES (?, ?, ?, ?, ?, NOW())");
+    // 🔐 Attribute the refund to the manager who authorized it (audit trail)
+    try {
+        $db->exec("ALTER TABLE return_transactions ADD COLUMN approver_id INT NULL DEFAULT NULL");
+    } catch (PDOException $ignore) {
+        // column already exists
+    }
+
+    $stmtInsertReturn = $db->prepare("INSERT INTO return_transactions (original_transaction_id, user_id, refund_amount, reason, refund_method, approver_id, created_at)
+        VALUES (?, ?, ?, ?, ?, ?, NOW())");
     $stmtInsertReturn->execute([
         $transactionId,
         $currentUserId,
         $refundTotal,
         $reason,
         $refundMethod,
+        (int)$approver['id'],
     ]);
 
     $returnId = (int)$db->lastInsertId();
 
     $stmtInsertItem = $db->prepare("INSERT INTO return_items (return_transaction_id, product_id, quantity, price, subtotal, item_type, restocked)
         VALUES (?, ?, ?, ?, ?, ?, ?)");
-    $stmtRestock = $db->prepare("UPDATE inventory i
-        JOIN (SELECT id FROM inventory WHERE product_id = ? ORDER BY id ASC LIMIT 1) sel ON i.id = sel.id
-        SET i.current_quantity = i.current_quantity + ?");
+
+    // 🔧 Restock into the batch the goods were originally deducted from
+    // (recorded in transaction_item_batches), so FEFO/expiry integrity is
+    // preserved. Falls back to the earliest unexpired batch; if the product
+    // has no batch at all, the restock fails loudly instead of vanishing.
+    $stmtRestockOriginal = $db->prepare("
+        UPDATE inventory i
+        JOIN (
+            SELECT tib.inventory_id AS id
+            FROM transaction_items ti
+            JOIN transaction_item_batches tib ON tib.transaction_item_id = ti.id
+            WHERE ti.transaction_id = ? AND ti.product_id = ?
+            ORDER BY tib.id ASC
+            LIMIT 1
+        ) sel ON i.id = sel.id
+        SET i.current_quantity = i.current_quantity + ?
+    ");
+    $stmtRestockFallback = $db->prepare("
+        UPDATE inventory i
+        JOIN (
+            SELECT id FROM inventory
+            WHERE product_id = ? AND (expiry_date IS NULL OR expiry_date >= CURDATE())
+            ORDER BY expiry_date ASC, id ASC
+            LIMIT 1
+        ) sel ON i.id = sel.id
+        SET i.current_quantity = i.current_quantity + ?
+    ");
+    $stmtHasBatch = $db->prepare("SELECT COUNT(*) AS c FROM inventory WHERE product_id = ?");
 
     foreach ($selectedItems as $item) {
         $stmtInsertItem->execute([
@@ -217,7 +274,24 @@ try {
 
         if ($item['is_restockable']) {
             $restoreQty = $item['qty'] * $item['pcs'];
-            $stmtRestock->execute([$item['product_id'], $restoreQty]);
+
+            // Try the original batch first
+            $stmtRestockOriginal->execute([$transactionId, $item['product_id'], $restoreQty]);
+            if ($stmtRestockOriginal->rowCount() < 1) {
+                // Fallback: earliest unexpired batch
+                $stmtRestockFallback->execute([$item['product_id'], $restoreQty]);
+                if ($stmtRestockFallback->rowCount() < 1) {
+                    // No batch exists at all — fail loudly (stock must not vanish)
+                    $stmtHasBatch->execute([$item['product_id']]);
+                    $hasAny = ((int)($stmtHasBatch->fetch(PDO::FETCH_ASSOC)['c'] ?? 0)) > 0;
+                    if (!$hasAny) {
+                        throw new RuntimeException(
+                            'Cannot restock product ID ' . $item['product_id'] .
+                            ': no inventory batch exists for this product. Create a batch first.'
+                        );
+                    }
+                }
+            }
         }
     }
 

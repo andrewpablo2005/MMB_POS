@@ -1,4 +1,6 @@
-<?php 
+<?php
+require_once __DIR__ . '/guard.php'; guard_require_roles(['admin','owner']);
+ 
 include("../conn/connection_links.php");
 ?>
 

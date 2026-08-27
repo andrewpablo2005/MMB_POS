@@ -1,5 +1,6 @@
 <?php
-require_once __DIR__ . "/../conn/Database.php";
+require_once __DIR__ . '/guard.php'; guard_require_roles(['owner']);
+require_once __DIR__ . "/../conn/database.php";
 require_once __DIR__ . "/../function/userregistration.php";
 
 use Classes\UserRegistration;
@@ -41,28 +42,28 @@ $users = $userAction->getAllPreUsers();
             <?php foreach ($users as $u): ?>
             <tr>
 
-                <td><?= $u['username'] ?></td>
+                <td><?= htmlspecialchars((string)($u['username']), ENT_QUOTES, 'UTF-8') ?></td>
 
                 <td>
                     <?= ($u['firstname']) . ' ' . ($u['lastname'])?>
                 </td>
 
-                <td><?= $u['age'] ?></td>
+                <td><?= htmlspecialchars((string)($u['age']), ENT_QUOTES, 'UTF-8') ?></td>
 
                 <td>
                     <?= ($u['city']) . ', ' . ($u['province'])?>
                 </td>
 
-                <td><?= $u['email'] ?></td>
+                <td><?= htmlspecialchars((string)($u['email']), ENT_QUOTES, 'UTF-8') ?></td>
 
-                <td><?= $u['position'] ?></td>
+                <td><?= htmlspecialchars((string)($u['position']), ENT_QUOTES, 'UTF-8') ?></td>
                 
                 <td class="text-center">
 
                     <div class="d-flex justify-content-center gap-2 flex-wrap">
 
                         <form method="POST">
-                            <input type="hidden" name="id" value="<?= $u['id'] ?>">
+                            <input type="hidden" name="id" value="<?= htmlspecialchars((string)($u['id']), ENT_QUOTES, 'UTF-8') ?>">
                             <button name="action" value="approve"
                                 class="btn btn-success btn-sm">
                                 Approve
@@ -70,7 +71,7 @@ $users = $userAction->getAllPreUsers();
                         </form>
 
                         <form method="POST">
-                            <input type="hidden" name="id" value="<?= $u['id'] ?>">
+                            <input type="hidden" name="id" value="<?= htmlspecialchars((string)($u['id']), ENT_QUOTES, 'UTF-8') ?>">
                             <button name="action" value="reject"
                                 class="btn btn-danger btn-sm">
                                 Reject

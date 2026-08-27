@@ -4,8 +4,14 @@ session_start();
 
 // 🔐 CHECK IF LOGGED IN
 if (!isset($_SESSION['user_id'])) {
-    header("Location: /MMBPOS/login.php");
+    header("Location: /MMBPOS/login_logout_page/login.php");
     exit;
+}
+
+// 🔐 CHECK ROLE — Owner dashboard must only be accessible to the Owner
+if (strtolower(trim((string)($_SESSION['position'] ?? ''))) !== 'owner') {
+    http_response_code(403);
+    exit('Access denied: Owner accounts only.');
 }
 
 $activeTab = $_GET['tab'] ?? 'dashboard';

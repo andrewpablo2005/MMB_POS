@@ -1,5 +1,6 @@
 <?php
-require_once __DIR__ . "/../conn/Database.php";
+require_once __DIR__ . '/guard.php'; guard_require_roles(['owner']);
+require_once __DIR__ . "/../conn/database.php";
 require_once __DIR__ . "/../function/usermanagement.php";
 
 use Classes\UserManagement;

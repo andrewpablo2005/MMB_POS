@@ -2,7 +2,7 @@
 
 namespace Classes;
 
-require_once "../conn/Database.php";
+require_once "../conn/database.php";
 
 class UserManagement
 {
@@ -16,10 +16,18 @@ class UserManagement
     // ✅ CLEAN INPUT HANDLER
     private function input(array $data): array
     {
+        // 🔐 Position whitelist — prevents privilege escalation via a forged
+        // position value (e.g. a request posting position=Owner).
+        $allowedPositions = ['Owner', 'Admin', 'Staff'];
+        $position = trim((string)($data['position'] ?? 'Staff'));
+        if (!in_array($position, $allowedPositions, true)) {
+            $position = 'Staff';
+        }
+
         return [
-            'username' => $data['username'] ?? '',
-            'password' => $data['password'] ?? '',
-            'position' => $data['position'] ?? 'Staff',
+            'username' => trim((string)($data['username'] ?? '')),
+            'password' => (string)($data['password'] ?? ''),
+            'position' => $position,
 
             'firstname' => $data['firstname'] ?? '',
             'middlename' => $data['middlename'] ?? '',
@@ -39,6 +47,22 @@ class UserManagement
         ];
     }
 
+    /**
+     * 🔐 Hash a void PIN for storage. Never store PINs in plaintext.
+     * Accepts null/empty (keep existing) and returns null then.
+     */
+    private function hashVoidPin(?string $pin): ?string
+    {
+        $pin = trim((string)$pin);
+        if ($pin === '') {
+            return null;
+        }
+        if (!preg_match('/^\d{7}$/', $pin)) {
+            return null; // invalid PIN — ignored, existing value kept
+        }
+        return password_hash($pin, PASSWORD_BCRYPT);
+    }
+
     // 🔥 ADD USER (TRANSACTION SAFE.)
    public function addUser(array $data): array
 {
@@ -55,8 +79,8 @@ class UserManagement
             return ['success' => false, 'message' => 'Username already exists'];
         }
 
-        // ✅ Get void_password from form (manual input)
-        $voidRaw = !empty($data['void_password']) ? $data['void_password'] : null;
+        // ✅ Get void_password from form (manual input) — stored HASHED
+        $voidHash = $this->hashVoidPin($data['void_password'] ?? null);
 
         // Insert user
         $this->con->prepare("
@@ -66,7 +90,7 @@ class UserManagement
             $d['username'],
             password_hash($d['password'], PASSWORD_BCRYPT), // hashed login password
             $d['position'],
-            $voidRaw // plain void password
+            $voidHash // hashed void PIN
         ]);
 
         $userId = $this->con->lastInsertId();
@@ -99,8 +123,12 @@ class UserManagement
         ];
 
     } catch (\Throwable $e) {
-        $this->con->rollBack();
-        return ['success' => false, 'message' => $e->getMessage()];
+        if ($this->con->inTransaction()) {
+            $this->con->rollBack();
+        }
+        // Never leak raw DB errors to the browser
+        error_log('addUser failed: ' . $e->getMessage());
+        return ['success' => false, 'message' => 'Failed to add user'];
     }
 }
 
@@ -159,10 +187,13 @@ class UserManagement
             $params[] = password_hash($data['password'], PASSWORD_DEFAULT);
         }
 
-        // ✅ PLAIN void password (as requested)
+        // ✅ HASHED void PIN (blank = keep existing)
         if (!empty($data['void_password'])) {
-            $fields[] = 'void_password = ?';
-            $params[] = $data['void_password'];
+            $voidHash = $this->hashVoidPin($data['void_password']);
+            if ($voidHash !== null) {
+                $fields[] = 'void_password = ?';
+                $params[] = $voidHash;
+            }
         }
 
         $params[] = $userId;
@@ -207,8 +238,11 @@ class UserManagement
         return ['success' => true, 'message' => 'User updated successfully'];
 
     } catch (\Throwable $e) {
-        $this->con->rollBack();
-        return ['success' => false, 'message' => $e->getMessage()];
+        if ($this->con->inTransaction()) {
+            $this->con->rollBack();
+        }
+        error_log('updateUser failed: ' . $e->getMessage());
+        return ['success' => false, 'message' => 'Failed to update user'];
     }
 }
     public function updateUserSystem(int $userId, array $data): array
@@ -228,38 +262,26 @@ class UserManagement
 
             // =========================
             // UPDATE USERS TABLE
+            // (Void PIN is only rewritten when a valid 7-digit PIN is supplied;
+            //  it is stored HASHED, and never shown again afterwards.)
             // =========================
+            $fields = ['username = ?'];
+            $params = [$d['username']];
+
             if (!empty($data['password'])) {
-
-                $hashedPassword = password_hash($data['password'], PASSWORD_DEFAULT);
-
-                $stmt = $this->con->prepare("
-        UPDATE users 
-        SET username = ?, password = ?, void_password = ?
-        WHERE id = ?
-    ");
-
-                $stmt->execute([
-                    $d['username'],
-                    $hashedPassword,
-                    $data['void_password'], // always included
-                    $userId
-                ]);
-
-            } else {
-
-                $stmt = $this->con->prepare("
-        UPDATE users 
-        SET username = ?, void_password = ?
-        WHERE id = ?
-    ");
-
-                $stmt->execute([
-                    $d['username'],
-                    $data['void_password'], // ✅ FIXED
-                    $userId
-                ]);
+                $fields[] = 'password = ?';
+                $params[] = password_hash($data['password'], PASSWORD_DEFAULT);
             }
+
+            $voidHash = $this->hashVoidPin($data['void_password'] ?? null);
+            if ($voidHash !== null) {
+                $fields[] = 'void_password = ?';
+                $params[] = $voidHash;
+            }
+
+            $params[] = $userId;
+            $stmt = $this->con->prepare("UPDATE users SET " . implode(', ', $fields) . " WHERE id = ?");
+            $stmt->execute($params);
 
             // =========================
             // UPDATE USERS INFO TABLE
@@ -291,8 +313,11 @@ class UserManagement
             return ['success' => true, 'message' => 'User updated successfully'];
 
         } catch (\Throwable $e) {
-            $this->con->rollBack();
-            return ['success' => false, 'message' => $e->getMessage()];
+            if ($this->con->inTransaction()) {
+                $this->con->rollBack();
+            }
+            error_log('updateUserSystem failed: ' . $e->getMessage());
+            return ['success' => false, 'message' => 'Failed to update settings'];
         }
     }
     // 🔥 DELETE USER
@@ -300,6 +325,23 @@ class UserManagement
     {
         if (!$userId) {
             return ['success' => false, 'message' => 'Invalid ID'];
+        }
+
+        // 🔐 SAFETY: block deleting your own account and the last Owner
+        $currentUserId = (int)($_SESSION['user_id'] ?? 0);
+        if ($userId === $currentUserId) {
+            return ['success' => false, 'message' => 'You cannot delete your own account'];
+        }
+
+        $stmt = $this->con->prepare("SELECT position FROM users WHERE id = ?");
+        $stmt->execute([$userId]);
+        $target = $stmt->fetch(\PDO::FETCH_ASSOC);
+        if ($target && strtolower((string)$target['position']) === 'owner') {
+            $countStmt = $this->con->query("SELECT COUNT(*) AS c FROM users WHERE LOWER(position) = 'owner' AND status = 'active'");
+            $row = $countStmt->fetch(\PDO::FETCH_ASSOC);
+            if ((int)($row['c'] ?? 0) <= 1) {
+                return ['success' => false, 'message' => 'Cannot delete the last active Owner account'];
+            }
         }
 
         $ok = $this->con->prepare("DELETE FROM users WHERE id = ?")

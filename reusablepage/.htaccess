@@ -1,0 +1,14 @@
+# Fragments in this folder must only be reached via the dashboard pages
+# (ownerpage/, adminpage/, staffpos/), never directly over HTTP.
+# Server-side includes are filesystem operations and are NOT affected.
+
+# Apache 2.4+
+<IfModule mod_authz_core.c>
+    Require all denied
+</IfModule>
+
+# Apache 2.2 fallback
+<IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+</IfModule>

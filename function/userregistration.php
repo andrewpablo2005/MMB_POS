@@ -2,7 +2,7 @@
 
 namespace Classes;
 // PDO DB
-require_once "../conn/Database.php";
+require_once "../conn/database.php";
 
 class UserRegistration
 {
@@ -40,7 +40,12 @@ class UserRegistration
 
         $this->username = $_POST['username'];
         $this->password = $_POST['password'];
-        $this->position = $_POST['position'];
+        // 🔐 Position whitelist — pre-registration may ONLY create Staff
+        // accounts. Owner/Admin accounts are created by the Owner/Admin
+        // dashboards, never through self-registration.
+        $this->position = in_array($_POST['position'], ['Staff'], true)
+            ? $_POST['position']
+            : 'Staff';
 
         // 🔥 USERS_INFO TABLE (SAFE)
         $this->firstname = $_POST['firstname'];
@@ -190,6 +195,12 @@ public function pre_addUser()
                 throw new \Exception("User not found");
             }
 
+            // 🔐 SECURITY: never approve a pending account with a privileged
+            // role. Pre-registration is Staff-only; anything else is rejected.
+            if (strtolower(trim((string)$user['position'])) !== 'staff') {
+                throw new \Exception("Invalid pending account role — rejected");
+            }
+
             // =========================
             // INSERT INTO users
             // =========================
@@ -251,7 +262,7 @@ public function pre_addUser()
 
         } catch (\Exception $e) {
             $this->con->rollBack();
-            echo $e->getMessage();
+            error_log('approve() failed: ' . $e->getMessage());
         }
     }
 
@@ -293,26 +304,38 @@ public function pre_addUser()
 
         $mail = new \PHPMailer\PHPMailer\PHPMailer(true);
 
+        // 🔐 SMTP credentials are read from the environment (never commit
+        // real passwords to the repo). Define these in Apache config / .env:
+        //   MMBPOS_SMTP_USER, MMBPOS_SMTP_PASS, MMBPOS_SMTP_FROM
+        $smtpUser = getenv('MMBPOS_SMTP_USER');
+        $smtpPass = getenv('MMBPOS_SMTP_PASS');
+        $smtpFrom = getenv('MMBPOS_SMTP_FROM') ?: $smtpUser;
+
+        if (!$smtpUser || !$smtpPass) {
+            // Email notifications are optional — skip silently when not configured.
+            return;
+        }
+
         try {
             $mail->isSMTP();
             $mail->Host = 'smtp.gmail.com';
             $mail->SMTPAuth = true;
-            $mail->Username = 'andrewpablo.neust.student@gmail.com';
-            $mail->Password = 'uwlb bpni hhwn llix';
+            $mail->Username = $smtpUser;
+            $mail->Password = $smtpPass;
             $mail->SMTPSecure = 'tls';
             $mail->Port = 587;
 
-            $mail->setFrom('andrewpablo.neust.student@gmail.com', 'MMBPOS Admin');
+            $mail->setFrom($smtpFrom, 'MMBPOS Admin');
             $mail->addAddress($to);
 
             $mail->isHTML(true);
             $mail->Subject = $subject;
-            $mail->Body = "<p>$body</p>";
+            $mail->Body = '<p>' . nl2br(htmlspecialchars($body, ENT_QUOTES, 'UTF-8')) . '</p>';
 
             $mail->send();
 
         } catch (\Exception $e) {
-            // optional log
+            error_log('sendEmail failed: ' . $e->getMessage());
         }
     }
 }

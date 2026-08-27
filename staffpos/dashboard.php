@@ -3,24 +3,26 @@ session_start();
 
 // 🔐 CHECK IF LOGGED IN
 if (!isset($_SESSION['user_id'])) {
-    header("Location: /MMBPOS/login.php");
+    header("Location: /MMBPOS/login_logout_page/login.php");
     exit;
 }
 
-// 🔐 OPTIONAL: CHECK ROLE (case-insensitive)
+// 🔐 CHECK ROLE (case-insensitive)
 if (strtolower($_SESSION['position']) !== 'staff') {
+    http_response_code(403);
     echo "Access denied";
     exit;
 }
 
-require_once __DIR__ . "/../conn/Database.php";
+require_once __DIR__ . "/../conn/database.php";
 require_once __DIR__ . "/../conn/connection_links.php";
 require_once __DIR__ . "/../function/userregistration.php";
 
 use Classes\UserRegistration;
 
-$user = new UserRegistration($db);
-$user->pre_addUser();
+// NOTE: Staff accounts must NOT be able to pre-register users (privilege
+// escalation vector — position was client-supplied). Account creation is
+// handled by Admin (adminaddaccount) and Owner (addaccount) dashboards.
 ?>
 
 <!DOCTYPE html>

@@ -1,4 +1,6 @@
-﻿<?php $dosageForms = $product->getDosageForms(); ?>
+<?php
+require_once __DIR__ . '/guard.php'; guard_require_roles(['owner','admin']);
+$dosageForms = $product->getDosageForms(); ?>
 <?php foreach ($products as $prod): ?>
     <div class="modal fade" id="editProduct<?= $prod['id'] ?>" tabindex="-1" aria-labelledby="updateproductLabel<?= $prod['id'] ?>" aria-hidden="true">
         <div class="modal-dialog modal-lg">
