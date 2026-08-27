@@ -147,6 +147,17 @@
 </div>
 
 <script>
+
+    // 🔐 XSS guard for user-editable product/customer names
+    function escapeHtmlRm(value) {
+        return String(value ?? '')
+            .replaceAll('&', '&amp;')
+            .replaceAll('<', '&lt;')
+            .replaceAll('>', '&gt;')
+            .replaceAll('"', '&quot;')
+            .replaceAll("'", '&#039;');
+    }
+
 let currentReturnTxData = null;
 
 function openReturnModal() {
@@ -210,7 +221,7 @@ function renderReturnTxUI(data) {
                     <input type="checkbox" class="form-check-input chk-return-item" data-pid="${item.product_id}" data-price="${item.price}" data-max="${avail}" ${disabled ? 'disabled' : ''} onchange="calcReturnTotal()">
                 </td>
                 <td>
-                    <div style="font-weight:600;">${item.product_name}</div>
+                    <div style="font-weight:600;">${escapeHtmlRm(item.product_name)}</div>
                     <small style="color:#64748b;">Purchased: ${item.quantity} | Returned: ${item.already_returned} | Avail: ${avail}</small>
                 </td>
                 <td class="text-center">₱${parseFloat(item.price).toFixed(2)}</td>
@@ -353,7 +364,7 @@ function showRefundReceipt(data, items) {
         const name = origItem ? origItem.product_name : 'Product #' + item.product_id;
         itemsHtml += `
             <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
-                <div>${name}<br><small style="color:#64748b;">${item.qty} x ₱${item.price.toFixed(2)}</small></div>
+                <div>${escapeHtmlRm(name)}<br><small style="color:#64748b;">${item.qty} x ₱${item.price.toFixed(2)}</small></div>
                 <div style="font-weight:700;">₱${(item.qty * item.price).toFixed(2)}</div>
             </div>
         `;

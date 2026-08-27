@@ -252,6 +252,7 @@ CREATE TABLE `pre_approved_users_info` (
 
 CREATE TABLE `products` (
   `id` int(11) NOT NULL,
+  `is_hidden` tinyint(1) NOT NULL DEFAULT 0,
   `branded_name` varchar(255) NOT NULL COMMENT 'Brand name (e.g., Amoxil)',
   `generic_name` varchar(255) NOT NULL COMMENT 'Generic/active ingredient (e.g., Amoxicillin)',
   `strength` decimal(10,2) NOT NULL DEFAULT 0.00 COMMENT 'Main strength value (e.g., 500mg)',
@@ -356,6 +357,7 @@ CREATE TABLE `pwd_customers` (
   `customer_name` varchar(255) NOT NULL,
   `id_number` varchar(100) NOT NULL,
   `cashier_id` int(11) NOT NULL,
+  `verified_by` int(11) DEFAULT NULL,
   `verified_at` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -433,6 +435,7 @@ CREATE TABLE `return_transactions` (
   `id` int(11) NOT NULL,
   `original_transaction_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
+  `approver_id` int(11) DEFAULT NULL,
   `refund_amount` decimal(10,2) NOT NULL DEFAULT 0.00,
   `replacement_product_id` int(11) DEFAULT NULL,
   `replacement_quantity` int(11) NOT NULL DEFAULT 0,
@@ -463,6 +466,7 @@ CREATE TABLE `senior_customers` (
   `customer_name` varchar(255) NOT NULL,
   `id_number` varchar(100) NOT NULL,
   `cashier_id` int(11) NOT NULL,
+  `verified_by` int(11) DEFAULT NULL,
   `verified_at` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -686,9 +690,9 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `username`, `password`, `void_password`, `position`, `failed_attempts`, `last_attempt`, `status`) VALUES
-(1, 'andrew_owner', '$2y$10$U9nvr0YPYlqswVjqumcw1OTvtVJYVwdl5MFcCfvumt.nUzhqJTe9C', '1234567', 'Owner', 0, '2026-07-29 03:16:59', 'active'),
-(2, 'andrew_admin', '$2y$10$.pMY78gCNdiWGwCw8DAIse7SS./j5d9T8pQ87YhhLoOum4yKzJL.m', '1234567', 'Admin', 0, '2026-08-20 01:56:58', 'active'),
-(3, 'andrew_staff', '$2y$10$WESQ6f2mApseNhMhKMmW8e6gg.tp9AU8CsY/mQrU4g6GHEWmFCWGG', '1234567', 'Staff', 0, '2026-07-26 14:50:35', 'active'),
+(1, 'andrew_owner', '$2y$10$U9nvr0YPYlqswVjqumcw1OTvtVJYVwdl5MFcCfvumt.nUzhqJTe9C', '$2y$10$hN/7ltDzFfP1PJpuHFS5P.jCevRpFZeL468LOWngveeQAtj.E2ELy', 'Owner', 0, '2026-07-29 03:16:59', 'active'),
+(2, 'andrew_admin', '$2y$10$.pMY78gCNdiWGwCw8DAIse7SS./j5d9T8pQ87YhhLoOum4yKzJL.m', '$2y$10$pZ7uhfZbbwqstHwZjLK6J.eDGNqWQ4AM69m9bMdJnj4UmOo6sp6Cq', 'Admin', 0, '2026-08-20 01:56:58', 'active'),
+(3, 'andrew_staff', '$2y$10$WESQ6f2mApseNhMhKMmW8e6gg.tp9AU8CsY/mQrU4g6GHEWmFCWGG', '$2y$10$61ur.W.lccaIJQlXbXEIXObAjeAkXkTnEMBwNrjTrks2/4PdaChOC', 'Staff', 0, '2026-07-26 14:50:35', 'active'),
 (4, 'staff1', '$2y$10$U60z2JyVRKxJ.x36cqpJkuzZDPRFtOF5aZqUO7QCyBBN.P614oIoy', NULL, 'Staff', 0, NULL, 'active'),
 (5, 'sampleAccount', '$2y$10$G.IAWGX.MPWQ8E1bIvuykO7Ph//70zWAqxZdMdDVMFiZDu7qFtBLm', NULL, 'Staff', 0, NULL, 'active'),
 (6, 'ownerewew', '$2y$10$ksJeBpMxV9gjhPxayLmxSexH68mbQj4MK8ImAs8aCsGYldOCYOJgG', NULL, 'Staff', 0, NULL, 'active');

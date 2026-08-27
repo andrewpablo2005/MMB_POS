@@ -131,4 +131,4 @@ if ($product->addProduct()) {
 <?php include 'updateproductmodal.php'; ?>
 <?php include 'viewproductmodal.php'; ?>
 <?php include 'addproductmodal.php'; ?>
-<script src="js/usermanagement.js"></script>
+<!-- usersmanagement.js is loaded globally via conn/connection_links.php (broken duplicate reference removed) -->
