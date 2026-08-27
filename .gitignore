@@ -1,0 +1,9 @@
+# Local environment config (production credentials live only on the server)
+conn/config.local.php
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
