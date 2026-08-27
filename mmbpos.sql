@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 21, 2026 at 07:20 AM
+-- Generation Time: Aug 24, 2026 at 10:17 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -110,8 +110,8 @@ CREATE TABLE `inventory` (
 --
 
 INSERT INTO `inventory` (`id`, `product_id`, `supplier_id`, `batch_number`, `date_received`, `manufacture_date`, `purchase_cost`, `markup`, `sale_price`, `received_quantity`, `created_at`, `updated_at`, `current_quantity`, `expiry_date`) VALUES
-(1, 1, 1, 'Batch-1', '2026-08-19', NULL, 12.00, 5.00, 12.60, 100, '2026-08-19 07:54:08', '2026-08-20 02:01:31', 94, '2036-02-02'),
-(2, 2, 1, 'Batch-1', '2026-08-19', NULL, 14.00, 5.00, 14.70, 100, '2026-08-19 08:03:49', '2026-08-21 05:06:13', 93, '2035-02-02');
+(1, 1, 1, 'Batch-1', '2026-08-19', NULL, 12.00, 5.00, 12.60, 100, '2026-08-19 07:54:08', '2026-08-21 06:31:56', 94, '2036-02-02'),
+(2, 2, 1, 'Batch-1', '2026-08-19', NULL, 14.00, 5.00, 14.70, 100, '2026-08-19 08:03:49', '2026-08-21 06:34:24', 92, '2035-02-02');
 
 -- --------------------------------------------------------
 
@@ -420,7 +420,8 @@ INSERT INTO `return_items` (`id`, `return_transaction_id`, `product_id`, `quanti
 (1, 1, 1, 1, 12.60, 12.60, 'returned', 0, 0, 0.00),
 (2, 2, 1, 1, 12.60, 12.60, 'returned', 1, 0, 0.00),
 (3, 3, 1, 1, 9.00, 9.00, 'returned', 1, 0, 0.00),
-(4, 4, 2, 1, 10.49, 10.49, 'returned', 0, 0, 0.00);
+(4, 4, 2, 1, 10.49, 10.49, 'returned', 0, 0, 0.00),
+(5, 5, 1, 1, 12.60, 12.60, 'returned', 1, 0, 0.00);
 
 -- --------------------------------------------------------
 
@@ -448,7 +449,8 @@ INSERT INTO `return_transactions` (`id`, `original_transaction_id`, `user_id`, `
 (1, 6, 1, 12.60, NULL, 0, 'Customer Request / Change of Mind', 'Cash', '2026-08-20 08:51:46'),
 (2, 7, 1, 12.60, NULL, 0, 'Customer Request / Change of Mind', 'Cash', '2026-08-20 09:08:38'),
 (3, 8, 1, 9.00, NULL, 0, 'Customer Request / Change of Mind', 'Cash', '2026-08-20 09:15:00'),
-(4, 8, 1, 10.49, NULL, 0, 'Customer Request / Change of Mind', 'Cash', '2026-08-20 09:15:51');
+(4, 8, 1, 10.49, NULL, 0, 'Customer Request / Change of Mind', 'Cash', '2026-08-20 09:15:51'),
+(5, 11, 1, 12.60, NULL, 0, 'Customer Request / Change of Mind', 'Cash', '2026-08-21 14:31:56');
 
 -- --------------------------------------------------------
 
@@ -532,7 +534,9 @@ INSERT INTO `transactions` (`id`, `user_id`, `discount_id`, `customer_name`, `cu
 (7, 1, 1, 'Walk-in', NULL, '', 27.30, '2026-08-20 01:05:10', 0.00, 0.00),
 (8, 1, 2, 'Andrew pablo', '1', 'senior', 19.49, '2026-08-20 01:05:45', 4.88, 2.93),
 (9, 1, 1, 'Walk-in', NULL, '', 27.30, '2026-08-20 02:01:31', 0.00, 0.00),
-(10, 1, 2, 'Andrew Pablo', '1', 'senior', 10.49, '2026-08-21 05:06:13', 2.63, 1.58);
+(10, 1, 2, 'Andrew Pablo', '1', 'senior', 10.49, '2026-08-21 05:06:13', 2.63, 1.58),
+(11, 1, 1, 'Walk-in', NULL, '', 12.60, '2026-08-21 05:26:11', 0.00, 0.00),
+(12, 1, 1, 'Walk-in', NULL, '', 14.70, '2026-08-21 06:34:24', 0.00, 0.00);
 
 -- --------------------------------------------------------
 
@@ -585,7 +589,9 @@ INSERT INTO `transaction_items` (`id`, `transaction_id`, `product_id`, `batch_id
 (13, 8, 2, 2, 1, 14.70, 10.49),
 (14, 9, 1, 1, 1, 12.60, 12.60),
 (15, 9, 2, 2, 1, 14.70, 14.70),
-(16, 10, 2, 2, 1, 14.70, 10.49);
+(16, 10, 2, 2, 1, 14.70, 10.49),
+(17, 11, 1, 1, 1, 12.60, 12.60),
+(18, 12, 2, 2, 1, 14.70, 14.70);
 
 -- --------------------------------------------------------
 
@@ -622,7 +628,9 @@ INSERT INTO `transaction_item_batches` (`id`, `transaction_item_id`, `inventory_
 (13, 13, 2, 1, 14.00, '2026-08-20 01:05:45'),
 (14, 14, 1, 1, 12.00, '2026-08-20 02:01:31'),
 (15, 15, 2, 1, 14.00, '2026-08-20 02:01:31'),
-(16, 16, 2, 1, 14.00, '2026-08-21 05:06:13');
+(16, 16, 2, 1, 14.00, '2026-08-21 05:06:13'),
+(17, 17, 1, 1, 12.00, '2026-08-21 05:26:11'),
+(18, 18, 2, 1, 14.00, '2026-08-21 06:34:24');
 
 -- --------------------------------------------------------
 
@@ -1002,13 +1010,13 @@ ALTER TABLE `register_closings`
 -- AUTO_INCREMENT for table `return_items`
 --
 ALTER TABLE `return_items`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `return_transactions`
 --
 ALTER TABLE `return_transactions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `senior_customers`
@@ -1026,7 +1034,7 @@ ALTER TABLE `suppliers`
 -- AUTO_INCREMENT for table `transactions`
 --
 ALTER TABLE `transactions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `transaction_batch_allocations`
@@ -1038,13 +1046,13 @@ ALTER TABLE `transaction_batch_allocations`
 -- AUTO_INCREMENT for table `transaction_items`
 --
 ALTER TABLE `transaction_items`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT for table `transaction_item_batches`
 --
 ALTER TABLE `transaction_item_batches`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT for table `unit_measurement`

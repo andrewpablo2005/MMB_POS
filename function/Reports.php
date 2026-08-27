@@ -113,6 +113,20 @@ class Reports
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public function getCashierList(): array
+    {
+       $stmt = $this->db->prepare("
+           SELECT u.id,
+                  u.username,
+                  COALESCE(NULLIF(CONCAT_WS(' ', ui.firstname, ui.lastname), ''), u.username) AS cashier_name
+           FROM users u
+           LEFT JOIN users_info ui ON ui.user_id = u.id
+           ORDER BY cashier_name ASC, u.username ASC
+       ");
+       $stmt->execute();
+       return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     /* =========================
        DAILY SALES
     ========================= */
@@ -233,10 +247,11 @@ class Reports
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function getSalesDetailReport(string $period, string $value): array
+    public function getSalesDetailReport(string $period, string $value, ?int $cashierId = null): array
     {
         $period = in_array($period, ['date', 'month', 'year'], true) ? $period : 'date';
         $value = trim($value);
+        $cashierId = (int)($cashierId ?? 0);
 
         if ($period === 'date' && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $value)) {
             $value = date('Y-m-d');
@@ -257,6 +272,11 @@ class Reports
         } else {
             $where = 'YEAR(t.created_at) = ?';
             $parameters[] = (int)$value;
+        }
+
+        if ($cashierId > 0) {
+            $where .= ' AND t.user_id = ?';
+            $parameters[] = $cashierId;
         }
 
         $stmt = $this->db->prepare("SELECT t.id,
@@ -321,6 +341,7 @@ class Reports
         return [
             'period' => $period,
             'value' => $value,
+            'cashier_id' => $cashierId,
             'rows' => $stmt->fetchAll(PDO::FETCH_ASSOC),
         ];
     }
