@@ -1,5 +1,7 @@
 <?php
 // 🔐 Proper logout: destroy session data AND the session cookie
+require_once __DIR__ . "/../conn/basepath.php";
+
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
@@ -13,5 +15,5 @@ if (ini_get('session.use_cookies')) {
 
 session_destroy();
 
-header("Location: /MMBPOS/");
+header("Location: " . mmbpos_base_path() . "/");
 exit;

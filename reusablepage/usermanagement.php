@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/guard.php'; guard_require_roles(['owner']);
+require_once __DIR__ . "/../conn/basepath.php";
 require_once __DIR__ . "/../conn/database.php";
 require_once __DIR__ . "/../function/usermanagement.php";
 
@@ -46,7 +47,7 @@ $users = $usersmanagement->getAllUsers();
 <?php endif; ?>
 
 <!-- ✅ CUSTOM TABLE SPACING -->
-<link rel="stylesheet" href="/MMBPOS/css/table.css">
+<link rel="stylesheet" href="<?= mmbpos_base_path() ?>/css/table.css">
 <link rel="stylesheet" href="../css/button.css">
 <div class="container-fluid px-4 mt-3">
 

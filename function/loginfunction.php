@@ -4,6 +4,7 @@ namespace Classes;
 
 // PDO DB
 require_once __DIR__ . "/../conn/database.php"; //yours is Database.php
+require_once __DIR__ . "/../conn/basepath.php"; // URL base path (root or subfolder deploys)
 
 global $db; // Make $db accessible
 
@@ -83,13 +84,13 @@ class Project
                 $_SESSION['position'] = $user['position'];
 
                 if ($position === 'owner') {
-                    header('Location: /MMBPOS/ownerpage/dashboard.php');
+                    header('Location: ' . mmbpos_base_path() . '/ownerpage/dashboard.php');
                     exit;
                 } elseif ($position === 'admin') {
-                    header('Location: /MMBPOS/adminpage/dashboard.php');
+                    header('Location: ' . mmbpos_base_path() . '/adminpage/dashboard.php');
                     exit;
                 } else {
-                    header('Location: /MMBPOS/staffpos/dashboard.php');
+                    header('Location: ' . mmbpos_base_path() . '/staffpos/dashboard.php');
                     exit;
                 }
             }
