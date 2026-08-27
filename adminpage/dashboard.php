@@ -1,8 +1,9 @@
 <?php
 session_start();
+require_once __DIR__ . "/../conn/basepath.php";
 
 if (!isset($_SESSION['user_id'])) {
-    header("Location: /MMBPOS/login_logout_page/login.php");
+    header("Location: " . mmbpos_base_path() . "/login_logout_page/login.php");
     exit;
 }
 

@@ -4,7 +4,7 @@ session_start();
 
 // 🔐 CHECK IF LOGGED IN
 if (!isset($_SESSION['user_id'])) {
-    header("Location: /MMBPOS/login_logout_page/login.php");
+    header("Location: " . mmbpos_base_path() . "/login_logout_page/login.php");
     exit;
 }
 

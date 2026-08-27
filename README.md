@@ -33,7 +33,7 @@ A web-based Point-of-Sale and inventory system for a small pharmacy, built with 
 ## 3. Installation (XAMPP)
 
 1. Copy this repository into `C:\xampp\htdocs\MMBPOS\`
-   (the app expects the URL path `/MMBPOS/` — see §7 if you want a different folder name).
+   (any folder name works — the app auto-detects its URL path, see §7).
 2. Start **Apache** and **MySQL** in the XAMPP control panel.
 3. Open <http://localhost/phpmyadmin> and create a database named **`mmbpos`**.
 4. Import **`mmbpos.sql`** (root of this repo) into the `mmbpos` database.
@@ -170,13 +170,9 @@ Known limitations (documented, not dangerous for a school deployment): no CSRF t
 
 ---
 
-## 7. Changing the URL folder
+## 7. Deploying at a domain root (or any subfolder)
 
-Login redirects and `.htaccess` assume the app lives at `/MMBPOS/`. To use a different folder name, search-replace `/MMBPOS/` in:
-
-- `function/loginfunction.php` (role redirects)
-- `ownerpage/dashboard.php`, `adminpage/dashboard.php`, `staffpos/dashboard.php` (login redirect)
-- `login_logout_page/logout.php` (post-logout redirect)
+The app **auto-detects its base URL path** via `conn/basepath.php` (`mmbpos_base_path()`), so the same code works at `http://localhost/MMBPOS/` (XAMPP subfolder) **and** at a domain root such as `https://mmbpos.wuaze.com/` with zero configuration. Login redirects, logout, and asset links all use the helper. If you add a new page with a redirect or a root-absolute asset path, use `mmbpos_base_path() . '/...'` instead of a hardcoded `/MMBPOS/...`.
 
 ---
 
