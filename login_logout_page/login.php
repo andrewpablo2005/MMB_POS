@@ -1,4 +1,10 @@
 <?php
+// 🔐 This page must be able to run standalone (it is included by index.php,
+// but it can also be reached directly at /MMBPOS/login_logout_page/login.php).
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 require_once __DIR__ . "/../conn/database.php";
 require_once __DIR__ ."/../conn/connection_links.php";
 require_once __DIR__ . "/../function/loginfunction.php";
@@ -51,7 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
                             <i class="fas fa-exclamation-circle me-3 mt-1"></i>
                             <div>
                                 <strong>Login Error</strong>
-                                <p class="mb-0"><?php echo $error_message; ?></p>
+                                <p class="mb-0"><?php echo htmlspecialchars((string)$error_message, ENT_QUOTES, 'UTF-8'); ?></p>
                             </div>
                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>

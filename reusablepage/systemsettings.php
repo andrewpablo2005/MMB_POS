@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/guard.php';
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
@@ -13,22 +14,23 @@ $usersmanagement = new UserManagement($db);
 $userId = $_SESSION['user_id'] ?? 0;
 $result = null;
 
-// ✅ HANDLE UPDATE (same as your other page)
+// ✅ HANDLE UPDATE — SECURITY FIX: always operate on the LOGGED-IN user's
+// own account. The posted user_id is ignored (it previously allowed anyone
+// to rewrite any account, including the owner's credentials).
 if (isset($_POST['updateUserSystem'])) {
-
     $result = $usersmanagement->updateUserSystem(
-        $_POST['user_id'],
+        (int)$_SESSION['user_id'],
         $_POST
     );
-}   
+}
 
 $currentUser = $usersmanagement->getUserById($userId);
 ?>
 <?php if ($result): ?>
     <script>
-        alert("<?= $result['message'] ?>");
+        alert(<?= json_encode($result['message'] ?? '') ?>);
 
-        <?php if ($result['success']): ?>
+        <?php if (!empty($result['success'])): ?>
             window.location.href = 'dashboard.php?tab=system';
         <?php endif; ?>
     </script>
@@ -79,7 +81,8 @@ $currentUser = $usersmanagement->getUserById($userId);
                 <h4 class="fw-bold mb-4">System Settings</h4>
 
                 <form method="POST">
-                    <input type="hidden" name="user_id" value="<?= htmlspecialchars($userId) ?>">
+                    <!-- user_id is intentionally NOT taken from the form; the
+                         server always uses the session user id -->
 
                     <!-- ROW 1 -->
                     <div class="row g-3 mb-3">
@@ -126,16 +129,19 @@ $currentUser = $usersmanagement->getUserById($userId);
                         </div>
 
                         <div class="col-md-6">
-                            <label class="form-label">Void Password</label>
-                            <input type="number" class="form-control"  minlength="7" maxlength="7" name="void_password"
-                                placeholder="Enter 7 number new void password" 
-                                value="<?= htmlspecialchars($currentUser['void_password'] ?? '') ?>">
+                            <label class="form-label">Void PIN</label>
+                            <input type="password" inputmode="numeric" pattern="[0-9]{7}" minlength="7" maxlength="7" class="form-control" name="void_password"
+                                placeholder="Enter 7-digit new Void PIN (leave blank to keep)" 
+                                autocomplete="new-password">
+                            <small class="text-muted">Stored hashed. Leave blank to keep your current PIN.</small>
                         </div>
 
                         <div class="col-md-6">
                             <label class="form-label">Password</label>
-                            <input type="text" class="form-control" minlength="8" maxlength="16" name="password"
-                                placeholder="Enter 8 alpanumeric password ex Qwerty123!">
+                            <input type="password" class="form-control" minlength="8" maxlength="16" name="password"
+                                placeholder="Enter 8 alphanumeric password ex Qwerty123!"
+                                autocomplete="new-password">
+                            <small class="text-muted">Leave blank to keep your current password.</small>
                         </div>
 
                     </div>

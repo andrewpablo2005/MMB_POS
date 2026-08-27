@@ -1,9 +1,10 @@
 <?php
+require_once __DIR__ . '/guard.php';
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-require_once __DIR__ . "/../conn/Database.php";
+require_once __DIR__ . "/../conn/database.php";
 require_once __DIR__ . "/../function/addprodfunct.php";
 
 use Classes\ProductManagement;

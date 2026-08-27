@@ -2,7 +2,7 @@
 
 namespace Classes;
 
-require_once "../conn/Database.php";
+require_once "../conn/database.php";
 require_once "file_upload.php";
 
 class ProductManagement
@@ -350,6 +350,7 @@ class ProductManagement
             FROM products p
             LEFT JOIN product_categories pc ON p.category_id = pc.id
             LEFT JOIN inventory i ON p.id = i.product_id
+            WHERE " . ($this->hasColumn('products', 'is_hidden') ? "COALESCE(p.is_hidden, 0) = 0" : "1 = 1") . "
             GROUP BY p.id
             ORDER BY {$orderBy}";
 
@@ -525,7 +526,10 @@ class ProductManagement
         return $stmt->fetchAll();
     }
 
-    // 🔥 DELETE PRODUCT (SIMPLIFIED - CASCADE HANDLES INVENTORY.)
+    // 🔥 DELETE PRODUCT — sales history is PRESERVED.
+    // A product that has ever been sold cannot be hard-deleted (its
+    // transaction_items rows are the store's financial record). Products
+    // with history are soft-hidden instead.
     public function deleteProduct($productId)
     {
         if (!$productId) {
@@ -536,9 +540,32 @@ class ProductManagement
         try {
             $this->con->beginTransaction();
 
-            $stmt = $this->con->prepare("DELETE FROM transaction_items WHERE product_id = ?");
-            $stmt->execute([$productId]);
+            // Does this product have sales history or remaining stock?
+            $histStmt = $this->con->prepare("SELECT COUNT(*) AS c FROM transaction_items WHERE product_id = ?");
+            $histStmt->execute([$productId]);
+            $hasHistory = ((int)($histStmt->fetch(\PDO::FETCH_ASSOC)['c'] ?? 0)) > 0;
 
+            $stockStmt = $this->con->prepare("SELECT COALESCE(SUM(current_quantity), 0) AS qty FROM inventory WHERE product_id = ?");
+            $stockStmt->execute([$productId]);
+            $stockRow = $stockStmt->fetch(\PDO::FETCH_ASSOC);
+            $hasStock = ((float)($stockRow['qty'] ?? 0)) > 0;
+
+            if ($hasHistory || $hasStock) {
+                // Ensure soft-delete column exists (guarded, one-time)
+                if (!$this->hasColumn('products', 'is_hidden')) {
+                    $this->con->exec("ALTER TABLE products ADD COLUMN is_hidden TINYINT(1) NOT NULL DEFAULT 0");
+                }
+                // Soft-delete: hide from catalog but keep history intact
+                $this->con->prepare("UPDATE products SET is_hidden = 1 WHERE id = ?")->execute([$productId]);
+                $this->con->prepare("UPDATE inventory SET current_quantity = 0 WHERE product_id = ? AND current_quantity > 0")->execute([$productId]);
+                $this->con->commit();
+                $this->response = $hasHistory
+                    ? "Product has sales history — hidden from catalog instead of deleted (history preserved)."
+                    : "Product still has stock — quantities zeroed and hidden from catalog.";
+                return true;
+            }
+
+            // No history and no stock → safe to remove completely
             $stmt = $this->con->prepare("DELETE FROM inventory WHERE product_id = ?");
             $stmt->execute([$productId]);
 
@@ -555,8 +582,11 @@ class ProductManagement
             $this->response = "Failed to delete product";
             return false;
         } catch (\Exception $e) {
-            $this->con->rollBack();
-            $this->response = "Delete failed: " . $e->getMessage();
+            if ($this->con->inTransaction()) {
+                $this->con->rollBack();
+            }
+            error_log('deleteProduct failed: ' . $e->getMessage());
+            $this->response = "Delete failed";
             return false;
         }
     }
@@ -983,6 +1013,11 @@ class ProductManagement
     {
         if (!$this->hasColumn('inventory', 'batch_number')) {
             $this->con->exec("ALTER TABLE inventory ADD COLUMN batch_number VARCHAR(100) DEFAULT NULL");
+        }
+
+        // One-time guarded migration for soft-delete support
+        if (!$this->hasColumn('products', 'is_hidden')) {
+            $this->con->exec("ALTER TABLE products ADD COLUMN is_hidden TINYINT(1) NOT NULL DEFAULT 0");
         }
 
         $hasGeneric = $this->hasColumn('products', 'generic_name');

@@ -1185,6 +1185,18 @@ function weposOnDiscountChange(selectEl) {
         document.getElementById('verifyIdNumber').value = '';
         document.getElementById('verifyIdError').style.display = 'none';
         document.getElementById('verifyIdNewMsg').style.display = 'none';
+        document.getElementById('verifyIdChecklist').style.display = 'none';
+        // Reset the inspection checklist + accept button
+        document.querySelectorAll('.verifyIdCheck').forEach(cb => { cb.checked = false; });
+        const acceptBtn = document.getElementById('verifyIdAcceptBtn');
+        if (acceptBtn) acceptBtn.disabled = true;
+        // Optional external registry link (helper only — never required)
+        const extLink = document.getElementById('verifyIdExternalLink');
+        if (extLink) {
+            extLink.href = isSenior
+                ? 'https://www.ncsc.gov.ph/registration-verification'
+                : 'https://pwd.doh.gov.ph/tbl_pwd_id_verificationlist.php';
+        }
         document.getElementById('verifyIdFootInitial').style.display = 'flex';
         document.getElementById('verifyIdFootManual').style.display = 'none';
         document.getElementById('verifyIdBtn').disabled = false;
@@ -1238,12 +1250,19 @@ async function weposSubmitVerifyId() {
             return;
         }
         if (!result.exists) {
-            // New customer — show warning message and switch to manual footer
+            // New customer — show the IN-APP physical ID inspection checklist.
+            // No external website redirect: the cashier inspects the physical
+            // ID card (the legally sufficient step) and ticks each item.
             document.getElementById('verifyIdNewMsg').style.display = 'block';
+            document.getElementById('verifyIdChecklist').style.display = 'block';
 
-            // Switch to manual footer
+            // Switch to manual footer (Confirm button stays disabled until
+            // every checklist item is ticked)
             document.getElementById('verifyIdFootInitial').style.display = 'none';
             document.getElementById('verifyIdFootManual').style.display = 'flex';
+            document.querySelectorAll('.verifyIdCheck').forEach(cb => {
+                cb.addEventListener('change', weposUpdateVerifyChecklist);
+            });
         } else {
             // Exists — apply discount and close modal
             weposVerified = true;
@@ -1269,6 +1288,21 @@ function weposDeclineVerify() {
     weposCancelVerifyId();
 }
 
+// 🔐 Checklist gate: "Confirm ID Verified" only becomes clickable when the
+// cashier has ticked every inspection item.
+function weposUpdateVerifyChecklist() {
+    const checks = document.querySelectorAll('.verifyIdCheck');
+    const acceptBtn = document.getElementById('verifyIdAcceptBtn');
+    if (!acceptBtn) return;
+    const allTicked = Array.from(checks).every(cb => cb.checked);
+    acceptBtn.disabled = !allTicked;
+    acceptBtn.innerHTML = allTicked
+        ? '<i class="fas fa-check"></i> Confirm ID Verified'
+        : '<i class="fas fa-clock"></i> Complete checklist first';
+}
+
+// Optional helper only — opens the official registry in a new tab.
+// The REQUIRED verification is the in-app physical ID checklist.
 function weposOpenVerificationSite() {
     const type = document.getElementById('verifyIdModal').getAttribute('data-type');
     const verifyUrl = type === 'senior'
@@ -1282,6 +1316,14 @@ async function weposApproveVerify() {
     const id_number = document.getElementById('verifyIdNumber').value.trim();
     const type      = document.getElementById('verifyIdModal').getAttribute('data-type');
     const errEl     = document.getElementById('verifyIdError');
+
+    // 🔐 The cashier must have completed every inspection item
+    const checks = document.querySelectorAll('.verifyIdCheck');
+    if (!Array.from(checks).every(cb => cb.checked)) {
+        errEl.textContent = 'Please complete the physical ID inspection checklist first.';
+        errEl.style.display = 'block';
+        return;
+    }
 
     try {
         const res = await fetch('../function/save_customer_id', {

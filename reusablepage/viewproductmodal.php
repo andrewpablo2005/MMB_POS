@@ -1,4 +1,6 @@
-<?php foreach ($products as $prod): ?>
+<?php
+require_once __DIR__ . '/guard.php'; guard_require_roles(['owner','admin']);
+ foreach ($products as $prod): ?>
     <div class="modal fade" id="viewProduct<?= $prod['id'] ?>" tabindex="-1" aria-labelledby="viewProductLabel<?= $prod['id'] ?>" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-scrollable">
             <div class="modal-content">

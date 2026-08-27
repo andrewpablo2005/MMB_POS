@@ -1,7 +1,9 @@
-<?php foreach ($users as $u): ?>
+<?php
+require_once __DIR__ . '/guard.php'; guard_require_roles(['owner','admin']);
+ foreach ($users as $u): ?>
 
 <!-- Edit User Modal -->
-<div class="modal fade" id="edit<?= $u['id'] ?>" tabindex="-1">
+<div class="modal fade" id="edit<?= htmlspecialchars((string)($u['id']), ENT_QUOTES, 'UTF-8') ?>" tabindex="-1">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
 
@@ -14,7 +16,7 @@
 
                 <div class="modal-body">
 
-                    <input type="hidden" name="id" value="<?= $u['id'] ?>">
+                    <input type="hidden" name="id" value="<?= htmlspecialchars((string)($u['id']), ENT_QUOTES, 'UTF-8') ?>">
 
                     <!-- Account Information -->
                     <h6 class="mb-3 text-secondary fw-bold">
@@ -27,7 +29,7 @@
                             <input
                                 name="username"
                                 class="form-control"
-                                value="<?= $u['username'] ?>"
+                                value="<?= htmlspecialchars((string)($u['username']), ENT_QUOTES, 'UTF-8') ?>"
                                 minlength="6"
                                 maxlength="30"
                                 required
@@ -80,7 +82,7 @@
                             <input
                                 name="firstname"
                                 class="form-control"
-                                value="<?= $u['firstname'] ?>"
+                                value="<?= htmlspecialchars((string)($u['firstname']), ENT_QUOTES, 'UTF-8') ?>"
                                 required
                             >
                         </div>
@@ -90,7 +92,7 @@
                             <input
                                 name="middlename"
                                 class="form-control"
-                                value="<?= $u['middlename'] ?>"
+                                value="<?= htmlspecialchars((string)($u['middlename']), ENT_QUOTES, 'UTF-8') ?>"
                                 required
                             >
                         </div>
@@ -100,7 +102,7 @@
                             <input
                                 name="lastname"
                                 class="form-control"
-                                value="<?= $u['lastname'] ?>"
+                                value="<?= htmlspecialchars((string)($u['lastname']), ENT_QUOTES, 'UTF-8') ?>"
                                 required
                             >
                         </div>
@@ -113,7 +115,7 @@
                                 type="number"
                                 name="age"
                                 class="form-control"
-                                value="<?= $u['age'] ?>"
+                                value="<?= htmlspecialchars((string)($u['age']), ENT_QUOTES, 'UTF-8') ?>"
                                 required
                             >
                         </div>
@@ -124,7 +126,7 @@
                                 type="email"
                                 name="email"
                                 class="form-control"
-                                value="<?= $u['email'] ?>"
+                                value="<?= htmlspecialchars((string)($u['email']), ENT_QUOTES, 'UTF-8') ?>"
                                 required
                             >
                         </div>
@@ -135,7 +137,7 @@
                         <input
                             name="contactnumber"
                             class="form-control"
-                            value="<?= $u['contactnumber'] ?>"
+                            value="<?= htmlspecialchars((string)($u['contactnumber']), ENT_QUOTES, 'UTF-8') ?>"
                             minlength="11"
                             maxlength="11"
                             required
@@ -154,7 +156,7 @@
                         <input
                             name="street"
                             class="form-control"
-                            value="<?= $u['street'] ?>"
+                            value="<?= htmlspecialchars((string)($u['street']), ENT_QUOTES, 'UTF-8') ?>"
                             required
                         >
                     </div>
@@ -165,7 +167,7 @@
                             <input
                                 name="barangay"
                                 class="form-control"
-                                value="<?= $u['barangay'] ?>"
+                                value="<?= htmlspecialchars((string)($u['barangay']), ENT_QUOTES, 'UTF-8') ?>"
                                 required
                             >
                         </div>
@@ -175,7 +177,7 @@
                             <input
                                 name="city"
                                 class="form-control"
-                                value="<?= $u['city'] ?>"
+                                value="<?= htmlspecialchars((string)($u['city']), ENT_QUOTES, 'UTF-8') ?>"
                                 required
                             >
                         </div>
@@ -187,7 +189,7 @@
                             <input
                                 name="province"
                                 class="form-control"
-                                value="<?= $u['province'] ?>"
+                                value="<?= htmlspecialchars((string)($u['province']), ENT_QUOTES, 'UTF-8') ?>"
                                 required
                             >
                         </div>
@@ -197,7 +199,7 @@
                             <input
                                 name="country"
                                 class="form-control"
-                                value="<?= $u['country'] ?>"
+                                value="<?= htmlspecialchars((string)($u['country']), ENT_QUOTES, 'UTF-8') ?>"
                                 required
                             >
                         </div>
@@ -217,12 +219,16 @@
 
                         <input
                             name="void_password"
+                            type="password"
+                            inputmode="numeric"
+                            pattern="[0-9]{7}"
                             class="form-control"
-                            value="<?= $u['void_password'] ?>"
+                            placeholder="Enter new 7-digit PIN (blank = keep current)"
                             minlength="7"
                             maxlength="7"
-                            required
+                            autocomplete="new-password"
                         >
+                        <small class="text-muted">PINs are stored hashed and can no longer be viewed. Leave blank to keep the current PIN.</small>
                     </div>
 
                 </div>

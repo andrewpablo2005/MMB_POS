@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/guard.php'; guard_require_roles(['owner']);
 require_once __DIR__ . "/../conn/database.php";
 require_once __DIR__ . "/../function/usermanagement.php";
 
@@ -36,7 +37,7 @@ $users = $usersmanagement->getAllUsers();
 <!-- ✅ ALERT + REDIRECT -->
 <?php if ($result): ?>
     <script>
-        alert("<?= $result['message'] ?>");
+        alert("<?= htmlspecialchars((string)($result['message']), ENT_QUOTES, 'UTF-8') ?>");
 
         <?php if ($result['success']): ?>
             window.location.href = 'dashboard.php?tab=users';
@@ -84,7 +85,7 @@ $users = $usersmanagement->getAllUsers();
                     <tbody>
                         <?php foreach ($users as $u): ?>
                             <tr>
-                                <td class="col-id"><?= $u['id'] ?></td>
+                                <td class="col-id"><?= htmlspecialchars((string)($u['id']), ENT_QUOTES, 'UTF-8') ?></td>
 
                                 <td class="col-name"><?= ($u['firstname']), " ", ($u['lastname']) ?></td>
 
@@ -119,19 +120,19 @@ $users = $usersmanagement->getAllUsers();
 
                                     <!-- VIEW -->
                                     <button class="btn btn-info" data-bs-toggle="modal"
-                                        data-bs-target="#view<?= $u['id'] ?>">
+                                        data-bs-target="#view<?= htmlspecialchars((string)($u['id']), ENT_QUOTES, 'UTF-8') ?>">
                                         View
                                     </button>
 
                                     <!-- EDIT -->
                                     <button class="btn btn-success" data-bs-toggle="modal"
-                                        data-bs-target="#edit<?= $u['id'] ?>">
+                                        data-bs-target="#edit<?= htmlspecialchars((string)($u['id']), ENT_QUOTES, 'UTF-8') ?>">
                                         Edit
                                     </button>
 
                                     <!-- DELETE -->
                                     <form method="POST" class="d-inline">
-                                        <input type="hidden" name="id" value="<?= $u['id'] ?>">
+                                        <input type="hidden" name="id" value="<?= htmlspecialchars((string)($u['id']), ENT_QUOTES, 'UTF-8') ?>">
                                         <input type="hidden" name="status" value="<?= ($u['status'] ?? 'active') === 'active' ? 'disabled' : 'active' ?>">
                                         <button type="submit" name="toggleUserStatus" class="btn <?= ($u['status'] ?? 'active') === 'active' ? 'btn-warning' : 'btn-success' ?> btn-sm"
                                             onclick="return confirm('<?= ($u['status'] ?? 'active') === 'active' ? 'Disable' : 'Enable' ?> this account?')">
@@ -140,7 +141,7 @@ $users = $usersmanagement->getAllUsers();
                                     </form>
 
                                     <form method="POST" class="d-inline">
-                                        <input type="hidden" name="id" value="<?= $u['id'] ?>">
+                                        <input type="hidden" name="id" value="<?= htmlspecialchars((string)($u['id']), ENT_QUOTES, 'UTF-8') ?>">
                                         <button type="submit" name="deleteUser" class="btn btn-danger btn-sm"
                                             onclick="return confirm('Delete this user?')">
                                             Delete

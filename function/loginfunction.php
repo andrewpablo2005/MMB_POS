@@ -52,12 +52,20 @@ class Project
                 $lastAttempt = strtotime($user['last_attempt']);
 
                 if ((time() - $lastAttempt) < 300) {
-                    return "Account locked. Try again after 5 minutes.";
+                    return "Too many attempts. Try again later.";
                 }
             }
 
             // 🔐 VERIFY PASSWORD
             if (password_verify($password, $user['password'])) {
+
+                // 🔁 REDIRECT BASED ON ROLE (case-insensitive) — validate the
+                // position BEFORE populating the session, otherwise an account
+                // with an unexpected role would still receive a valid session.
+                $position = strtolower($user['position']);
+                if (!in_array($position, ['owner', 'admin', 'staff'], true)) {
+                    return "Invalid user position: " . htmlspecialchars($user['position']);
+                }
 
                 // 🔄 RESET USER ATTEMPTS
                 $resetUser = $this->con->prepare("UPDATE users SET failed_attempts = 0 WHERE id = ?");
@@ -74,20 +82,15 @@ class Project
                 $_SESSION['username'] = $user['username'];
                 $_SESSION['position'] = $user['position'];
 
-                // 🔁 REDIRECT BASED ON ROLE (case-insensitive)
-                $position = strtolower($user['position']);
                 if ($position === 'owner') {
                     header('Location: /MMBPOS/ownerpage/dashboard.php');
                     exit;
                 } elseif ($position === 'admin') {
                     header('Location: /MMBPOS/adminpage/dashboard.php');
                     exit;
-                } elseif ($position === 'staff') {
+                } else {
                     header('Location: /MMBPOS/staffpos/dashboard.php');
                     exit;
-                } else {
-                    // Fallback if position doesn't match any role
-                    return "Invalid user position: " . htmlspecialchars($user['position']);
                 }
             }
             // =========================

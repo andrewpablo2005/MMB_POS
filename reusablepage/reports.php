@@ -1,9 +1,14 @@
 <?php
-require_once __DIR__ . "/../conn/Database.php";
+require_once __DIR__ . '/guard.php'; guard_require_roles(['owner','admin']);
+require_once __DIR__ . "/../conn/database.php";
 require_once __DIR__ . "/../conn/connection_links.php";
 require_once __DIR__ . "/../function/Reports.php";
 
 use Classes\Reports;
+
+// 🐛 FIX: month names for the Monthly Sales Trend modal (previously undefined)
+$monthNames = [1 => 'January', 2 => 'February', 3 => 'March', 4 => 'April', 5 => 'May', 6 => 'June',
+               7 => 'July', 8 => 'August', 9 => 'September', 10 => 'October', 11 => 'November', 12 => 'December'];
 
 $report = new Reports($db);
 
@@ -297,7 +302,7 @@ foreach ($salesDetailRows as $detailRow) {
                                         <tr>
                                             <td>
                                                 <strong>
-                                                    <?= $monthNames[$row['sale_month']] ?>
+                                                    <?= htmlspecialchars((string)($monthNames[(int)$row['sale_month']] ?? $row['sale_month']), ENT_QUOTES, 'UTF-8') ?>
                                                     <?= $row['sale_year'] ?>
                                                 </strong>
                                             </td>
@@ -817,7 +822,7 @@ foreach ($salesDetailRows as $detailRow) {
     </script>
 
     <!-- Bootstrap JS for Modal -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- bootstrap.bundle already loaded once via conn/connection_links.php (duplicate removed) -->
 
 </body>
 

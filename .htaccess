@@ -1,5 +1,12 @@
 Options -Indexes
 
+# 🔐 Session hardening (applies before any session_start())
+<IfModule mod_php.c>
+    php_value session.cookie_httponly 1
+    php_value session.use_strict_mode 1
+    php_value session.cookie_samesite Lax
+</IfModule>
+
 RewriteEngine On
 
 # Remove .php extension
@@ -12,11 +19,14 @@ RewriteCond %{REQUEST_METHOD} !POST
 RewriteCond %{THE_REQUEST} \s([^.]+)\.php
 RewriteRule ^ %1 [R=301,L]
 
-# Block sensitive files
-<FilesMatch "(config\.php|\.env|\.ini|\.log|\.sql)">
+# Block sensitive files (docs/, dumps, notes)
+<FilesMatch "(config\.php|\.env|\.ini|\.log|\.sql|\.txt|\.md)$">
     Order allow,deny
     Deny from all
 </FilesMatch>
+
+# Block the docs folder entirely
+RedirectMatch 404 ^/.*docs/
 
 # Optional: block pages folder
 RewriteRule ^pages/ - [F,L]

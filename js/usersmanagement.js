@@ -19,7 +19,11 @@ $(function () {
 
     // Focus search input on page load
     focusSearchInput();
-    initUserModals();
+    // 🐛 FIX: initUserModals() was never defined — calling it threw a
+    // ReferenceError on every page load and aborted the remaining handlers.
+    if (typeof initUserModals === 'function') {
+        initUserModals();
+    }
 
 });
 

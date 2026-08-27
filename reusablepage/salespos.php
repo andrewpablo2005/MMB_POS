@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/guard.php'; guard_require_roles(['owner','admin','staff']);
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
@@ -656,8 +657,28 @@ if (!empty($_SESSION['user_id'])) {
             
             <div id="verifyIdError" class="text-danger" style="font-size:0.85rem; display:none; margin-bottom:0.5rem;"></div>
             
-            <div id="verifyIdNewMsg" class="text-warning" style="font-size:0.85rem; display:none; margin-bottom:0.5rem; color: #d97706; background: #fef3c7; padding: 8px; border-radius: 4px; border-left: 3px solid #f59e0b;">
-                <i class="fas fa-exclamation-triangle"></i> This ID has not been verified yet for a discount. Please check the website.
+            <div id="verifyIdNewMsg" style="font-size:0.85rem; display:none; margin-bottom:0.5rem; color: #92400e; background: #fef3c7; padding: 8px; border-radius: 4px; border-left: 3px solid #f59e0b;">
+                <i class="fas fa-exclamation-triangle"></i> This ID is not yet on file. <strong>Inspect the physical ID card</strong> and complete the checklist below.
+            </div>
+
+            <!-- 🔐 IN-APP PHYSICAL ID INSPECTION CHECKLIST (replaces the
+                 external-website redirect flow) -->
+            <div id="verifyIdChecklist" style="display:none; margin-top:0.75rem; border:1px solid #e5e7eb; border-radius:6px; padding:12px; background:#f9fafb;">
+                <p style="font-size:0.8rem; font-weight:600; margin:0 0 8px 0; color:#374151;"><i class="fas fa-clipboard-check"></i> Physical ID Inspection Checklist</p>
+                <label style="display:flex; align-items:center; gap:8px; font-size:0.85rem; margin-bottom:6px; cursor:pointer;">
+                    <input type="checkbox" class="verifyIdCheck" id="verifyIdCheckPhoto"> Photo and name on the ID match the customer
+                </label>
+                <label style="display:flex; align-items:center; gap:8px; font-size:0.85rem; margin-bottom:6px; cursor:pointer;">
+                    <input type="checkbox" class="verifyIdCheck" id="verifyIdCheckGov"> ID is a government-issued Senior/PWD ID (valid signature, not expired)
+                </label>
+                <label style="display:flex; align-items:center; gap:8px; font-size:0.85rem; margin-bottom:0; cursor:pointer;">
+                    <input type="checkbox" class="verifyIdCheck" id="verifyIdCheckNumber"> ID number entered above matches the ID card
+                </label>
+                <p style="font-size:0.72rem; color:#6b7280; margin:8px 0 0 0;">
+                    Optional extra check:
+                    <a href="#" id="verifyIdExternalLink" target="_blank" rel="noopener noreferrer" style="color:#2563eb;">open the official NCSC / DOH registry <i class="fas fa-external-link-alt" style="font-size:0.65rem;"></i></a>
+                    — not required if the physical ID is genuine.
+                </p>
             </div>
         </div>
         <div class="wepos-modal-foot" id="verifyIdFootInitial">
@@ -667,8 +688,7 @@ if (!empty($_SESSION['user_id'])) {
         <div class="wepos-modal-foot" id="verifyIdFootManual" style="display:none; justify-content: space-between;">
             <button class="wepos-btn wepos-btn-outline" style="color: #dc2626; border-color: #dc2626;" onclick="weposDeclineVerify()">Decline</button>
             <div style="display:flex; gap: 8px;">
-                <button class="wepos-btn wepos-btn-primary" style="background-color: #3b82f6; border-color: #3b82f6;" onclick="weposOpenVerificationSite()"><i class="fas fa-external-link-alt"></i> Check Website</button>
-                <button class="wepos-btn wepos-btn-primary" style="background-color: #16a34a; border-color: #16a34a;" onclick="weposApproveVerify()"><i class="fas fa-check"></i> Accept</button>
+                <button class="wepos-btn wepos-btn-primary" style="background-color: #16a34a; border-color: #16a34a;" id="verifyIdAcceptBtn" onclick="weposApproveVerify()" disabled><i class="fas fa-check"></i> Confirm ID Verified</button>
             </div>
         </div>
     </div>
