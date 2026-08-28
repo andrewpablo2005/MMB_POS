@@ -418,9 +418,8 @@ h1, h2, h3, h4, h5, h6 { color: var(--mmb-heading); letter-spacing: -0.01em; }
     color: #475569;
     font-weight: 500;
     font-size: 0.9rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    line-height: 1.25;
+    white-space: normal;
     background: transparent;
     transition: background 0.15s ease, color 0.15s ease;
 }
