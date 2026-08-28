@@ -42,127 +42,63 @@ foreach ($expiryItems as $item) {
         'bg' => $item['status'] === 'Expired' ? '#dc2626' : '#d97706'
     ];
 }
+
+$mmbPosition = htmlspecialchars($_SESSION['position'] ?? '');
+$mmbInitial = mb_strtoupper(mb_substr($mmbPosition, 0, 1));
 ?>
 
-<style>
-    #sidebar {
-        overflow-x: hidden;
-    }
-
-    #sidebar.offcanvas-lg.offcanvas-start {
-        overflow-x: hidden;
-    }
-
-    #sidebar .offcanvas-body {
-        padding: 0;
-        overflow-x: hidden;
-    }
-
-    #sidebar .nav-pills {
-        width: 100%;
-        margin: 0 !important;
-        padding: 0;
-    }
-
-    #sidebar .nav-pills.me-3 {
-        margin-right: 0 !important;
-    }
-
-    #sidebar .nav-pills .nav-link {
-        display: block;
-        width: calc(100% - 2rem);
-        max-width: calc(100% - 2rem);
-        min-width: 0;
-        box-sizing: border-box;
-        padding: 0.45rem 0.65rem;
-        margin: 0.15rem 0.35rem;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        border-radius: 0.75rem;
-    }
-
-    #sidebar .nav-pills .nav-link.active,
-    #sidebar .nav-pills .nav-link:hover {
-        width: calc(100% - 3.1rem);
-    }
-
-    .navbar {
-        z-index: 1030 !important;
-    }
-
-    .notification-scroll {
-        max-height: 320px;
-        overflow-y: auto;
-        scrollbar-width: thin;
-        scrollbar-color: #c7c7c7 transparent;
-    }
-
-    .notification-scroll::-webkit-scrollbar {
-        width: 6px;
-    }
-
-    .notification-scroll::-webkit-scrollbar-track {
-        background: transparent;
-    }
-
-    .notification-scroll::-webkit-scrollbar-thumb {
-        background: #c7c7c7;
-        border-radius: 999px;
-    }
-
-    #headerAlertBell {
-        animation: bellPulse 1.8s infinite;
-        box-shadow: 0 0 0 rgba(245, 158, 11, 0.35);
-    }
-
-    @keyframes bellPulse {
-        0% {
-            box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.35);
-            transform: scale(1);
-        }
-        50% {
-            box-shadow: 0 0 0 8px rgba(245, 158, 11, 0.10);
-            transform: scale(1.03);
-        }
-        100% {
-            box-shadow: 0 0 0 0 rgba(245, 158, 11, 0);
-            transform: scale(1);
-        }
-    }
-</style>
-
-<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm px-3 sticky-top" style="z-index: 1030;">
+<!-- ═══════════════════════════════════════════════════════════════
+     TOPBAR — all visual styling lives in css/mmb-theme.css (v1.1+)
+     ═══════════════════════════════════════════════════════════════ -->
+<nav class="navbar app-topbar navbar-expand-lg sticky-top">
 
     <!-- ☰ Sidebar Toggle (Mobile) -->
-    <button class="btn btn-outline-success d-lg-none me-2" data-bs-toggle="offcanvas" data-bs-target="#sidebar">
-        ☰
+    <button class="btn topbar-toggle d-lg-none me-1" type="button"
+            data-bs-toggle="offcanvas" data-bs-target="#sidebar" aria-label="Open menu">
+        <i class="fas fa-bars"></i>
     </button>
 
-    <!-- 🏥 Logo / System Name -->
-    <a class="navbar-brand fw-bold text-success" href="#">
-        MMB'S DRUGSTORE
+    <!-- 🏥 Brand -->
+    <a class="navbar-brand app-brand" href="#">
+        <span class="brand-mark"><i class="fas fa-prescription-bottle-medical"></i></span>
+        <span class="brand-text">
+            <span class="brand-name">MMB's Drugstore</span>
+            <span class="brand-sub">Pharmacy POS</span>
+        </span>
     </a>
 
     <!-- Right Side -->
     <div class="ms-auto d-flex align-items-center gap-2">
 
         <?php if (!empty($globalAlertItems)): ?>
-        <button type="button" id="headerAlertBell" class="btn btn-outline-warning position-relative d-flex align-items-center justify-content-center" aria-label="Open notifications" style="width: 42px; height: 42px; border-radius: 50%;">
-            <i class="fas fa-bell text-warning"></i>
-            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.62rem; min-width: 18px; height: 18px; display: flex; align-items: center; justify-content: center;">
+        <button type="button" id="headerAlertBell" class="btn topbar-icon-btn position-relative d-inline-flex align-items-center justify-content-center" aria-label="Open notifications">
+            <i class="fas fa-bell"></i>
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger bell-badge">
                 <?= count($globalAlertItems) ?>
             </span>
         </button>
         <?php endif; ?>
 
+        <span class="topbar-divider d-none d-sm-block"></span>
+
         <!-- 👤 User Dropdown -->
         <div class="dropdown">
-            <button type="button" class="btn btn-success dropdown-toggle" id="userDropdownBtn" onclick="toggleDropdown()">
-                <?php echo htmlspecialchars($_SESSION['position']); ?>
+            <button type="button" class="btn user-chip" id="userDropdownBtn" onclick="toggleDropdown()">
+                <span class="user-avatar"><?= $mmbInitial ?></span>
+                <span class="user-chip-name d-none d-sm-inline"><?= $mmbPosition ?></span>
+                <i class="fas fa-chevron-down user-chip-chevron"></i>
             </button>
-            <ul class="dropdown-menu dropdown-menu-end shadow-lg" id="userDropdownMenu" style="display: none; width: 20%; border-radius: 8px; border: none;">
-                <li><a class="dropdown-item text-danger d-flex align-items-center gap-2" href="../login_logout_page/logout.php" style="padding: 12px 16px 12px; font-size: 15px; font-weight: 500;"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+            <ul class="dropdown-menu dropdown-menu-end user-dropdown-menu shadow" id="userDropdownMenu" style="display: none;">
+                <li class="dropdown-header">
+                    Signed in as
+                    <div class="user-dropdown-role"><?= $mmbPosition ?></div>
+                </li>
+                <li><hr class="dropdown-divider"></li>
+                <li>
+                    <a class="dropdown-item text-danger d-flex align-items-center gap-2" href="../login_logout_page/logout.php">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </a>
+                </li>
             </ul>
         </div>
 

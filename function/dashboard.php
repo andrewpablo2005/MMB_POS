@@ -238,16 +238,6 @@ class DashboardManager
         $result = $stmt->fetch();
         return (float)($result['total_vat'] ?? 0);
     }
-
-    public function getTotalRefundsAllTime()
-    {
-        try {
-            $sql = "SELECT COALESCE(SUM(refund_amount), 0) as total FROM return_transactions";
-            $stmt = $this->db->query($sql);
-            $result = $stmt->fetch();
-            return (float)($result['total'] ?? 0);
-        } catch (\Exception $e) {
-            return 0.0;
-        }
-    }
 }
+
+

@@ -30,7 +30,7 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
     $inventorySuccessMessage = 'Inventory batch disposed successfully.';
 }
 ?>
-<link rel="stylesheet" href="../css/button.css">
+<link rel="stylesheet" href="../css/button.css?v=2">
 <div class="card shadow-sm">
     <div class="card-body">
         <?php if ($inventorySuccessMessage !== ''): ?>
@@ -54,7 +54,7 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
                 <button class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#disposeBatchModal">
                     <i class="fas fa-trash"></i> Dispose Batch
                 </button>
-                <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#addBatchModal">
+                <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addBatchModal">
                     <i class="fas fa-plus"></i> Add Batch
                 </button>
             </div>
@@ -413,7 +413,7 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-success">Save Batch</button>
+                    <button type="submit" class="btn btn-primary">Save Batch</button>
                 </div>
             </form>
         </div>

@@ -46,7 +46,7 @@ if ($product->addProduct()) {
     }
 }
 ?>
-<link rel="stylesheet" href="../css/button.css">
+<link rel="stylesheet" href="../css/button.css?v=2">
 <div class="card shadow-sm">
     <div class="card-body">
 

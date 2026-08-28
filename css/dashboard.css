@@ -1,6 +1,6 @@
 /* ─── Dashboard Scoped Styles ─── */
 .dash-wrapper {
-  background: #f0f4f8;
+  background: transparent;
   min-height: 100%;
   padding: 28px 28px 40px;
   font-family: 'Inter', sans-serif;
@@ -20,13 +20,14 @@
   margin: 0;
 }
 .dash-header .date-badge {
-  background: linear-gradient(135deg, #16a34a, #15803d);
-  color: #fff;
-  font-size: .8rem;
+  background: #fef2f2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+  font-size: .78rem;
   font-weight: 600;
-  padding: 6px 16px;
+  padding: 5px 14px;
   border-radius: 50px;
-  letter-spacing: .5px;
+  letter-spacing: .3px;
 }
 
 /* ─── Stat Cards ─── */
@@ -100,7 +101,7 @@
   height: 100%;
 }
 .dash-card-header {
-  padding: 20px 24px 0;
+  padding: 24px 24px 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -112,7 +113,7 @@
   margin: 0;
 }
 .dash-card-body {
-  padding: 20px 24px;
+  padding: 24px;
 }
 
 /* ─── Chart ─── */
@@ -131,13 +132,13 @@
   text-transform: uppercase;
   font-size: .7rem;
   letter-spacing: .6px;
-  color: #94a3b8;
+  color: #64748b;
   font-weight: 700;
-  padding: 0 0 10px;
+  padding: 0 1rem 10px 0;
   border-bottom: 2px solid #f1f5f9;
 }
 .dash-table td {
-  padding: 12px 0;
+  padding: 12px 1rem 12px 0;
   color: #374151;
   border-bottom: 1px solid #f8fafc;
 }
@@ -170,8 +171,8 @@
   width: 26px;
   height: 26px;
   border-radius: 8px;
-  background: #f0fdf4;
-  color: #16a34a;
+  background: #fef2f2;
+  color: #dc2626;
   font-size: .72rem;
   font-weight: 800;
   display: flex;
