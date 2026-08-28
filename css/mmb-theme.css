@@ -651,7 +651,7 @@ div.dt-buttons .dt-button:focus {
 .card {
     border: 1px solid var(--mmb-line-soft);
     border-radius: 0.9rem;
-    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 4px 14px rgba(15, 23, 42, 0.05);
 }
 
 .card-header {
@@ -702,4 +702,57 @@ div.dt-buttons .dt-button:focus {
     border-radius: 9px;
     font-size: 0.85rem;
     box-shadow: 0 2px 6px rgba(var(--mmb-primary-rgb), 0.25);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SOFT ACTION BUTTONS inside data tables (View / Edit / Delete …)
+   Tinted chips read better than saturated BS defaults in tight rows.
+   Scoped to tables so modal & standalone buttons keep solid styles.
+   ═══════════════════════════════════════════════════════════════ */
+.table .btn-info {
+    --bs-btn-bg: #ecfeff;
+    --bs-btn-color: #0e7490;
+    --bs-btn-border-color: transparent;
+    --bs-btn-hover-bg: #cffafe;
+    --bs-btn-hover-color: #155e75;
+    --bs-btn-hover-border-color: transparent;
+    --bs-btn-active-bg: #a5f3fc;
+    --bs-btn-active-color: #155e75;
+    --bs-btn-active-border-color: transparent;
+    --bs-btn-focus-shadow-rgb: 14, 116, 144;
+    font-weight: 600;
+}
+
+.table .btn-warning {
+    --bs-btn-bg: #fffbeb;
+    --bs-btn-color: #b45309;
+    --bs-btn-border-color: transparent;
+    --bs-btn-hover-bg: #fef3c7;
+    --bs-btn-hover-color: #92400e;
+    --bs-btn-hover-border-color: transparent;
+    --bs-btn-active-bg: #fde68a;
+    --bs-btn-active-color: #92400e;
+    --bs-btn-active-border-color: transparent;
+    --bs-btn-focus-shadow-rgb: 180, 83, 9;
+    font-weight: 600;
+}
+
+.table .btn-danger {
+    --bs-btn-bg: #fef2f2;
+    --bs-btn-color: #b91c1c;
+    --bs-btn-border-color: transparent;
+    --bs-btn-hover-bg: #fee2e2;
+    --bs-btn-hover-color: #991b1b;
+    --bs-btn-hover-border-color: transparent;
+    --bs-btn-active-bg: #fecaca;
+    --bs-btn-active-color: #991b1b;
+    --bs-btn-active-border-color: transparent;
+    --bs-btn-focus-shadow-rgb: 185, 28, 28;
+    font-weight: 600;
+}
+
+.table .btn-info:hover,
+.table .btn-warning:hover,
+.table .btn-danger:hover {
+    transform: translateY(-1px);
 }
