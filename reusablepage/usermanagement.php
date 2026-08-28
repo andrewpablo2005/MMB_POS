@@ -48,7 +48,7 @@ $users = $usersmanagement->getAllUsers();
 
 <!-- ✅ CUSTOM TABLE SPACING -->
 <link rel="stylesheet" href="<?= mmbpos_base_path() ?>/css/table.css">
-<link rel="stylesheet" href="../css/button.css?v=2">
+<link rel="stylesheet" href="../css/button.css">
 <div class="container-fluid px-4 mt-3">
 
     <div class="card shadow-sm">
@@ -126,7 +126,7 @@ $users = $usersmanagement->getAllUsers();
                                     </button>
 
                                     <!-- EDIT -->
-                                    <button class="btn btn-primary" data-bs-toggle="modal"
+                                    <button class="btn btn-success" data-bs-toggle="modal"
                                         data-bs-target="#edit<?= htmlspecialchars((string)($u['id']), ENT_QUOTES, 'UTF-8') ?>">
                                         Edit
                                     </button>

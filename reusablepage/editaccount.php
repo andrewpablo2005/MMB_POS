@@ -244,7 +244,7 @@ require_once __DIR__ . '/guard.php'; guard_require_roles(['owner','admin']);
                     <button
                         type="submit"
                         name="updateUser"
-                        class="btn btn-primary">
+                        class="btn btn-success">
                         Save Changes
                     </button>
                 </div>

@@ -19,7 +19,7 @@ body {
     border-radius: 12px 12px 0 0 !important;
     font-weight: 600;
     font-size: 1.1rem;
-    background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%) !important;
+    background: linear-gradient(135deg, #1a3a52 0%, #2c3e50 100%) !important;
     color: white !important;
 }
 
@@ -30,7 +30,7 @@ body {
 .report-title {
     font-weight: 700;
     font-size: 2.5rem;
-    color: #991b1b;
+    color: #1a3a52;
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
 }
 
@@ -45,12 +45,12 @@ body {
     margin-bottom: 8px;
     border-radius: 12px !important;
     background: white;
-    border-left: 5px solid #dc2626;
+    border-left: 5px solid #1a3a52;
     transition: all 0.3s ease;
 }
 
 .summary-card:nth-child(2) {
-    border-left-color: #b91c1c;
+    border-left-color: #2c3e50;
 }
 
 .summary-card:nth-child(3) {
@@ -72,11 +72,11 @@ body {
     font-size: 28px;
     font-weight: 700;
     margin: 10px 0;
-    color: #1a2535;
+    color: #1a3a52;
 }
 
 .table-dark {
-    background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%) !important;
+    background: linear-gradient(135deg, #1a3a52 0%, #2c3e50 100%) !important;
 }
 
 .table-hover tbody tr:hover {
@@ -101,7 +101,7 @@ table thead th {
 }
 
 .bg-primary {
-    background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%) !important;
+    background: linear-gradient(135deg, #1a3a52 0%, #2c3e50 100%) !important;
 }
 
 .bg-danger {

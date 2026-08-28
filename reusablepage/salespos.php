@@ -32,7 +32,7 @@ if (!empty($_SESSION['user_id'])) {
 ?>
 
 <!-- wePOS Inspired CSS -->
-<link rel="stylesheet" href="../css/pos_wepos.css?v=1.4">
+<link rel="stylesheet" href="../css/pos_wepos.css?v=1.3">
 
 <div class="wepos-wrapper" id="weposApp">
     
@@ -52,7 +52,7 @@ if (!empty($_SESSION['user_id'])) {
             <button class="wepos-btn wepos-btn-outline" onclick="location.reload()">
                 <i class="fas fa-sync-alt"></i> Refresh
             </button>
-            <button class="wepos-btn wepos-btn-outline text-primary" onclick="weposOpenClosingModal()" title="Close cashier register">
+            <button class="wepos-btn wepos-btn-outline text-success" onclick="weposOpenClosingModal()" title="Close cashier register">
                 <i class="fas fa-cash-register"></i> Close Register
             </button>
         </div>
@@ -686,9 +686,9 @@ if (!empty($_SESSION['user_id'])) {
             <button class="wepos-btn wepos-btn-primary" id="verifyIdBtn" onclick="weposSubmitVerifyId()">Verify</button>
         </div>
         <div class="wepos-modal-foot" id="verifyIdFootManual" style="display:none; justify-content: space-between;">
-            <button class="wepos-btn wepos-btn-outline" onclick="weposDeclineVerify()">Decline</button>
+            <button class="wepos-btn wepos-btn-outline" style="color: #dc2626; border-color: #dc2626;" onclick="weposDeclineVerify()">Decline</button>
             <div style="display:flex; gap: 8px;">
-                <button class="wepos-btn wepos-btn-primary" id="verifyIdAcceptBtn" onclick="weposApproveVerify()" disabled><i class="fas fa-check"></i> Confirm ID Verified</button>
+                <button class="wepos-btn wepos-btn-primary" style="background-color: #16a34a; border-color: #16a34a;" id="verifyIdAcceptBtn" onclick="weposApproveVerify()" disabled><i class="fas fa-check"></i> Confirm ID Verified</button>
             </div>
         </div>
     </div>

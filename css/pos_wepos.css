@@ -3,9 +3,8 @@
    ═══════════════════════════════════════════════════════════ */
 
 :root {
-    /* MMB brand — primary is now crimson; success/danger stay semantic */
-    --wp-primary: #dc2626;        /* MMB Brand Crimson */
-    --wp-primary-hover: #b91c1c;
+    --wp-primary: #2271b1;      /* WordPress Blue */
+    --wp-primary-hover: #135e96;
     --wp-success: #00a32a;
     --wp-danger: #d63638;
     --wp-bg: #f0f0f1;
@@ -581,7 +580,7 @@
 .wepos-pay-method {
     flex: 1; padding: 12px; border: 1px solid #8c8f94; border-radius: 3px; background: #fff; cursor: pointer; font-weight: 600; color: var(--wp-text-light);
 }
-.wepos-pay-method.active { border-color: var(--wp-primary); background: #fef2f2; color: var(--wp-primary); }
+.wepos-pay-method.active { border-color: var(--wp-primary); background: #f0f6fc; color: var(--wp-primary); }
 
 .wepos-input-lg { width: 100%; padding: 12px; font-size: 20px; font-weight: 600; text-align: center; border: 1px solid #8c8f94; border-radius: 3px; }
 .wepos-input-lg:focus { outline: none; border-color: var(--wp-primary); box-shadow: 0 0 0 1px var(--wp-primary); }
@@ -590,7 +589,7 @@
 .wepos-quick-cash button { flex: 1; padding: 8px; background: #f6f7f7; border: 1px solid var(--wp-border); border-radius: 3px; cursor: pointer; }
 .wepos-quick-cash button:hover { background: #e0e0e1; }
 
-.wepos-change-box { text-align: center; margin-top: 20px; padding: 15px; background: #fef2f2; border-radius: 4px; }
+.wepos-change-box { text-align: center; margin-top: 20px; padding: 15px; background: #f0f6fc; border-radius: 4px; }
 .wepos-change-box strong { font-size: 24px; color: var(--wp-success); display: block; }
 
 .wepos-modal-foot { padding: 16px 20px; border-top: 1px solid var(--wp-border); display: flex; justify-content: flex-end; gap: 10px; background: #fcfcfc; }

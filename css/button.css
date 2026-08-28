@@ -5,8 +5,8 @@
   cursor: pointer;
   display: flex;
   align-items: center;
-  border: 1px solid #b91c1c;
-  background-color: #dc2626;
+  border: 1px solid #34974d;
+  background-color: #3aa856;
 }
 
 .button, .button__icon, .button__text {
@@ -24,7 +24,7 @@
   transform: translateX(109px);
   height: 100%;
   width: 39px;
-  background-color: #b91c1c;
+  background-color: #34974d;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -36,7 +36,7 @@
 }
 
 .button:hover {
-  background: #b91c1c;
+  background: #34974d;
 }
 
 .button:hover .button__text {
@@ -49,11 +49,11 @@
 }
 
 .button:active .button__icon {
-  background-color: #991b1b;
+  background-color: #2e8644;
 }
 
 .button:active {
-  border: 1px solid #991b1b;
+  border: 1px solid #2e8644;
 }
 
 /* From Uiverse.io by vinodjangid07 */ 
@@ -99,5 +99,5 @@
 .Btn:active {
   transform: translate(3px , 3px);
   transition-duration: .3s;
-  box-shadow: 2px 2px 0px rgb(185, 28, 28);
+  box-shadow: 2px 2px 0px rgb(140, 32, 212);
 }
