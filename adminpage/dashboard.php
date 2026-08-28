@@ -42,7 +42,7 @@ if (isset($_GET['added'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admiin Dashboard</title>
+    <title>Admin Dashboard</title>
     <?php require_once __DIR__ . "/../conn/connection_links.php"; ?>
     <style>
         @media (min-width: 992px) {
