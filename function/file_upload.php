@@ -15,7 +15,7 @@ class fileupload
 
     private $con;
 
-//    public function __construct($file_post, $dir, $con)
+// public function __construct($file_post, $dir, $con)
     public function __construct($file_post, $dir)
     {
         $today = date('Y-m-d H:i:s');

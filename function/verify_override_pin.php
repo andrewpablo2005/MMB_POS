@@ -5,11 +5,11 @@
  * Returns: { success, approver_id, approver_name } or { error }
  *
  * SECURITY:
- *  - Requires an authenticated session (the cashier must be logged in).
- *  - Password is verified BEFORE the role check so that error messages
- *    cannot be used to enumerate which usernames are Owner/Admin.
- *  - All failures return the SAME generic message.
- *  - Per-session throttling: 5 failures → 5 minute lockout.
+ * - Requires an authenticated session (the cashier must be logged in).
+ * - Password is verified BEFORE the role check so that error messages
+ * cannot be used to enumerate which usernames are Owner/Admin.
+ * - All failures return the SAME generic message.
+ * - Per-session throttling: 5 failures -> 5 minute lockout.
  */
 session_start();
 header('Content-Type: application/json');
@@ -21,13 +21,13 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-// 🔐 Must be a logged-in user to even attempt this
+// Must be a logged-in user to even attempt this
 if (empty($_SESSION['user_id'])) {
     echo json_encode(['error' => 'Not authenticated. Please log in again.']);
     exit;
 }
 
-// 🔐 Simple per-session throttle
+// Simple per-session throttle
 $now = time();
 if (isset($_SESSION['override_attempts'], $_SESSION['override_last_attempt'])) {
     if ($_SESSION['override_attempts'] >= 5 && ($now - (int)$_SESSION['override_last_attempt']) < 300) {

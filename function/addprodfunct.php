@@ -100,7 +100,7 @@ class ProductManagement
         }
     }
 
-    // 🔹 GET POST DATA - PRODUCT MASTER ONLY
+    // GET POST DATA - PRODUCT MASTER ONLY
     public function getPost()
     {
         if (!empty($_POST)) {
@@ -160,12 +160,12 @@ class ProductManagement
         return '';
     }
 
-    // 🔥 ADD PRODUCT (WITH TRANSACTION)
+    // ADD PRODUCT (WITH TRANSACTION)
    public function addProduct()
 {
     if (isset($_POST['addProduct'])) {
         $this->getPost();
-        // ✅ VALIDATE REQUIRED FIELDS WITH FK CONSTRAINTS
+        // VALIDATE REQUIRED FIELDS WITH FK CONSTRAINTS
         if ($this->category_id <= 0) {
             $this->response = "Category is required. Please select a valid category.";
             return false;
@@ -177,7 +177,7 @@ class ProductManagement
         try {
             $this->con->beginTransaction();
 
-            // ✅ INSERT THIS BLOCK HERE
+            // INSERT THIS BLOCK HERE
             if (empty($this->barcode)) {
                 do {
                     $this->barcode = time() . rand(100, 999);
@@ -289,7 +289,7 @@ class ProductManagement
     }
     return false;
 }
-    // 🔥 GET ALL PRODUCTS (IMPROVED - GROUPED INVENTORY)
+    // GET ALL PRODUCTS (IMPROVED - GROUPED INVENTORY)
     public function getAllProducts()
     {
         $hasBasic = $this->hasColumn('products', 'is_basic_necessities');
@@ -526,7 +526,7 @@ class ProductManagement
         return $stmt->fetchAll();
     }
 
-    // 🔥 DELETE PRODUCT — sales history is PRESERVED.
+    // DELETE PRODUCT — sales history is PRESERVED.
     // A product that has ever been sold cannot be hard-deleted (its
     // transaction_items rows are the store's financial record). Products
     // with history are soft-hidden instead.
@@ -565,7 +565,7 @@ class ProductManagement
                 return true;
             }
 
-            // No history and no stock → safe to remove completely
+            // No history and no stock -> safe to remove completely
             $stmt = $this->con->prepare("DELETE FROM inventory WHERE product_id = ?");
             $stmt->execute([$productId]);
 
@@ -591,7 +591,7 @@ class ProductManagement
         }
     }
 
-    // 🔹 GET ALL CATEGORIES
+    // GET ALL CATEGORIES
     public function getCategories()
     {
         $stmt = $this->con->prepare("SELECT * FROM product_categories");
@@ -599,7 +599,7 @@ class ProductManagement
         return $stmt->fetchAll();
     }
 
-    // 🔥 UPDATE PRODUCT
+    // UPDATE PRODUCT
     public function updateProduct()
     {
         if (isset($_POST['updateProduct'])) {
@@ -610,7 +610,7 @@ class ProductManagement
             try {
                 $this->con->beginTransaction();
 
-                // 🔍 CHECK BARCODE (exclude current product)
+                // CHECK BARCODE (exclude current product)
                 if (!empty($this->barcode)) {
                     $stmt = $this->con->prepare("
                     SELECT COUNT(*) 
@@ -728,7 +728,7 @@ class ProductManagement
         return false;
     }
 
-    // 🔥 GET SINGLE PRODUCT (FOR EDIT)
+    // GET SINGLE PRODUCT (FOR EDIT)
     public function getProductById($id)
     {
         $selectFields = 'p.*, p.units_per_package AS pcs, i.current_quantity as quantity, i.expiry_date, i.batch_number';
@@ -763,7 +763,7 @@ class ProductManagement
         return $stmt->fetch();
     }
 
-    // 🔥 UPDATE STOCK (AUTO HANDLE POST)
+    // UPDATE STOCK (AUTO HANDLE POST)
     public function updateStock()
     {
         if (isset($_POST['updateStock'])) {
@@ -811,7 +811,7 @@ class ProductManagement
         $markup = isset($_POST['markup']) && $_POST['markup'] !== '' ? (float) $_POST['markup'] : 0;
         $salePrice = isset($_POST['sale_price']) && $_POST['sale_price'] !== '' ? (float) $_POST['sale_price'] : 0;
 
-        // ✅ VALIDATE REQUIRED FIELDS
+        // VALIDATE REQUIRED FIELDS
         if ($productId <= 0) {
             $this->response = "Please select a valid product before adding a batch.";
             return false;
@@ -934,7 +934,7 @@ class ProductManagement
         }
     }
 
-    // 🔥 LOW STOCK ALERT (FULL HTML OUTPUT)
+    // LOW STOCK ALERT (FULL HTML OUTPUT)
     public function getLowStockAlertItems($limit = 50)
     {
         $hasGeneric = $this->hasColumn('products', 'generic_name');

@@ -13,10 +13,10 @@ class UserManagement
         $this->con = $db;
     }
 
-    // ✅ CLEAN INPUT HANDLER
+    // CLEAN INPUT HANDLER
     private function input(array $data): array
     {
-        // 🔐 Position whitelist — prevents privilege escalation via a forged
+        // Position whitelist — prevents privilege escalation via a forged
         // position value (e.g. a request posting position=Owner).
         $allowedPositions = ['Owner', 'Admin', 'Staff'];
         $position = trim((string)($data['position'] ?? 'Staff'));
@@ -48,7 +48,7 @@ class UserManagement
     }
 
     /**
-     * 🔐 Hash a void PIN for storage. Never store PINs in plaintext.
+     * Hash a void PIN for storage. Never store PINs in plaintext.
      * Accepts null/empty (keep existing) and returns null then.
      */
     private function hashVoidPin(?string $pin): ?string
@@ -63,7 +63,7 @@ class UserManagement
         return password_hash($pin, PASSWORD_BCRYPT);
     }
 
-    // 🔥 ADD USER (TRANSACTION SAFE.)
+    // ADD USER (TRANSACTION SAFE.)
    public function addUser(array $data): array
 {
     $d = $this->input($data);
@@ -79,7 +79,7 @@ class UserManagement
             return ['success' => false, 'message' => 'Username already exists'];
         }
 
-        // ✅ Get void_password from form (manual input) — stored HASHED
+        // Get void_password from form (manual input) — stored HASHED
         $voidHash = $this->hashVoidPin($data['void_password'] ?? null);
 
         // Insert user
@@ -132,7 +132,7 @@ class UserManagement
     }
 }
 
-    // 🔥 UPDATE USER (MERGED VERSION - no duplicate methods)
+    // UPDATE USER (MERGED VERSION - no duplicate methods)
     public function updateUser(int $userId, array $data): array
 {
     if (!$userId) {
@@ -181,13 +181,13 @@ class UserManagement
             trim($d['username'])
         ];
 
-        // ✅ HASHED password
+        // HASHED password
         if (!empty($data['password'])) {
             $fields[] = 'password = ?';
             $params[] = password_hash($data['password'], PASSWORD_DEFAULT);
         }
 
-        // ✅ HASHED void PIN (blank = keep existing)
+        // HASHED void PIN (blank = keep existing)
         if (!empty($data['void_password'])) {
             $voidHash = $this->hashVoidPin($data['void_password']);
             if ($voidHash !== null) {
@@ -263,7 +263,7 @@ class UserManagement
             // =========================
             // UPDATE USERS TABLE
             // (Void PIN is only rewritten when a valid 7-digit PIN is supplied;
-            //  it is stored HASHED, and never shown again afterwards.)
+            // it is stored HASHED, and never shown again afterwards.)
             // =========================
             $fields = ['username = ?'];
             $params = [$d['username']];
@@ -320,14 +320,14 @@ class UserManagement
             return ['success' => false, 'message' => 'Failed to update settings'];
         }
     }
-    // 🔥 DELETE USER
+    // DELETE USER
     public function deleteUser(int $userId): array
     {
         if (!$userId) {
             return ['success' => false, 'message' => 'Invalid ID'];
         }
 
-        // 🔐 SAFETY: block deleting your own account and the last Owner
+        // SAFETY: block deleting your own account and the last Owner
         $currentUserId = (int)($_SESSION['user_id'] ?? 0);
         if ($userId === $currentUserId) {
             return ['success' => false, 'message' => 'You cannot delete your own account'];
@@ -366,7 +366,7 @@ class UserManagement
             : ['success' => false, 'message' => 'Unable to update account status'];
     }
 
-    // 🔍 GET ALL
+    // GET ALL
     public function getAllUsers(): array
     {
         return $this->con
@@ -375,7 +375,7 @@ class UserManagement
             ->fetchAll();
     }
 
-    // 🔍 GET ONE
+    // GET ONE
     public function getUserById(int $id)
     {
         $stmt = $this->con->prepare("
@@ -388,7 +388,7 @@ class UserManagement
         return $stmt->fetch();
     }
 
-    // 🔐 LOGIN SUPPORT
+    // LOGIN SUPPORT
     public function getUserByUsername(string $username)
     {
         $stmt = $this->con->prepare("SELECT * FROM users WHERE username = ?");

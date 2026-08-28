@@ -150,7 +150,7 @@
 
 <script>
 
-    // 🔐 XSS guard for user-editable product/customer names
+    // XSS guard for user-editable product/customer names
     function escapeHtmlRm(value) {
         return String(value ?? '')
             .replaceAll('&', '&amp;')

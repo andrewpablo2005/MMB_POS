@@ -40,10 +40,10 @@ class Database
         try {
             $this->pdo = new PDO($this->dsn, $this->user, $this->pass, $this->options);
 
-            // ✅ Set PHP timezone (server-side)
+            // Set PHP timezone (server-side)
             date_default_timezone_set('Asia/Manila');
 
-            // ✅ Set MySQL timezone (database-side)
+            // Set MySQL timezone (database-side)
             $this->pdo->exec("SET time_zone = '+08:00'");
 
         } catch (\PDOException $e) {

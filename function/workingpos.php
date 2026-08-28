@@ -8,7 +8,7 @@ class Product {
         $this->conn = $db;
     }
 
-    // ✅ GET PRODUCTS with category name, stock, barcode and category-level discount flags
+    // GET PRODUCTS with category name, stock, barcode and category-level discount flags
     public function getProducts() {
         $sql = "SELECT p.*, 
                     pc.category_name,
@@ -54,7 +54,7 @@ class Product {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    // ✅ GET ALL CATEGORIES for filter buttons
+    // GET ALL CATEGORIES for filter buttons
     public function getCategories() {
         $sql = "SELECT * FROM product_categories ORDER BY category_name ASC";
         $stmt = $this->conn->prepare($sql);
@@ -62,7 +62,7 @@ class Product {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    // ✅ GET DISCOUNTS
+    // GET DISCOUNTS
     public function getDiscounts() {
         $sql = "SELECT * FROM discounts ORDER BY id ASC";
         $stmt = $this->conn->prepare($sql);
@@ -114,13 +114,13 @@ class Product {
         ];
     }
 
-    // ✅ PROCESS TRANSACTION
+    // PROCESS TRANSACTION
     public function processTransaction($userId, $cartItems, $discountId, $customerName, $customerId, $discountTotal = 0, $totalVatExemption = 0, $customerType = null, $discountRule = 'regular') {
         try {
             $this->conn->beginTransaction();
 
             // =========================================================
-            // 🔐 SECURITY: SERVER-SIDE VALIDATION
+            // SECURITY: SERVER-SIDE VALIDATION
             // The client (POS JS) computes prices/discounts for display,
             // but the server re-derives them from the database so that a
             // tampered request cannot buy stock at ₱0.01, use negative
@@ -161,7 +161,7 @@ class Product {
             }
 
             // 2) Fetch manager price overrides logged by THIS cashier recently
-            //    (product_id => list of allowed discounted rates)
+            // (product_id => list of allowed discounted rates)
             $overrideRates = [];
             $cartIds = array_unique(array_filter(array_map(fn($i) => (int)($i['id'] ?? 0), $cartItems)));
             if ($cartIds) {
@@ -193,7 +193,7 @@ class Product {
                 $pid = (int)($item['id'] ?? 0);
                 $qty = (int)($item['qty'] ?? 0);
 
-                // 🔐 Reject zero/negative/fractional quantities (previously a
+                // Reject zero/negative/fractional quantities (previously a
                 // negative qty zeroed the total while stock was still handed over)
                 if ($pid <= 0 || $qty <= 0) {
                     throw new Exception('Invalid quantity for product ID ' . $pid);
@@ -206,7 +206,7 @@ class Product {
                 $data = $productData[$pid];
                 $clientPrice = (float)($item['price'] ?? 0);
 
-                // 🔐 Price binding: accept the client price ONLY when it matches
+                // Price binding: accept the client price ONLY when it matches
                 // the authoritative shelf price (or an authorized manager
                 // override price). Otherwise the server price wins.
                 $unitPrice = $data['base_price'];
@@ -222,7 +222,7 @@ class Product {
                     }
                 }
 
-                // 🔐 pcs/units_per_package comes from the DB, never the client
+                // pcs/units_per_package comes from the DB, never the client
                 $serverCart[] = [
                     'id'    => $pid,
                     'qty'   => $qty,
@@ -242,7 +242,7 @@ class Product {
             }
 
             // =========================================================
-            // 🔐 DISCOUNT VALIDATION — the server caps whatever the client
+            // DISCOUNT VALIDATION — the server caps whatever the client
             // claims at what it computes itself as the maximum allowed.
             // =========================================================
             $appliedDiscount = (float)$discountTotal;
@@ -269,10 +269,10 @@ class Product {
                 $appliedDiscount = (float)$discountDetails['discount_total'];
             }
 
-            // 🔐 Cap the client-claimed discount at the maximum the server allows:
-            //    (a) statutory senior/PWD discount (with weekly caps), and/or
-            //    (b) the selected store discount rate from the discounts table, and/or
-            //    (c) manager price overrides logged for this cashier.
+            // Cap the client-claimed discount at the maximum the server allows:
+            // (a) statutory senior/PWD discount (with weekly caps), and/or
+            // (b) the selected store discount rate from the discounts table, and/or
+            // (c) manager price overrides logged for this cashier.
             $allowedDiscount = 0.0;
 
             // (a) statutory portion
@@ -323,7 +323,7 @@ class Product {
             // Clamp the claimed discount to the allowed maximum
             $appliedDiscount = round(min(max(0.0, $appliedDiscount), $allowedDiscount, $grossTransactionAmount), 2);
 
-            // 🔐 Cap the VAT exemption claim: only statutory-eligible items and
+            // Cap the VAT exemption claim: only statutory-eligible items and
             // manager-overridden items qualify (12% VAT-inclusive pricing).
             $allowedVatExemption = 0.0;
             foreach ($cartItems as $item) {
@@ -452,7 +452,7 @@ class Product {
     }
 }
 
-// ✅ API ENDPOINT: Get products for inventory refresh
+// API ENDPOINT: Get products for inventory refresh
 if (isset($_GET['action']) && $_GET['action'] === 'getProducts') {
     if (session_status() === PHP_SESSION_NONE) {
         session_start();
@@ -462,7 +462,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'getProducts') {
 
     header('Content-Type: application/json');
 
-    // 🔐 SECURITY: product catalog (prices, stock, cost) requires a login
+    // SECURITY: product catalog (prices, stock, cost) requires a login
     if (empty($_SESSION['user_id'])) {
         echo json_encode(['error' => 'Not authenticated']);
         exit;
@@ -471,7 +471,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'getProducts') {
     try {
         $product = new Product($db);
         $products = $product->getProducts();
-        // 🔐 Strip purchase cost (net_price) — internal margin data must not
+        // Strip purchase cost (net_price) — internal margin data must not
         // be exposed to the browser; the POS UI does not use it.
         foreach ($products as &$p) {
             unset($p['net_price']);

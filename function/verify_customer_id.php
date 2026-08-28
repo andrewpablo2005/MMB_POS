@@ -3,11 +3,11 @@
  * API: Verify Customer ID for Senior/PWD Discount
  * POST body: { type: 'senior'|'pwd', name: string, id_number: string }
  * Returns:
- *   { exists: true }  → customer already on record, just apply discount
- *   { exists: false } → new customer — cashier must complete the in-app
- *                       physical-ID inspection checklist, then save via
- *                       save_customer_id.php
- *   { error: string } → validation error
+ * { exists: true } -> customer already on record, just apply discount
+ * { exists: false } -> new customer — cashier must complete the in-app
+ * physical-ID inspection checklist, then save via
+ * save_customer_id.php
+ * { error: string } -> validation error
  *
  * SECURITY: requires an authenticated session (cashier must be logged in).
  */
@@ -27,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-// 🔐 Only a logged-in cashier may verify customers
+// Only a logged-in cashier may verify customers
 if (empty($_SESSION['user_id'])) {
     echo json_encode(['error' => 'Not authenticated. Please log in again.']);
     exit;

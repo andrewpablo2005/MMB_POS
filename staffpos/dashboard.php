@@ -2,13 +2,13 @@
 session_start();
 require_once __DIR__ . "/../conn/basepath.php";
 
-// 🔐 CHECK IF LOGGED IN
+// CHECK IF LOGGED IN
 if (!isset($_SESSION['user_id'])) {
     header("Location: " . mmbpos_base_path() . "/login_logout_page/login.php");
     exit;
 }
 
-// 🔐 CHECK ROLE (case-insensitive)
+// CHECK ROLE (case-insensitive)
 if (strtolower($_SESSION['position']) !== 'staff') {
     http_response_code(403);
     echo "Access denied";

@@ -6,7 +6,7 @@ require_once __DIR__ . "/../function/Reports.php";
 
 use Classes\Reports;
 
-// 🐛 FIX: month names for the Monthly Sales Trend modal (previously undefined)
+// FIX: month names for the Monthly Sales Trend modal (previously undefined)
 $monthNames = [1 => 'January', 2 => 'February', 3 => 'March', 4 => 'April', 5 => 'May', 6 => 'June',
                7 => 'July', 8 => 'August', 9 => 'September', 10 => 'October', 11 => 'November', 12 => 'December'];
 
@@ -302,7 +302,9 @@ foreach ($salesDetailRows as $detailRow) {
                                                     ? (($netRevenue - $prevMonthSales) / $prevMonthSales) * 100
                                                     : 0;
                                                 $performanceClass = $percentChange >= 0 ? 'text-success' : 'text-danger';
-                                                $performanceIcon = $percentChange >= 0 ? '📈' : '📉';
+                                                $performanceIcon = $percentChange >= 0
+                                                    ? '<i class="fas fa-arrow-trend-up me-1"></i>'
+                                                    : '<i class="fas fa-arrow-trend-down me-1"></i>';
                                         ?>
                                         <tr>
                                             <td>

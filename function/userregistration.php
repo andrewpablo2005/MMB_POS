@@ -40,14 +40,14 @@ class UserRegistration
 
         $this->username = $_POST['username'];
         $this->password = $_POST['password'];
-        // 🔐 Position whitelist — pre-registration may ONLY create Staff
+        // Position whitelist — pre-registration may ONLY create Staff
         // accounts. Owner/Admin accounts are created by the Owner/Admin
         // dashboards, never through self-registration.
         $this->position = in_array($_POST['position'], ['Staff'], true)
             ? $_POST['position']
             : 'Staff';
 
-        // 🔥 USERS_INFO TABLE (SAFE)
+        // USERS_INFO TABLE (SAFE)
         $this->firstname = $_POST['firstname'];
         $this->middlename = $_POST['middlename'];
         $this->lastname = $_POST['lastname'];
@@ -195,7 +195,7 @@ public function pre_addUser()
                 throw new \Exception("User not found");
             }
 
-            // 🔐 SECURITY: never approve a pending account with a privileged
+            // SECURITY: never approve a pending account with a privileged
             // role. Pre-registration is Staff-only; anything else is rejected.
             if (strtolower(trim((string)$user['position'])) !== 'staff') {
                 throw new \Exception("Invalid pending account role — rejected");
@@ -304,9 +304,9 @@ public function pre_addUser()
 
         $mail = new \PHPMailer\PHPMailer\PHPMailer(true);
 
-        // 🔐 SMTP credentials are read from the environment (never commit
+        // SMTP credentials are read from the environment (never commit
         // real passwords to the repo). Define these in Apache config / .env:
-        //   MMBPOS_SMTP_USER, MMBPOS_SMTP_PASS, MMBPOS_SMTP_FROM
+        // MMBPOS_SMTP_USER, MMBPOS_SMTP_PASS, MMBPOS_SMTP_FROM
         $smtpUser = getenv('MMBPOS_SMTP_USER');
         $smtpPass = getenv('MMBPOS_SMTP_PASS');
         $smtpFrom = getenv('MMBPOS_SMTP_FROM') ?: $smtpUser;

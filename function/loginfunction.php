@@ -25,7 +25,7 @@ class Project
     {
         $ip = $_SERVER['REMOTE_ADDR'];
 
-        // 🔐 CHECK IP LOCK
+        // CHECK IP LOCK
         $stmt = $this->con->prepare("SELECT * FROM login_attempts WHERE ip_address = ?");
         $stmt->execute([$ip]);
         $attemptData = $stmt->fetch();
@@ -38,17 +38,17 @@ class Project
             }
         }
 
-        // 🔍 GET USER
+        // GET USER
         $stmt = $this->con->prepare("SELECT * FROM users WHERE username = ? AND status = 'active'");
         $stmt->execute([$username]);
         $user = $stmt->fetch();
 
         // =========================
-        // ✅ USER EXISTS
+        // USER EXISTS
         // =========================
         if ($user) {
 
-            // 🔐 CHECK USER LOCK
+            // CHECK USER LOCK
             if ($user['failed_attempts'] >= 5) {
                 $lastAttempt = strtotime($user['last_attempt']);
 
@@ -57,10 +57,10 @@ class Project
                 }
             }
 
-            // 🔐 VERIFY PASSWORD
+            // VERIFY PASSWORD
             if (password_verify($password, $user['password'])) {
 
-                // 🔁 REDIRECT BASED ON ROLE (case-insensitive) — validate the
+                // REDIRECT BASED ON ROLE (case-insensitive) — validate the
                 // position BEFORE populating the session, otherwise an account
                 // with an unexpected role would still receive a valid session.
                 $position = strtolower($user['position']);
@@ -68,15 +68,15 @@ class Project
                     return "Invalid user position: " . htmlspecialchars($user['position']);
                 }
 
-                // 🔄 RESET USER ATTEMPTS
+                // RESET USER ATTEMPTS
                 $resetUser = $this->con->prepare("UPDATE users SET failed_attempts = 0 WHERE id = ?");
                 $resetUser->execute([$user['id']]);
 
-                // 🔄 RESET IP ATTEMPTS
+                // RESET IP ATTEMPTS
                 $resetIP = $this->con->prepare("DELETE FROM login_attempts WHERE ip_address = ?");
                 $resetIP->execute([$ip]);
 
-                // 🔐 SESSION
+                // SESSION
                 session_regenerate_id(true);
 
                 $_SESSION['user_id'] = $user['id'];
@@ -95,17 +95,17 @@ class Project
                 }
             }
             // =========================
-            // ❌ WRONG PASSWORD
+            // WRONG PASSWORD
             // =========================
             else {
 
-                // 🔺 INCREMENT USER ATTEMPTS
+                // INCREMENT USER ATTEMPTS
                 $newAttempts = $user['failed_attempts'] + 1;
 
                 $updateUser = $this->con->prepare("UPDATE users SET failed_attempts = ?, last_attempt = NOW() WHERE id = ?");
                 $updateUser->execute([$newAttempts, $user['id']]);
 
-                // 🔺 INCREMENT IP ATTEMPTS
+                // INCREMENT IP ATTEMPTS
                 if ($attemptData) {
                     $ipAttempts = $attemptData['attempts'] + 1;
 
@@ -122,11 +122,11 @@ class Project
         }
 
         // =========================
-        // ❌ USER NOT FOUND
+        // USER NOT FOUND
         // =========================
         else {
 
-            // 🔺 INCREMENT IP ATTEMPTS ONLY
+            // INCREMENT IP ATTEMPTS ONLY
             if ($attemptData) {
                 $ipAttempts = $attemptData['attempts'] + 1;
 

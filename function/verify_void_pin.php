@@ -5,10 +5,10 @@
  * Returns: { success: true, approver_name } or { error: string }
  *
  * SECURITY:
- *  - Requires an authenticated session (cashier must be logged in).
- *  - Rate limited: max 5 failed attempts per session, then a 5-minute lockout.
- *  - PINs are stored hashed (bcrypt). Legacy plaintext PINs are still
- *    verified during migration, but never accepted for writing.
+ * - Requires an authenticated session (cashier must be logged in).
+ * - Rate limited: max 5 failed attempts per session, then a 5-minute lockout.
+ * - PINs are stored hashed (bcrypt). Legacy plaintext PINs are still
+ * verified during migration, but never accepted for writing.
  */
 
 error_reporting(0);
@@ -26,13 +26,13 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-// 🔐 Must be a logged-in cashier/staff member to even attempt this
+// Must be a logged-in cashier/staff member to even attempt this
 if (empty($_SESSION['user_id'])) {
     echo json_encode(['error' => 'Not authenticated. Please log in again.']);
     exit;
 }
 
-// 🔐 Simple per-session throttle: 5 failures → 5 minute lockout
+// Simple per-session throttle: 5 failures -> 5 minute lockout
 $now = time();
 if (isset($_SESSION['void_attempts'], $_SESSION['void_last_attempt'])) {
     if ($_SESSION['void_attempts'] >= 5 && ($now - (int)$_SESSION['void_last_attempt']) < 300) {

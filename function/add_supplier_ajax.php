@@ -7,7 +7,7 @@ try {
     
     $db = Database::getConnection();
 
-    // 🔐 SECURITY: only authenticated Owner/Admin may manage suppliers
+    // SECURITY: only authenticated Owner/Admin may manage suppliers
     if (empty($_SESSION['user_id']) || !in_array(strtolower((string)($_SESSION['position'] ?? '')), ['owner', 'admin'], true)) {
         http_response_code(403);
         echo json_encode(['error' => 'Not authorized']);

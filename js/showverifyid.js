@@ -1,4 +1,4 @@
-// ✅ Senior/PWD verification now happens IN-APP (physical ID checklist in
+// Senior/PWD verification now happens IN-APP (physical ID checklist in
 // the POS verify modal). These helpers remain only as OPTIONAL links to the
 // official government registries — they are no longer a required step.
 function openSenior() {

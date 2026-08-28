@@ -561,7 +561,7 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
                         return;
                     }
 
-                    // ✅ Check for duplicate batch number in same product
+                    // Check for duplicate batch number in same product
                     const productId = parseInt(document.getElementById('batch_product_id').value);
                     const batchNumber = document.getElementById('batch_number').value.trim();
                         
@@ -582,7 +582,7 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
         }
     });
 
-    // 🟢 ADD SUPPLIER FORM HANDLER
+    // ADD SUPPLIER FORM HANDLER
     document.addEventListener('DOMContentLoaded', function () {
         const supplierForm = document.getElementById('addSupplierForm');
         const supplierModal = document.getElementById('addSupplierModal');
@@ -631,7 +631,7 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
                 submitBtn.textContent = 'Add Supplier';
 
                 if (status === 200) {
-                    alert('✅ Supplier "' + data.supplier_name + '" added successfully!\n\nRedirecting to inventory...');
+                    alert('Supplier "' + data.supplier_name + '" added successfully!\n\nRedirecting to inventory...');
                     
                     // Store flag and supplier ID to reopen modal after refresh
                     sessionStorage.setItem('reopenAddBatchModal', 'true');
@@ -643,7 +643,7 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
                     }, 500);
                 } else if (status === 409) {
                     // Duplicate found
-                    alert('⚠️  Supplier Already Exists\n\n' + data.message + '\n\nRedirecting to inventory...');
+                    alert('Supplier Already Exists\n\n' + data.message + '\n\nRedirecting to inventory...');
                     
                     // Store flag and supplier ID to reopen modal after refresh
                     sessionStorage.setItem('reopenAddBatchModal', 'true');

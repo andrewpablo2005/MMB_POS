@@ -70,7 +70,7 @@ if (!preg_match('/^[0-9]{7}$/', $voidPin)) {
     exit;
 }
 
-// 🔐 Verify the manager Void PIN against hashed (and legacy plaintext) PINs
+// Verify the manager Void PIN against hashed (and legacy plaintext) PINs
 $managerStmt = $db->prepare("
     SELECT u.id, u.void_password
     FROM users u
@@ -102,7 +102,7 @@ if (!$approver) {
 try {
     $db->beginTransaction();
 
-    // 🔐 Lock the original transaction row so two concurrent return requests
+    // Lock the original transaction row so two concurrent return requests
     // for the same transaction cannot both pass the already-returned check
     // (prevents double refunds / double restock).
     $stmtTx = $db->prepare("SELECT id FROM transactions WHERE id = ? FOR UPDATE");
@@ -210,7 +210,7 @@ try {
 
     $refundTotal = round($refundTotal, 2);
 
-    // 🔐 Attribute the refund to the manager who authorized it (audit trail)
+    // Attribute the refund to the manager who authorized it (audit trail)
     try {
         $db->exec("ALTER TABLE return_transactions ADD COLUMN approver_id INT NULL DEFAULT NULL");
     } catch (PDOException $ignore) {
@@ -233,7 +233,7 @@ try {
     $stmtInsertItem = $db->prepare("INSERT INTO return_items (return_transaction_id, product_id, quantity, price, subtotal, item_type, restocked)
         VALUES (?, ?, ?, ?, ?, ?, ?)");
 
-    // 🔧 Restock into the batch the goods were originally deducted from
+    // Restock into the batch the goods were originally deducted from
     // (recorded in transaction_item_batches), so FEFO/expiry integrity is
     // preserved. Falls back to the earliest unexpired batch; if the product
     // has no batch at all, the restock fails loudly instead of vanishing.

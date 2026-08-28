@@ -2,13 +2,13 @@
 require_once __DIR__ . "/../function/loginfunction.php"; //yours is loginfunction
 session_start();
 
-// 🔐 CHECK IF LOGGED IN
+// CHECK IF LOGGED IN
 if (!isset($_SESSION['user_id'])) {
     header("Location: " . mmbpos_base_path() . "/login_logout_page/login.php");
     exit;
 }
 
-// 🔐 CHECK ROLE — Owner dashboard must only be accessible to the Owner
+// CHECK ROLE — Owner dashboard must only be accessible to the Owner
 if (strtolower(trim((string)($_SESSION['position'] ?? ''))) !== 'owner') {
     http_response_code(403);
     exit('Access denied: Owner accounts only.');
