@@ -9,8 +9,8 @@
 
   function getGradient(ctx, chartArea) {
     const gradient = ctx.createLinearGradient(0, chartArea.bottom, 0, chartArea.top);
-    gradient.addColorStop(0, 'rgba(22, 163, 74, .15)');
-    gradient.addColorStop(1, 'rgba(22, 163, 74, .85)');
+    gradient.addColorStop(0, 'rgba(220, 38, 38, .15)');
+    gradient.addColorStop(1, 'rgba(220, 38, 38, .85)');
     return gradient;
   }
 
@@ -31,7 +31,7 @@
         backgroundColor: function (context) {
           const chart = context.chart;
           const { ctx, chartArea } = chart;
-          if (!chartArea) return 'rgba(22,163,74,.7)';
+          if (!chartArea) return 'rgba(220,38,38,.7)';
           if (width !== chart.width || height !== chart.height) {
             gradient = getGradient(ctx, chartArea);
             width    = chart.width;
@@ -39,11 +39,11 @@
           }
           return gradient;
         },
-        borderColor:          'rgba(22, 163, 74, 0)',
+        borderColor:          'rgba(220, 38, 38, 0)',
         borderWidth:           0,
         borderRadius:          10,
         borderSkipped:         false,
-        hoverBackgroundColor: 'rgba(22, 163, 74, .95)',
+        hoverBackgroundColor: 'rgba(220, 38, 38, .95)',
       }]
     },
     options: {
