@@ -20,7 +20,7 @@
   margin: 0;
 }
 .dash-header .date-badge {
-  background: linear-gradient(135deg, #16a34a, #15803d);
+  background: linear-gradient(135deg, #dc2626, #b91c1c);
   color: #fff;
   font-size: .8rem;
   font-weight: 600;
@@ -170,8 +170,8 @@
   width: 26px;
   height: 26px;
   border-radius: 8px;
-  background: #f0fdf4;
-  color: #16a34a;
+  background: #fef2f2;
+  color: #dc2626;
   font-size: .72rem;
   font-weight: 800;
   display: flex;

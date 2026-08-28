@@ -135,12 +135,12 @@ foreach ($expiryItems as $item) {
 <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm px-3 sticky-top" style="z-index: 1030;">
 
     <!-- ☰ Sidebar Toggle (Mobile) -->
-    <button class="btn btn-outline-success d-lg-none me-2" data-bs-toggle="offcanvas" data-bs-target="#sidebar">
+    <button class="btn btn-outline-primary d-lg-none me-2" data-bs-toggle="offcanvas" data-bs-target="#sidebar">
         ☰
     </button>
 
     <!-- 🏥 Logo / System Name -->
-    <a class="navbar-brand fw-bold text-success" href="#">
+    <a class="navbar-brand fw-bold text-primary" href="#">
         MMB'S DRUGSTORE
     </a>
 
@@ -158,7 +158,7 @@ foreach ($expiryItems as $item) {
 
         <!-- 👤 User Dropdown -->
         <div class="dropdown">
-            <button type="button" class="btn btn-success dropdown-toggle" id="userDropdownBtn" onclick="toggleDropdown()">
+            <button type="button" class="btn btn-primary dropdown-toggle" id="userDropdownBtn" onclick="toggleDropdown()">
                 <?php echo htmlspecialchars($_SESSION['position']); ?>
             </button>
             <ul class="dropdown-menu dropdown-menu-end shadow-lg" id="userDropdownMenu" style="display: none; width: 20%; border-radius: 8px; border: none;">
