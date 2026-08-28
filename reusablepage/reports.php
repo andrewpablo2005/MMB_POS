@@ -1,3 +1,63 @@
+<?php
+require_once __DIR__ . '/guard.php'; guard_require_roles(['owner','admin']);
+require_once __DIR__ . "/../conn/database.php";
+require_once __DIR__ . "/../conn/connection_links.php";
+require_once __DIR__ . "/../function/Reports.php";
+
+use Classes\Reports;
+
+// 🐛 FIX: month names for the Monthly Sales Trend modal (previously undefined)
+$monthNames = [1 => 'January', 2 => 'February', 3 => 'March', 4 => 'April', 5 => 'May', 6 => 'June',
+               7 => 'July', 8 => 'August', 9 => 'September', 10 => 'October', 11 => 'November', 12 => 'December'];
+
+$report = new Reports($db);
+
+// GET ALL DATA
+$data = $report->getAllReports();
+
+// ASSIGN VARIABLES
+$sales = $data['sales'];
+$topProducts = $data['topProducts'];
+$inventory = $data['inventory'];
+$discounts = $data['discounts'];
+$cashiers = $data['cashiers'];
+$dailySales = $data['dailySales'];
+$yearlySales = $data['yearlySales'];
+$discountBreakdown = $data['discountBreakdown'];
+$allTransactions = $data['transactions'];
+$totalDiscounts = $data['totalDiscounts'];
+$totalVatExemption = $data['totalVatExemption'];
+$realRevenueToday = $data['realRevenueToday'];
+$realRevenueMonth = $data['realRevenueMonth'];
+$realRevenueYear = $data['realRevenueYear'];
+$totalSalesYear = $data['totalSalesYear'];
+$detailCashierId = isset($_GET['detail_cashier']) ? (int)$_GET['detail_cashier'] : 0;
+$detailPeriod = $_GET['detail_period'] ?? 'date';
+$detailValue = $_GET['detail_value'] ?? date('Y-m-d');
+$cashierList = $report->getCashierList();
+$salesDetail = $report->getSalesDetailReport($detailPeriod, $detailValue, $detailCashierId);
+$salesDetailRows = $salesDetail['rows'];
+$registerClosings = $report->getRegisterClosings();
+$detailGrossTotal = 0.0;
+$detailDiscountTotal = 0.0;
+$detailVatTotal = 0.0;
+$detailNetTotal = 0.0;
+$detailRefundTotal = 0.0;
+$detailCogsReversedTotal = 0.0;
+$detailNetAfterRefundTotal = 0.0;
+$detailRealRevenueTotal = 0.0;
+foreach ($salesDetailRows as $detailRow) {
+    $detailGrossTotal += (float)($detailRow['gross_subtotal'] ?? 0);
+    $detailDiscountTotal += (float)($detailRow['discount_total'] ?? 0);
+    $detailVatTotal += (float)($detailRow['total_vat_exemption'] ?? 0);
+    $detailNetTotal += (float)($detailRow['total_amount'] ?? 0);
+    $detailRefundTotal += (float)($detailRow['refund_total'] ?? 0);
+    $detailCogsReversedTotal += (float)($detailRow['cogs_reversed'] ?? 0);
+    $detailNetAfterRefundTotal += (float)($detailRow['net_after_refund'] ?? 0);
+    $detailRealRevenueTotal += (float)($detailRow['real_revenue'] ?? 0);
+}
+?>
+
 <link rel="stylesheet" href="../css/report.css?v=3">
 
 <div class="report-page">
