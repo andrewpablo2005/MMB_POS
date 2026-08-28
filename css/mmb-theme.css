@@ -713,16 +713,16 @@ div.dt-buttons .dt-button:focus {
    Scoped to tables so modal & standalone buttons keep solid styles.
    ═══════════════════════════════════════════════════════════════ */
 .table .btn-info {
-    --bs-btn-bg: #ecfeff;
-    --bs-btn-color: #0e7490;
+    --bs-btn-bg: #f1f5f9;
+    --bs-btn-color: #334155;
     --bs-btn-border-color: transparent;
-    --bs-btn-hover-bg: #cffafe;
-    --bs-btn-hover-color: #155e75;
+    --bs-btn-hover-bg: #e2e8f0;
+    --bs-btn-hover-color: #1e293b;
     --bs-btn-hover-border-color: transparent;
-    --bs-btn-active-bg: #a5f3fc;
-    --bs-btn-active-color: #155e75;
+    --bs-btn-active-bg: #cbd5e1;
+    --bs-btn-active-color: #0f172a;
     --bs-btn-active-border-color: transparent;
-    --bs-btn-focus-shadow-rgb: 14, 116, 144;
+    --bs-btn-focus-shadow-rgb: 51, 65, 85;
     font-weight: 600;
 }
 

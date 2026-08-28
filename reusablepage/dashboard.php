@@ -89,7 +89,7 @@ date_default_timezone_set('Asia/Manila');
     </div>
     <div class="col-6 col-xl-3">
       <div class="stat-card">
-        <div class="stat-icon slate"><i class="fas fa-money-bill-trend-up"></i></div>
+        <div class="stat-icon crimson"><i class="fas fa-money-bill-trend-up"></i></div>
         <div>
           <div class="stat-label">Real Revenue Today</div>
           <div class="stat-value">₱<?php echo number_format($realRevenueToday, 2); ?></div>
