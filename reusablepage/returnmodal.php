@@ -3,9 +3,11 @@
     <div class="wepos-modal" style="max-width: 650px;" onclick="event.stopPropagation()">
         
         <!-- Modal Header -->
-        <div class="wepos-modal-head" style="background: linear-gradient(135deg, #1a2535, #2d3f57); color: #fff;">
-            <h5 style="color: #fff; margin:0;"><i class="fas fa-undo-alt me-2" style="color: #e74c3c;"></i> Process Product Return / Refund</h5>
-            <button type="button" onclick="closeReturnModal()" style="color: #fff;"><i class="fas fa-times"></i></button>
+        <div class="wepos-modal-head">
+            <h5 style="margin:0; display:flex; align-items:center; gap:.65rem; font-weight:700; color:#1a2535;">
+                <span class="modal-head-icon"><i class="fas fa-undo-alt"></i></span> Process Product Return / Refund
+            </h5>
+            <button type="button" onclick="closeReturnModal()" style="color:#64748b;"><i class="fas fa-times"></i></button>
         </div>
 
         <!-- Modal Body -->
@@ -39,7 +41,7 @@
                     </div>
                     <div style="display: flex; justify-content: space-between;">
                         <span>Customer: <strong id="lblReturnCustomer">Walk-in</strong></span>
-                        <span>Original Total: <strong id="lblReturnTxTotal" style="color: #16a34a;">₱0.00</strong></span>
+                        <span>Original Total: <strong id="lblReturnTxTotal" style="color: #b91c1c;">₱0.00</strong></span>
                     </div>
                 </div>
 

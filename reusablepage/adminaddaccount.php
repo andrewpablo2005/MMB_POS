@@ -9,8 +9,8 @@ include("../conn/connection_links.php");
     <div class="card shadow-lg border-0">
         
         <!-- HEADER. -->
-        <div class="card-header bg-primary text-white">
-            <h4 class="mb-0">Add User</h4>
+        <div class="card-header">
+            <h4 class="mb-0"><i class="fas fa-user-plus me-2 text-primary"></i>Add User</h4>
         </div>
 
         <div class="card-body">

@@ -48,24 +48,20 @@ $users = $usersmanagement->getAllUsers();
 
 <!-- ✅ CUSTOM TABLE SPACING -->
 <link rel="stylesheet" href="<?= mmbpos_base_path() ?>/css/table.css">
-<link rel="stylesheet" href="../css/button.css?v=2">
-<div class="container-fluid px-4 mt-3">
+<div>
 
-    <div class="card shadow-sm">
-        <div class="card-body">
+    <div class="card">
+        <div class="card-body p-4">
 
-            <!-- HEADER -->
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h4 class="mb-0">User Management</h4>
+            <!-- PAGE HEADER -->
+            <div class="page-head">
+                <div>
+                    <h4>User Management</h4>
+                    <p class="page-sub">Accounts, roles and access status for the whole team.</p>
+                </div>
 
-                <button class="button" data-bs-toggle="modal" data-bs-target="#adduser" style="color:white;"> 
-                    Add User
-                      <span class="button__icon"><svg xmlns="http://www.w3.org/2000" width="24" viewBox="0 0 24 24"
-                            stroke-width="2" stroke-linejoin="round" stroke-linecap="round" stroke="currentColor"
-                            height="24" fill="none" class="svg">
-                            <line y2="19" y1="5" x2="12" x1="12"></line>
-                            <line y2="12" y1="12" x2="19" x1="5"></line>
-                        </svg></span>
+                <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#adduser">
+                    <i class="fas fa-plus me-1"></i>Add User
                 </button>
             </div>
 
@@ -95,13 +91,13 @@ $users = $usersmanagement->getAllUsers();
                                     $pos = $u['position'];
 
                                     if ($pos === 'Admin') {
-                                        $badgeClass = 'bg-danger';
+                                        $badgeClass = 'badge-soft-danger';
                                     } elseif ($pos === 'Owner') {
-                                        $badgeClass = 'bg-dark';
+                                        $badgeClass = 'badge-soft-dark';
                                     } elseif ($pos === 'Staff') {
-                                        $badgeClass = 'bg-success';
+                                        $badgeClass = 'badge-soft-success';
                                     } else {
-                                        $badgeClass = 'bg-secondary';
+                                        $badgeClass = 'badge-soft-warning';
                                     }
                                     ?>
 
@@ -111,7 +107,7 @@ $users = $usersmanagement->getAllUsers();
                                 </td>
 
                                 <td>
-                                    <span class="badge <?= ($u['status'] ?? 'active') === 'active' ? 'bg-success' : 'bg-secondary' ?>">
+                                    <span class="badge <?= ($u['status'] ?? 'active') === 'active' ? 'badge-soft-success' : 'badge-soft-dark' ?>">
                                         <?= ($u['status'] ?? 'active') === 'active' ? 'Active' : 'Disabled' ?>
                                     </span>
                                 </td>
@@ -120,13 +116,13 @@ $users = $usersmanagement->getAllUsers();
 
 
                                     <!-- VIEW -->
-                                    <button class="btn btn-info" data-bs-toggle="modal"
+                                    <button class="btn btn-info btn-sm" data-bs-toggle="modal"
                                         data-bs-target="#view<?= htmlspecialchars((string)($u['id']), ENT_QUOTES, 'UTF-8') ?>">
                                         View
                                     </button>
 
                                     <!-- EDIT -->
-                                    <button class="btn btn-primary" data-bs-toggle="modal"
+                                    <button class="btn btn-primary btn-sm" data-bs-toggle="modal"
                                         data-bs-target="#edit<?= htmlspecialchars((string)($u['id']), ENT_QUOTES, 'UTF-8') ?>">
                                         Edit
                                     </button>
