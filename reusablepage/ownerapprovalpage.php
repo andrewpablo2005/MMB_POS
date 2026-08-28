@@ -21,6 +21,14 @@ if (isset($_POST['action'])) {
 $users = $userAction->getAllPreUsers();
 ?>
 
+<?php if (empty($users)): ?>
+    <div class="empty-panel">
+        <div class="empty-panel-icon"><i class="fas fa-user-check"></i></div>
+        <h6>No pending approvals</h6>
+        <p>New staff account requests will appear here for review.</p>
+    </div>
+<?php else: ?>
+
 <div class="table-responsive">
 
     <table class="table table-striped table-hover align-middle w-100 myTable pendingtable">
@@ -89,5 +97,7 @@ $users = $userAction->getAllPreUsers();
     </table>
 
 </div>
+
+<?php endif; ?>
 
 <script src="../js/usersmanagement.js?v=2"></script>

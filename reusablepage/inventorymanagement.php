@@ -44,17 +44,17 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
                 <div><?= htmlspecialchars($inventoryErrorMessage) ?></div>
             </div>
         <?php endif; ?>
-        <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="page-head">
             <div>
-                <h4 class="mb-1">Inventory Management</h4>
-                <p class="text-muted mb-0">Manage current stock batches and review disposed or expired inventory.</p>
+                <h4>Inventory Management</h4>
+                <p class="page-sub">Manage current stock batches and review disposed or expired inventory.</p>
             </div>
             <div class="d-flex gap-2">
-                <button class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#disposeBatchModal">
-                    <i class="fas fa-trash"></i> Dispose Batch
+                <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#disposeBatchModal">
+                    <i class="fas fa-trash me-1"></i> Dispose Batch
                 </button>
-                <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addBatchModal">
-                    <i class="fas fa-plus"></i> Add Batch
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addBatchModal">
+                    <i class="fas fa-plus me-1"></i> Add Batch
                 </button>
             </div>
         </div>

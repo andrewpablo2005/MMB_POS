@@ -10,7 +10,7 @@ require_once __DIR__ . '/guard.php'; guard_require_roles(['owner','admin']);
             <form method="POST">
 
                 <div class="modal-header">
-                    <h5 class="modal-title">Edit Account</h5>
+                    <h5 class="modal-title"><span class="modal-head-icon"><i class="fas fa-user-pen"></i></span> Edit Account</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
 

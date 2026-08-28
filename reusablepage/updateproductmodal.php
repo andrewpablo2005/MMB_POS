@@ -7,7 +7,7 @@ $dosageForms = $product->getDosageForms(); ?>
             <div class="modal-content">
                 <form method="POST" enctype="multipart/form-data">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="updateproductLabel<?= $prod['id'] ?>">Edit Product</h5>
+                        <h5 class="modal-title" id="updateproductLabel<?= $prod['id'] ?>"><span class="modal-head-icon"><i class="fas fa-pen-to-square"></i></span> Edit Product</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
 

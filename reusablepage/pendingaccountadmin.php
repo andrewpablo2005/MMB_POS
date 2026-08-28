@@ -20,13 +20,18 @@ if (isset($_POST['action'])) {
 // USE FUNCTION HERE
 $users = $userAction->getAllPreUsers();
 ?>
+<div class="page-head">
+    <div>
+        <h4>Pending Accounts</h4>
+        <p class="page-sub">Review and approve new staff account requests.</p>
+    </div>
+</div>
+
 <div class="card">
     <div class="card-body p-4">
         <div class="table-responsive">
 
             <table class="table table-striped table-hover align-middle w-100 myTable pendingtable">
-                <h4>Pending Account</h4>
-                <p class="page-sub">Review and approve new staff account requests.</p>
                 <thead class="table-dark">
                     <tr>
                         <th>Username</th>

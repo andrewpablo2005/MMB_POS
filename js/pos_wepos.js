@@ -515,7 +515,7 @@ function weposUpdateCart() {
         tbody.innerHTML = `
             <tr>
                 <td colspan="5" class="wepos-empty-cart">
-                    <i class="fas fa-shopping-cart fa-3x mb-3 text-muted" style="opacity: 0.3;"></i>
+                    <div class="wepos-empty-cart-icon"><i class="fas fa-basket-shopping"></i></div>
                     <p>Cart is empty</p>
                     <small>Scan barcode or click products to add</small>
                 </td>

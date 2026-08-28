@@ -109,7 +109,7 @@ foreach ($salesDetailRows as $detailRow) {
                     </div>
                 </div>
 
-                <div class="col-md-4">
+                <div class="col-md-6 col-xl-4">
                     <div class="card shadow-sm summary-card" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#vatDiscountModal">
                         <div><i class="fas fa-receipt"></i> VAT Exemption & Discount</div>
                         <div class="summary-value">
@@ -121,7 +121,7 @@ foreach ($salesDetailRows as $detailRow) {
                     </div>
                 </div>
 
-                <div class="col-md-4">
+                <div class="col-md-6 col-xl-4">
                     <div class="card shadow-sm summary-card" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#registerClosingReportModal">
                         <div><i class="fas fa-cash-register"></i> Register Closing Report</div>
                         <div class="summary-value"><?= count($registerClosings) ?></div>
