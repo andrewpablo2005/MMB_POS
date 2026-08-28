@@ -38,7 +38,7 @@ date_default_timezone_set('Asia/Manila');
 
 <!-- Inter Font & Dashboard CSS -->
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../css/dashboard.css?v=2">
+<link rel="stylesheet" href="../css/dashboard.css?v=3">
 
 <!-- Pass PHP data to dashboard.js without mixing PHP into the JS file -->
 <script>
