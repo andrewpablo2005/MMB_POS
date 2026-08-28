@@ -65,8 +65,8 @@ $users = $userAction->getAllPreUsers();
                         <form method="POST">
                             <input type="hidden" name="id" value="<?= htmlspecialchars((string)($u['id']), ENT_QUOTES, 'UTF-8') ?>">
                             <button name="action" value="approve"
-                                class="btn btn-success btn-sm">
-                                Approve
+                                class="btn btn-primary btn-sm">
+                                <i class="fas fa-check me-1"></i>Approve
                             </button>
                         </form>
 

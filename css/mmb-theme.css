@@ -8,9 +8,10 @@
    and every page that consumes the tokens will follow instantly.
 
    Loaded AFTER bootstrap.min.css (see conn/connection_links.php).
-   Semantic colors are intentionally NOT themed here:
-   - success/green  = money, approvals, "Good Stock", status badges
-   - danger/red     = destructive actions (void, decline, delete)
+   Semantic color policy (v3 — zero green anywhere):
+   - brand crimson  = money, approvals, positive emphasis
+   - danger red     = destructive actions (void, decline, delete)
+   - neutral slate  = secondary status, "Good Stock", Excel exports
    ═══════════════════════════════════════════════════════════════════ */
 
 :root {
@@ -847,32 +848,32 @@ thead.table-dark th,
     gap: 0.65rem;
 }
 
-/* ── 4. Soft emerald chips for success actions (Excel / approve / enable) ── */
+/* ── 4. Success actions — calm neutral, brand on hover (no greens) ── */
 .btn-success {
-    --bs-btn-bg: #ecfdf5;
-    --bs-btn-color: #047857;
-    --bs-btn-border-color: transparent;
-    --bs-btn-hover-bg: #d1fae5;
-    --bs-btn-hover-color: #065f46;
-    --bs-btn-hover-border-color: transparent;
-    --bs-btn-active-bg: #a7f3d0;
-    --bs-btn-active-color: #065f46;
-    --bs-btn-active-border-color: transparent;
-    --bs-btn-focus-shadow-rgb: 4, 120, 87;
+    --bs-btn-bg: #f1f5f9;
+    --bs-btn-color: #334155;
+    --bs-btn-border-color: #e2e8f0;
+    --bs-btn-hover-bg: #e2e8f0;
+    --bs-btn-hover-color: #1e293b;
+    --bs-btn-hover-border-color: #cbd5e1;
+    --bs-btn-active-bg: #cbd5e1;
+    --bs-btn-active-color: #0f172a;
+    --bs-btn-active-border-color: #cbd5e1;
+    --bs-btn-focus-shadow-rgb: 51, 65, 85;
     font-weight: 600;
 }
 
 .table .btn-success {
-    --bs-btn-bg: #ecfdf5;
-    --bs-btn-color: #047857;
-    --bs-btn-border-color: transparent;
-    --bs-btn-hover-bg: #d1fae5;
-    --bs-btn-hover-color: #065f46;
-    --bs-btn-hover-border-color: transparent;
-    --bs-btn-active-bg: #a7f3d0;
-    --bs-btn-active-color: #065f46;
-    --bs-btn-active-border-color: transparent;
-    --bs-btn-focus-shadow-rgb: 4, 120, 87;
+    --bs-btn-bg: #f1f5f9;
+    --bs-btn-color: #334155;
+    --bs-btn-border-color: #e2e8f0;
+    --bs-btn-hover-bg: #e2e8f0;
+    --bs-btn-hover-color: #1e293b;
+    --bs-btn-hover-border-color: #cbd5e1;
+    --bs-btn-active-bg: #cbd5e1;
+    --bs-btn-active-color: #0f172a;
+    --bs-btn-active-border-color: #cbd5e1;
+    --bs-btn-focus-shadow-rgb: 51, 65, 85;
     font-weight: 600;
 }
 
@@ -896,6 +897,31 @@ thead.table-dark th,
 /* ── 6. Soft badge utilities (role chips, status chips) ── */
 .badge-soft-danger  { background: #fef2f2 !important; color: #b91c1c !important; }
 .badge-soft-dark    { background: #f1f5f9 !important; color: #334155 !important; }
-.badge-soft-success { background: #ecfdf5 !important; color: #047857 !important; }
+.badge-soft-success { background: #f1f5f9 !important; color: #334155 !important; }
 .badge-soft-info    { background: #eff6ff !important; color: #1d4ed8 !important; }
 .badge-soft-warning { background: #fffbeb !important; color: #b45309 !important; }
+
+/* ── 7. Status indicator — dot + label (replaces colored status blocks) ── */
+.user-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #475569;
+    white-space: nowrap;
+}
+.user-status .status-dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background: #94a3b8;
+    box-shadow: 0 0 0 3px rgba(148, 163, 184, 0.18);
+}
+.user-status.is-active .status-dot {
+    background: var(--mmb-primary);
+    box-shadow: 0 0 0 3px rgba(var(--mmb-primary-rgb), 0.15);
+}
+.user-status.is-disabled {
+    color: #94a3b8;
+}

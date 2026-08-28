@@ -125,7 +125,7 @@ $dosageForms = $product->getDosageForms();
                     <div class="mb-3">
                         <label class="form-label">Do you want to add a batch and quantity now?</label>
                         <div class="btn-group w-100" role="group" aria-label="Add batch prompt">
-                            <button type="button" class="btn btn-outline-success" data-batch-option="yes">Yes</button>
+                            <button type="button" class="btn btn-outline-primary" data-batch-option="yes">Yes</button>
                             <button type="button" class="btn btn-secondary active" data-batch-option="no">No</button>
                         </div>
                         <input type="hidden" name="add_batch_prompt" id="add_batch_prompt" value="no">
@@ -463,8 +463,8 @@ $dosageForms = $product->getDosageForms();
             batchButtons.forEach((button) => {
                 const active = button.dataset.batchOption === option;
                 button.classList.toggle('active', active);
-                button.classList.toggle('btn-success', active && isYes);
-                button.classList.toggle('btn-outline-success', !active && isYes);
+                button.classList.toggle('btn-primary', active && isYes);
+                button.classList.toggle('btn-outline-primary', !active && isYes);
                 button.classList.toggle('btn-secondary', active && !isYes);
                 button.classList.toggle('btn-outline-secondary', !active && !isYes);
             });

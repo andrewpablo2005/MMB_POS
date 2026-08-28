@@ -70,7 +70,9 @@
 .stat-icon.secondary { background: #f3f4f6; color: #6b7280; }
 .stat-icon.info { background: #cffafe; color: #0369a1; }
 .stat-icon.danger { background: #fee2e2; color: #dc2626; }
-.stat-icon.success { background: #dcfce7; color: #16a34a; }
+.stat-icon.wine  { background: #fee2e2; color: #991b1b; }
+.stat-icon.slate { background: #f1f5f9; color: #334155; }
+.stat-icon.success { background: #f1f5f9; color: #334155; }
 .stat-label {
   font-size: .73rem;
   font-weight: 600;

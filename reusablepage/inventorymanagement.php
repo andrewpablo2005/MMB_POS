@@ -84,7 +84,7 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
                 <label class="mb-0" for="currentInventorySearch">Search:</label>
                 <input type="search" id="currentInventorySearch" class="form-control form-control-sm inventory-search" placeholder="Search current inventory..." style="max-width:260px;">
                 <button type="button" class="btn btn-sm btn-secondary inventory-copy"><i class="fas fa-copy me-1"></i>Copy</button>
-                <button type="button" class="btn btn-sm btn-success inventory-excel"><i class="fas fa-file-excel me-1"></i>Excel</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary inventory-excel"><i class="fas fa-file-excel me-1"></i>Excel</button>
                 <button type="button" class="btn btn-sm btn-danger inventory-pdf"><i class="fas fa-file-pdf me-1"></i>PDF</button>
                 <button type="button" class="btn btn-sm btn-outline-dark inventory-print"><i class="fas fa-print me-1"></i>Print</button>
             </div>
@@ -139,7 +139,7 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
                 <label class="mb-0" for="disposedInventorySearch">Search:</label>
                 <input type="search" id="disposedInventorySearch" class="form-control form-control-sm inventory-search" placeholder="Search disposed inventory..." style="max-width:260px;">
                 <button type="button" class="btn btn-sm btn-secondary inventory-copy"><i class="fas fa-copy me-1"></i>Copy</button>
-                <button type="button" class="btn btn-sm btn-success inventory-excel"><i class="fas fa-file-excel me-1"></i>Excel</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary inventory-excel"><i class="fas fa-file-excel me-1"></i>Excel</button>
                 <button type="button" class="btn btn-sm btn-danger inventory-pdf"><i class="fas fa-file-pdf me-1"></i>PDF</button>
                 <button type="button" class="btn btn-sm btn-outline-dark inventory-print"><i class="fas fa-print me-1"></i>Print</button>
             </div>
@@ -196,7 +196,7 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
                 <label class="mb-0" for="returnedProductsSearch">Search:</label>
                 <input type="search" id="returnedProductsSearch" class="form-control form-control-sm inventory-search" placeholder="Search returned products..." style="max-width:260px;">
                 <button type="button" class="btn btn-sm btn-secondary inventory-copy"><i class="fas fa-copy me-1"></i>Copy</button>
-                <button type="button" class="btn btn-sm btn-success inventory-excel"><i class="fas fa-file-excel me-1"></i>Excel</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary inventory-excel"><i class="fas fa-file-excel me-1"></i>Excel</button>
                 <button type="button" class="btn btn-sm btn-danger inventory-pdf"><i class="fas fa-file-pdf me-1"></i>PDF</button>
                 <button type="button" class="btn btn-sm btn-outline-dark inventory-print"><i class="fas fa-print me-1"></i>Print</button>
             </div>

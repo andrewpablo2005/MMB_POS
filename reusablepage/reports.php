@@ -184,7 +184,7 @@ foreach ($salesDetailRows as $detailRow) {
                                             <td>₱<?= number_format((float)$detailRow['gross_subtotal'], 2) ?></td>
                                             <td class="text-danger">-₱<?= number_format((float)$detailRow['discount_total'], 2) ?></td>
                                             <td class="text-danger">-₱<?= number_format((float)$detailRow['total_vat_exemption'], 2) ?></td>
-                                            <td class="text-success"><strong>₱<?= number_format((float)$detailRow['total_amount'], 2) ?></strong></td>
+                                            <td class="text-primary"><strong>₱<?= number_format((float)$detailRow['total_amount'], 2) ?></strong></td>
                                             <td class="text-danger"><?= (float)$detailRow['refund_total'] > 0 ? '-₱' . number_format((float)$detailRow['refund_total'], 2) : '—' ?></td>
                                             <td class="text-warning">
                                                 <?php if ((float)$detailRow['cogs_reversed'] > 0): ?>
@@ -195,12 +195,12 @@ foreach ($salesDetailRows as $detailRow) {
                                                     <span class="text-muted">No return</span>
                                                 <?php endif; ?>
                                             </td>
-                                            <td class="text-success">₱<?= number_format((float)$detailRow['net_after_refund'], 2) ?></td>
+                                            <td class="text-primary">₱<?= number_format((float)$detailRow['net_after_refund'], 2) ?></td>
                                             <td class="text-primary"><strong>₱<?= number_format((float)$detailRow['real_revenue'], 2) ?></strong></td>
                                         </tr>
                                     <?php endforeach; endif; ?>
                                 </tbody>
-                                <tfoot class="table-light fw-bold"><tr><td colspan="4">Period totals</td><td>₱<?= number_format($detailGrossTotal, 2) ?></td><td class="text-danger">-₱<?= number_format($detailDiscountTotal, 2) ?></td><td class="text-danger">-₱<?= number_format($detailVatTotal, 2) ?></td><td class="text-success">₱<?= number_format($detailNetTotal, 2) ?></td><td class="text-danger">-₱<?= number_format($detailRefundTotal, 2) ?></td><td class="text-warning">Restocked: +₱<?= number_format($detailCogsReversedTotal, 2) ?></td><td class="text-success">₱<?= number_format($detailNetAfterRefundTotal, 2) ?></td><td class="text-primary">₱<?= number_format($detailRealRevenueTotal, 2) ?></td></tr></tfoot>
+                                <tfoot class="table-light fw-bold"><tr><td colspan="4">Period totals</td><td>₱<?= number_format($detailGrossTotal, 2) ?></td><td class="text-danger">-₱<?= number_format($detailDiscountTotal, 2) ?></td><td class="text-danger">-₱<?= number_format($detailVatTotal, 2) ?></td><td class="text-primary">₱<?= number_format($detailNetTotal, 2) ?></td><td class="text-danger">-₱<?= number_format($detailRefundTotal, 2) ?></td><td class="text-warning">Restocked: +₱<?= number_format($detailCogsReversedTotal, 2) ?></td><td class="text-primary">₱<?= number_format($detailNetAfterRefundTotal, 2) ?></td><td class="text-primary">₱<?= number_format($detailRealRevenueTotal, 2) ?></td></tr></tfoot>
                             </table>
                         </div>
                         <div class="alert alert-light border mt-3 mb-0 small">
@@ -246,7 +246,7 @@ foreach ($salesDetailRows as $detailRow) {
                                             <td><?= htmlspecialchars($closing['cashier_name'] ?? 'N/A') ?></td>
                                             <td>₱<?= number_format((float)$closing['system_cash'], 2) ?></td>
                                             <td>₱<?= number_format((float)$closing['counted_cash'], 2) ?></td>
-                                            <td class="<?= $variance === 0.0 ? 'text-success' : ($variance < 0 ? 'text-danger' : 'text-warning') ?>">
+                                            <td class="<?= $variance === 0.0 ? 'text-body' : ($variance < 0 ? 'text-danger' : 'text-warning') ?>">
                                                 <?= $variance < 0 ? '-₱' : '₱' ?><?= number_format(abs($variance), 2) ?>
                                             </td>
                                             <td><?= htmlspecialchars($closing['notes'] ?? '—') ?></td>
@@ -301,7 +301,7 @@ foreach ($salesDetailRows as $detailRow) {
                                                 $percentChange = $prevMonthSales > 0
                                                     ? (($netRevenue - $prevMonthSales) / $prevMonthSales) * 100
                                                     : 0;
-                                                $performanceClass = $percentChange >= 0 ? 'text-success' : 'text-danger';
+                                                $performanceClass = $percentChange >= 0 ? 'text-primary' : 'text-danger';
                                                 $performanceIcon = $percentChange >= 0
                                                     ? '<i class="fas fa-arrow-trend-up me-1"></i>'
                                                     : '<i class="fas fa-arrow-trend-down me-1"></i>';
@@ -323,7 +323,7 @@ foreach ($salesDetailRows as $detailRow) {
                                                     ₱<?= number_format($grossRevenue, 2) ?>
                                                 </strong>
                                             </td>
-                                            <td class="text-success">
+                                            <td class="text-primary">
                                                 <strong>
                                                     ₱<?= number_format($netRevenue, 2) ?>
                                                 </strong>
@@ -331,7 +331,7 @@ foreach ($salesDetailRows as $detailRow) {
                                             <td class="text-warning">
                                                 ₱<?= number_format($totalCost, 2) ?>
                                             </td>
-                                            <td class="<?= $profit >= 0 ? 'text-success' : 'text-danger' ?>">
+                                            <td class="<?= $profit >= 0 ? 'text-primary' : 'text-danger' ?>">
                                                 <strong>
                                                     ₱<?= number_format($profit, 2) ?>
                                                 </strong>
@@ -406,7 +406,7 @@ foreach ($salesDetailRows as $detailRow) {
                                         <td class="text-danger">
                                             <?= $row['total_vat_exemption'] > 0 ? '-₱' . number_format($row['total_vat_exemption'], 2) : '—' ?>
                                         </td>
-                                        <td class="text-success"><strong>₱<?= number_format($row['total_amount'] ?? 0, 2) ?></strong></td>
+                                        <td class="text-primary"><strong>₱<?= number_format($row['total_amount'] ?? 0, 2) ?></strong></td>
                                     </tr>
                                 <?php endforeach; ?>
                             </tbody>
@@ -429,7 +429,7 @@ foreach ($salesDetailRows as $detailRow) {
                             </div>
                             <div class="col-md-3">
                                 <strong>Grand Total Sales:</strong> 
-                                <span class="badge bg-success">₱<?= number_format($grandTotalAllTransactions, 2) ?></span>
+                                <span class="badge badge-soft-danger">₱<?= number_format($grandTotalAllTransactions, 2) ?></span>
                             </div>
                         </div>
                     </div>
@@ -465,7 +465,7 @@ foreach ($salesDetailRows as $detailRow) {
                                 <?php foreach ($topProducts as $row): ?>
                                     <tr>
                                         <td><?= htmlspecialchars($row['product_name']) ?></td>
-                                        <td><span class="badge bg-success"><?= $row['total_sold'] ?> units</span></td>
+                                        <td><span class="badge badge-soft-dark"><?= $row['total_sold'] ?> units</span></td>
                                     </tr>
                                 <?php endforeach; ?>
                             </tbody>
@@ -507,7 +507,7 @@ foreach ($salesDetailRows as $detailRow) {
                                     <tr>
                                         <td><strong><?= $i + 1 ?></strong></td>
                                         <td><?= htmlspecialchars($product['product_name']) ?></td>
-                                        <td><span class="badge bg-success"><?= $product['total_sold'] ?> units</span></td>
+                                        <td><span class="badge badge-soft-dark"><?= $product['total_sold'] ?> units</span></td>
                                     </tr>
                                 <?php endfor; ?>
                             </tbody>
@@ -638,7 +638,7 @@ foreach ($salesDetailRows as $detailRow) {
                                     <tr>
                                         <td><strong><?= date('l, M d, Y', strtotime($row['sale_date'])) ?></strong></td>
                                         <td><span class="badge bg-info"><?= $row['total_transactions'] ?></span></td>
-                                        <td class="text-success"><strong>₱<?= number_format($row['daily_total'] ?? 0, 2) ?></strong></td>
+                                        <td class="text-primary"><strong>₱<?= number_format($row['daily_total'] ?? 0, 2) ?></strong></td>
                                         <td>₱<?= number_format($row['daily_avg'] ?? 0, 2) ?></td>
                                     </tr>
                                 <?php endforeach; ?>
@@ -646,7 +646,7 @@ foreach ($salesDetailRows as $detailRow) {
                             <tfoot>
                                 <tr style="background-color: #f8f9fa; font-weight: bold;">
                                     <td colspan="2">Total (Last 30 Days)</td>
-                                    <td class="text-success">₱<?= number_format($totalForSummary, 2) ?></td>
+                                    <td class="text-primary">₱<?= number_format($totalForSummary, 2) ?></td>
                                     <td>₱<?= number_format(count($dailySales) > 0 ? $totalForSummary / count($dailySales) : 0, 2) ?></td>
                                 </tr>
                             </tfoot>
