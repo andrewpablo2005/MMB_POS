@@ -238,8 +238,8 @@ if (!empty($_SESSION['user_id'])) {
 <!-- REGISTER CLOSING MODAL -->
 <div class="wepos-modal-overlay" id="registerClosingModal" style="display:none;" onclick="weposCloseClosingModal(event)">
     <div class="wepos-modal" onclick="event.stopPropagation()" style="max-width:520px;">
-        <div class="wepos-modal-head" style="background:#ecfdf5; border-bottom:1px solid #bbf7d0;">
-            <h5 style="color:#166534;"><i class="fas fa-cash-register me-2"></i>Close Cashier Register</h5>
+        <div class="wepos-modal-head" style="background:#f8fafc; border-bottom:1px solid #e2e8f0;">
+            <h5 style="color:#1a2535;"><i class="fas fa-cash-register me-2"></i>Close Cashier Register</h5>
             <button type="button" onclick="weposCloseClosingModal()"><i class="fas fa-times"></i></button>
         </div>
         <div class="wepos-modal-body">
@@ -433,8 +433,8 @@ if (!empty($_SESSION['user_id'])) {
 <!-- ═══════════════ RECEIPT MODAL ═══════════════ -->
 <div class="wepos-modal-overlay" id="weposReceiptModal" style="display:none;" onclick="event.stopPropagation()">
     <div class="wepos-modal" onclick="event.stopPropagation()" style="max-width:400px; border-radius:8px;">
-        <div class="wepos-modal-head" style="background:#f0fdf4; border-bottom:1px solid #bbf7d0;">
-            <h5 style="color:#15803d;"><i class="fas fa-receipt"></i> Payment Successful</h5>
+        <div class="wepos-modal-head" style="background:#fef2f2; border-bottom:1px solid #fecaca;">
+            <h5 style="color:#b91c1c;"><i class="fas fa-receipt"></i> Payment Successful</h5>
             <button onclick="weposCloseReceipt()"><i class="fas fa-times"></i></button>
         </div>
         <div class="wepos-modal-body" id="weposReceiptBody" style="padding:0;">

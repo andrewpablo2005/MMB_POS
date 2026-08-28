@@ -128,7 +128,7 @@ $dosageForms = $product->getDosageForms(); ?>
                         <div id="image_preview_container_<?= $prod['id'] ?>" style="display: none;">
                             <div class="text-center">
                                 <img id="image_preview_<?= $prod['id'] ?>" src="" alt="New Image Preview"
-                                    style="max-width: 100%; max-height: 250px; border: 1px solid #28a745; border-radius: 8px; padding: 10px; background-color: #f8f9fa;">
+                                    style="max-width: 100%; max-height: 250px; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; background-color: #f8f9fa;">
                                 <small class="text-success d-block mt-2">✓ New image selected</small>
                             </div>
                         </div>

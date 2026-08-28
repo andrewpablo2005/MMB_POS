@@ -46,25 +46,18 @@ if ($product->addProduct()) {
     }
 }
 ?>
-<link rel="stylesheet" href="../css/button.css?v=2">
-<div class="card shadow-sm">
-    <div class="card-body">
+<div class="card">
+    <div class="card-body p-4">
 
-        <!-- ADD PRODUCT BUTTON -->
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h4 class="mb-0">Product Management</h4>
+        <!-- PAGE HEADER -->
+        <div class="page-head">
+            <div>
+                <h4>Product Management</h4>
+                <p class="page-sub">Manage the medicine catalog — brands, generics, strengths and pricing.</p>
+            </div>
             <div class="d-flex gap-2">
-                <?php if ($pmIsManager): ?>
-
-                <?php endif; ?>
-                <button class="button" data-bs-toggle="modal" data-bs-target="#addProductModal">
-                    <span class="button__text">Add Item</span>
-                    <span class="button__icon"><svg xmlns="http://www.w3.org/2000" width="24" viewBox="0 0 24 24"
-                            stroke-width="2" stroke-linejoin="round" stroke-linecap="round" stroke="currentColor"
-                            height="24" fill="none" class="svg">
-                            <line y2="19" y1="5" x2="12" x1="12"></line>
-                            <line y2="12" y1="12" x2="19" x1="5"></line>
-                        </svg></span>
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addProductModal">
+                    <i class="fas fa-plus me-1"></i>Add Item
                 </button>
             </div>
         </div>
