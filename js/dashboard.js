@@ -41,38 +41,53 @@
         },
         borderColor:          'rgba(220, 38, 38, 0)',
         borderWidth:           0,
-        borderRadius:          10,
-        borderSkipped:         false,
+        borderRadius:          7,
+        borderSkipped:         'bottom',
+        barPercentage:         0.58,
+        categoryPercentage:    0.72,
+        maxBarThickness:       46,
         hoverBackgroundColor: 'rgba(220, 38, 38, .95)',
+        hoverBorderRadius:     7
       }]
     },
     options: {
       responsive:          true,
       maintainAspectRatio: false,
       animation:           { duration: 900, easing: 'easeInOutQuart' },
+      interaction:         { mode: 'index', intersect: false },
+      onHover: (e, els, chart) => {
+        chart.canvas.style.cursor = els.length ? 'pointer' : 'default';
+      },
       plugins: {
         legend: { display: false },
         tooltip: {
           backgroundColor: '#1a2535',
           titleColor:      '#fff',
-          bodyColor:       '#94a3b8',
+          bodyColor:       '#e2e8f0',
+          titleFont:       { size: 12, weight: '600', family: 'Inter' },
+          bodyFont:        { size: 13, weight: '700', family: 'Inter' },
           padding:          12,
           cornerRadius:     10,
           displayColors:    false,
           callbacks: {
-            title: (items) => labels[items[0].dataIndex],
-            label: (ctx)   => ' ₱ ' + Number(ctx.parsed.y).toLocaleString('en-PH', { minimumFractionDigits: 2 }),
+            title: (items) => {
+              const full = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+              return full[items[0].dataIndex] + ' ' + new Date().getFullYear();
+            },
+            label: (ctx)   => '₱ ' + Number(ctx.parsed.y).toLocaleString('en-PH', { minimumFractionDigits: 2 }),
           }
         }
       },
       scales: {
         y: {
           beginAtZero: true,
-          grid:   { color: 'rgba(0,0,0,.04)', drawBorder: false },
+          grace:       '8%',
+          grid:   { color: 'rgba(0,0,0,.045)', drawBorder: false },
           border: { display: false },
           ticks:  {
             color:  '#64748b',
             font:   { size: 11, family: 'Inter' },
+            padding: 6,
             callback: (v) => v >= 1000 ? '₱' + (v / 1000).toFixed(0) + 'k' : '₱' + v,
           }
         },

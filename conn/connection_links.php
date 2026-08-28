@@ -7,7 +7,7 @@
 <?php //Bootstrap Links for CSS and JS ?>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
 <!-- MMB Brand Theme (design tokens + Bootstrap primary overrides) — keep AFTER bootstrap -->
-<link rel="stylesheet" href="<?= mmbpos_base_path() ?>/css/mmb-theme.css?v=2.0">
+<link rel="stylesheet" href="<?= mmbpos_base_path() ?>/css/mmb-theme.css?v=3.0">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 
 <!-- Font Awesome -->
@@ -37,7 +37,7 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <!-- Custom JS -->
-<script src="../js/usersmanagement.js"></script>
+<script src="../js/usersmanagement.js?v=2"></script>
 
 <!-- JS PDF -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
