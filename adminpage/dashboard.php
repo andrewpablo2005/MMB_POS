@@ -82,28 +82,28 @@ if (isset($_GET['added'])) {
                 <div class="nav flex-column nav-pills me-3" role="tablist">
 
                     <a class="nav-link <?= $activeTab === 'dashboard' ? 'active' : '' ?>" data-bs-toggle="pill"
-                        href="#v-pills-dashboard"><i class="fas fa-chart-line me-2"></i>Dashboard</a>
+                        href="dashboard.php?tab=dashboard" data-tab="dashboard"><i class="fas fa-chart-line me-2"></i>Dashboard</a>
 
                     <a class="nav-link <?= $activeTab === 'product' ? 'active' : '' ?>" data-bs-toggle="pill"
-                        href="#v-pills-product"><i class="fas fa-box me-2"></i>Product Management</a>
+                        href="dashboard.php?tab=product" data-tab="product"><i class="fas fa-box me-2"></i>Product Management</a>
 
                     <a class="nav-link <?= $activeTab === 'inventory' ? 'active' : '' ?>" data-bs-toggle="pill"
-                        href="#v-pills-inventory"><i class="fas fa-warehouse me-2"></i>Inventory</a>
+                        href="dashboard.php?tab=inventory" data-tab="inventory"><i class="fas fa-warehouse me-2"></i>Inventory</a>
 
                     <a class="nav-link <?= $activeTab === 'sales' ? 'active' : '' ?>" data-bs-toggle="pill"
-                        href="#v-pills-sales"><i class="fas fa-shopping-cart me-2"></i>Sales (POS)</a>
+                        href="dashboard.php?tab=sales" data-tab="sales"><i class="fas fa-shopping-cart me-2"></i>Sales (POS)</a>
 
                     <a class="nav-link <?= $activeTab === 'reports' ? 'active' : '' ?>" data-bs-toggle="pill"
-                        href="#v-pills-reports"><i class="fas fa-file-alt me-2"></i>Reports</a>
+                        href="dashboard.php?tab=reports" data-tab="reports"><i class="fas fa-file-alt me-2"></i>Reports</a>
 
                     <a class="nav-link <?= $activeTab === 'pendingaccount' ? 'active' : '' ?>" data-bs-toggle="pill"
-                        href="#v-pills-pendingaccount"><i class="fas fa-hourglass-half me-2"></i>Pending Account</a>
+                        href="dashboard.php?tab=pendingaccount" data-tab="pendingaccount"><i class="fas fa-hourglass-half me-2"></i>Pending Account</a>
 
                     <a class="nav-link <?= $activeTab === 'users' ? 'active' : '' ?>" data-bs-toggle="pill"
-                        href="#v-pills-users"><i class="fas fa-users me-2"></i>User Management</a>
+                        href="dashboard.php?tab=users" data-tab="users"><i class="fas fa-users me-2"></i>User Management</a>
 
                     <a class="nav-link <?= $activeTab === 'system' ? 'active' : '' ?>" data-bs-toggle="pill"
-                        href="#v-pills-system"><i class="fas fa-cog me-2"></i>System Settings</a>
+                        href="dashboard.php?tab=system" data-tab="system"><i class="fas fa-cog me-2"></i>System Settings</a>
                 </div>
             </div>
         </div>
@@ -140,6 +140,48 @@ if (isset($_GET['added'])) {
     
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const url = new URL(window.location.href);
+            const currentTab = url.searchParams.get('tab') || 'dashboard';
+            const tabLinks = document.querySelectorAll('.nav-link[data-tab]');
+
+            tabLinks.forEach(function (link) {
+                const tab = link.dataset.tab;
+                const nextUrl = new URL(link.href);
+                nextUrl.searchParams.set('tab', tab);
+                link.href = nextUrl.pathname + nextUrl.search;
+
+                link.addEventListener('click', function (event) {
+                    event.preventDefault();
+                    const targetUrl = new URL(link.href);
+                    const activeTab = targetUrl.searchParams.get('tab') || tab;
+                    const currentUrl = new URL(window.location.href);
+                    currentUrl.searchParams.delete('detail_period');
+                    currentUrl.searchParams.delete('detail_cashier');
+                    currentUrl.searchParams.delete('detail_value');
+                    currentUrl.searchParams.set('tab', activeTab);
+                    history.pushState({}, '', currentUrl);
+
+                    const targetPane = document.getElementById('v-pills-' + activeTab);
+                    if (targetPane) {
+                        document.querySelectorAll('.nav-link[data-tab]').forEach(function (navLink) {
+                            navLink.classList.toggle('active', navLink.dataset.tab === activeTab);
+                        });
+                        document.querySelectorAll('.tab-pane').forEach(function (pane) {
+                            pane.classList.remove('show', 'active');
+                        });
+                        targetPane.classList.add('show', 'active');
+                    }
+                });
+            });
+
+            const initialTabLink = document.querySelector('.nav-link[data-tab="' + currentTab + '"]');
+            if (initialTabLink) {
+                initialTabLink.classList.add('active');
+            }
+        });
+    </script>
 
 </body>
 

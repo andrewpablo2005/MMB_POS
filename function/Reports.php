@@ -74,9 +74,27 @@ class Reports
     public function getInventory(): array
     {
         $stmt = $this->db->prepare("
-            SELECT p.generic_name, i.current_quantity as quantity, i.expiry_date
+            SELECT p.id AS product_id,
+                   p.branded_name,
+                   p.generic_name,
+                   p.strength,
+                   p.dosage_form,
+                   p.strength_per_quantity,
+                   p.strength_per_quantity_unit,
+                   i.id AS inventory_id,
+                   i.supplier_id,
+                   i.received_quantity,
+                   i.current_quantity AS quantity,
+                   i.expiry_date,
+                   s.supplier_name,
+                   s.contact_person,
+                   s.contact_number,
+                   s.email,
+                   s.address,
+                   s.supplier_type
             FROM inventory i
             JOIN products p ON i.product_id = p.id
+            LEFT JOIN suppliers s ON i.supplier_id = s.id
             ORDER BY i.expiry_date ASC
         ");
         $stmt->execute();

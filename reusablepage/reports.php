@@ -5,6 +5,52 @@ require_once __DIR__ . "/../function/Reports.php";
 
 use Classes\Reports;
 
+function formatProductNameForReport(array $row): string
+{
+    $brand = trim((string)($row['branded_name'] ?? ''));
+    $generic = trim((string)($row['generic_name'] ?? ''));
+    $strength = trim((string)($row['strength'] ?? ''));
+    $dosage = trim((string)($row['dosage_form'] ?? ''));
+    $strengthPerQty = trim((string)($row['strength_per_quantity'] ?? ''));
+    $strengthPerQtyUnit = trim((string)($row['strength_per_quantity_unit'] ?? ''));
+
+    $parts = [];
+    if ($brand !== '') $parts[] = $brand;
+    if ($generic !== '') $parts[] = $generic;
+
+    $strengthText = '';
+    if ($strength !== '') {
+        $strengthText = $strength;
+        if ($strengthPerQty !== '' && $strengthPerQtyUnit !== '') {
+            $strengthText .= ' / ' . $strengthPerQty . ' ' . $strengthPerQtyUnit;
+        }
+    } elseif ($strengthPerQty !== '') {
+        $strengthText = $strengthPerQty . ($strengthPerQtyUnit !== '' ? ' ' . $strengthPerQtyUnit : '');
+    }
+    if ($strengthText !== '') $parts[] = $strengthText;
+    if ($dosage !== '') $parts[] = $dosage;
+
+    return implode(' ', $parts) ?: 'Unknown product';
+}
+
+function formatSupplierForReport(array $row): string
+{
+    $supplierName = trim((string)($row['supplier_name'] ?? ''));
+    $contactPerson = trim((string)($row['contact_person'] ?? ''));
+    $contactNumber = trim((string)($row['contact_number'] ?? ''));
+    $email = trim((string)($row['email'] ?? ''));
+    $address = trim((string)($row['address'] ?? ''));
+
+    $detailParts = [];
+    if ($supplierName !== '') $detailParts[] = $supplierName;
+    if ($contactPerson !== '') $detailParts[] = 'Contact: ' . $contactPerson;
+    if ($contactNumber !== '') $detailParts[] = 'Phone: ' . $contactNumber;
+    if ($email !== '') $detailParts[] = 'Email: ' . $email;
+    if ($address !== '') $detailParts[] = 'Address: ' . $address;
+
+    return $detailParts ? implode(' | ', $detailParts) : 'No supplier info';
+}
+
 $report = new Reports($db);
 
 // GET ALL DATA
@@ -572,7 +618,8 @@ foreach ($salesDetailRows as $detailRow) {
                 <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
                     <?php 
                         $expiredProducts = array_filter($inventory, function($row) {
-                            return $row['expiry_date'] && strtotime($row['expiry_date']) < time();
+                            $expiryDate = $row['expiry_date'] ?? null;
+                            return $expiryDate && strtotime($expiryDate) < time();
                         });
                     ?>
                     <?php if (empty($expiredProducts)): ?>
@@ -584,22 +631,33 @@ foreach ($salesDetailRows as $detailRow) {
                             <table class="table table-striped table-hover myTableExport">
                                 <thead class="table-dark">
                                     <tr>
-                                        <th><i class="fas fa-cube me-2"></i>Product Name</th>
-                                        <th><i class="fas fa-hourglass-end me-2"></i>Expiry Date</th>
-                                        <th><i class="fas fa-boxes me-2"></i>Quantity</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php foreach ($expiredProducts as $row): ?>
-                                        <tr class="table-danger">
-                                            <td><strong><?= htmlspecialchars($row['product_name']) ?></strong></td>
-                                            <td><?= date('M d, Y', strtotime($row['expiry_date'])) ?> <span class="badge bg-danger"><?= ceil((time() - strtotime($row['expiry_date'])) / 86400) ?> days ago</span></td>
-                                            <td><span class="badge bg-warning"><?= $row['quantity'] ?> units</span></td>
-                                        </tr>
-                                    <?php endforeach; ?>
-                                </tbody>
-                            </table>
-                        </div>
+                                       <th><i class="fas fa-cube me-2"></i>Product</th>
+                                       <th><i class="fas fa-pills me-2"></i>Dosage</th>
+                                       <th><i class="fas fa-flask me-2"></i>Strength</th>
+                                       <th><i class="fas fa-boxes me-2"></i>Original Qty</th>
+                                       <th><i class="fas fa-warehouse me-2"></i>Current Qty</th>
+                                       <th><i class="fas fa-truck me-2"></i>Supplier</th>
+                                       <th><i class="fas fa-hourglass-end me-2"></i>Expiry</th>
+                                   </tr>
+                               </thead>
+                               <tbody>
+                                   <?php foreach ($expiredProducts as $row): ?>
+                                       <tr class="table-danger">
+                                           <td><strong><?= htmlspecialchars(formatProductNameForReport($row)) ?></strong></td>
+                                           <td><?= htmlspecialchars(trim((string)($row['dosage_form'] ?? '')) ?: 'N/A') ?></td>
+                                           <td><?= htmlspecialchars(trim((string)($row['strength'] ?? '')) ?: 'N/A') ?></td>
+                                           <td><span class="badge bg-secondary"><?= (int)($row['received_quantity'] ?? 0) ?> units</span></td>
+                                           <td><span class="badge bg-warning text-dark"><?= (int)($row['quantity'] ?? 0) ?> units</span></td>
+                                           <td><?= nl2br(htmlspecialchars(formatSupplierForReport($row))) ?></td>
+                                           <td>
+                                               <?= date('M d, Y', strtotime($row['expiry_date'])) ?>
+                                               <span class="badge bg-danger"><?= ceil((time() - strtotime($row['expiry_date'])) / 86400) ?> days ago</span>
+                                           </td>
+                                       </tr>
+                                   <?php endforeach; ?>
+                               </tbody>
+                           </table>
+                       </div>
                     <?php endif; ?>
                 </div>
                 <div class="modal-footer" style="background: #f8f9fa;">
@@ -807,6 +865,11 @@ foreach ($salesDetailRows as $detailRow) {
                 const salesDetailModal = document.getElementById('salesDetailModal');
                 if (salesDetailModal && window.bootstrap) {
                     bootstrap.Modal.getOrCreateInstance(salesDetailModal).show();
+                    reportUrl.searchParams.delete('detail_period');
+                    reportUrl.searchParams.delete('detail_cashier');
+                    reportUrl.searchParams.delete('detail_value');
+                    const nextUrl = reportUrl.pathname + (reportUrl.search ? '?' + reportUrl.searchParams.toString() : '');
+                    history.replaceState({}, '', nextUrl);
                 }
             }
 
