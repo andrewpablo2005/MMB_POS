@@ -38,7 +38,7 @@ date_default_timezone_set('Asia/Manila');
 
 <!-- Inter Font & Dashboard CSS -->
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../css/dashboard.css?v=3">
+<link rel="stylesheet" href="../css/dashboard.css?v=4">
 
 <!-- Pass PHP data to dashboard.js without mixing PHP into the JS file -->
 <script>
@@ -79,7 +79,7 @@ date_default_timezone_set('Asia/Manila');
     </div>
     <div class="col-6 col-xl-3">
       <div class="stat-card">
-        <div class="stat-icon lime"><i class="fas fa-chart-bar"></i></div>
+        <div class="stat-icon rose"><i class="fas fa-chart-bar"></i></div>
         <div>
           <div class="stat-label">Yearly Sales</div>
           <div class="stat-value">₱<?php echo number_format($totalSalesYear, 2); ?></div>

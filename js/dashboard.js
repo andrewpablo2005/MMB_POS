@@ -71,7 +71,7 @@
           grid:   { color: 'rgba(0,0,0,.04)', drawBorder: false },
           border: { display: false },
           ticks:  {
-            color:  '#94a3b8',
+            color:  '#64748b',
             font:   { size: 11, family: 'Inter' },
             callback: (v) => v >= 1000 ? '₱' + (v / 1000).toFixed(0) + 'k' : '₱' + v,
           }
@@ -79,7 +79,7 @@
         x: {
           grid:   { display: false },
           border: { display: false },
-          ticks:  { color: '#94a3b8', font: { size: 11, family: 'Inter' } },
+          ticks:  { color: '#64748b', font: { size: 11, family: 'Inter' } },
         }
       }
     }
