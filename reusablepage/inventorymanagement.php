@@ -30,7 +30,6 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
     $inventorySuccessMessage = 'Inventory batch disposed successfully.';
 }
 ?>
-<link rel="stylesheet" href="../css/button.css?v=2">
 <div class="card shadow-sm">
     <div class="card-body">
         <?php if ($inventorySuccessMessage !== ''): ?>

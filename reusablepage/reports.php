@@ -58,7 +58,7 @@ foreach ($salesDetailRows as $detailRow) {
 }
 ?>
 
-<link rel="stylesheet" href="../css/report.css?v=3">
+<link rel="stylesheet" href="../css/report.css?v=4">
 
 <div class="report-page">
 
@@ -829,7 +829,7 @@ foreach ($salesDetailRows as $detailRow) {
     </script>
 
     <!-- PDF SCRIPT -->
-    <script src="../js/reports.js">
+    <script src="../js/reports.js?v=2">
     </script>
 
     <!-- Bootstrap JS for Modal -->

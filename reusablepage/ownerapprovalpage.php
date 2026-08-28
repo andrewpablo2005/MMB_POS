@@ -90,4 +90,4 @@ $users = $userAction->getAllPreUsers();
 
 </div>
 
-<script src="../js/usersmanagement.js"></script>
+<script src="../js/usersmanagement.js?v=2"></script>

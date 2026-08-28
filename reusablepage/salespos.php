@@ -32,7 +32,7 @@ if (!empty($_SESSION['user_id'])) {
 ?>
 
 <!-- wePOS Inspired CSS -->
-<link rel="stylesheet" href="../css/pos_wepos.css?v=1.4">
+<link rel="stylesheet" href="../css/pos_wepos.css?v=1.5">
 
 <div class="wepos-wrapper" id="weposApp">
     
@@ -695,4 +695,4 @@ if (!empty($_SESSION['user_id'])) {
 </div>
 
 <?php include __DIR__ . '/returnmodal.php'; ?>
-<script src="../js/pos_wepos.js?v=1.4"></script>
+<script src="../js/pos_wepos.js?v=1.5"></script>
