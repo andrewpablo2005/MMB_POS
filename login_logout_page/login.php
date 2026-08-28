@@ -1,5 +1,5 @@
 <?php
-// 🔐 This page must be able to run standalone (it is included by index.php,
+// This page must be able to run standalone (it is included by index.php,
 // but it can also be reached directly at /MMBPOS/login_logout_page/login.php).
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
@@ -144,7 +144,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
                     </div>
 
                     <div style="padding: 20px; background: rgba(255, 255, 255, 0.1); border-radius: 10px; backdrop-filter: blur(10px);">
-                        <small style="font-size: 13px; opacity: 0.9;">✓ HIPAA Compliant • ✓ Secure • ✓ Real-time Analytics</small>
+                        <small style="font-size: 13px; opacity: 0.9; letter-spacing: .02em;">
+                            <i class="fas fa-shield-halved me-1"></i>HIPAA Compliant
+                            <span class="mx-2 opacity-50">·</span>
+                            <i class="fas fa-lock me-1"></i>Secure
+                            <span class="mx-2 opacity-50">·</span>
+                            <i class="fas fa-chart-line me-1"></i>Real-time Analytics
+                        </small>
                     </div>
                 </div>
             </div>

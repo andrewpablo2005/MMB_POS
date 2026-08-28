@@ -481,7 +481,7 @@ if (!empty($_SESSION['user_id'])) {
                         <span>VAT (12%)</span><span id="receiptVat"></span>
                     </div>
                     <div style="display:flex; justify-content:space-between; font-size:15px; font-weight:700; border-top:1px solid #e2e8f0; padding-top:6px; margin-top:4px;">
-                        <span>TOTAL</span><span id="receiptTotal" style="color:#15803d;"></span>
+                        <span>TOTAL</span><span id="receiptTotal" style="color:#b91c1c;"></span>
                     </div>
                 </div>
                 <div style="border-top:1px dashed #cbd5e1; margin-top:10px; padding-top:8px; font-size:12px;">
@@ -576,11 +576,11 @@ if (!empty($_SESSION['user_id'])) {
 
         const variance = Math.round((counted - weposClosingSystemCash) * 100) / 100;
         varianceBox.textContent = variance === 0
-            ? '✓ Counted cash matches the system amount.'
+            ? 'Counted cash matches the system amount.'
             : (variance > 0 ? 'Overage: ' : 'Shortage: ') + weposFormatClosingCurrency(Math.abs(variance));
         varianceBox.style.display = 'block';
-        varianceBox.style.background = variance === 0 ? '#dcfce7' : '#fef3c7';
-        varianceBox.style.color = variance === 0 ? '#166534' : '#92400e';
+        varianceBox.style.background = variance === 0 ? '#f1f5f9' : '#fef3c7';
+        varianceBox.style.color = variance === 0 ? '#334155' : '#92400e';
         confirmButton.disabled = false;
     }
 
@@ -661,7 +661,7 @@ if (!empty($_SESSION['user_id'])) {
                 <i class="fas fa-exclamation-triangle"></i> This ID is not yet on file. <strong>Inspect the physical ID card</strong> and complete the checklist below.
             </div>
 
-            <!-- 🔐 IN-APP PHYSICAL ID INSPECTION CHECKLIST (replaces the
+            <!-- IN-APP PHYSICAL ID INSPECTION CHECKLIST (replaces the
                  external-website redirect flow) -->
             <div id="verifyIdChecklist" style="display:none; margin-top:0.75rem; border:1px solid #e5e7eb; border-radius:6px; padding:12px; background:#f9fafb;">
                 <p style="font-size:0.8rem; font-weight:600; margin:0 0 8px 0; color:#374151;"><i class="fas fa-clipboard-check"></i> Physical ID Inspection Checklist</p>

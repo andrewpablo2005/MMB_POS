@@ -4,8 +4,8 @@
  * the domain root (e.g. https://mmbpos.wuaze.com/) OR inside a subfolder
  * (e.g. XAMPP's http://localhost/MMBPOS/).
  *
- * Usage:  href="<?= mmbpos_base_path() ?>/css/login.css"
- *         header('Location: ' . mmbpos_base_path() . '/ownerpage/dashboard.php');
+ * Usage: href="<?= mmbpos_base_path() ?>/css/login.css"
+ * header('Location: ' . mmbpos_base_path() . '/ownerpage/dashboard.php');
  */
 if (!function_exists('mmbpos_base_path')) {
     function mmbpos_base_path(): string

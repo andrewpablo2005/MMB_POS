@@ -7,7 +7,7 @@ use Classes\ProductManagement;
 
 $product = new ProductManagement($db);
 
-// ✅ USE CLASS FUNCTIONS
+// USE CLASS FUNCTIONS
 $categories = $product->getCategories();
 $unitMeasurements = $product->getUnitMeasurements();
 $dosageForms = $product->getDosageForms();
@@ -483,7 +483,7 @@ $dosageForms = $product->getDosageForms();
         });
     });
 
-    // 🔥 ADD FORM VALIDATION BEFORE SUBMIT
+    // ADD FORM VALIDATION BEFORE SUBMIT
     function validateAddProductForm(event) {
         const categoryValue = document.getElementById('category_id');
         const unitValue = document.getElementById('unit_measurement');
@@ -517,7 +517,7 @@ $dosageForms = $product->getDosageForms();
         }
 
         if (errors.length > 0) {
-            alert('❌ Form Validation Error:\n\n' + errors.join('\n'));
+            alert('Form Validation Error:\n\n' + errors.join('\n'));
             event.preventDefault();
             return false;
         }

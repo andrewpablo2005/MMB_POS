@@ -14,7 +14,7 @@ let weposCustomerName = null;     // tracks customer name for senior/pwd custome
 let weposCustomerId = null;       // tracks customer ID linking to senior_customers/pwd_customers table
 let weposLastReceiptData = null;  // stores last receipt data for printing
 
-// 🔐 XSS guard: product/customer names are user-editable data and must be
+// XSS guard: product/customer names are user-editable data and must be
 // escaped before being interpolated into innerHTML templates.
 function weposEscapeHtml(value) {
     return String(value ?? '')
@@ -564,7 +564,7 @@ function weposUpdateCart() {
         totalFinalAmount += c.final;
 
         const overrideBadge = item.override
-            ? ` <span style="font-size:10px; color:#00a32a; font-weight:600;">✓ ${(item.overrideRate*100).toFixed(0)}% OFF</span>`
+            ? ` <span style="font-size:10px; color:#b91c1c; font-weight:600;"><i class="fas fa-tag"></i> ${(item.overrideRate*100).toFixed(0)}% OFF</span>`
             : '';
 
 
@@ -757,7 +757,7 @@ function weposRenderCheckoutItems() {
     entries.forEach(item => {
         const c = weposCalcItem(item, dRate, isVatExempt, discountRule);
         const overrideLabel = item.override
-            ? `<span style="color:#00a32a; font-weight:600;">${(item.overrideRate*100).toFixed(0)}% OFF (by ${weposEscapeHtml(item.overrideApprover)})</span>`
+            ? `<span style="color:#b91c1c; font-weight:600;"><i class="fas fa-tag"></i> ${(item.overrideRate*100).toFixed(0)}% OFF (by ${weposEscapeHtml(item.overrideApprover)})</span>`
             : '';
         
         html += `<div style="display:flex; justify-content:space-between; align-items:center; padding:8px 12px; border-bottom:1px solid #f0f0f1;">
@@ -766,7 +766,7 @@ function weposRenderCheckoutItems() {
                 <div style="font-size:12px; color:#50575e;">${item.qty} × ₱${item.price.toFixed(2)} = ₱${c.final.toFixed(2)} ${overrideLabel}</div>
             </div>
             <button onclick="weposRequestOverride('${item.id}')" 
-                    style="padding:4px 10px; font-size:11px; border-radius:3px; border:1px solid ${item.override ? '#00a32a' : '#8c8f94'}; background:${item.override ? '#f0fdf4' : '#f6f7f7'}; color:${item.override ? '#00a32a' : '#50575e'}; cursor:pointer; white-space:nowrap;">
+                    style="padding:4px 10px; font-size:11px; border-radius:3px; border:1px solid ${item.override ? '#dc2626' : '#8c8f94'}; background:${item.override ? '#fef2f2' : '#f6f7f7'}; color:${item.override ? '#dc2626' : '#50575e'}; cursor:pointer; white-space:nowrap;">
                 <i class="fas fa-tag"></i> ${item.override ? 'Remove' : 'Override'}
             </button>
         </div>`;
@@ -1299,7 +1299,7 @@ function weposDeclineVerify() {
     weposCancelVerifyId();
 }
 
-// 🔐 Checklist gate: "Confirm ID Verified" only becomes clickable when the
+// Checklist gate: "Confirm ID Verified" only becomes clickable when the
 // cashier has ticked every inspection item.
 function weposUpdateVerifyChecklist() {
     const checks = document.querySelectorAll('.verifyIdCheck');
@@ -1328,7 +1328,7 @@ async function weposApproveVerify() {
     const type      = document.getElementById('verifyIdModal').getAttribute('data-type');
     const errEl     = document.getElementById('verifyIdError');
 
-    // 🔐 The cashier must have completed every inspection item
+    // The cashier must have completed every inspection item
     const checks = document.querySelectorAll('.verifyIdCheck');
     if (!Array.from(checks).every(cb => cb.checked)) {
         errEl.textContent = 'Please complete the physical ID inspection checklist first.';

@@ -15,7 +15,7 @@ header('Content-Type: application/json');
 
 require_once __DIR__ . '/../conn/database.php';
 
-// 🔐 SECURITY: transaction details (customer names, totals, items) must not
+// SECURITY: transaction details (customer names, totals, items) must not
 // be readable by unauthenticated callers.
 if (empty($_SESSION['user_id'])) {
     echo json_encode(['success' => false, 'error' => 'Not authenticated. Please log in again.']);

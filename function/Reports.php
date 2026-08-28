@@ -115,7 +115,7 @@ class Reports
 
     public function getCashierList(): array
     {
-       // 🐛 FIX: only ACTIVE accounts, deduped (a user with multiple
+       // FIX: only ACTIVE accounts, deduped (a user with multiple
        // users_info rows previously appeared twice in the dropdown).
        $stmt = $this->db->prepare("
            SELECT u.id,

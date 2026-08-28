@@ -17,7 +17,7 @@ if (isset($_POST['action'])) {
         $userAction->reject();
 }
 
-// 🔥 USE FUNCTION HERE
+// USE FUNCTION HERE
 $users = $userAction->getAllPreUsers();
 ?>
 <div class="card">
@@ -37,7 +37,7 @@ $users = $userAction->getAllPreUsers();
                     </tr>
                 </thead>
 
-                <!-- ✅ ONLY ONE TBODY -->
+                <!-- ONLY ONE TBODY -->
                 <tbody>
                     <?php foreach ($users as $u): ?>
                         <tr>

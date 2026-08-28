@@ -52,13 +52,13 @@ $mmbInitial = mb_strtoupper(mb_substr($mmbPosition, 0, 1));
      ═══════════════════════════════════════════════════════════════ -->
 <nav class="navbar app-topbar navbar-expand-lg sticky-top">
 
-    <!-- ☰ Sidebar Toggle (Mobile) -->
+    <!-- Sidebar Toggle (Mobile) -->
     <button class="btn topbar-toggle d-lg-none me-1" type="button"
             data-bs-toggle="offcanvas" data-bs-target="#sidebar" aria-label="Open menu">
         <i class="fas fa-bars"></i>
     </button>
 
-    <!-- 🏥 Brand -->
+    <!-- Brand -->
     <a class="navbar-brand app-brand" href="#">
         <span class="brand-mark"><i class="fas fa-prescription-bottle-medical"></i></span>
         <span class="brand-text">
@@ -81,7 +81,7 @@ $mmbInitial = mb_strtoupper(mb_substr($mmbPosition, 0, 1));
 
         <span class="topbar-divider d-none d-sm-block"></span>
 
-        <!-- 👤 User Dropdown -->
+        <!-- User Dropdown -->
         <div class="dropdown">
             <button type="button" class="btn user-chip" id="userDropdownBtn" onclick="toggleDropdown()">
                 <span class="user-avatar"><?= $mmbInitial ?></span>

@@ -14,7 +14,7 @@ $usersmanagement = new UserManagement($db);
 $userId = $_SESSION['user_id'] ?? 0;
 $result = null;
 
-// ✅ HANDLE UPDATE — SECURITY FIX: always operate on the LOGGED-IN user's
+// HANDLE UPDATE — SECURITY FIX: always operate on the LOGGED-IN user's
 // own account. The posted user_id is ignored (it previously allowed anyone
 // to rewrite any account, including the owner's credentials).
 if (isset($_POST['updateUserSystem'])) {

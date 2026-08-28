@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-// 🔐 Only a logged-in cashier may register a verified customer
+// Only a logged-in cashier may register a verified customer
 if (empty($_SESSION['user_id'])) {
     echo json_encode(['error' => 'Not authenticated. Please log in again.']);
     exit;

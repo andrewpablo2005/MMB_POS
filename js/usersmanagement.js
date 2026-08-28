@@ -1,6 +1,6 @@
 $(function () {
 
-    // 🔹 NORMAL TABLES (no buttons)
+    // NORMAL TABLES (no buttons)
     $('.myTable').each(function () {
         if (!$.fn.DataTable.isDataTable(this)) {
             $(this).DataTable({
@@ -10,7 +10,7 @@ $(function () {
         }
     });
 
-    // 🔥 TABLES WITH EXPORT BUTTONS ONLY
+    // TABLES WITH EXPORT BUTTONS ONLY
     $('.myTableExport').each(function () {
         if (!$.fn.DataTable.isDataTable(this)) {
             initDataTable(this);
@@ -19,7 +19,7 @@ $(function () {
 
     // Focus search input on page load
     focusSearchInput();
-    // 🐛 FIX: initUserModals() was never defined — calling it threw a
+    // FIX: initUserModals() was never defined — calling it threw a
     // ReferenceError on every page load and aborted the remaining handlers.
     if (typeof initUserModals === 'function') {
         initUserModals();

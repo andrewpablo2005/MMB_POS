@@ -14,7 +14,7 @@ $pmUserRole = strtolower($_SESSION['position'] ?? 'staff');
 $pmIsManager = in_array($pmUserRole, ['owner', 'admin']);
 
 if (isset($_GET['deleteProduct'])) {
-    // 🔐 CSRF protection: deletes are only accepted with a valid per-session token
+    // CSRF protection: deletes are only accepted with a valid per-session token
     $deleteToken = (string)($_GET['t'] ?? '');
     if (!hash_equals($_SESSION['csrf_token'] ?? '', $deleteToken)) {
         echo "<script>alert('Invalid or expired delete request.'); window.location.href='dashboard.php?tab=product';</script>";

@@ -9,8 +9,8 @@
  * because .htaccess protection may not be active on all servers.
  *
  * Usage at the very top of a fragment:
- *   require_once __DIR__ . '/guard.php';                    // any logged-in user
- *   require_once __DIR__ . '/guard.php'; guard_require_roles(['owner']); // owner only
+ * require_once __DIR__ . '/guard.php'; // any logged-in user
+ * require_once __DIR__ . '/guard.php'; guard_require_roles(['owner']); // owner only
  */
 
 if (session_status() === PHP_SESSION_NONE) {
@@ -44,7 +44,7 @@ if (!function_exists('guard_require_roles')) {
 
 guard_require_login();
 
-// 🔐 Per-session CSRF token (used by GET delete links and available to forms)
+// Per-session CSRF token (used by GET delete links and available to forms)
 if (empty($_SESSION['csrf_token'])) {
     $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 }

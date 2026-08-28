@@ -23,7 +23,7 @@ use Classes\UserRegistration;
 
 $user = new UserRegistration($db);
 
-// ✅ SAFE POST HANDLING
+// SAFE POST HANDLING
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($user->pre_addUser()) {
         header("Location: dashboard.php?tab=users&added=1");
@@ -31,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// ✅ ALERT AFTER REDIRECT
+// ALERT AFTER REDIRECT
 if (isset($_GET['added'])) {
     echo "<script>alert('User added successfully!');</script>";
 }

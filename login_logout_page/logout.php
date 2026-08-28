@@ -1,5 +1,5 @@
 <?php
-// 🔐 Proper logout: destroy session data AND the session cookie
+// Proper logout: destroy session data AND the session cookie
 require_once __DIR__ . "/../conn/basepath.php";
 
 if (session_status() === PHP_SESSION_NONE) {

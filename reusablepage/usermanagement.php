@@ -35,7 +35,7 @@ if (isset($_POST['toggleUserStatus'])) {
 $users = $usersmanagement->getAllUsers();
 ?>
 
-<!-- ✅ ALERT + REDIRECT -->
+<!-- ALERT + REDIRECT -->
 <?php if ($result): ?>
     <script>
         alert("<?= htmlspecialchars((string)($result['message']), ENT_QUOTES, 'UTF-8') ?>");
@@ -46,7 +46,7 @@ $users = $usersmanagement->getAllUsers();
     </script>
 <?php endif; ?>
 
-<!-- ✅ CUSTOM TABLE SPACING -->
+<!-- CUSTOM TABLE SPACING -->
 <link rel="stylesheet" href="<?= mmbpos_base_path() ?>/css/table.css">
 <div>
 

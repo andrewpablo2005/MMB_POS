@@ -17,7 +17,7 @@ include("../conn/connection_links.php");
 
             <form method="POST" action="">
 
-                <!-- 🔐 ACCOUNT -->
+                <!-- ACCOUNT -->
                 <h6 class="text-primary">Account Information</h6>
                 <hr>
 
@@ -41,7 +41,7 @@ include("../conn/connection_links.php");
                     </select>
                 </div>
 
-                <!-- 👤 PERSONAL -->
+                <!-- PERSONAL -->
                 <h6 class="text-primary mt-4">Personal Information</h6>
                 <hr>
 
@@ -67,7 +67,7 @@ include("../conn/connection_links.php");
                     <input type="number" name="age" class="form-control">
                 </div>
 
-                <!-- 📧 CONTACT -->
+                <!-- CONTACT -->
                 <h6 class="text-primary mt-4">Contact Information</h6>
                 <hr>
 
@@ -83,7 +83,7 @@ include("../conn/connection_links.php");
                     </div>
                 </div>
 
-                <!-- 📍 ADDRESS -->
+                <!-- ADDRESS -->
                 <h6 class="text-primary mt-4">Address</h6>
                 <hr>
 
@@ -111,7 +111,7 @@ include("../conn/connection_links.php");
                 <!-- ACTION BUTTONS -->
                 <div class="d-flex justify-content-between mt-4">
                     <button type="submit" name="pre_addUser" class="btn btn-primary px-4">
-                        💾 Save User
+                        <i class="fas fa-floppy-disk me-1"></i> Save User
                     </button>
                 </div>
 
