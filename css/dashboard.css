@@ -1,4 +1,4 @@
-/* ─── Dashboard Scoped Styles ─── */
+/* ─── Dashboard Scoped Styles (v5 — brand palette, no green) ─── */
 .dash-wrapper {
   background: transparent;
   min-height: 100%;
@@ -58,7 +58,7 @@
   font-size: 1.4rem;
 }
 .stat-icon.blue  { background: #eff6ff; color: #2563eb; }
-.stat-icon.green { background: #f0fdf4; color: #16a34a; }
+.stat-icon.crimson { background: #fef2f2; color: #dc2626; }
 .stat-icon.cyan  { background: #ecfeff; color: #0891b2; }
 .stat-icon.amber { background: #fffbeb; color: #d97706; }
 .stat-icon.purple { background: #faf5ff; color: #9333ea; }
@@ -146,8 +146,8 @@
 .dash-table tr:hover td     { background: #fafbfc; }
 
 .ref-id     { font-weight: 700; color: #1a2535; font-size: .82rem; }
-.amount-pos { color: #16a34a; font-weight: 700; }
-.amount-neg { color: #ef4444; font-size: .82rem; }
+.amount-pos { color: #b91c1c; font-weight: 700; }
+.amount-neg { color: #94a3b8; font-size: .82rem; }
 
 .pill {
   padding: 3px 10px;
@@ -156,7 +156,8 @@
   font-weight: 600;
 }
 .pill-gray  { background: #f1f5f9; color: #64748b; }
-.pill-green { background: #f0fdf4; color: #16a34a; }
+.pill-green { background: #f1f5f9; color: #64748b; }
+.pill-brand { background: #fef2f2; color: #b91c1c; }
 
 /* ─── Top Products ─── */
 .top-product-item {
@@ -183,7 +184,7 @@
 }
 .top-product-item .product-name  { font-weight: 600; color: #1a2535; font-size: .85rem; }
 .top-product-item .product-sold  { font-size: .73rem; color: #94a3b8; }
-.top-product-item .product-price { font-weight: 700; color: #16a34a; font-size: .88rem; }
+.top-product-item .product-price { font-weight: 700; color: #b91c1c; font-size: .88rem; }
 
 /* ─── Alert Widgets ─── */
 .alert-card-warn {
