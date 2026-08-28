@@ -38,7 +38,7 @@ date_default_timezone_set('Asia/Manila');
 
 <!-- Inter Font & Dashboard CSS -->
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../css/dashboard.css?v=4">
+<link rel="stylesheet" href="../css/dashboard.css?v=5">
 
 <!-- Pass PHP data to dashboard.js without mixing PHP into the JS file -->
 <script>
@@ -59,7 +59,7 @@ date_default_timezone_set('Asia/Manila');
   <div class="row g-3 mb-4">
     <div class="col-6 col-xl-3">
       <div class="stat-card">
-        <div class="stat-icon blue"><i class="fas fa-peso-sign"></i></div>
+        <div class="stat-icon crimson"><i class="fas fa-peso-sign"></i></div>
         <div>
           <div class="stat-label">Today's Sales</div>
           <div class="stat-value">₱<?php echo number_format($netSalesToday, 2); ?></div>
@@ -69,7 +69,7 @@ date_default_timezone_set('Asia/Manila');
     </div>
     <div class="col-6 col-xl-3">
       <div class="stat-card">
-        <div class="stat-icon green"><i class="fas fa-chart-line"></i></div>
+        <div class="stat-icon amber"><i class="fas fa-chart-line"></i></div>
         <div>
           <div class="stat-label">Monthly Sales</div>
           <div class="stat-value">₱<?php echo number_format($totalSalesMonth, 2); ?></div>
@@ -89,7 +89,7 @@ date_default_timezone_set('Asia/Manila');
     </div>
     <div class="col-6 col-xl-3">
       <div class="stat-card">
-        <div class="stat-icon teal"><i class="fas fa-money-bill-trend-up"></i></div>
+        <div class="stat-icon indigo"><i class="fas fa-money-bill-trend-up"></i></div>
         <div>
           <div class="stat-label">Real Revenue Today</div>
           <div class="stat-value">₱<?php echo number_format($realRevenueToday, 2); ?></div>
@@ -105,7 +105,7 @@ date_default_timezone_set('Asia/Manila');
       <div class="dash-card">
         <div class="dash-card-header">
           <h6><i class="fas fa-bar-chart me-2 text-primary"></i>Monthly Sales Performance</h6>
-          <span class="pill pill-green"><?php echo date('Y'); ?></span>
+          <span class="pill pill-brand"><?php echo date('Y'); ?></span>
         </div>
         <div class="dash-card-body">
           <div class="chart-wrapper">
@@ -162,7 +162,7 @@ date_default_timezone_set('Asia/Manila');
     <div class="col-12 col-xl-5">
       <div class="dash-card">
         <div class="dash-card-header">
-          <h6><i class="fas fa-trophy me-2 text-warning"></i>Top Selling Products</h6>
+          <h6><i class="fas fa-trophy me-2 text-primary"></i>Top Selling Products</h6>
         </div>
         <div class="dash-card-body">
           <?php if (empty($topProducts)): ?>
@@ -199,7 +199,7 @@ date_default_timezone_set('Asia/Manila');
         </div>
         <div class="dash-card-body">
           <?php if (empty($lowStockItems)): ?>
-            <div class="empty-state"><i class="fas fa-circle-check" style="color:#16a34a;opacity:1"></i>All inventory looks good!</div>
+            <div class="empty-state"><i class="fas fa-circle-check" style="color:#dc2626;opacity:1"></i>All inventory looks good!</div>
           <?php else: ?>
             <table class="dash-table">
               <thead><tr><th>Product</th><th>Stock</th><th>Reorder At</th></tr></thead>
@@ -229,7 +229,7 @@ date_default_timezone_set('Asia/Manila');
         </div>
         <div class="dash-card-body">
           <?php if (empty($expiringItems)): ?>
-            <div class="empty-state"><i class="fas fa-circle-check" style="color:#16a34a;opacity:1"></i>No immediate expiries.</div>
+            <div class="empty-state"><i class="fas fa-circle-check" style="color:#dc2626;opacity:1"></i>No immediate expiries.</div>
           <?php else: ?>
             <table class="dash-table">
               <thead><tr><th>Product</th><th>Expiry Date</th><th>Status</th></tr></thead>
