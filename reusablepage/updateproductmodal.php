@@ -323,8 +323,8 @@ $dosageForms = $product->getDosageForms(); ?>
                 const noButton = form ? form.querySelector('[data-batch-option="no"]') : null;
 
                 if (yesButton) {
-                    yesButton.classList.toggle('btn-success', isYes);
-                    yesButton.classList.toggle('btn-outline-success', !isYes);
+                    yesButton.classList.toggle('btn-primary', isYes);
+                    yesButton.classList.toggle('btn-outline-primary', !isYes);
                 }
                 if (noButton) {
                     noButton.classList.toggle('btn-secondary', !isYes);

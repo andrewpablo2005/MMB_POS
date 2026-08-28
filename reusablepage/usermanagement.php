@@ -95,7 +95,7 @@ $users = $usersmanagement->getAllUsers();
                                     } elseif ($pos === 'Owner') {
                                         $badgeClass = 'badge-soft-dark';
                                     } elseif ($pos === 'Staff') {
-                                        $badgeClass = 'badge-soft-success';
+                                        $badgeClass = 'badge-soft-info';
                                     } else {
                                         $badgeClass = 'badge-soft-warning';
                                     }
@@ -107,8 +107,9 @@ $users = $usersmanagement->getAllUsers();
                                 </td>
 
                                 <td>
-                                    <span class="badge <?= ($u['status'] ?? 'active') === 'active' ? 'badge-soft-success' : 'badge-soft-dark' ?>">
-                                        <?= ($u['status'] ?? 'active') === 'active' ? 'Active' : 'Disabled' ?>
+                                    <?php $isActive = ($u['status'] ?? 'active') === 'active'; ?>
+                                    <span class="user-status <?= $isActive ? 'is-active' : 'is-disabled' ?>">
+                                        <span class="status-dot"></span><?= $isActive ? 'Active' : 'Disabled' ?>
                                     </span>
                                 </td>
 
@@ -131,7 +132,7 @@ $users = $usersmanagement->getAllUsers();
                                     <form method="POST" class="d-inline">
                                         <input type="hidden" name="id" value="<?= htmlspecialchars((string)($u['id']), ENT_QUOTES, 'UTF-8') ?>">
                                         <input type="hidden" name="status" value="<?= ($u['status'] ?? 'active') === 'active' ? 'disabled' : 'active' ?>">
-                                        <button type="submit" name="toggleUserStatus" class="btn <?= ($u['status'] ?? 'active') === 'active' ? 'btn-warning' : 'btn-success' ?> btn-sm"
+                                        <button type="submit" name="toggleUserStatus" class="btn <?= ($u['status'] ?? 'active') === 'active' ? 'btn-outline-secondary' : 'btn-primary' ?> btn-sm"
                                             onclick="return confirm('<?= ($u['status'] ?? 'active') === 'active' ? 'Disable' : 'Enable' ?> this account?')">
                                             <?= ($u['status'] ?? 'active') === 'active' ? 'Disable' : 'Enable' ?>
                                         </button>

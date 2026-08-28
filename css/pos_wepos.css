@@ -3,10 +3,10 @@
    ═══════════════════════════════════════════════════════════ */
 
 :root {
-    /* MMB brand — primary is now crimson; success/danger stay semantic */
+    /* MMB brand — single crimson identity; pay/total/change use brand family */
     --wp-primary: #dc2626;        /* MMB Brand Crimson */
     --wp-primary-hover: #b91c1c;
-    --wp-success: #00a32a;
+    --wp-success: #b91c1c;         /* remapped to brand — no greens anywhere */
     --wp-danger: #d63638;
     --wp-bg: #f0f0f1;
     --wp-card: #ffffff;
@@ -194,8 +194,8 @@
 }
 
 .wepos-product-card.flash-add {
-    border-color: var(--wp-success);
-    background: #f0fdf4;
+    border-color: var(--wp-primary);
+    background: #fef2f2;
 }
 
 .wepos-product-card.out-of-stock {
@@ -478,13 +478,13 @@
 .wepos-grand-total {
     font-size: 20px !important;
     font-weight: 700 !important;
-    color: var(--wp-success) !important;
+    color: #b91c1c !important;
 }
 
 .wepos-pay-btn {
     width: 100%;
     padding: 18px;
-    background: var(--wp-success);
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
     color: #fff;
     border: none;
     font-size: 16px;
@@ -492,11 +492,13 @@
     display: flex;
     justify-content: space-between;
     cursor: pointer;
-    transition: background 0.15s;
+    transition: background 0.15s, box-shadow 0.15s;
+    box-shadow: 0 4px 14px rgba(220, 38, 38, 0.28);
 }
 
 .wepos-pay-btn:hover:not(:disabled) {
-    background: #008a20;
+    background: linear-gradient(135deg, #b91c1c 0%, #991b1b 100%);
+    box-shadow: 0 6px 18px rgba(220, 38, 38, 0.36);
 }
 
 .wepos-pay-btn:disabled {
@@ -591,7 +593,7 @@
 .wepos-quick-cash button:hover { background: #e0e0e1; }
 
 .wepos-change-box { text-align: center; margin-top: 20px; padding: 15px; background: #fef2f2; border-radius: 4px; }
-.wepos-change-box strong { font-size: 24px; color: var(--wp-success); display: block; }
+.wepos-change-box strong { font-size: 24px; color: #b91c1c; display: block; }
 
 .wepos-modal-foot { padding: 16px 20px; border-top: 1px solid var(--wp-border); display: flex; justify-content: flex-end; gap: 10px; background: #fcfcfc; }
 

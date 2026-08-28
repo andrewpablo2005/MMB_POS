@@ -139,7 +139,7 @@ require_once __DIR__ . '/guard.php'; guard_require_roles(['owner','admin']);
                                             }
 
                                             if (empty($batchStatus)) {
-                                                $batchStatus[] = '<span class="badge bg-success">Good Stock</span>';
+                                                $batchStatus[] = '<span class="badge badge-soft-dark">Good Stock</span>';
                                             }
                                         ?>
                                         <tr class="<?= $batchRowClass ?>">

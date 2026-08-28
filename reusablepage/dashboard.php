@@ -69,7 +69,7 @@ date_default_timezone_set('Asia/Manila');
     </div>
     <div class="col-6 col-xl-3">
       <div class="stat-card">
-        <div class="stat-icon amber"><i class="fas fa-chart-line"></i></div>
+        <div class="stat-icon wine"><i class="fas fa-chart-line"></i></div>
         <div>
           <div class="stat-label">Monthly Sales</div>
           <div class="stat-value">₱<?php echo number_format($totalSalesMonth, 2); ?></div>
@@ -89,7 +89,7 @@ date_default_timezone_set('Asia/Manila');
     </div>
     <div class="col-6 col-xl-3">
       <div class="stat-card">
-        <div class="stat-icon indigo"><i class="fas fa-money-bill-trend-up"></i></div>
+        <div class="stat-icon slate"><i class="fas fa-money-bill-trend-up"></i></div>
         <div>
           <div class="stat-label">Real Revenue Today</div>
           <div class="stat-value">₱<?php echo number_format($realRevenueToday, 2); ?></div>
