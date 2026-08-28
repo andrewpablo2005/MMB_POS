@@ -1,82 +1,14 @@
-<?php
-require_once __DIR__ . '/guard.php'; guard_require_roles(['owner','admin']);
-require_once __DIR__ . "/../conn/database.php";
-require_once __DIR__ . "/../conn/connection_links.php";
-require_once __DIR__ . "/../function/Reports.php";
+<link rel="stylesheet" href="../css/report.css?v=3">
 
-use Classes\Reports;
+<div class="report-page">
 
-// 🐛 FIX: month names for the Monthly Sales Trend modal (previously undefined)
-$monthNames = [1 => 'January', 2 => 'February', 3 => 'March', 4 => 'April', 5 => 'May', 6 => 'June',
-               7 => 'July', 8 => 'August', 9 => 'September', 10 => 'October', 11 => 'November', 12 => 'December'];
-
-$report = new Reports($db);
-
-// GET ALL DATA
-$data = $report->getAllReports();
-
-// ASSIGN VARIABLES
-$sales = $data['sales'];
-$topProducts = $data['topProducts'];
-$inventory = $data['inventory'];
-$discounts = $data['discounts'];
-$cashiers = $data['cashiers'];
-$dailySales = $data['dailySales'];
-$yearlySales = $data['yearlySales'];
-$discountBreakdown = $data['discountBreakdown'];
-$allTransactions = $data['transactions'];
-$totalDiscounts = $data['totalDiscounts'];
-$totalVatExemption = $data['totalVatExemption'];
-$realRevenueToday = $data['realRevenueToday'];
-$realRevenueMonth = $data['realRevenueMonth'];
-$realRevenueYear = $data['realRevenueYear'];
-$totalSalesYear = $data['totalSalesYear'];
-$detailCashierId = isset($_GET['detail_cashier']) ? (int)$_GET['detail_cashier'] : 0;
-$detailPeriod = $_GET['detail_period'] ?? 'date';
-$detailValue = $_GET['detail_value'] ?? date('Y-m-d');
-$cashierList = $report->getCashierList();
-$salesDetail = $report->getSalesDetailReport($detailPeriod, $detailValue, $detailCashierId);
-$salesDetailRows = $salesDetail['rows'];
-$registerClosings = $report->getRegisterClosings();
-$detailGrossTotal = 0.0;
-$detailDiscountTotal = 0.0;
-$detailVatTotal = 0.0;
-$detailNetTotal = 0.0;
-$detailRefundTotal = 0.0;
-$detailCogsReversedTotal = 0.0;
-$detailNetAfterRefundTotal = 0.0;
-$detailRealRevenueTotal = 0.0;
-foreach ($salesDetailRows as $detailRow) {
-    $detailGrossTotal += (float)($detailRow['gross_subtotal'] ?? 0);
-    $detailDiscountTotal += (float)($detailRow['discount_total'] ?? 0);
-    $detailVatTotal += (float)($detailRow['total_vat_exemption'] ?? 0);
-    $detailNetTotal += (float)($detailRow['total_amount'] ?? 0);
-    $detailRefundTotal += (float)($detailRow['refund_total'] ?? 0);
-    $detailCogsReversedTotal += (float)($detailRow['cogs_reversed'] ?? 0);
-    $detailNetAfterRefundTotal += (float)($detailRow['net_after_refund'] ?? 0);
-    $detailRealRevenueTotal += (float)($detailRow['real_revenue'] ?? 0);
-}
-?>
-
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <title>Drugstore Reports</title>
-    <link rel="stylesheet" href="../css/report.css?v=2">
-</head>
-
-<body class="p-4">
-
-    <div class="container">
-
-        <!-- HEADER -->
-        <div class="d-flex justify-content-between align-items-center mb-5 p-4 bg-white rounded shadow-sm" style="border-left: 5px solid #1a3a52;">
+        <!-- PAGE HEADER -->
+        <div class="page-head">
             <div>
-
-                <h2 class="report-title m-0">📊 MMB Drugstore Reports</h2>
+                <h2>Reports &amp; Analytics</h2>
+                <p class="page-sub">Sales details, refunds, cashier performance and inventory insights.</p>
             </div>
+            <span class="report-date-pill"><?= date('F j, Y') ?></span>
         </div>
 
         <div id="reportContent">
@@ -85,8 +17,8 @@ foreach ($salesDetailRows as $detailRow) {
             <div class="row mb-4">
                 <div class="col-md-4">
                     <div class="card shadow-sm summary-card" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#topProductsModal">
-                        <div><i class="fas fa-crown text-warning"></i> Top Selling Product</div>
-                        <div class="summary-value text-warning">
+                        <div><i class="fas fa-crown"></i> Top Selling Product</div>
+                        <div class="summary-value">
                             <?= htmlspecialchars($topProducts[0]['product_name'] ?? 'N/A') ?>
                         </div>
                         <small class="text-muted"><?= $topProducts[0]['total_sold'] ?? 0 ?> units sold</small>
@@ -95,8 +27,8 @@ foreach ($salesDetailRows as $detailRow) {
 
                 <div class="col-md-4">
                     <div class="card shadow-sm summary-card" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#salesDetailModal">
-                        <div><i class="fas fa-calendar-check text-info"></i> Sales Detail Report</div>
-                        <div class="summary-value text-info">₱<?= number_format($detailRealRevenueTotal, 2) ?></div>
+                        <div><i class="fas fa-calendar-check"></i> Sales Detail Report</div>
+                        <div class="summary-value">₱<?= number_format($detailRealRevenueTotal, 2) ?></div>
                         <small class="text-muted">Real revenue for <?= htmlspecialchars($salesDetail['value']) ?></small>
                     </div>
                 </div>
@@ -109,8 +41,8 @@ foreach ($salesDetailRows as $detailRow) {
                         $expiredCount = count($expiredProducts);
                     ?>
                     <div class="card shadow-sm summary-card" style="cursor: pointer; <?= $expiredCount > 0 ? 'border-danger; background-color: #fef2f2;' : '' ?>" data-bs-toggle="modal" data-bs-target="#expiredProductsModal">
-                        <div><i class="fas fa-exclamation-triangle <?= $expiredCount > 0 ? 'text-danger' : 'text-success' ?>"></i> Expired Products</div>
-                        <div class="summary-value <?= $expiredCount > 0 ? 'text-danger' : 'text-success' ?>">
+                        <div><i class="fas fa-exclamation-triangle"></i> Expired Products</div>
+                        <div class="summary-value <?= $expiredCount > 0 ? 'text-danger' : '' ?>">
                             <?= $expiredCount ?>
                         </div>
                         <small class="text-muted"><?= $expiredCount > 0 ? 'Action required' : 'All items safe' ?></small>
@@ -119,8 +51,8 @@ foreach ($salesDetailRows as $detailRow) {
 
                 <div class="col-md-4">
                     <div class="card shadow-sm summary-card" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#vatDiscountModal">
-                        <div><i class="fas fa-receipt text-warning"></i> VAT Exemption & Discount</div>
-                        <div class="summary-value text-warning">
+                        <div><i class="fas fa-receipt"></i> VAT Exemption & Discount</div>
+                        <div class="summary-value">
                             ₱<?= number_format(($totalVatExemption ?? 0) + ($totalDiscounts ?? 0), 2) ?>
                         </div>
                         <small class="text-muted">
@@ -131,8 +63,8 @@ foreach ($salesDetailRows as $detailRow) {
 
                 <div class="col-md-4">
                     <div class="card shadow-sm summary-card" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#registerClosingReportModal">
-                        <div><i class="fas fa-cash-register text-success"></i> Register Closing Report</div>
-                        <div class="summary-value text-success"><?= count($registerClosings) ?></div>
+                        <div><i class="fas fa-cash-register"></i> Register Closing Report</div>
+                        <div class="summary-value"><?= count($registerClosings) ?></div>
                         <small class="text-muted">Saved cashier closing(s)</small>
                     </div>
                 </div>
@@ -143,9 +75,9 @@ foreach ($salesDetailRows as $detailRow) {
         <div class="modal fade" id="salesDetailModal" tabindex="-1" aria-labelledby="salesDetailModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-xl modal-fullscreen-lg-down">
                 <div class="modal-content">
-                    <div class="modal-header" style="background: linear-gradient(135deg, #0f766e 0%, #0891b2 100%); color: white;">
-                        <h5 class="modal-title" id="salesDetailModalLabel"><i class="fas fa-calendar-check me-2"></i>Sales Detail Report</h5>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="salesDetailModalLabel"><span class="modal-head-icon"><i class="fas fa-calendar-check"></i></span>Sales Detail Report</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
                         <form method="GET" id="salesDetailFilterForm" class="row g-2 align-items-end mb-3">
@@ -224,9 +156,9 @@ foreach ($salesDetailRows as $detailRow) {
         <div class="modal fade" id="registerClosingReportModal" tabindex="-1" aria-labelledby="registerClosingReportModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-xl modal-fullscreen-lg-down">
                 <div class="modal-content">
-                    <div class="modal-header" style="background: linear-gradient(135deg, #166534 0%, #0f766e 100%); color: white;">
-                        <h5 class="modal-title" id="registerClosingReportModalLabel"><i class="fas fa-cash-register me-2"></i>Register Closing Report</h5>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="registerClosingReportModalLabel"><span class="modal-head-icon"><i class="fas fa-cash-register"></i></span>Register Closing Report</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
                         <div class="table-responsive">
@@ -276,12 +208,12 @@ foreach ($salesDetailRows as $detailRow) {
         <div class="modal fade" id="monthlySalesModal" tabindex="-1" aria-labelledby="monthlySalesModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-xl">
                     <div class="modal-content">
-                        <div class="modal-header" style="background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%); color: white;">
+                        <div class="modal-header">
                             <h5 class="modal-title" id="monthlySalesModalLabel">
-                                <i class="fas fa-chart-line me-2"></i>
+                                <span class="modal-head-icon"><i class="fas fa-chart-line"></i></span>
                                 Monthly Sales Trend & Performance
                             </h5>
-                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                         </div>
 
                         <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
@@ -369,11 +301,11 @@ foreach ($salesDetailRows as $detailRow) {
     <div class="modal fade" id="transactionModal" tabindex="-1" aria-labelledby="transactionModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-xl modal-fullscreen-lg-down">
             <div class="modal-content">
-                <div class="modal-header" style="background: linear-gradient(135deg, #475569 0%, #334155 100%); color: white;">
+                <div class="modal-header">
                     <h5 class="modal-title" id="transactionModalLabel">
-                        <i class="fas fa-receipt me-2"></i>Transaction Details (Last 500)
+                        <span class="modal-head-icon"><i class="fas fa-receipt"></i></span>Transaction Details (Last 500)
                     </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
                     <div class="table-responsive">
@@ -452,11 +384,11 @@ foreach ($salesDetailRows as $detailRow) {
     <div class="modal fade" id="topProductsModal" tabindex="-1" aria-labelledby="topProductsModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
-                <div class="modal-header" style="background: linear-gradient(135deg, #1a3a52 0%, #2c3e50 100%); color: white;">
+                <div class="modal-header">
                     <h5 class="modal-title" id="topProductsModalLabel">
-                        <i class="fas fa-star me-2"></i>Top 5 Best-Selling Products
+                        <span class="modal-head-icon"><i class="fas fa-star"></i></span>Top 5 Best-Selling Products
                     </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="table-responsive">
@@ -489,11 +421,11 @@ foreach ($salesDetailRows as $detailRow) {
     <div class="modal fade" id="top5ProductsModal" tabindex="-1" aria-labelledby="top5ProductsModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
-                <div class="modal-header" style="background: linear-gradient(135deg, #1a3a52 0%, #2c3e50 100%); color: white;">
+                <div class="modal-header">
                     <h5 class="modal-title" id="top5ProductsModalLabel">
-                        <i class="fas fa-box me-2"></i>Top 5 Best-Selling Products
+                        <span class="modal-head-icon"><i class="fas fa-box"></i></span>Top 5 Best-Selling Products
                     </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
                     <div class="table-responsive">
@@ -531,11 +463,11 @@ foreach ($salesDetailRows as $detailRow) {
     <div class="modal fade" id="cashierModal" tabindex="-1" aria-labelledby="cashierModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
-                <div class="modal-header" style="background: linear-gradient(135deg, #0369a1 0%, #0284c7 100%); color: white;">
+                <div class="modal-header">
                     <h5 class="modal-title" id="cashierModalLabel">
-                        <i class="fas fa-user-tie me-2"></i>Cashier Performance Report
+                        <span class="modal-head-icon"><i class="fas fa-user-tie"></i></span>Cashier Performance Report
                     </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="table-responsive">
@@ -568,11 +500,11 @@ foreach ($salesDetailRows as $detailRow) {
     <div class="modal fade" id="expiredProductsModal" tabindex="-1" aria-labelledby="expiredProductsModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
-                <div class="modal-header" style="background: linear-gradient(135deg, #7f1d1d 0%, #dc2626 100%); color: white;">
+                <div class="modal-header">
                     <h5 class="modal-title" id="expiredProductsModalLabel">
-                        <i class="fas fa-exclamation-triangle me-2"></i>Expired Products (Action Required)
+                        <span class="modal-head-icon"><i class="fas fa-exclamation-triangle"></i></span>Expired Products (Action Required)
                     </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
                     <?php 
@@ -618,11 +550,11 @@ foreach ($salesDetailRows as $detailRow) {
     <div class="modal fade" id="dailySalesModal" tabindex="-1" aria-labelledby="dailySalesModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
-                <div class="modal-header" style="background: linear-gradient(135deg, #0f766e 0%, #14b8a6 100%); color: white;">
+                <div class="modal-header">
                     <h5 class="modal-title" id="dailySalesModalLabel">
-                        <i class="fas fa-chart-line me-2"></i>Daily Sales Summary (Last 30 Days)
+                        <span class="modal-head-icon"><i class="fas fa-chart-line"></i></span>Daily Sales Summary (Last 30 Days)
                     </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
                     <div class="table-responsive">
@@ -670,11 +602,11 @@ foreach ($salesDetailRows as $detailRow) {
     <div class="modal fade" id="vatDiscountModal" tabindex="-1" aria-labelledby="vatDiscountModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-xl modal-fullscreen-lg-down">
             <div class="modal-content">
-                <div class="modal-header" style="background: linear-gradient(135deg, #b45309 0%, #f59e0b 100%); color: white;">
+                <div class="modal-header">
                     <h5 class="modal-title" id="vatDiscountModalLabel">
-                        <i class="fas fa-receipt me-2"></i>VAT Exemption & Discount Details
+                        <span class="modal-head-icon"><i class="fas fa-receipt"></i></span>VAT Exemption & Discount Details
                     </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
                     <div class="table-responsive">
@@ -740,7 +672,7 @@ foreach ($salesDetailRows as $detailRow) {
                                 ?>
                             </tbody>
                             <tfoot>
-                                <tr style="background: linear-gradient(135deg, #1e293b 0%, #ffffff 100%); font-weight: bold; color: white; font-size: 1.1em;">
+                                <tr class="table-totals">
                                     <td colspan="4" style="text-align: right; padding: 15px;">TOTAL</td>
                                     <td style="padding: 15px; border-left: 2px solid #fbbf24;"><i class="fas fa-check-circle me-2"></i>₱<?= number_format($grandTotalVatExemp, 2) ?></td>
                                     <td style="padding: 15px; border-left: 2px solid #ef4444;"><i class="fas fa-tag me-2"></i>₱<?= number_format($grandTotalDiscount, 2) ?></td>
@@ -840,7 +772,3 @@ foreach ($salesDetailRows as $detailRow) {
 
     <!-- Bootstrap JS for Modal -->
     <!-- bootstrap.bundle already loaded once via conn/connection_links.php (duplicate removed) -->
-
-</body>
-
-</html>
