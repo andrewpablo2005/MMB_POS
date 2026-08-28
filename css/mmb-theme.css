@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════════
-   MMB'S DRUGSTORE — BRAND THEME v1.1
+   MMB'S DRUGSTORE — BRAND THEME v2.0
    Single source of truth for the brand palette + app shell look.
 
    HOW TO RE-SKIN THE ENTIRE APP:
@@ -647,18 +647,20 @@ div.dt-buttons .dt-button:focus {
 
 /* ═══════════════════════════════════════════════════════════════
    CARDS, MODALS, BUTTONS & GENERAL POLISH
+   v2.0: .card now mirrors the dashboard dash-card exactly — every
+   plain Bootstrap card in the app inherits the dashboard look.
    ═══════════════════════════════════════════════════════════════ */
 .card {
-    border: 1px solid var(--mmb-line-soft);
-    border-radius: 0.9rem;
-    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 4px 14px rgba(15, 23, 42, 0.05);
+    border: 1px solid rgba(15, 23, 42, 0.04);
+    border-radius: 1.125rem;
+    box-shadow: 0 2px 12px rgba(15, 23, 42, 0.06);
 }
 
 .card-header {
     background: var(--mmb-surface);
     border-bottom: 1px solid var(--mmb-line-soft);
     font-weight: 600;
-    border-radius: 0.9rem 0.9rem 0 0 !important;
+    border-radius: 1.125rem 1.125rem 0 0 !important;
 }
 
 .btn {
@@ -763,3 +765,137 @@ div.dt-buttons .dt-button:focus {
     align-items: center;
     vertical-align: middle;
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   v2.0 — DASHBOARD-LOOK EVERYWHERE
+   The pieces below lift the dashboard design language into the global
+   theme so every management page reads like the dashboard.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── 1. Soft-slate table heads (replaces black .table-dark) ── */
+.table-dark {
+    --bs-table-color: #64748b;
+    --bs-table-bg: #f8fafc;
+    --bs-table-border-color: var(--mmb-line);
+    --bs-table-striped-bg: #f8fafc;
+    --bs-table-striped-color: #334155;
+    --bs-table-hover-bg: rgba(var(--mmb-primary-rgb), 0.04);
+    --bs-table-hover-color: var(--mmb-heading);
+    --bs-table-active-bg: #e2e8f0;
+    --bs-table-active-color: var(--mmb-heading);
+}
+
+.table-dark > :not(caption) > * > * {
+    color: #64748b;
+}
+
+thead.table-dark th,
+.table-dark thead th {
+    text-transform: uppercase;
+    font-size: 0.7rem;
+    letter-spacing: 0.7px;
+    font-weight: 700;
+}
+
+/* ── 2. Page header (dashboard .dash-header pattern for inner pages) ── */
+.page-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.4rem;
+}
+
+.page-head h2,
+.page-head h3,
+.page-head h4 {
+    font-size: 1.55rem;
+    font-weight: 700;
+    color: var(--mmb-heading);
+    letter-spacing: -0.2px;
+    margin: 0;
+}
+
+.page-head .text-muted,
+.page-sub {
+    font-size: 0.85rem;
+    color: var(--mmb-muted);
+    margin: 3px 0 0;
+}
+
+/* ── 3. Modal headers — clean white + icon tile + crimson accent ── */
+.modal-head-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 11px;
+    background: var(--mmb-primary-soft);
+    color: var(--mmb-primary);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.95rem;
+    flex-shrink: 0;
+}
+
+.modal-header .modal-title {
+    font-weight: 700;
+    font-size: 1.02rem;
+    color: var(--mmb-heading);
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+}
+
+/* ── 4. Soft emerald chips for success actions (Excel / approve / enable) ── */
+.btn-success {
+    --bs-btn-bg: #ecfdf5;
+    --bs-btn-color: #047857;
+    --bs-btn-border-color: transparent;
+    --bs-btn-hover-bg: #d1fae5;
+    --bs-btn-hover-color: #065f46;
+    --bs-btn-hover-border-color: transparent;
+    --bs-btn-active-bg: #a7f3d0;
+    --bs-btn-active-color: #065f46;
+    --bs-btn-active-border-color: transparent;
+    --bs-btn-focus-shadow-rgb: 4, 120, 87;
+    font-weight: 600;
+}
+
+.table .btn-success {
+    --bs-btn-bg: #ecfdf5;
+    --bs-btn-color: #047857;
+    --bs-btn-border-color: transparent;
+    --bs-btn-hover-bg: #d1fae5;
+    --bs-btn-hover-color: #065f46;
+    --bs-btn-hover-border-color: transparent;
+    --bs-btn-active-bg: #a7f3d0;
+    --bs-btn-active-color: #065f46;
+    --bs-btn-active-border-color: transparent;
+    --bs-btn-focus-shadow-rgb: 4, 120, 87;
+    font-weight: 600;
+}
+
+/* ── 5. Export/toolbars — one unified neutral chip w/ brand hover ── */
+.inventory-report-toolbar .btn,
+.report-toolbar .btn {
+    --bs-btn-bg: var(--mmb-surface);
+    --bs-btn-color: #475569;
+    --bs-btn-border-color: var(--mmb-line);
+    --bs-btn-hover-bg: var(--mmb-primary-soft);
+    --bs-btn-hover-color: var(--mmb-primary-hover);
+    --bs-btn-hover-border-color: rgba(var(--mmb-primary-rgb), 0.45);
+    --bs-btn-active-bg: var(--mmb-primary-soft-2);
+    --bs-btn-active-color: var(--mmb-primary-hover);
+    --bs-btn-active-border-color: rgba(var(--mmb-primary-rgb), 0.45);
+    --bs-btn-focus-shadow-rgb: var(--mmb-primary-rgb);
+    font-weight: 600;
+    border-radius: 0.55rem;
+}
+
+/* ── 6. Soft badge utilities (role chips, status chips) ── */
+.badge-soft-danger  { background: #fef2f2 !important; color: #b91c1c !important; }
+.badge-soft-dark    { background: #f1f5f9 !important; color: #334155 !important; }
+.badge-soft-success { background: #ecfdf5 !important; color: #047857 !important; }
+.badge-soft-info    { background: #eff6ff !important; color: #1d4ed8 !important; }
+.badge-soft-warning { background: #fffbeb !important; color: #b45309 !important; }
