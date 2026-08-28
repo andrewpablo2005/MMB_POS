@@ -925,3 +925,65 @@ thead.table-dark th,
 .user-status.is-disabled {
     color: #94a3b8;
 }
+
+/* ── 8. Settings form sections ── */
+.settings-section {
+    padding: 1.15rem 0;
+    border-bottom: 1px solid var(--mmb-line);
+}
+.settings-section:first-child { padding-top: 0; }
+.settings-section:last-of-type { border-bottom: none; }
+.settings-section h6 {
+    display: flex;
+    align-items: center;
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .8px;
+    color: var(--mmb-muted);
+    margin-bottom: 1rem;
+}
+.settings-section h6 i {
+    color: var(--mmb-primary);
+    font-size: .85rem;
+    width: 22px;
+    height: 22px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--mmb-primary-soft);
+    border-radius: 7px;
+}
+
+/* ── 9. Empty panel state (no-data views) ── */
+.empty-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 3.5rem 1.5rem;
+}
+.empty-panel-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 15px;
+    background: var(--mmb-primary-soft);
+    color: var(--mmb-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+}
+.empty-panel h6 {
+    font-weight: 700;
+    color: var(--mmb-heading);
+    margin-bottom: 0.25rem;
+}
+.empty-panel p {
+    font-size: 0.85rem;
+    color: var(--mmb-muted);
+    margin: 0;
+    max-width: 340px;
+}

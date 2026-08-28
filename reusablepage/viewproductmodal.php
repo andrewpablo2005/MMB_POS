@@ -5,7 +5,7 @@ require_once __DIR__ . '/guard.php'; guard_require_roles(['owner','admin']);
         <div class="modal-dialog modal-lg modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="viewProductLabel<?= $prod['id'] ?>">Product Details</h5>
+                    <h5 class="modal-title" id="viewProductLabel<?= $prod['id'] ?>"><span class="modal-head-icon"><i class="fas fa-capsules"></i></span> Product Details</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">

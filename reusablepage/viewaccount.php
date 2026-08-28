@@ -8,7 +8,7 @@ require_once __DIR__ . '/guard.php'; guard_require_roles(['owner','admin']);
         <div class="modal-content">
 
             <div class="modal-header">
-                <h5 class="modal-title">User Details</h5>
+                <h5 class="modal-title"><span class="modal-head-icon"><i class="fas fa-id-badge"></i></span> User Details</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
 

@@ -103,8 +103,8 @@
 .wepos-cat-btn {
     background: var(--wp-card);
     border: 1px solid var(--wp-border);
-    border-radius: 4px;
-    padding: 6px 14px;
+    border-radius: 999px;
+    padding: 7px 16px;
     font-size: 13px;
     font-weight: 500;
     color: var(--wp-text-light);
@@ -122,6 +122,7 @@
     background: var(--wp-primary);
     border-color: var(--wp-primary);
     color: #fff;
+    box-shadow: 0 2px 8px rgba(220, 38, 38, 0.25);
 }
 
 /* Product Grid */
@@ -143,7 +144,7 @@
 .wepos-product-card {
     background: var(--wp-card);
     border: 1px solid var(--wp-border);
-    border-radius: 4px;
+    border-radius: 10px;
     cursor: pointer;
     transition: box-shadow 0.15s, transform 0.1s, border-color 0.1s;
     overflow: hidden;
@@ -153,7 +154,7 @@
 }
 
 .wepos-product-card:hover {
-    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.09);
     border-color: var(--wp-primary);
 }
 
@@ -164,7 +165,7 @@
 .wepos-card-add-overlay {
     position: absolute;
     inset: 0;
-    background: rgba(34, 113, 177, 0.05);
+    background: rgba(220, 38, 38, 0.06);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -418,8 +419,28 @@
 
 .wepos-empty-cart {
     text-align: center;
-    padding: 60px 20px !important;
+    padding: 56px 20px !important;
     color: var(--wp-text-light);
+}
+.wepos-empty-cart-icon {
+    width: 54px;
+    height: 54px;
+    border-radius: 16px;
+    background: #fef2f2;
+    color: var(--wp-primary);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.35rem;
+    margin-bottom: 12px;
+}
+.wepos-empty-cart p {
+    font-weight: 600;
+    color: var(--wp-text);
+    margin-bottom: 2px;
+}
+.wepos-empty-cart small {
+    font-size: 12px;
 }
 
 /* Checkout Area */

@@ -21,7 +21,7 @@ $dosageForms = $product->getDosageForms();
 
             <form method="POST" enctype="multipart/form-data" onsubmit="return validateAddProductForm(event)">
                 <div class="modal-header">
-                    <h5 class="modal-title">Add New Product</h5>
+                    <h5 class="modal-title"><span class="modal-head-icon"><i class="fas fa-pills"></i></span> Add New Product</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
 
