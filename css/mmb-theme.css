@@ -1,0 +1,157 @@
+/* ═══════════════════════════════════════════════════════════════════
+   MMB'S DRUGSTORE — BRAND THEME v1.0
+   Single source of truth for the brand palette.
+
+   HOW TO RE-SKIN THE ENTIRE APP:
+   Change ONLY the --mmb-* tokens in :root below. Every Bootstrap
+   primary button, link, focus ring, pill, checkbox, pagination page,
+   and every page that consumes the tokens will follow instantly.
+
+   Loaded AFTER bootstrap.min.css (see conn/connection_links.php).
+   Semantic colors are intentionally NOT themed here:
+   - success/green  = money, approvals, "Good Stock", status badges
+   - danger/red     = destructive actions (void, decline, delete)
+   ═══════════════════════════════════════════════════════════════════ */
+
+:root {
+    /* ── Brand tokens — edit these to re-skin ── */
+    --mmb-primary:        #dc2626;   /* crimson red-600  */
+    --mmb-primary-hover:  #b91c1c;   /* red-700          */
+    --mmb-primary-active: #991b1b;   /* red-800          */
+    --mmb-primary-border: #f87171;   /* red-400 (focus)  */
+    --mmb-primary-soft:   #fef2f2;   /* red-50  tint     */
+    --mmb-primary-soft-2: #fee2e2;   /* red-100 tint     */
+    --mmb-primary-rgb:    220, 38, 38;
+    --mmb-ink:            #1a2535;   /* headings/text    */
+
+    /* ── Bootstrap variable bridge (var-driven utilities follow) ── */
+    --bs-primary:            var(--mmb-primary);
+    --bs-primary-rgb:        var(--mmb-primary-rgb);
+    --bs-link-color:         var(--mmb-primary-hover);
+    --bs-link-color-rgb:     var(--mmb-primary-rgb);
+    --bs-link-hover-color:   var(--mmb-primary-active);
+    --bs-link-hover-color-rgb: var(--mmb-primary-rgb);
+    --bs-focus-ring-color:   rgba(var(--mmb-primary-rgb), .25);
+}
+
+/* ── Text selection detail ── */
+::selection {
+    background: rgba(var(--mmb-primary-rgb), .18);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   BUTTONS — Bootstrap bakes hex values per class, so we override
+   the local --bs-btn-* variables (same specificity, later = wins).
+   ═══════════════════════════════════════════════════════════════ */
+.btn-primary {
+    --bs-btn-bg:               var(--mmb-primary);
+    --bs-btn-border-color:     var(--mmb-primary);
+    --bs-btn-hover-bg:         var(--mmb-primary-hover);
+    --bs-btn-hover-border-color: var(--mmb-primary-hover);
+    --bs-btn-active-bg:        var(--mmb-primary-active);
+    --bs-btn-active-border-color: var(--mmb-primary-active);
+    --bs-btn-disabled-bg:      var(--mmb-primary);
+    --bs-btn-disabled-border-color: var(--mmb-primary);
+    --bs-btn-focus-shadow-rgb: var(--mmb-primary-rgb);
+}
+
+.btn-outline-primary {
+    --bs-btn-color:            var(--mmb-primary);
+    --bs-btn-border-color:     var(--mmb-primary);
+    --bs-btn-hover-bg:         var(--mmb-primary);
+    --bs-btn-hover-border-color: var(--mmb-primary);
+    --bs-btn-active-bg:        var(--mmb-primary-hover);
+    --bs-btn-active-border-color: var(--mmb-primary-hover);
+    --bs-btn-disabled-color:   var(--mmb-primary);
+    --bs-btn-disabled-border-color: var(--mmb-primary);
+    --bs-btn-focus-shadow-rgb: var(--mmb-primary-rgb);
+}
+
+.btn-link { --bs-btn-color: var(--mmb-primary-hover); }
+.btn-link:hover { --bs-btn-hover-color: var(--mmb-primary-active); }
+
+/* ═══════════════════════════════════════════════════════════════
+   LINKS & TEXT/BG UTILITIES (belt-and-braces; most already follow
+   --bs-primary-rgb via the bridge above)
+   ═══════════════════════════════════════════════════════════════ */
+.text-primary  { color: var(--mmb-primary) !important; }
+.bg-primary    { background-color: var(--mmb-primary) !important; }
+.link-primary  { color: var(--mmb-primary-hover) !important; }
+.link-primary:hover,
+.link-primary:focus { color: var(--mmb-primary-active) !important; }
+
+/* ═══════════════════════════════════════════════════════════════
+   FORMS — focus rings & checked states (hardcoded blue in BS)
+   ═══════════════════════════════════════════════════════════════ */
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--mmb-primary-border);
+    box-shadow: 0 0 0 .25rem rgba(var(--mmb-primary-rgb), .25);
+}
+
+.form-check-input:checked {
+    background-color: var(--mmb-primary);
+    border-color: var(--mmb-primary);
+}
+
+.form-check-input:focus {
+    border-color: var(--mmb-primary-border);
+    box-shadow: 0 0 0 .25rem rgba(var(--mmb-primary-rgb), .25);
+}
+
+.form-switch .form-check-input:focus:not(:checked) {
+    --bs-form-switch-bg: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23dc2626'/%3e%3c/svg%3e");
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   NAVIGATION — sidebar pills, dropdown, list groups
+   ═══════════════════════════════════════════════════════════════ */
+.nav-pills {
+    --bs-nav-pills-link-active-bg: var(--mmb-primary);
+    --bs-nav-pills-link-active-color: #fff;
+}
+
+.nav-tabs {
+    --bs-nav-tabs-link-active-color: var(--mmb-primary-hover);
+}
+
+.dropdown-menu {
+    --bs-dropdown-link-active-bg: var(--mmb-primary);
+}
+
+.dropdown-item.active,
+.dropdown-item:active {
+    background-color: var(--mmb-primary);
+}
+
+.list-group {
+    --bs-list-group-active-bg: var(--mmb-primary);
+    --bs-list-group-active-border-color: var(--mmb-primary);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   PAGINATION (DataTables draws its own, BS tables use .pagination)
+   ═══════════════════════════════════════════════════════════════ */
+.pagination {
+    --bs-pagination-color: var(--mmb-primary-hover);
+    --bs-pagination-hover-color: var(--mmb-primary-active);
+    --bs-pagination-focus-color: var(--mmb-primary-active);
+    --bs-pagination-focus-box-shadow: 0 0 0 .25rem rgba(var(--mmb-primary-rgb), .25);
+    --bs-pagination-active-bg: var(--mmb-primary);
+    --bs-pagination-active-border-color: var(--mmb-primary);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   ACCORDION
+   ═══════════════════════════════════════════════════════════════ */
+.accordion {
+    --bs-accordion-active-color: var(--mmb-primary-hover);
+    --bs-accordion-btn-focus-box-shadow: 0 0 0 .25rem rgba(var(--mmb-primary-rgb), .25);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   BADGES — brand tint chip for reuse anywhere:
+   <span class="badge bg-primary-soft text-primary">…</span>
+   ═══════════════════════════════════════════════════════════════ */
+.bg-primary-soft { background-color: var(--mmb-primary-soft) !important; }
+.border-primary-soft { border-color: var(--mmb-primary-soft-2) !important; }

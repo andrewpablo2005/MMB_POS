@@ -1,5 +1,13 @@
+<?php // Shared CDN + theme links. Guarantees mmbpos_base_path() exists
+   // even when this partial is included before loginfunction.php (e.g. login.php).
+   if (!function_exists('mmbpos_base_path')) {
+       require_once __DIR__ . '/basepath.php';
+   }
+?>
 <?php //Bootstrap Links for CSS and JS ?>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+<!-- MMB Brand Theme (design tokens + Bootstrap primary overrides) — keep AFTER bootstrap -->
+<link rel="stylesheet" href="<?= mmbpos_base_path() ?>/css/mmb-theme.css?v=1.0">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 
 <!-- Font Awesome -->
