@@ -756,3 +756,10 @@ div.dt-buttons .dt-button:focus {
 .table .btn-danger:hover {
     transform: translateY(-1px);
 }
+
+/* Anchor-styled buttons in tables align with real buttons */
+.table a.btn {
+    display: inline-flex;
+    align-items: center;
+    vertical-align: middle;
+}
