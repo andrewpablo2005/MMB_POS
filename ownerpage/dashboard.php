@@ -84,7 +84,7 @@ $activeTab = $_GET['tab'] ?? 'dashboard';
                         href="#v-pills-reports"><i class="fas fa-file-alt"></i>Reports</a>
 
                     <a class="nav-link <?= $activeTab === 'security' ? 'active' : '' ?>" data-bs-toggle="pill"
-                        href="#v-pills-security"><i class="fas fa-shield-alt"></i>User Authentication & Security</a>
+                        href="#v-pills-security"><i class="fas fa-shield-alt"></i>Security</a>
 
                     <a class="nav-link <?= $activeTab === 'users' ? 'active' : '' ?>" data-bs-toggle="pill"
                         href="#v-pills-users"><i class="fas fa-users"></i>User Management</a>
