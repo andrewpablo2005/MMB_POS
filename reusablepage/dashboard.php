@@ -26,7 +26,6 @@ $totalTransactionsAllTime = $dashboardManager->getTotalTransactionsAllTime();
 $averageTransactionValue = $dashboardManager->getAverageTransactionValue();
 $totalDiscountAllTime = $dashboardManager->getTotalDiscountAllTime();
 $totalVatExemptionAllTime = $dashboardManager->getTotalVatExemptionAllTime();
-$totalRefundsAllTime = $dashboardManager->getTotalRefundsAllTime();
 
 $recentTransactions  = $dashboardManager->getRecentTransactions(5);
 $topProducts         = $dashboardManager->getTopSellingProducts(5);
@@ -39,7 +38,7 @@ date_default_timezone_set('Asia/Manila');
 
 <!-- Inter Font & Dashboard CSS -->
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../css/dashboard.css">
+<link rel="stylesheet" href="../css/dashboard.css?v=4">
 
 <!-- Pass PHP data to dashboard.js without mixing PHP into the JS file -->
 <script>
@@ -56,7 +55,7 @@ date_default_timezone_set('Asia/Manila');
     <span class="date-badge"><?php echo date('F j, Y'); ?></span>
   </div>
 
-  <!-- ── Stat Cards ── -->
+  <!-- ── Sales Summary ── -->
   <div class="row g-3 mb-4">
     <div class="col-6 col-xl-3">
       <div class="stat-card">
@@ -80,7 +79,7 @@ date_default_timezone_set('Asia/Manila');
     </div>
     <div class="col-6 col-xl-3">
       <div class="stat-card">
-        <div class="stat-icon lime"><i class="fas fa-chart-bar"></i></div>
+        <div class="stat-icon rose"><i class="fas fa-chart-bar"></i></div>
         <div>
           <div class="stat-label">Yearly Sales</div>
           <div class="stat-value">₱<?php echo number_format($totalSalesYear, 2); ?></div>
@@ -98,96 +97,6 @@ date_default_timezone_set('Asia/Manila');
         </div>
       </div>
     </div>
-    <div class="col-6 col-xl-3">
-      <div class="stat-card">
-        <div class="stat-icon indigo"><i class="fas fa-chart-area"></i></div>
-        <div>
-          <div class="stat-label">Real Revenue Month</div>
-          <div class="stat-value">₱<?php echo number_format($realRevenueMonth, 2); ?></div>
-          <div class="stat-sub"><?php echo date('F Y'); ?></div>
-        </div>
-      </div>
-    </div>
-    <div class="col-6 col-xl-3">
-      <div class="stat-card">
-        <div class="stat-icon rose"><i class="fas fa-trophy"></i></div>
-        <div>
-          <div class="stat-label">Real Revenue Year</div>
-          <div class="stat-value">₱<?php echo number_format($realRevenueYear, 2); ?></div>
-          <div class="stat-sub"><?php echo date('Y'); ?></div>
-        </div>
-      </div>
-    </div>
-    <div class="col-6 col-xl-3">
-      <div class="stat-card">
-        <div class="stat-icon cyan"><i class="fas fa-receipt"></i></div>
-        <div>
-          <div class="stat-label">Transactions</div>
-          <div class="stat-value"><?php echo $transactionsToday; ?></div>
-          <div class="stat-sub">Today</div>
-        </div>
-      </div>
-    </div>
-    <div class="col-6 col-xl-3">
-      <div class="stat-card">
-        <div class="stat-icon amber"><i class="fas fa-boxes-stacked"></i></div>
-        <div>
-          <div class="stat-label">Total Products</div>
-          <div class="stat-value"><?php echo $totalProducts; ?></div>
-          <div class="stat-sub">In inventory</div>
-        </div>
-      </div>
-    </div>
-    <div class="col-6 col-xl-3">
-      <div class="stat-card">
-        <div class="stat-icon purple"><i class="fas fa-tag"></i></div>
-        <div>
-          <div class="stat-label">Discount Total</div>
-          <div class="stat-value">₱<?php echo number_format($totalDiscountToday, 2); ?></div>
-          <div class="stat-sub">Month: ₱<?php echo number_format($totalDiscountMonth, 2); ?></div>
-        </div>
-      </div>
-    </div>
-    <div class="col-6 col-xl-3">
-      <div class="stat-card">
-        <div class="stat-icon orange"><i class="fas fa-star"></i></div>
-        <div>
-          <div class="stat-label">VAT Exemption</div>
-          <div class="stat-value">₱<?php echo number_format($totalVatExemptionToday, 2); ?></div>
-          <div class="stat-sub">Month: ₱<?php echo number_format($totalVatExemptionMonth, 2); ?></div>
-        </div>
-      </div>
-    </div>
-    <div class="col-6 col-xl-3">
-      <div class="stat-card">
-        <div class="stat-icon secondary"><i class="fas fa-receipt"></i></div>
-        <div>
-          <div class="stat-label">Total Transactions</div>
-          <div class="stat-value"><?php echo number_format($totalTransactionsAllTime); ?></div>
-          <div class="stat-sub">All-time</div>
-        </div>
-      </div>
-    </div>
-    <div class="col-6 col-xl-3">
-      <div class="stat-card">
-        <div class="stat-icon info"><i class="fas fa-chart-bar"></i></div>
-        <div>
-          <div class="stat-label">Avg Per Transaction</div>
-          <div class="stat-value">₱<?php echo number_format($averageTransactionValue, 2); ?></div>
-          <div class="stat-sub">Average value</div>
-        </div>
-      </div>
-    </div>
-    <div class="col-6 col-xl-3">
-      <div class="stat-card">
-        <div class="stat-icon red"><i class="fas fa-undo-alt"></i></div>
-        <div>
-          <div class="stat-label">Total Refunds</div>
-          <div class="stat-value">₱<?php echo number_format($totalRefundsAllTime, 2); ?></div>
-          <div class="stat-sub">Refunded to date</div>
-        </div>
-      </div>
-    </div>
   </div>
 
   <!-- ── Chart ── -->
@@ -195,7 +104,7 @@ date_default_timezone_set('Asia/Manila');
     <div class="col-12">
       <div class="dash-card">
         <div class="dash-card-header">
-          <h6><i class="fas fa-bar-chart me-2 text-success"></i>Monthly Sales Performance</h6>
+          <h6><i class="fas fa-bar-chart me-2 text-primary"></i>Monthly Sales Performance</h6>
           <span class="pill pill-green"><?php echo date('Y'); ?></span>
         </div>
         <div class="dash-card-body">

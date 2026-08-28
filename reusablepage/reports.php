@@ -64,7 +64,7 @@ foreach ($salesDetailRows as $detailRow) {
 <head>
     <meta charset="UTF-8">
     <title>Drugstore Reports</title>
-    <link rel="stylesheet" href="../css/report.css">
+    <link rel="stylesheet" href="../css/report.css?v=2">
 </head>
 
 <body class="p-4">
@@ -276,7 +276,7 @@ foreach ($salesDetailRows as $detailRow) {
         <div class="modal fade" id="monthlySalesModal" tabindex="-1" aria-labelledby="monthlySalesModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-xl">
                     <div class="modal-content">
-                        <div class="modal-header" style="background: linear-gradient(135deg, #14532d 0%, #16a34a 100%); color: white;">
+                        <div class="modal-header" style="background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%); color: white;">
                             <h5 class="modal-title" id="monthlySalesModalLabel">
                                 <i class="fas fa-chart-line me-2"></i>
                                 Monthly Sales Trend & Performance

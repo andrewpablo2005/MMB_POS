@@ -38,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pharmacy Management System - Login</title>
     <?php require_once __DIR__ . "/../conn/connection_links.php"; ?>
-    <link rel="stylesheet" href="<?= mmbpos_base_path() ?>/css/login.css">
+    <link rel="stylesheet" href="<?= mmbpos_base_path() ?>/css/login.css?v=2">
 </head>
 
 <body class="bg-light d-flex align-items-center justify-content-center" style="min-height: 100vh;">
@@ -105,7 +105,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
             </div>
 
             <!-- Right Column - Illustration Background -->
-            <div class="col-lg-6 d-none d-lg-flex align-items-center justify-content-center" style="background: linear-gradient(135deg, #4a90e2 0%, #357abd 100%); position: relative; overflow: hidden; min-height: 100vh;">
+            <div class="col-lg-6 d-none d-lg-flex align-items-center justify-content-center" style="background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%); position: relative; overflow: hidden; min-height: 100vh;">
                 <!-- Animated Decorative Elements -->
                 <div style="position: absolute; top: -100px; right: -100px; width: 400px; height: 400px; background: rgba(255, 255, 255, 0.08); border-radius: 50%; animation: float 6s ease-in-out infinite;"></div>
                 <div style="position: absolute; bottom: -150px; left: -150px; width: 500px; height: 500px; background: rgba(255, 255, 255, 0.05); border-radius: 50%; animation: float 8s ease-in-out infinite 2s;"></div>
