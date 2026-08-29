@@ -62,7 +62,7 @@ if ($product->addProduct()) {
             </div>
         </div>
 
-        <table class="table table-striped table-hover align-middle w-100 myTable">
+        <div class="table-responsive"><table class="table table-striped table-hover align-middle w-100 myTable">
             <thead class="table-dark">
                 <tr>
                     <th>ID</th>
@@ -129,7 +129,7 @@ if ($product->addProduct()) {
                     </tr>
                 <?php endforeach; ?>
             </tbody>
-        </table>
+        </table></div>
     </div>
 </div>
 <?php include 'updateproductmodal.php'; ?>

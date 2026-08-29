@@ -58,7 +58,7 @@ foreach ($salesDetailRows as $detailRow) {
 }
 ?>
 
-<link rel="stylesheet" href="../css/report.css?v=4">
+<link rel="stylesheet" href="../css/report.css?v=5">
 
 <div class="report-page">
 

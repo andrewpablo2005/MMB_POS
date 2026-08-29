@@ -19,7 +19,7 @@
 .wepos-wrapper {
     display: flex;
     width: 100%;
-    height: calc(100vh - 58px); /* subtract only the fixed header height */
+    height: calc(100vh - var(--mmb-topbar-h, 56px)); /* shell topbar height */
     background: var(--wp-bg);
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
     color: var(--wp-text);
@@ -44,6 +44,8 @@
     justify-content: space-between;
     align-items: center;
     border-bottom: 1px solid var(--wp-border);
+    flex-wrap: wrap;
+    gap: 10px;
 }
 
 .wepos-search-container {
@@ -97,8 +99,21 @@
     overflow-x: auto;
     border-bottom: 1px solid var(--wp-border);
     scrollbar-width: none;
+    position: relative;
+    -webkit-overflow-scrolling: touch;
 }
 .wepos-categories::-webkit-scrollbar { display: none; }
+/* right-edge fade = "this row scrolls" affordance */
+.wepos-categories::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 36px;
+    background: linear-gradient(to right, rgba(246, 247, 247, 0), #f6f7f7);
+    pointer-events: none;
+}
 
 .wepos-cat-btn {
     background: var(--wp-card);
@@ -625,3 +640,43 @@
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: #c3c4c7; border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: #a7aaad; }
+
+/* ═════════════════════════════════════════════════════════════
+   RESPONSIVE — phone/tablet POS (v1.6)
+   Below lg: stack products above the cart; the cart gets its own
+   scroll area so the grand total + Pay Now stay reachable.
+   ═════════════════════════════════════════════════════════════ */
+@media (max-width: 991.98px) {
+    .wepos-wrapper {
+        flex-direction: column;
+        height: auto;
+        min-height: calc(100vh - var(--mmb-topbar-h, 56px));
+        overflow: visible;
+    }
+    .wepos-left {
+        min-height: 58vh;
+        overflow: visible;
+    }
+    .wepos-right {
+        width: 100%;
+        min-width: 0;
+        max-width: none;
+        border-left: 0;
+        border-top: 1px solid var(--wp-border);
+        box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.04);
+    }
+    .wepos-cart-items {
+        max-height: 42vh;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    .wepos-search-container { min-width: 140px; }
+}
+
+@media (max-width: 575.98px) {
+    .wepos-header { padding: 10px 12px; }
+    .wepos-categories { padding: 8px 12px; }
+    .wepos-categories::after { width: 28px; }
+    .wepos-search-container input { font-size: 14px; padding: 9px 36px; }
+    .wepos-search-container kbd { display: none; }
+}

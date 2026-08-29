@@ -61,11 +61,11 @@
 }
 
 .summary-value {
-    font-size: 1.3rem;
+    font-size: 1.08rem;
     font-weight: 800;
     margin: 0;
     color: #1a2535;
-    line-height: 1.15;
+    line-height: 1.2;
     word-break: break-word;
 }
 
