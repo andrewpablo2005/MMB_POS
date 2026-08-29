@@ -154,6 +154,26 @@
     var SKIP = 'input, textarea, .page-link, [data-bs-toggle="offcanvas"]';
     var initialized = new WeakSet();
 
+    /* Elements already hosting another Bootstrap component (nav pills,
+       tab buttons, dropdown toggles) CANNOT register a Tooltip in
+       Bootstrap 5.3 — Data.set refuses a second component per element
+       ("Bootstrap doesn't allow more than one instance per element")
+       which produces zombie instances, duplicate tip elements and
+       console errors. Detect them up front and fall back to a native
+       title tooltip so staff hints still cover everything. */
+    var COMPONENTS = ['Tab', 'Dropdown', 'Collapse', 'Modal', 'Offcanvas',
+                      'Popover', 'ScrollSpy', 'Toast', 'Button', 'Carousel'];
+
+    function hostsBootstrapComponent(el) {
+        for (var i = 0; i < COMPONENTS.length; i++) {
+            var C = bootstrap[COMPONENTS[i]];
+            if (C && typeof C.getInstance === 'function' && C.getInstance(el)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     function norm(s) {
         return (s || '').replace(/\s+/g, ' ').trim().toLowerCase();
     }
@@ -306,6 +326,14 @@
         initialized.add(el);
         if (!tip) return; // nothing meaningful to say — stay quiet
 
+        /* Elements with another Bootstrap component on them: styled
+           tooltip is impossible — deliver the hint as a native title. */
+        if (hostsBootstrapComponent(el)) {
+            el.setAttribute('data-native-title', tip);
+            el.setAttribute('title', tip);
+            return;
+        }
+
         /* remove native tooltip to avoid double bubbles */
         if (el.getAttribute('title')) el.setAttribute('data-native-title', el.getAttribute('title'));
         el.removeAttribute('title');
@@ -333,5 +361,5 @@
         if (el && !initialized.has(el)) maybeInit(e.target);
     }, true);
 
-    window.mmbTooltips = { version: '1.1' };
+    window.mmbTooltips = { version: '1.2' };
 })();
