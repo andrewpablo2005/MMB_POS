@@ -987,3 +987,33 @@ thead.table-dark th,
     margin: 0;
     max-width: 340px;
 }
+
+/* ── 10. Global tooltip layer (js/mmb-tooltips.js) ──
+   Dark-slate hint bubble for every interactive control. */
+.tooltip.mmb-tip {
+    --bs-tooltip-bg: #1e293b;
+    --bs-tooltip-color: #f8fafc;
+    --bs-tooltip-opacity: 1;
+    --bs-tooltip-border-radius: 0.5rem;
+    --bs-tooltip-padding-x: 0.65rem;
+    --bs-tooltip-padding-y: 0.42rem;
+    --bs-tooltip-font-size: 0.78rem;
+    opacity: 1 !important;
+    filter: drop-shadow(0 6px 16px rgba(15, 23, 42, 0.28));
+}
+.tooltip.mmb-tip .tooltip-inner {
+    max-width: 280px;
+    font-weight: 500;
+    line-height: 1.45;
+    text-align: center;
+    letter-spacing: 0.01em;
+}
+.tooltip.mmb-tip .tooltip-arrow::before {
+    border-top-color: #1e293b;
+    border-bottom-color: #1e293b;
+}
+/* Disabled POS pay button: keep hover events alive so the
+   "cart is empty" hint can appear (clicks stay blocked natively). */
+.wepos-pay-btn:disabled {
+    pointer-events: auto;
+}
