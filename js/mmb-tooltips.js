@@ -201,7 +201,7 @@
 
         /* Cart quantity controls */
         if (el.closest('.wepos-qty-ctrl')) {
-            return el.querySelector('.fa-minus, .fa-minus') || textOf(el).indexOf('-') === 0
+            return el.querySelector('.fa-minus') || textOf(el).indexOf('-') === 0
                 ? 'Decrease the quantity by one'
                 : 'Increase the quantity by one';
         }
@@ -244,14 +244,15 @@
         return null;
     }
 
-    /* ── Main resolver ── */
+    /* ── Main resolver (re-evaluated on every show — state-aware) ── */
     function resolveTip(el) {
         /* 1. explicit override */
         var explicit = el.getAttribute('data-bs-title');
         if (explicit) return explicit.trim();
 
-        /* 2. native title attribute → upgrade to styled tooltip */
-        var nativeTitle = el.getAttribute('title');
+        /* 2. native title attribute → upgrade to styled tooltip
+              (kept in data-native-title after first init) */
+        var nativeTitle = el.getAttribute('title') || el.getAttribute('data-native-title');
         if (nativeTitle && nativeTitle.trim()) return nativeTitle.trim();
 
         /* 3. element rules */
@@ -310,7 +311,9 @@
         el.removeAttribute('title');
 
         var tt = new bootstrap.Tooltip(el, {
-            title: tip,
+            /* function title → re-resolved on every show, so state-aware
+               hints (e.g. Pay Now: empty cart vs active) never go stale */
+            title: function () { return resolveTip(el); },
             trigger: 'hover focus',
             delay: { show: 250, hide: 100 },
             placement: placementOf(el),
@@ -330,5 +333,5 @@
         if (el && !initialized.has(el)) maybeInit(e.target);
     }, true);
 
-    window.mmbTooltips = { version: '1.0' };
+    window.mmbTooltips = { version: '1.1' };
 })();
