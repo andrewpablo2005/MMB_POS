@@ -248,7 +248,7 @@
 .dash-table tr:hover td     { background: #fafbfc; }
 
 .ref-id     { font-weight: 700; color: #1a2535; font-size: .82rem; }
-.amount-pos { color: #b91c1c; font-weight: 700; }
+.amount-pos { color: #b91c1c; font-weight: 800; font-size: .9rem; }
 .amount-neg { color: #94a3b8; font-size: .82rem; }
 
 .pill {

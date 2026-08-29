@@ -497,10 +497,10 @@ h1, h2, h3, h4, h5, h6 { color: var(--mmb-heading); letter-spacing: -0.01em; }
 }
 
 #sidebar .nav-pills .nav-link.active {
-    background: var(--mmb-primary-soft);
+    background: var(--mmb-primary-soft-2);
     color: var(--mmb-primary-hover);
-    font-weight: 600;
-    box-shadow: inset 3px 0 0 var(--mmb-primary);
+    font-weight: 700;
+    box-shadow: inset 4px 0 0 var(--mmb-primary);
 }
 
 #sidebar .nav-pills .nav-link.active i {
