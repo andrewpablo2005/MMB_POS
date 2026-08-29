@@ -1002,7 +1002,9 @@ thead.table-dark th,
     filter: drop-shadow(0 6px 16px rgba(15, 23, 42, 0.28));
 }
 .tooltip.mmb-tip .tooltip-inner {
-    max-width: 280px;
+    /* 220px keeps bubbles compact (max 2–3 lines). Wider values turn
+       long hints into full-sidebar-width bars that read as layout bugs. */
+    max-width: 220px;
     font-weight: 500;
     line-height: 1.45;
     text-align: center;

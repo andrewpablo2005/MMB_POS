@@ -28,18 +28,20 @@
     if (window.mmbTooltips) return;
     if (!window.bootstrap || !bootstrap.Tooltip) return; // CDN failed → no-op
 
-    /* ── Staff-facing explanations, keyed by normalized visible text ── */
+    /* ── Staff-facing explanations, keyed by normalized visible text ──
+       Keep sidebar entries short (≤ ~40 chars) so bubbles stay compact —
+       two lines at most — instead of wide bars. */
     var LABEL_TIPS = {
         /* Sidebar navigation */
-        'dashboard':          'Sales overview — today\u2019s numbers, monthly chart and recent activity',
-        'product management': 'Add, view, edit and remove products in the catalog',
-        'inventory':          'Manage stock batches — receive, dispose and track returns',
-        'sales (pos)':        'Point of sale — ring up items, apply discounts and accept payment',
-        'reports':            'Sales, inventory and product performance reports',
-        'security':           'Passwords, verification PINs and account security',
-        'user management':    'Create staff accounts, set roles and manage access',
-        'system settings':    'Update your profile, contact details and login credentials',
-        'pending accounts':   'Review and approve new staff account requests',
+        'dashboard':          'Today\u2019s sales, chart and recent activity',
+        'product management': 'Add, edit and remove products',
+        'inventory':          'Manage stock batches and disposal',
+        'sales (pos)':        'Ring up items and accept payment',
+        'reports':            'Sales, inventory and product reports',
+        'security':           'Passwords, PINs and account security',
+        'user management':    'Create staff accounts and set roles',
+        'system settings':    'Your profile and login credentials',
+        'pending accounts':   'Approve new staff account requests',
 
         /* Common buttons */
         'add item':           'Register a new product in the catalog',
@@ -151,7 +153,10 @@
         '#togglePassword'
     ].join(',');
 
-    var SKIP = 'input, textarea, .page-link, [data-bs-toggle="offcanvas"]';
+    /* Note: the sidebar hamburger (data-bs-toggle="offcanvas") is NOT
+       skipped — the Offcanvas instance lives on the #sidebar target,
+       not the button, so a styled tooltip is safe there. */
+    var SKIP = 'input, textarea, .page-link';
     var initialized = new WeakSet();
 
     /* Elements already hosting another Bootstrap component (nav pills,
@@ -183,6 +188,12 @@
 
     /* ── Smart placement: keep bubbles inside the viewport ── */
     function placementOf(el) {
+        /* Vertical navs (the app sidebar): bubble floats to the RIGHT of
+           the menu. Without this the pill falls through to the .d-flex
+           heuristic below (the whole layout wrapper is .d-flex) and the
+           bubble renders BELOW the pill — a wide dark bar laid across
+           the entire menu column. */
+        if (el.closest('.nav.flex-column')) return 'right';
         if (el.matches('a[data-bs-toggle="pill"], a[data-bs-toggle="tab"]')) {
             return el.closest('.d-flex, .card, .dash-card') ? 'bottom' : 'right';
         }
@@ -361,5 +372,5 @@
         if (el && !initialized.has(el)) maybeInit(e.target);
     }, true);
 
-    window.mmbTooltips = { version: '1.2' };
+    window.mmbTooltips = { version: '1.3' };
 })();
