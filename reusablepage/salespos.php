@@ -46,13 +46,13 @@ if (!empty($_SESSION['user_id'])) {
                 <input type="text" id="weposSearch" placeholder="Scan barcode or search products..." autocomplete="off">
                 <kbd>F2</kbd>
             </div>
-            <button type="button" class="wepos-btn wepos-btn-outline text-danger" style="border-color: #e74c3c; color: #c0392b;" onclick="openReturnModal()" title="Process Return / Refund (F9)">
+            <button type="button" class="wepos-btn wepos-btn-outline text-danger" style="border-color: #e74c3c; color: #c0392b;" onclick="openReturnModal()">
                     <i class="fas fa-undo-alt me-1"></i> Process Return <kbd style="font-size: 10px; background: #fee2e2; color: #c0392b; border: none; margin-left: 2px;">F9</kbd>
                 </button>
             <button class="wepos-btn wepos-btn-outline" onclick="location.reload()">
                 <i class="fas fa-sync-alt"></i> Refresh
             </button>
-            <button class="wepos-btn wepos-btn-outline text-primary" onclick="weposOpenClosingModal()" title="Close cashier register">
+            <button class="wepos-btn wepos-btn-outline text-primary" onclick="weposOpenClosingModal()">
                 <i class="fas fa-cash-register"></i> Close Register
             </button>
         </div>
@@ -120,7 +120,7 @@ if (!empty($_SESSION['user_id'])) {
                         
                         <div class="wepos-card-info">
                             <div class="wepos-card-price">₱<?= number_format($salePrice, 2) ?></div>
-                            <div class="wepos-card-name" title="<?= htmlspecialchars($row['branded_name']) ?> <?= htmlspecialchars($row['generic_name']) ?> <?= htmlspecialchars($row['strength'] ?? '') ?> <?= htmlspecialchars($row['measurement_name'] ?? '') ?><?= !empty(trim($row['dosage_form'] ?? '')) ? ' ' . htmlspecialchars(trim($row['dosage_form'])) : '' ?><?= isset($row['strength_per_quantity']) && $row['strength_per_quantity'] > 0 ? ' (' . htmlspecialchars((string)$row['strength_per_quantity']) . ' ' . htmlspecialchars(trim($row['strength_per_quantity_unit'] ?? '')) . ' per unit)' : '' ?>">
+                            <div class="wepos-card-name">
                                 <?= htmlspecialchars($row['branded_name']) ?> <?= htmlspecialchars($row['generic_name']) ?> <?= htmlspecialchars($row['strength'] ?? '') ?> <?= htmlspecialchars($row['measurement_name'] ?? '') ?><?= !empty(trim($row['dosage_form'] ?? '')) ? ' ' . htmlspecialchars(trim($row['dosage_form'])) : '' ?><?= isset($row['strength_per_quantity']) && $row['strength_per_quantity'] > 0 ? ' (' . htmlspecialchars((string)$row['strength_per_quantity']) . ' ' . htmlspecialchars(trim($row['strength_per_quantity_unit'] ?? '')) . ' per unit)' : '' ?>
                             </div>
                         </div>
@@ -138,8 +138,8 @@ if (!empty($_SESSION['user_id'])) {
         <div class="wepos-cart-header">
             <span style="font-size:13px; font-weight:600; color:#50575e;"><i class="fas fa-shopping-cart me-1"></i> Current Order</span>
             <div class="wepos-cart-actions">
-                <button class="wepos-btn wepos-btn-icon text-danger" title="Clear Cart (F8)" onclick="weposClearCart()">
-                    <i class="fas fa-trash-alt"></i>
+                <button class="wepos-btn wepos-btn-outline text-danger" style="border-color: #e74c3c; color: #c0392b;" onclick="weposClearCart()">
+                    <i class="fas fa-trash-alt me-1"></i> Clear <kbd style="font-size: 10px; background: #fee2e2; color: #c0392b; border: none; margin-left: 2px;">F8</kbd>
                 </button>
             </div>
         </div>
@@ -695,4 +695,4 @@ if (!empty($_SESSION['user_id'])) {
 </div>
 
 <?php include __DIR__ . '/returnmodal.php'; ?>
-<script src="../js/pos_wepos.js?v=1.5"></script>
+<script src="../js/pos_wepos.js?v=1.6"></script>

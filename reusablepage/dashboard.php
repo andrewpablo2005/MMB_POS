@@ -46,7 +46,7 @@ function dash_product_thumb(?string $image, string $sizeClass = 'mmb-thumb'): st
 
 <!-- Inter Font & Dashboard CSS -->
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../css/dashboard.css?v=7">
+<link rel="stylesheet" href="../css/dashboard.css?v=8">
 
 <!-- Pass PHP data to dashboard.js without mixing PHP into the JS file -->
 <script>
@@ -91,11 +91,11 @@ function dash_product_thumb(?string $image, string $sizeClass = 'mmb-thumb'): st
         <div class="flex-grow-1 min-w-0">
           <div class="d-flex align-items-center justify-content-between">
             <div class="stat-label">Sales</div>
-            <div class="kpi-toggle" role="group" aria-label="Sales period">
-              <button type="button" data-period="today" class="active">Today</button>
-              <button type="button" data-period="month">Month</button>
-              <button type="button" data-period="year">Year</button>
-            </div>
+            <select class="period-select" id="salesPeriod" aria-label="Sales period">
+              <option value="today" selected>Today</option>
+              <option value="month">This Month</option>
+              <option value="year">This Year</option>
+            </select>
           </div>
           <div class="stat-value stat-value--xl" id="salesValue">₱<?php echo number_format($netSalesToday, 2); ?></div>
           <div class="stat-sub" id="salesSub">Refunds today: -₱<?php echo number_format($totalRefundToday, 2); ?></div>
@@ -132,10 +132,10 @@ function dash_product_thumb(?string $image, string $sizeClass = 'mmb-thumb'): st
           <h6><i class="fas fa-chart-column me-2 text-primary"></i>Sales Performance</h6>
           <div class="d-flex align-items-center gap-2">
             <span class="pill pill-gray" id="chartTotal">YTD ₱<?php echo number_format(array_sum($monthlySalesTrend), 2); ?></span>
-            <div class="kpi-toggle kpi-toggle--sm" role="group" aria-label="Chart range">
-              <button type="button" data-range="6" class="active">6M</button>
-              <button type="button" data-range="12">12M</button>
-            </div>
+            <select class="period-select period-select--sm" id="chartRange" aria-label="Chart range">
+              <option value="6">Last 6 months</option>
+              <option value="12" selected>Last 12 months</option>
+            </select>
           </div>
         </div>
         <div class="dash-card-body">
@@ -326,4 +326,4 @@ function dash_product_thumb(?string $image, string $sizeClass = 'mmb-thumb'): st
 </div><!-- end .dash-wrapper -->
 
 <!-- Dashboard Chart -->
-<script src="../js/dashboard.js?v=7"></script>
+<script src="../js/dashboard.js?v=8"></script>
