@@ -988,10 +988,12 @@ thead.table-dark th,
     max-width: 340px;
 }
 
-/* ── 10. Global tooltip layer (js/mmb-tooltips.js) ──
-   Dark-slate hint bubble for every interactive control. */
+/* ── 10. Global tooltip layer (js/mmb-tooltips.js v2.0) ──
+   Translucent "ink" bubble with a frosted-glass backdrop — reads
+   like a real OS tooltip, not a branded banner. Semi-transparent
+   by design: content underneath stays faintly visible. */
 .tooltip.mmb-tip {
-    --bs-tooltip-bg: #1e293b;
+    --bs-tooltip-bg: rgba(15, 23, 42, 0.72);
     --bs-tooltip-color: #f8fafc;
     --bs-tooltip-opacity: 1;
     --bs-tooltip-border-radius: 0.5rem;
@@ -999,20 +1001,27 @@ thead.table-dark th,
     --bs-tooltip-padding-y: 0.42rem;
     --bs-tooltip-font-size: 0.78rem;
     opacity: 1 !important;
-    filter: drop-shadow(0 6px 16px rgba(15, 23, 42, 0.28));
 }
 .tooltip.mmb-tip .tooltip-inner {
-    /* 220px keeps bubbles compact (max 2–3 lines). Wider values turn
+    /* frosted glass: translucent ink + backdrop blur */
+    background-color: rgba(15, 23, 42, 0.72);
+    backdrop-filter: blur(10px) saturate(1.35);
+    -webkit-backdrop-filter: blur(10px) saturate(1.35);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.22);
+    /* 240px keeps bubbles compact (max 2–3 lines). Wider values turn
        long hints into full-sidebar-width bars that read as layout bugs. */
-    max-width: 220px;
+    max-width: 240px;
     font-weight: 500;
     line-height: 1.45;
     text-align: center;
     letter-spacing: 0.01em;
 }
 .tooltip.mmb-tip .tooltip-arrow::before {
-    border-top-color: #1e293b;
-    border-bottom-color: #1e293b;
+    /* a touch more opaque than the bubble so it visually matches the
+       frosted composite (the pseudo-element cannot carry the blur) */
+    border-top-color: rgba(15, 23, 42, 0.86);
+    border-bottom-color: rgba(15, 23, 42, 0.86);
 }
 /* Disabled POS pay button: keep hover events alive so the
    "cart is empty" hint can appear (clicks stay blocked natively). */
@@ -1020,12 +1029,13 @@ thead.table-dark th,
     pointer-events: auto;
 }
 
-/* ── 11. "?" help badges (js/mmb-tooltips.js injects these) ──
-   Small crimson question mark pinned to the corner of every control
-   that has a hover explanation. One badge language across the whole
-   app: sidebar, topbar, KPI tiles, table rows, POS cart, modals,
-   forms and fields. Pointer-transparent (hovering the badge IS
-   hovering the control) and aria-hidden for screen readers. */
+/* ── 11. "?" help badges (js/mmb-tooltips.js v2.0 injects these) ──
+   Small translucent question chip pinned to the corner of the FEW
+   controls that carry a curated explanation (sidebar menu, POS
+   jargon like Close Register / Void / Override). Same frosted-ink
+   family as the tooltip bubble itself — quiet at rest, solid when
+   hovered. Pointer-transparent (hovering the badge IS hovering the
+   control) and aria-hidden for screen readers. */
 .mmb-q-host {
     position: relative;
 }
@@ -1040,13 +1050,15 @@ thead.table-dark th,
     width: 15px;
     height: 15px;
     border-radius: 50%;
-    background: linear-gradient(140deg, #ef4444 0%, #b91c1c 100%);
-    color: #fff;
+    background: rgba(15, 23, 42, 0.38);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+    color: rgba(255, 255, 255, 0.95);
     font-size: 9px;
     line-height: 1;
-    box-shadow: 0 0 0 2px #fff, 0 1px 3px rgba(15, 23, 42, 0.35);
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.9), 0 1px 3px rgba(15, 23, 42, 0.3);
     pointer-events: none;
-    transition: transform 0.15s ease;
+    transition: background 0.15s ease, transform 0.15s ease;
 }
 .mmb-q .fa-question {
     font-size: 8px;
@@ -1082,11 +1094,12 @@ thead.table-dark th,
     top: -7px;
     right: -7px;
 }
-/* hover feedback — the badge answers the pointer */
+/* hover feedback — the chip answers the pointer by solidifying */
 .mmb-q-host:hover .mmb-q {
-    transform: scale(1.22);
+    background: rgba(15, 23, 42, 0.85);
+    transform: scale(1.18);
 }
-/* brand-colored buttons: the white ring keeps the badge legible */
+/* brand-colored buttons: the white ring keeps the chip legible */
 .btn-primary > .mmb-q,
 .btn-danger > .mmb-q,
 .btn-dark > .mmb-q {
