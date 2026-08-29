@@ -44,43 +44,26 @@ if (isset($_GET['added'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
     <?php require_once __DIR__ . "/../conn/connection_links.php"; ?>
-    <style>
-        @media (min-width: 992px) {
-            #sidebar.offcanvas-lg.offcanvas-start {
-                position: fixed !important;
-                top: 64px;
-                left: 0;
-                height: calc(100vh - 64px);
-                width: min(320px, var(--bs-offcanvas-width, 280px));
-                overflow-y: auto;
-                z-index: 1030;
-            }
-
-            #sidebar .offcanvas-body {
-                padding-bottom: 1rem;
-            }
-
-            .dashboard-main-content {
-                margin-left: min(320px, var(--bs-offcanvas-width, 280px));
-            }
-        }
-    </style>
+    <!-- App shell layout (sidebar + topbar metrics) lives in css/mmb-theme.css -->
 </head>
 
-<body class="d-flex flex-column m-0 p-0" style="min-height: 100vh;">
+<body class="d-flex flex-column m-0 p-0 has-sidebar" style="min-height: 100vh; overflow-x: hidden;">
    <?php include __DIR__ . "/../reusablepage/header.php"; ?>
 
 
     <div class="d-flex dashboard-main-content">
 
         <!-- SIDEBAR -->
-        <div class="offcanvas-lg offcanvas-start" tabindex="-1" id="sidebar" style="--bs-offcanvas-width: 50%;">
-            <div class="offcanvas-header d-lg-none">
-                <div class="d-flex align-items-center gap-2">
-                    <span class="brand-mark brand-mark-sm"><i class="fas fa-prescription-bottle-medical"></i></span>
-                    <span class="fw-bold" style="font-size: .95rem;">MMB's Drugstore</span>
-                </div>
-                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        <div class="offcanvas-lg offcanvas-start" tabindex="-1" id="sidebar" style="--bs-offcanvas-width: min(85vw, 320px);">
+            <div class="offcanvas-header">
+                <a class="sidebar-brand" href="?tab=dashboard">
+                    <span class="brand-mark"><i class="fas fa-prescription-bottle-medical"></i></span>
+                    <span class="brand-text">
+                        <span class="brand-name">MMB's Drugstore</span>
+                        <span class="brand-sub">Pharmacy POS</span>
+                    </span>
+                </a>
+                <button type="button" class="btn-close d-lg-none" data-bs-dismiss="offcanvas" aria-label="Close"></button>
             </div>
 
             <div class="offcanvas-body">

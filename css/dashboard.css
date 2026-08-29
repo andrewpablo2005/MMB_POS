@@ -1,8 +1,8 @@
-/* ─── Dashboard Scoped Styles (v8 — period dropdown, no toggles) ─── */
+/* ─── Dashboard Scoped Styles (v9 — compact type scale, mobile-safe KPIs) ─── */
 .dash-wrapper {
   background: transparent;
   min-height: 100%;
-  padding: 28px 28px 40px;
+  padding: 8px 0 32px;
   font-family: 'Inter', sans-serif;
 }
 .min-w-0 { min-width: 0; }
@@ -12,13 +12,16 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 28px;
+  margin-bottom: 20px;
+  gap: 0.75rem;
+  flex-wrap: wrap;
 }
 .dash-header h4 {
-  font-size: 1.55rem;
+  font-size: 1.28rem;
   font-weight: 700;
   color: #1a2535;
   margin: 0;
+  letter-spacing: -0.2px;
 }
 .dash-header .date-badge {
   background: #fef2f2;
@@ -34,29 +37,30 @@
 /* ─── Stat Cards ─── */
 .stat-card {
   background: #fff;
-  border-radius: 18px;
-  padding: 24px;
+  border-radius: 16px;
+  padding: 18px 20px;
   box-shadow: 0 2px 12px rgba(0,0,0,.06);
   display: flex;
   align-items: center;
-  gap: 18px;
+  gap: 16px;
   transition: transform .18s ease, box-shadow .18s ease;
   border: 1px solid rgba(0,0,0,.04);
   height: 100%;
+  min-width: 0;
 }
 .stat-card:hover {
-  transform: translateY(-3px);
+  transform: translateY(-2px);
   box-shadow: 0 8px 24px rgba(0,0,0,.10);
 }
 .stat-icon {
-  width: 56px;
-  height: 56px;
-  border-radius: 15px;
+  width: 46px;
+  height: 46px;
+  border-radius: 13px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  font-size: 1.4rem;
+  font-size: 1.15rem;
 }
 .stat-icon.blue  { background: #eff6ff; color: #2563eb; }
 .stat-icon.crimson { background: #fef2f2; color: #dc2626; }
@@ -83,19 +87,33 @@
   margin-bottom: 4px;
 }
 .stat-value {
-  font-size: 1.55rem;
+  font-size: 1.35rem;
   font-weight: 800;
   color: #1a2535;
-  line-height: 1;
+  line-height: 1.1;
+  overflow-wrap: anywhere;
 }
 .stat-value--xl {
-  font-size: 2rem;
+  font-size: 1.75rem;
   letter-spacing: -.5px;
 }
 .stat-sub {
   font-size: .73rem;
   color: #94a3b8;
   margin-top: 4px;
+  overflow-wrap: anywhere;
+}
+
+/* Mobile: KPI values must never clip — tighter type + smaller icons */
+@media (max-width: 575.98px) {
+  .stat-card { padding: 14px 16px; gap: 12px; border-radius: 14px; }
+  .stat-icon { width: 40px; height: 40px; border-radius: 11px; font-size: 1rem; }
+  .stat-value { font-size: 1.12rem; }
+  .stat-value--xl { font-size: 1.4rem; }
+  .stat-sub { font-size: .7rem; }
+  .dash-wrapper { padding: 4px 0 24px; }
+  .dash-header h4 { font-size: 1.15rem; }
+  .chart-wrapper { height: 220px; }
 }
 
 /* ─── Period dropdown (Sales card + chart range) ─── */
@@ -172,26 +190,31 @@
 /* ─── Section Cards ─── */
 .dash-card {
   background: #fff;
-  border-radius: 18px;
+  border-radius: 16px;
   box-shadow: 0 2px 12px rgba(0,0,0,.06);
   border: 1px solid rgba(0,0,0,.04);
   overflow: hidden;
   height: 100%;
+  min-width: 0;
 }
 .dash-card-header {
-  padding: 24px 24px 0;
+  padding: 18px 20px 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
 }
 .dash-card-header h6 {
-  font-size: .95rem;
+  font-size: .92rem;
   font-weight: 700;
   color: #1a2535;
   margin: 0;
 }
 .dash-card-body {
-  padding: 24px;
+  padding: 18px 20px 20px;
+  overflow-x: auto;   /* tables scroll in-card on narrow screens */
+  -webkit-overflow-scrolling: touch;
 }
 
 /* ─── Chart ─── */
@@ -205,6 +228,7 @@
   width: 100%;
   border-collapse: collapse;
   font-size: .84rem;
+  min-width: 420px;   /* scroll past this inside dash-card-body */
 }
 .dash-table th {
   text-transform: uppercase;

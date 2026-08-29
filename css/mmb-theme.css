@@ -33,6 +33,10 @@
     --bs-link-hover-color:   var(--mmb-primary-active);
     --bs-link-hover-color-rgb: var(--mmb-primary-rgb);
     --bs-focus-ring-color:   rgba(var(--mmb-primary-rgb), .25);
+
+    /* ── App shell metrics (v3.7 layout system) ── */
+    --mmb-topbar-h:  56px;   /* slim topbar                    */
+    --mmb-sidebar-w: 264px;  /* desktop sidebar width          */
 }
 
 /* ── Text selection detail ── */
@@ -193,12 +197,55 @@ h1, h2, h3, h4, h5, h6 { color: var(--mmb-heading); letter-spacing: -0.01em; }
    TOPBAR (reusablepage/header.php)
    ═══════════════════════════════════════════════════════════════ */
 .navbar.app-topbar {
-    height: 64px;
+    height: var(--mmb-topbar-h);
     padding: 0 1rem;
     background: var(--mmb-surface);
     border-bottom: 1px solid var(--mmb-line);
     z-index: 1030 !important;
 }
+
+/* ── Desktop shell: full-height sidebar owns the brand; the topbar
+      lives only over the content area (no menu row on PC) ── */
+@media (min-width: 992px) {
+    body.has-sidebar .app-topbar { margin-left: var(--mmb-sidebar-w); }
+
+    /* brand moves into the sidebar header on sidebar pages */
+    body.has-sidebar .app-brand { display: none; }
+
+    #sidebar.offcanvas-lg.offcanvas-start {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        height: 100vh !important;
+        width: var(--mmb-sidebar-w) !important;
+        max-width: var(--mmb-sidebar-w) !important;
+        transform: none !important;
+        visibility: visible !important;
+        background: var(--mmb-surface) !important;
+        border-right: 1px solid var(--mmb-line);
+        z-index: 1030;
+    }
+
+    body.has-sidebar .dashboard-main-content { margin-left: var(--mmb-sidebar-w); }
+}
+
+/* Sidebar brand header (rendered in-page, always visible in sidebar) */
+#sidebar .offcanvas-header {
+    padding: 0.8rem 0.9rem;
+    border-bottom: 1px solid var(--mmb-line);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+.sidebar-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    text-decoration: none;
+    min-width: 0;
+}
+.sidebar-brand .brand-mark { width: 36px; height: 36px; font-size: 1rem; }
 
 .app-brand {
     display: flex;
@@ -462,14 +509,7 @@ h1, h2, h3, h4, h5, h6 { color: var(--mmb-heading); letter-spacing: -0.01em; }
     box-shadow: 0 3px 8px rgba(var(--mmb-primary-rgb), 0.3);
 }
 
-#sidebar .offcanvas-header {
-    border-bottom: 1px solid var(--mmb-line);
-}
-
-#sidebar .offcanvas-header h5 {
-    font-weight: 700;
-    font-size: 1rem;
-}
+/* (offcanvas-header layout + sidebar-brand live in the TOPBAR section above) */
 
 /* Mobile offcanvas backdrop tint */
 .offcanvas-backdrop.show { opacity: 0.45; }
@@ -811,11 +851,12 @@ thead.table-dark th,
 .page-head h2,
 .page-head h3,
 .page-head h4 {
-    font-size: 1.55rem;
+    font-size: 1.28rem;
     font-weight: 700;
     color: var(--mmb-heading);
     letter-spacing: -0.2px;
-    margin: 0;
+    margin: 0 0 0.35rem;
+    line-height: 1.25;
 }
 
 .page-head .text-muted,

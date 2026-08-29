@@ -47,7 +47,7 @@
 
                 <!-- Items Table -->
                 <div style="max-height: 220px; overflow-y: auto; border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 15px;">
-                    <table class="table table-sm table-hover align-middle mb-0" style="font-size: 0.83rem;">
+                    <div class="table-responsive"><table class="table table-sm table-hover align-middle mb-0" style="font-size: 0.83rem;">
                         <thead class="table-light" style="position: sticky; top: 0; z-index: 2;">
                             <tr>
                                 <th style="width: 30px;"></th>
@@ -60,7 +60,7 @@
                         <tbody id="returnItemsBody">
                             <!-- Populated via JS -->
                         </tbody>
-                    </table>
+                    </table></div>
                 </div>
 
                 <!-- Return Reason & Method -->

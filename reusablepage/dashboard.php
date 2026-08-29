@@ -46,7 +46,7 @@ function dash_product_thumb(?string $image, string $sizeClass = 'mmb-thumb'): st
 
 <!-- Inter Font & Dashboard CSS -->
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../css/dashboard.css?v=8">
+<link rel="stylesheet" href="../css/dashboard.css?v=9">
 
 <!-- Pass PHP data to dashboard.js without mixing PHP into the JS file -->
 <script>
@@ -102,7 +102,7 @@ function dash_product_thumb(?string $image, string $sizeClass = 'mmb-thumb'): st
         </div>
       </div>
     </div>
-    <div class="col-6 col-xl-3">
+    <div class="col-12 col-sm-6 col-xl-3">
       <div class="stat-card">
         <div class="stat-icon wine"><i class="fas fa-money-bill-trend-up"></i></div>
         <div class="min-w-0">
@@ -112,7 +112,7 @@ function dash_product_thumb(?string $image, string $sizeClass = 'mmb-thumb'): st
         </div>
       </div>
     </div>
-    <div class="col-6 col-xl-3">
+    <div class="col-12 col-sm-6 col-xl-3">
       <div class="stat-card">
         <div class="stat-icon rose"><i class="fas fa-receipt"></i></div>
         <div class="min-w-0">
