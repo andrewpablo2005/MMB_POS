@@ -563,8 +563,11 @@
             new MutationObserver(scheduleScan)
                 .observe(document.body, { childList: true, subtree: true });
         }
-        /* Bootstrap surfaces that reveal pre-rendered controls */
-        ['shown.bs.modal', 'shown.bs.offcanvas', 'shown.bs.dropdown']
+        /* Bootstrap surfaces that reveal pre-rendered controls. Tab panes
+           matter especially: switching tabs only toggles classes (no DOM
+           mutation), so field badges pinned while the pane was hidden
+           must be re-positioned once it becomes visible. */
+        ['shown.bs.modal', 'shown.bs.offcanvas', 'shown.bs.dropdown', 'shown.bs.tab']
             .forEach(function (ev) { document.addEventListener(ev, scheduleScan, true); });
         /* responsive reflow: re-pin field badges to their fields */
         window.addEventListener('resize', scheduleScan);

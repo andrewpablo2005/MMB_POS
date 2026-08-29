@@ -40,7 +40,7 @@
 <script src="../js/usersmanagement.js?v=2"></script>
 
 <!-- Global help layer (staff hover tooltips + "?" badges on every control) -->
-<script src="<?= mmbpos_base_path() ?>/js/mmb-tooltips.js?v=5"></script>
+<script src="<?= mmbpos_base_path() ?>/js/mmb-tooltips.js?v=6"></script>
 
 <!-- JS PDF -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
