@@ -1,12 +1,43 @@
 /**
  * dashboard.js
- * Chart.js initialization for the Dashboard page.
- * salesData is injected inline from PHP via window.dashboardData.
+ * KPI period toggle + Chart.js chart for the Dashboard page.
+ * All values are injected inline from PHP via window.dashboardData.
  */
 (function () {
-  const salesData = window.dashboardData?.monthlySalesTrend ?? Array(12).fill(0);
-  const labels    = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const data = window.dashboardData || {};
+  const salesData = data.monthlySalesTrend ?? Array(12).fill(0);
+  const periods = data.periods || {};
+  const labels = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
+  const peso = (n) => '₱' + Number(n).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+  /* ── KPI period toggle (drives Sales + Real Revenue together) ── */
+  function swapText(el, text) {
+    if (!el || el.textContent === text) return;
+    el.classList.add('is-swapping');
+    setTimeout(() => {
+      el.textContent = text;
+      el.classList.remove('is-swapping');
+    }, 120);
+  }
+
+  document.querySelectorAll('.kpi-toggle[role="group"]:not(.kpi-toggle--sm) button')
+    .forEach((btn) => {
+      btn.addEventListener('click', function () {
+        const group = this.closest('.kpi-toggle');
+        group.querySelectorAll('button').forEach((b) => b.classList.remove('active'));
+        this.classList.add('active');
+
+        const p = periods[this.dataset.period];
+        if (!p) return;
+        swapText(document.getElementById('salesValue'), p.sales);
+        swapText(document.getElementById('salesSub'), p.sub);
+        swapText(document.getElementById('revenueValue'), p.revenue);
+        swapText(document.getElementById('revenueSub'), p.revSub);
+      });
+    });
+
+  /* ── Chart ── */
   function getGradient(ctx, chartArea) {
     const gradient = ctx.createLinearGradient(0, chartArea.bottom, 0, chartArea.top);
     gradient.addColorStop(0, 'rgba(220, 38, 38, .15)');
@@ -21,7 +52,7 @@
 
   const chartCtx = canvas.getContext('2d');
 
-  new Chart(chartCtx, {
+  const chart = new Chart(chartCtx, {
     type: 'bar',
     data: {
       labels,
@@ -55,13 +86,13 @@
       maintainAspectRatio: false,
       animation:           { duration: 900, easing: 'easeInOutQuart' },
       interaction:         { mode: 'index', intersect: false },
-      onHover: (e, els, chart) => {
-        chart.canvas.style.cursor = els.length ? 'pointer' : 'default';
+      onHover: (e, els, ch) => {
+        ch.canvas.style.cursor = els.length ? 'pointer' : 'default';
       },
       plugins: {
         legend: { display: false },
         tooltip: {
-          backgroundColor: '#1a2535',
+          backgroundColor: 'rgba(15, 23, 42, .92)',
           titleColor:      '#fff',
           bodyColor:       '#e2e8f0',
           titleFont:       { size: 12, weight: '600', family: 'Inter' },
@@ -72,9 +103,9 @@
           callbacks: {
             title: (items) => {
               const full = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-              return full[items[0].dataIndex] + ' ' + new Date().getFullYear();
+              return full[items[0].dataIndex % 12] + ' ' + new Date().getFullYear();
             },
-            label: (ctx)   => '₱ ' + Number(ctx.parsed.y).toLocaleString('en-PH', { minimumFractionDigits: 2 }),
+            label: (ctx)   => peso(ctx.parsed.y),
           }
         }
       },
@@ -98,5 +129,27 @@
         }
       }
     }
+  });
+
+  /* ── Chart range toggle (6M / 12M) ── */
+  const totalChip = document.getElementById('chartTotal');
+  document.querySelectorAll('.kpi-toggle--sm button').forEach((btn) => {
+    btn.addEventListener('click', function () {
+      const group = this.closest('.kpi-toggle');
+      group.querySelectorAll('button').forEach((b) => b.classList.remove('active'));
+      this.classList.add('active');
+
+      const months = parseInt(this.dataset.range, 10) || 12;
+      const slice = salesData.slice(12 - months);
+      const sliceLabels = labels.slice(12 - months);
+
+      chart.data.labels = sliceLabels;
+      chart.data.datasets[0].data = slice;
+      chart.update();
+
+      if (totalChip) {
+        totalChip.textContent = (months === 12 ? 'YTD ' : months + 'M ') + peso(slice.reduce((a, b) => a + b, 0));
+      }
+    });
   });
 })();

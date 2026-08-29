@@ -81,7 +81,18 @@ if ($product->addProduct()) {
                 <?php foreach ($products as $prod): ?>
                     <tr>
                         <td><?= htmlspecialchars((string)($prod['id']), ENT_QUOTES, 'UTF-8') ?></td>
-                        <td><?= htmlspecialchars((string)($prod['branded_name']), ENT_QUOTES, 'UTF-8') ?></td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <?php if (!empty(trim((string)($prod['imageproduct'] ?? '')))): ?>
+                                    <span class="mmb-thumb mmb-thumb--md">
+                                        <img src="../img/<?= htmlspecialchars($prod['imageproduct'], ENT_QUOTES, 'UTF-8') ?>" alt="" loading="lazy">
+                                    </span>
+                                <?php else: ?>
+                                    <span class="mmb-thumb mmb-thumb--md mmb-thumb--empty"><i class="fas fa-capsules"></i></span>
+                                <?php endif; ?>
+                                <span><?= htmlspecialchars((string)($prod['branded_name']), ENT_QUOTES, 'UTF-8') ?></span>
+                            </div>
+                        </td>
                         <td><?= htmlspecialchars((string)($prod['generic_name']), ENT_QUOTES, 'UTF-8') ?></td>
                         <td><?= htmlspecialchars((string)($prod['strength'] ?? 'N/A'), ENT_QUOTES, 'UTF-8') ?> <?= htmlspecialchars((string)($prod['measurement_name'] ?? 'N/A'), ENT_QUOTES, 'UTF-8') ?></td>
                         <td><?= !empty(trim($prod['dosage_form'] ?? '')) ? htmlspecialchars(trim($prod['dosage_form'])) : 'N/A' ?></td>

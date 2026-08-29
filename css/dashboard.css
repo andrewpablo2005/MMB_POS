@@ -1,10 +1,11 @@
-/* ─── Dashboard Scoped Styles (v5 — brand palette, no green) ─── */
+/* ─── Dashboard Scoped Styles (v7 — toggle KPI, product thumbs) ─── */
 .dash-wrapper {
   background: transparent;
   min-height: 100%;
   padding: 28px 28px 40px;
   font-family: 'Inter', sans-serif;
 }
+.min-w-0 { min-width: 0; }
 
 /* ─── Header ─── */
 .dash-header {
@@ -87,10 +88,80 @@
   color: #1a2535;
   line-height: 1;
 }
+.stat-value--xl {
+  font-size: 2rem;
+  letter-spacing: -.5px;
+}
 .stat-sub {
   font-size: .73rem;
   color: #94a3b8;
   margin-top: 4px;
+}
+
+/* ─── Segmented period toggle (Sales card + chart range) ─── */
+.kpi-toggle {
+  display: inline-flex;
+  background: #f1f5f9;
+  border-radius: 10px;
+  padding: 3px;
+  gap: 2px;
+  flex-shrink: 0;
+}
+.kpi-toggle button {
+  border: none;
+  background: transparent;
+  color: #64748b;
+  font-size: .72rem;
+  font-weight: 700;
+  font-family: 'Inter', sans-serif;
+  padding: 4px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background .15s ease, color .15s ease;
+  line-height: 1.3;
+}
+.kpi-toggle button:hover { color: #1a2535; }
+.kpi-toggle button.active {
+  background: #fff;
+  color: #b91c1c;
+  box-shadow: 0 1px 4px rgba(15, 23, 42, .12);
+}
+.kpi-toggle--sm button { padding: 3px 10px; font-size: .7rem; }
+
+/* flagship sales card — a touch more presence */
+.stat-card--sales {
+  background: linear-gradient(135deg, #fff 55%, #fef2f2 100%);
+}
+
+/* value swap micro-animation (JS adds/removes .is-swapping) */
+.stat-value.is-swapping,
+.stat-sub.is-swapping {
+  opacity: 0;
+  transform: translateY(4px);
+}
+.stat-value,
+.stat-sub {
+  transition: opacity .12s ease, transform .12s ease;
+}
+
+/* Product thumbnails are defined in css/mmb-theme.css (.mmb-thumb) so
+   every page — dashboard, product management, inventory — shares them. */
+
+/* ─── Mini stat rows (Discounts & VAT card) ─── */
+.mini-stat-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 9px 0;
+  border-bottom: 1px solid #f8fafc;
+  font-size: .82rem;
+  color: #64748b;
+}
+.mini-stat-row:last-child { border-bottom: none; }
+.mini-stat-row strong {
+  color: #1a2535;
+  font-weight: 700;
+  font-size: .85rem;
 }
 
 /* ─── Section Cards ─── */
@@ -187,6 +258,8 @@
 .top-product-item .product-name  { font-weight: 600; color: #1a2535; font-size: .85rem; }
 .top-product-item .product-sold  { font-size: .73rem; color: #94a3b8; }
 .top-product-item .product-price { font-weight: 700; color: #b91c1c; font-size: .88rem; }
+.top-product-item .mmb-thumb { margin-right: 0; }
+.top-product-item .product-rank { margin-right: 10px; }
 
 /* ─── Alert Widgets ─── */
 .alert-card-warn {
