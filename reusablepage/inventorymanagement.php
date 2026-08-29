@@ -540,7 +540,7 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
                                 }
                                 ?>
                             </select>
-                            <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addSupplierModal" title="Add new supplier">
+                            <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addSupplierModal">
                                 <i class="fas fa-plus"></i>
                             </button>
                         </div>

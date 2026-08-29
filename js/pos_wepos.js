@@ -572,7 +572,7 @@ function weposUpdateCart() {
         html += `
             <tr class="wepos-cart-row">
                 <td class="wepos-col-name">
-                    <div class="wepos-cart-item-name" title="${weposEscapeHtml(item.name)}">${weposEscapeHtml(item.name)}${overrideBadge}</div>
+                    <div class="wepos-cart-item-name">${weposEscapeHtml(item.name)}${overrideBadge}</div>
                 </td>
                 <td class="wepos-col-price text-muted">₱${item.price.toFixed(2)}</td>
                 <td class="wepos-col-qty">

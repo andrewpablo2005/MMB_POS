@@ -1,7 +1,8 @@
 /**
  * dashboard.js
- * KPI period toggle + Chart.js chart for the Dashboard page.
+ * KPI period dropdown + Chart.js chart for the Dashboard page.
  * All values are injected inline from PHP via window.dashboardData.
+ * No tooltips anywhere — the chart is read from the axis + total chip.
  */
 (function () {
   const data = window.dashboardData || {};
@@ -11,7 +12,7 @@
 
   const peso = (n) => '₱' + Number(n).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
-  /* ── KPI period toggle (drives Sales + Real Revenue together) ── */
+  /* ── KPI period dropdown (drives Sales + Real Revenue together) ── */
   function swapText(el, text) {
     if (!el || el.textContent === text) return;
     el.classList.add('is-swapping');
@@ -21,21 +22,17 @@
     }, 120);
   }
 
-  document.querySelectorAll('.kpi-toggle[role="group"]:not(.kpi-toggle--sm) button')
-    .forEach((btn) => {
-      btn.addEventListener('click', function () {
-        const group = this.closest('.kpi-toggle');
-        group.querySelectorAll('button').forEach((b) => b.classList.remove('active'));
-        this.classList.add('active');
-
-        const p = periods[this.dataset.period];
-        if (!p) return;
-        swapText(document.getElementById('salesValue'), p.sales);
-        swapText(document.getElementById('salesSub'), p.sub);
-        swapText(document.getElementById('revenueValue'), p.revenue);
-        swapText(document.getElementById('revenueSub'), p.revSub);
-      });
+  const periodSelect = document.getElementById('salesPeriod');
+  if (periodSelect) {
+    periodSelect.addEventListener('change', function () {
+      const p = periods[this.value];
+      if (!p) return;
+      swapText(document.getElementById('salesValue'), p.sales);
+      swapText(document.getElementById('salesSub'), p.sub);
+      swapText(document.getElementById('revenueValue'), p.revenue);
+      swapText(document.getElementById('revenueSub'), p.revSub);
     });
+  }
 
   /* ── Chart ── */
   function getGradient(ctx, chartArea) {
@@ -76,38 +73,16 @@
         borderSkipped:         'bottom',
         barPercentage:         0.58,
         categoryPercentage:    0.72,
-        maxBarThickness:       46,
-        hoverBackgroundColor: 'rgba(220, 38, 38, .95)',
-        hoverBorderRadius:     7
+        maxBarThickness:       46
       }]
     },
     options: {
       responsive:          true,
       maintainAspectRatio: false,
       animation:           { duration: 900, easing: 'easeInOutQuart' },
-      interaction:         { mode: 'index', intersect: false },
-      onHover: (e, els, ch) => {
-        ch.canvas.style.cursor = els.length ? 'pointer' : 'default';
-      },
       plugins: {
-        legend: { display: false },
-        tooltip: {
-          backgroundColor: 'rgba(15, 23, 42, .92)',
-          titleColor:      '#fff',
-          bodyColor:       '#e2e8f0',
-          titleFont:       { size: 12, weight: '600', family: 'Inter' },
-          bodyFont:        { size: 13, weight: '700', family: 'Inter' },
-          padding:          12,
-          cornerRadius:     10,
-          displayColors:    false,
-          callbacks: {
-            title: (items) => {
-              const full = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-              return full[items[0].dataIndex % 12] + ' ' + new Date().getFullYear();
-            },
-            label: (ctx)   => peso(ctx.parsed.y),
-          }
-        }
+        legend:  { display: false },
+        tooltip: { enabled: false }   /* no tooltips — by explicit user request */
       },
       scales: {
         y: {
@@ -131,15 +106,12 @@
     }
   });
 
-  /* ── Chart range toggle (6M / 12M) ── */
+  /* ── Chart range dropdown (6M / 12M) ── */
   const totalChip = document.getElementById('chartTotal');
-  document.querySelectorAll('.kpi-toggle--sm button').forEach((btn) => {
-    btn.addEventListener('click', function () {
-      const group = this.closest('.kpi-toggle');
-      group.querySelectorAll('button').forEach((b) => b.classList.remove('active'));
-      this.classList.add('active');
-
-      const months = parseInt(this.dataset.range, 10) || 12;
+  const rangeSelect = document.getElementById('chartRange');
+  if (rangeSelect) {
+    rangeSelect.addEventListener('change', function () {
+      const months = parseInt(this.value, 10) || 12;
       const slice = salesData.slice(12 - months);
       const sliceLabels = labels.slice(12 - months);
 
@@ -151,5 +123,5 @@
         totalChip.textContent = (months === 12 ? 'YTD ' : months + 'M ') + peso(slice.reduce((a, b) => a + b, 0));
       }
     });
-  });
+  }
 })();
