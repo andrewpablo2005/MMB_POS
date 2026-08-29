@@ -1019,3 +1019,100 @@ thead.table-dark th,
 .wepos-pay-btn:disabled {
     pointer-events: auto;
 }
+
+/* ── 11. "?" help badges (js/mmb-tooltips.js injects these) ──
+   Small crimson question mark pinned to the corner of every control
+   that has a hover explanation. One badge language across the whole
+   app: sidebar, topbar, KPI tiles, table rows, POS cart, modals,
+   forms and fields. Pointer-transparent (hovering the badge IS
+   hovering the control) and aria-hidden for screen readers. */
+.mmb-q-host {
+    position: relative;
+}
+.mmb-q {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    z-index: 7;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background: linear-gradient(140deg, #ef4444 0%, #b91c1c 100%);
+    color: #fff;
+    font-size: 9px;
+    line-height: 1;
+    box-shadow: 0 0 0 2px #fff, 0 1px 3px rgba(15, 23, 42, 0.35);
+    pointer-events: none;
+    transition: transform 0.15s ease;
+}
+.mmb-q .fa-question {
+    font-size: 8px;
+    line-height: 1;
+}
+/* compact controls (qty ±, pager, row-action icon buttons): hangs
+   mostly OFF the corner so it never occludes the glyph underneath */
+.mmb-q--sm {
+    top: -6px;
+    right: -6px;
+    width: 12px;
+    height: 12px;
+    font-size: 7px;
+}
+.mmb-q--sm .fa-question {
+    font-size: 7px;
+}
+/* fields: JS pins these to the field's own corner with inline styles;
+   these are the fallback while a field is still hidden (closed modal) */
+.mmb-q--field {
+    top: -7px;
+    right: 8px;
+}
+/* bare inline text links ("Go Back", "Lookup"…): badge floats at the
+   end of the text instead of a padded button corner */
+.mmb-q--link {
+    top: -6px;
+    right: -2px;
+}
+/* tiny glyph buttons (modal × close): push further out so the badge
+   never covers the × */
+.btn-close > .mmb-q {
+    top: -7px;
+    right: -7px;
+}
+/* hover feedback — the badge answers the pointer */
+.mmb-q-host:hover .mmb-q {
+    transform: scale(1.22);
+}
+/* brand-colored buttons: the white ring keeps the badge legible */
+.btn-primary > .mmb-q,
+.btn-danger > .mmb-q,
+.btn-dark > .mmb-q {
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.92), 0 1px 3px rgba(15, 23, 42, 0.35);
+}
+/* grouped buttons (btn-group): interior badges tuck inwards so they
+   don't sit on the neighbour button */
+.btn-group > .mmb-q-host:not(:last-child) > .mmb-q {
+    right: -3px;
+}
+/* sidebar pills sit in 0.6rem offcanvas padding — the corner badge
+   fits, but pull it 1px shy of the overflow-x boundary */
+#sidebar .mmb-q {
+    right: -4px;
+}
+@media (prefers-reduced-motion: reduce) {
+    .mmb-q,
+    .mmb-q-host:hover .mmb-q {
+        transition: none;
+        transform: none;
+    }
+}
+/* receipts and printed reports never show help chrome */
+@media print {
+    .mmb-q,
+    .tooltip.mmb-tip {
+        display: none !important;
+    }
+}
