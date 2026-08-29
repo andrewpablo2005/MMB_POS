@@ -24,8 +24,6 @@ $totalVatExemptionToday = $dashboardManager->getTotalVatExemptionToday();
 $totalVatExemptionMonth = $dashboardManager->getTotalVatExemptionMonth();
 $totalTransactionsAllTime = $dashboardManager->getTotalTransactionsAllTime();
 $averageTransactionValue = $dashboardManager->getAverageTransactionValue();
-$totalDiscountAllTime = $dashboardManager->getTotalDiscountAllTime();
-$totalVatExemptionAllTime = $dashboardManager->getTotalVatExemptionAllTime();
 
 $recentTransactions  = $dashboardManager->getRecentTransactions(5);
 $topProducts         = $dashboardManager->getTopSellingProducts(5);
@@ -34,16 +32,46 @@ $expiringItems       = $dashboardManager->getExpiringProducts();
 $monthlySalesTrend   = $dashboardManager->getMonthlySalesTrend();
 
 date_default_timezone_set('Asia/Manila');
+
+/* Product image helper — thumbnail markup with icon fallback (no inline JS) */
+function dash_product_thumb(?string $image, string $sizeClass = 'mmb-thumb'): string
+{
+    $image = trim((string)$image);
+    if ($image !== '') {
+        return '<span class="' . $sizeClass . '"><img src="../img/' . htmlspecialchars($image, ENT_QUOTES, 'UTF-8') . '" alt="" loading="lazy"></span>';
+    }
+    return '<span class="' . $sizeClass . ' mmb-thumb--empty"><i class="fas fa-capsules"></i></span>';
+}
 ?>
 
 <!-- Inter Font & Dashboard CSS -->
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../css/dashboard.css?v=6">
+<link rel="stylesheet" href="../css/dashboard.css?v=7">
 
 <!-- Pass PHP data to dashboard.js without mixing PHP into the JS file -->
 <script>
   window.dashboardData = {
-    monthlySalesTrend: <?php echo json_encode($monthlySalesTrend); ?>
+    monthlySalesTrend: <?php echo json_encode($monthlySalesTrend); ?>,
+    periods: {
+      today: {
+        sales:   <?php echo json_encode('₱' . number_format($netSalesToday, 2)); ?>,
+        sub:     <?php echo json_encode('Refunds today: -₱' . number_format($totalRefundToday, 2)); ?>,
+        revenue: <?php echo json_encode('₱' . number_format($realRevenueToday, 2)); ?>,
+        revSub:  'Net of refunds & restock costs — today'
+      },
+      month: {
+        sales:   <?php echo json_encode('₱' . number_format($totalSalesMonth, 2)); ?>,
+        sub:     <?php echo json_encode(date('F Y') . ' · gross'); ?>,
+        revenue: <?php echo json_encode('₱' . number_format($realRevenueMonth, 2)); ?>,
+        revSub:  <?php echo json_encode(date('F Y')); ?>
+      },
+      year: {
+        sales:   <?php echo json_encode('₱' . number_format($totalSalesYear, 2)); ?>,
+        sub:     <?php echo json_encode(date('Y') . ' · gross'); ?>,
+        revenue: <?php echo json_encode('₱' . number_format($realRevenueYear, 2)); ?>,
+        revSub:  <?php echo json_encode(date('Y')); ?>
+      }
+    }
   };
 </script>
 
@@ -52,64 +80,102 @@ date_default_timezone_set('Asia/Manila');
   <!-- Header -->
   <div class="dash-header">
     <h4>Business Overview</h4>
-    <span class="date-badge"><?php echo date('F j, Y'); ?></span>
+    <span class="date-badge"><?php echo date('l, F j, Y'); ?></span>
   </div>
 
-  <!-- ── Sales Summary ── -->
+  <!-- ── KPI Row: one flagship Sales card with a period toggle ── -->
   <div class="row g-3 mb-4">
-    <div class="col-6 col-xl-3">
-      <div class="stat-card">
+    <div class="col-12 col-xl-6">
+      <div class="stat-card stat-card--sales">
         <div class="stat-icon crimson"><i class="fas fa-peso-sign"></i></div>
-        <div>
-          <div class="stat-label">Today's Sales</div>
-          <div class="stat-value">₱<?php echo number_format($netSalesToday, 2); ?></div>
-          <div class="stat-sub text-danger">Refunds: -₱<?php echo number_format($totalRefundToday, 2); ?></div>
+        <div class="flex-grow-1 min-w-0">
+          <div class="d-flex align-items-center justify-content-between">
+            <div class="stat-label">Sales</div>
+            <div class="kpi-toggle" role="group" aria-label="Sales period">
+              <button type="button" data-period="today" class="active">Today</button>
+              <button type="button" data-period="month">Month</button>
+              <button type="button" data-period="year">Year</button>
+            </div>
+          </div>
+          <div class="stat-value stat-value--xl" id="salesValue">₱<?php echo number_format($netSalesToday, 2); ?></div>
+          <div class="stat-sub" id="salesSub">Refunds today: -₱<?php echo number_format($totalRefundToday, 2); ?></div>
         </div>
       </div>
     </div>
     <div class="col-6 col-xl-3">
       <div class="stat-card">
-        <div class="stat-icon wine"><i class="fas fa-chart-line"></i></div>
-        <div>
-          <div class="stat-label">Monthly Sales</div>
-          <div class="stat-value">₱<?php echo number_format($totalSalesMonth, 2); ?></div>
-          <div class="stat-sub"><?php echo date('F Y'); ?></div>
+        <div class="stat-icon wine"><i class="fas fa-money-bill-trend-up"></i></div>
+        <div class="min-w-0">
+          <div class="stat-label">Real Revenue</div>
+          <div class="stat-value" id="revenueValue">₱<?php echo number_format($realRevenueToday, 2); ?></div>
+          <div class="stat-sub" id="revenueSub">Net of refunds & restock costs — today</div>
         </div>
       </div>
     </div>
     <div class="col-6 col-xl-3">
       <div class="stat-card">
-        <div class="stat-icon rose"><i class="fas fa-chart-bar"></i></div>
-        <div>
-          <div class="stat-label">Yearly Sales</div>
-          <div class="stat-value">₱<?php echo number_format($totalSalesYear, 2); ?></div>
-          <div class="stat-sub"><?php echo date('Y'); ?></div>
-        </div>
-      </div>
-    </div>
-    <div class="col-6 col-xl-3">
-      <div class="stat-card">
-        <div class="stat-icon crimson"><i class="fas fa-money-bill-trend-up"></i></div>
-        <div>
-          <div class="stat-label">Real Revenue Today</div>
-          <div class="stat-value">₱<?php echo number_format($realRevenueToday, 2); ?></div>
-          <div class="stat-sub"><?php echo date('F j, Y'); ?></div>
+        <div class="stat-icon rose"><i class="fas fa-receipt"></i></div>
+        <div class="min-w-0">
+          <div class="stat-label">Transactions Today</div>
+          <div class="stat-value"><?php echo number_format((float)$transactionsToday); ?></div>
+          <div class="stat-sub">Avg basket ₱<?php echo number_format((float)$averageTransactionValue, 2); ?> · <?php echo number_format((float)$totalTransactionsAllTime); ?> all-time</div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- ── Chart ── -->
-  <div class="row mb-4">
-    <div class="col-12">
+  <!-- ── Chart + right rail ── -->
+  <div class="row g-3 mb-4">
+    <div class="col-12 col-xl-8">
       <div class="dash-card">
         <div class="dash-card-header">
-          <h6><i class="fas fa-bar-chart me-2 text-primary"></i>Monthly Sales Performance</h6>
-          <span class="pill pill-brand"><?php echo date('Y'); ?></span>
+          <h6><i class="fas fa-chart-column me-2 text-primary"></i>Sales Performance</h6>
+          <div class="d-flex align-items-center gap-2">
+            <span class="pill pill-gray" id="chartTotal">YTD ₱<?php echo number_format(array_sum($monthlySalesTrend), 2); ?></span>
+            <div class="kpi-toggle kpi-toggle--sm" role="group" aria-label="Chart range">
+              <button type="button" data-range="6" class="active">6M</button>
+              <button type="button" data-range="12">12M</button>
+            </div>
+          </div>
         </div>
         <div class="dash-card-body">
           <div class="chart-wrapper">
             <canvas id="salesChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right rail: catalog + discounts -->
+    <div class="col-12 col-xl-4 d-flex flex-column gap-3">
+      <div class="stat-card">
+        <div class="stat-icon slate"><i class="fas fa-boxes-stacked"></i></div>
+        <div class="min-w-0">
+          <div class="stat-label">Catalog</div>
+          <div class="stat-value"><?php echo number_format((float)$totalProducts); ?> products</div>
+          <div class="stat-sub"><?php echo count($lowStockItems); ?> low stock · <?php echo count($expiringItems); ?> expiring in 30d</div>
+        </div>
+      </div>
+      <div class="dash-card flex-grow-1">
+        <div class="dash-card-header">
+          <h6><i class="fas fa-tags me-2 text-primary"></i>Discounts & VAT</h6>
+        </div>
+        <div class="dash-card-body py-3">
+          <div class="mini-stat-row">
+            <span>Discounts today</span>
+            <strong>₱<?php echo number_format((float)$totalDiscountToday, 2); ?></strong>
+          </div>
+          <div class="mini-stat-row">
+            <span>Discounts this month</span>
+            <strong>₱<?php echo number_format((float)$totalDiscountMonth, 2); ?></strong>
+          </div>
+          <div class="mini-stat-row">
+            <span>VAT exempt today</span>
+            <strong>₱<?php echo number_format((float)$totalVatExemptionToday, 2); ?></strong>
+          </div>
+          <div class="mini-stat-row">
+            <span>VAT exempt this month</span>
+            <strong>₱<?php echo number_format((float)$totalVatExemptionMonth, 2); ?></strong>
           </div>
         </div>
       </div>
@@ -134,10 +200,9 @@ date_default_timezone_set('Asia/Manila');
                 <tr>
                   <th>Ref ID</th>
                   <th>Date / Time</th>
+                  <th>Cashier</th>
                   <th>Customer</th>
-                  <th>Discount</th>
-                  <th>VAT Exempt</th>
-                  <th>Total Amount</th>
+                  <th class="text-end">Total</th>
                 </tr>
               </thead>
               <tbody>
@@ -145,10 +210,9 @@ date_default_timezone_set('Asia/Manila');
                   <tr>
                     <td class="ref-id">#<?php echo str_pad($tx['id'], 6, '0', STR_PAD_LEFT); ?></td>
                     <td><?php echo date('M d, H:i', strtotime($tx['created_at'])); ?></td>
+                    <td><?php echo htmlspecialchars($tx['username'] ?? '—'); ?></td>
                     <td><?php echo htmlspecialchars($tx['customer_name'] ?? 'Guest'); ?></td>
-                    <td class="amount-neg">₱<?php echo number_format($tx['discount_total'] ?? 0, 2); ?></td>
-                    <td class="amount-neg">₱<?php echo number_format($tx['total_vat_exemption'] ?? 0, 2); ?></td>
-                    <td class="amount-pos"><strong>₱<?php echo number_format($tx['total_amount'], 2); ?></strong></td>
+                    <td class="text-end amount-pos"><strong>₱<?php echo number_format($tx['total_amount'], 2); ?></strong></td>
                   </tr>
                 <?php endforeach; ?>
               </tbody>
@@ -170,10 +234,11 @@ date_default_timezone_set('Asia/Manila');
           <?php else: ?>
             <?php foreach ($topProducts as $i => $product): ?>
               <div class="top-product-item">
-                <div class="d-flex align-items-center">
+                <div class="d-flex align-items-center min-w-0">
                   <div class="product-rank"><?php echo $i + 1; ?></div>
-                  <div>
-                    <div class="product-name"><?php echo htmlspecialchars($product['name']); ?></div>
+                  <?php echo dash_product_thumb($product['imageproduct'] ?? null); ?>
+                  <div class="min-w-0">
+                    <div class="product-name text-truncate"><?php echo htmlspecialchars(trim(($product['branded_name'] ?? '') !== '' ? $product['branded_name'] : ($product['name'] ?? ''))); ?></div>
                     <div class="product-sold"><?php echo $product['total_sold']; ?> units sold</div>
                   </div>
                 </div>
@@ -189,7 +254,7 @@ date_default_timezone_set('Asia/Manila');
   <!-- ── Alert Widgets ── -->
   <div class="row g-3">
     <!-- Low Stock -->
-    <div class="col-12 col-md-6">
+    <div class="col-12 col-xl-6">
       <div class="dash-card alert-card-warn">
         <div class="dash-card-header">
           <h6><i class="fas fa-triangle-exclamation me-2"></i>Low Stock Alerts</h6>
@@ -202,11 +267,12 @@ date_default_timezone_set('Asia/Manila');
             <div class="empty-state"><i class="fas fa-circle-check" style="color:#dc2626;opacity:1"></i>All inventory looks good!</div>
           <?php else: ?>
             <table class="dash-table">
-              <thead><tr><th>Product</th><th>Stock</th><th>Reorder At</th></tr></thead>
+              <thead><tr><th></th><th>Product</th><th>Stock</th><th>Reorder At</th></tr></thead>
               <tbody>
                 <?php foreach ($lowStockItems as $item): ?>
                   <tr>
-                    <td class="fw-semibold"><?php echo htmlspecialchars($item['name']); ?></td>
+                    <td class="pt-2 pb-2"><?php echo dash_product_thumb($item['imageproduct'] ?? null); ?></td>
+                    <td class="fw-semibold"><?php echo htmlspecialchars(trim(($item['branded_name'] ?? '') !== '' ? $item['branded_name'] : $item['name'])); ?></td>
                     <td><span class="badge-warn"><?php echo $item['stock_quantity']; ?></span></td>
                     <td style="color:#94a3b8;font-size:.8rem"><?php echo $item['reorder_level']; ?></td>
                   </tr>
@@ -219,7 +285,7 @@ date_default_timezone_set('Asia/Manila');
     </div>
 
     <!-- Expiring Soon -->
-    <div class="col-12 col-md-6">
+    <div class="col-12 col-xl-6">
       <div class="dash-card alert-card-danger">
         <div class="dash-card-header">
           <h6><i class="fas fa-calendar-xmark me-2"></i>Expiring Soon (30 Days)</h6>
@@ -232,12 +298,13 @@ date_default_timezone_set('Asia/Manila');
             <div class="empty-state"><i class="fas fa-circle-check" style="color:#dc2626;opacity:1"></i>No immediate expiries.</div>
           <?php else: ?>
             <table class="dash-table">
-              <thead><tr><th>Product</th><th>Expiry Date</th><th>Status</th></tr></thead>
+              <thead><tr><th></th><th>Product</th><th>Expiry Date</th><th>Status</th></tr></thead>
               <tbody>
                 <?php foreach ($expiringItems as $item): ?>
                   <?php $days = (strtotime($item['expiry_date']) - time()) / 86400; ?>
                   <tr>
-                    <td class="fw-semibold"><?php echo htmlspecialchars($item['name']); ?></td>
+                    <td class="pt-2 pb-2"><?php echo dash_product_thumb($item['imageproduct'] ?? null); ?></td>
+                    <td class="fw-semibold"><?php echo htmlspecialchars(trim(($item['branded_name'] ?? '') !== '' ? $item['branded_name'] : $item['name'])); ?></td>
                     <td style="font-size:.82rem"><?php echo date('M d, Y', strtotime($item['expiry_date'])); ?></td>
                     <td>
                       <?php if ($days <= 10): ?>
@@ -259,4 +326,4 @@ date_default_timezone_set('Asia/Manila');
 </div><!-- end .dash-wrapper -->
 
 <!-- Dashboard Chart -->
-<script src="../js/dashboard.js?v=6"></script>
+<script src="../js/dashboard.js?v=7"></script>

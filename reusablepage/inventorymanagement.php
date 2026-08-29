@@ -116,7 +116,18 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
                             <tr>
                                 <td><?= htmlspecialchars($batch['id']) ?></td>
                                 <td><?= htmlspecialchars($batchNumber) ?></td>
-                                <td><?= htmlspecialchars(trim(($batch['branded_name'] ?? '') . ' ' . ($batch['generic_name'] ?? '') . ' ' . ($batch['strength'] ?? '') . ' ' . ($batch['measurement_name'] ?? ''))) ?></td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <?php if (!empty(trim((string)($batch['imageproduct'] ?? '')))): ?>
+                                            <span class="mmb-thumb mmb-thumb--md">
+                                                <img src="../img/<?= htmlspecialchars($batch['imageproduct'], ENT_QUOTES, 'UTF-8') ?>" alt="" loading="lazy">
+                                            </span>
+                                        <?php else: ?>
+                                            <span class="mmb-thumb mmb-thumb--md mmb-thumb--empty"><i class="fas fa-capsules"></i></span>
+                                        <?php endif; ?>
+                                        <span><?= htmlspecialchars(trim(($batch['branded_name'] ?? '') . ' ' . ($batch['generic_name'] ?? '') . ' ' . ($batch['strength'] ?? '') . ' ' . ($batch['measurement_name'] ?? ''))) ?></span>
+                                    </div>
+                                </td>
                                 <td><?= htmlspecialchars($batch['category_name'] ?? 'N/A') ?></td>
                                 <td><?= htmlspecialchars($batch['barcode'] ?? 'N/A') ?></td>
                                 <td><?= htmlspecialchars($batch['supplier_name'] ?? 'N/A') ?></td>
@@ -168,14 +179,25 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
                         <?php foreach ($disposedBatches as $disposed): ?>
                             <tr>
                                 <td><?= htmlspecialchars($disposed['id']) ?></td>
-                                <td><?= htmlspecialchars(trim(implode(' ', array_filter([
-                                    $disposed['branded_name'] ?? '',
-                                    $disposed['generic_name'] ?? '',
-                                    $disposed['strength'] ?? '',
-                                    $disposed['measurement_name'] ?? ''
-                                ], static function ($value) {
-                                    return $value !== '';
-                                })))) ?></td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <?php if (!empty(trim((string)($disposed['imageproduct'] ?? '')))): ?>
+                                            <span class="mmb-thumb mmb-thumb--md">
+                                                <img src="../img/<?= htmlspecialchars($disposed['imageproduct'], ENT_QUOTES, 'UTF-8') ?>" alt="" loading="lazy">
+                                            </span>
+                                        <?php else: ?>
+                                            <span class="mmb-thumb mmb-thumb--md mmb-thumb--empty"><i class="fas fa-capsules"></i></span>
+                                        <?php endif; ?>
+                                        <span><?= htmlspecialchars(trim(implode(' ', array_filter([
+                                            $disposed['branded_name'] ?? '',
+                                            $disposed['generic_name'] ?? '',
+                                            $disposed['strength'] ?? '',
+                                            $disposed['measurement_name'] ?? ''
+                                        ], static function ($value) {
+                                            return $value !== '';
+                                        })))) ?></span>
+                                    </div>
+                                </td>
                                 <td><?= htmlspecialchars(($disposed['quantity'] ?? 0)) ?></td>
                                 <td><?= htmlspecialchars($disposed['expiry_date'] ?: 'N/A') ?></td>
                                 <td><?= htmlspecialchars($disposed['reason'] ?? 'N/A') ?></td>
@@ -191,71 +213,109 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
 
             <div class="tab-pane fade" id="returned-products-pane" role="tabpanel" aria-labelledby="returned-products-tab" tabindex="0">
             <h5 class="mb-3">Returned Products</h5>
-            <div class="inventory-report-toolbar d-flex flex-wrap align-items-center gap-2 mb-2" data-table-target="returnedProductsTable">
-                <label class="mb-0" for="returnedProductsSearch">Search:</label>
-                <input type="search" id="returnedProductsSearch" class="form-control form-control-sm inventory-search" placeholder="Search returned products..." style="max-width:260px;">
-                <button type="button" class="btn btn-sm btn-secondary inventory-copy"><i class="fas fa-copy me-1"></i>Copy</button>
-                <button type="button" class="btn btn-sm btn-outline-secondary inventory-excel"><i class="fas fa-file-excel me-1"></i>Excel</button>
-                <button type="button" class="btn btn-sm btn-danger inventory-pdf"><i class="fas fa-file-pdf me-1"></i>PDF</button>
-                <button type="button" class="btn btn-sm btn-outline-dark inventory-print"><i class="fas fa-print me-1"></i>Print</button>
+            <p class="text-muted small mb-3">All returns grouped per product — pick a product from the dropdown or expand a group to see each return record.</p>
+
+            <?php
+            /* Group return records per product for the accordion view */
+            $returnGroups = [];
+            foreach ($returnedProducts as $return) {
+                $pid = (int)($return['product_id'] ?? 0);
+                if (!isset($returnGroups[$pid])) {
+                    $returnGroups[$pid] = ['product' => $return, 'items' => [], 'total' => 0.0, 'qty' => 0];
+                }
+                $returnGroups[$pid]['items'][] = $return;
+                $returnGroups[$pid]['total'] += (float)($return['subtotal'] ?? 0);
+                $returnGroups[$pid]['qty'] += (int)($return['quantity'] ?? 0);
+            }
+            ?>
+
+            <div class="returns-toolbar d-flex flex-wrap align-items-center gap-2 mb-3">
+                <label class="mb-0 fw-semibold small" for="returnsProductFilter">Product:</label>
+                <select id="returnsProductFilter" class="form-select form-select-sm" style="max-width:300px;">
+                    <option value="all">All products (<?= count($returnGroups) ?>)</option>
+                    <?php foreach ($returnGroups as $gPid => $g): ?>
+                        <?php $gName = trim(($g['product']['branded_name'] ?? '') . ' ' . ($g['product']['generic_name'] ?? '')); ?>
+                        <option value="<?= $gPid ?>"><?= htmlspecialchars($gName) ?> (<?= count($g['items']) ?>)</option>
+                    <?php endforeach; ?>
+                </select>
+                <input type="search" id="returnsSearch" class="form-control form-control-sm" placeholder="Search returns..." style="max-width:220px;">
+                <button type="button" class="btn btn-sm btn-secondary returns-copy"><i class="fas fa-copy me-1"></i>Copy</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary returns-excel"><i class="fas fa-file-excel me-1"></i>Excel</button>
+                <button type="button" class="btn btn-sm btn-danger returns-pdf"><i class="fas fa-file-pdf me-1"></i>PDF</button>
+                <button type="button" class="btn btn-sm btn-outline-dark returns-print"><i class="fas fa-print me-1"></i>Print</button>
             </div>
-            <div class="table-responsive mb-4">
-            <table id="returnedProductsTable" class="table table-sm table-bordered align-middle w-100">
-                <thead class="table-secondary">
-                    <tr>
-                        <th>Return Item ID</th>
-                        <th>Return Tx</th>
-                        <th>Original Tx</th>
-                        <th>Product</th>
-                        <th>Qty</th>
-                        <th>Price</th>
-                        <th>Subtotal</th>
-                        <th>Reason</th>
-                        <th>Method</th>
-                        <th>Returned At</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php if (empty($returnedProducts)): ?>
-                        <tr>
-                            <td class="text-center">No returned products recorded.</td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                    <?php else: ?>
-                        <?php foreach ($returnedProducts as $return): ?>
-                            <tr>
-                                <td><?= htmlspecialchars($return['id']) ?></td>
-                                <td><?= htmlspecialchars($return['return_transaction_id']) ?></td>
-                                <td><?= htmlspecialchars($return['original_transaction_id']) ?></td>
-                                <td><?= htmlspecialchars(trim(implode(' ', array_filter([
-                                    $return['branded_name'] ?? '',
-                                    $return['generic_name'] ?? '',
-                                    $return['strength'] ?? '',
-                                    $return['measurement_name'] ?? ''
-                                ], static function ($value) {
-                                    return $value !== '';
-                                })))) ?></td>
-                                <td><?= htmlspecialchars(($return['quantity'] ?? 0)) ?></td>
-                                <td><?= htmlspecialchars(number_format((float)($return['price'] ?? 0), 2)) ?></td>
-                                <td><?= htmlspecialchars(number_format((float)($return['subtotal'] ?? 0), 2)) ?></td>
-                                <td><?= htmlspecialchars($return['reason'] ?? 'N/A') ?></td>
-                                <td><?= htmlspecialchars($return['refund_method'] ?? 'N/A') ?></td>
-                                <td><?= htmlspecialchars($return['return_date'] ?? 'N/A') ?></td>
-                            </tr>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
-                </tbody>
-            </table>
+
+            <div id="returnsAccordion" class="mb-4">
+                <?php if (empty($returnGroups)): ?>
+                    <div class="empty-panel">
+                        <i class="fas fa-rotate-left"></i>
+                        <h6>No returned products recorded</h6>
+                        <p>Customer returns will appear here, grouped by product.</p>
+                    </div>
+                <?php else: ?>
+                    <?php foreach ($returnGroups as $gPid => $g): ?>
+                        <?php
+                        $gProd = $g['product'];
+                        $gName = trim(($gProd['branded_name'] ?? '') . ' ' . ($gProd['generic_name'] ?? '') . ' ' . ($gProd['strength'] ?? '') . ' ' . ($gProd['measurement_name'] ?? ''));
+                        $gLabel = trim(($gProd['branded_name'] ?? '') !== '' ? $gProd['branded_name'] : ($gProd['generic_name'] ?? ''));
+                        ?>
+                        <div class="return-group" data-product-id="<?= $gPid ?>" data-search-name="<?= htmlspecialchars(mb_strtolower($gName)) ?>">
+                            <button type="button" class="return-group-head" aria-expanded="false">
+                                <?php if (!empty(trim((string)($gProd['imageproduct'] ?? '')))): ?>
+                                    <span class="mmb-thumb mmb-thumb--md">
+                                        <img src="../img/<?= htmlspecialchars($gProd['imageproduct'], ENT_QUOTES, 'UTF-8') ?>" alt="" loading="lazy">
+                                    </span>
+                                <?php else: ?>
+                                    <span class="mmb-thumb mmb-thumb--md mmb-thumb--empty"><i class="fas fa-capsules"></i></span>
+                                <?php endif; ?>
+                                <span class="rg-name">
+                                    <span class="rg-title"><?= htmlspecialchars($gLabel) ?></span>
+                                    <span class="rg-sub"><?= count($g['items']) ?> return<?= count($g['items']) > 1 ? 's' : '' ?> · <?= $g['qty'] ?> unit<?= $g['qty'] > 1 ? 's' : '' ?> refunded</span>
+                                </span>
+                                <span class="rg-total">₱<?= number_format($g['total'], 2) ?></span>
+                                <i class="fas fa-chevron-down rg-chevron"></i>
+                            </button>
+                            <div class="return-group-body">
+                                <div class="table-responsive">
+                                    <table class="table table-sm table-borderless align-middle mb-0 return-detail-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Return Tx</th>
+                                                <th>Original Tx</th>
+                                                <th>Qty</th>
+                                                <th>Price</th>
+                                                <th>Subtotal</th>
+                                                <th>Reason</th>
+                                                <th>Method</th>
+                                                <th>Returned At</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php foreach ($g['items'] as $return): ?>
+                                                <tr>
+                                                    <td>#<?= htmlspecialchars($return['return_transaction_id']) ?></td>
+                                                    <td>#<?= htmlspecialchars($return['original_transaction_id']) ?></td>
+                                                    <td><?= htmlspecialchars(($return['quantity'] ?? 0)) ?></td>
+                                                    <td>₱<?= htmlspecialchars(number_format((float)($return['price'] ?? 0), 2)) ?></td>
+                                                    <td class="fw-semibold">₱<?= htmlspecialchars(number_format((float)($return['subtotal'] ?? 0), 2)) ?></td>
+                                                    <td><?= htmlspecialchars($return['reason'] ?? 'N/A') ?></td>
+                                                    <td><?= htmlspecialchars($return['refund_method'] ?? 'N/A') ?></td>
+                                                    <td><?= htmlspecialchars($return['return_date'] ?? 'N/A') ?></td>
+                                                </tr>
+                                            <?php endforeach; ?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </div>
+            <div class="returns-empty-filter d-none text-center text-muted py-4">
+                <i class="fas fa-magnifying-glass mb-2 d-block" style="font-size:1.4rem;opacity:.4"></i>
+                No products match that filter.
+            </div>
         </div>
-            </div>
         </div>
     </div>
 </div>
@@ -331,6 +391,116 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
             });
         });
     }());
+</script>
+
+<script>
+    /* ── Returned Products: grouped accordion + product dropdown filter ── */
+    (function () {
+        const accordion = document.getElementById('returnsAccordion');
+        if (!accordion) return;
+
+        const filterSelect = document.getElementById('returnsProductFilter');
+        const searchInput  = document.getElementById('returnsSearch');
+        const emptyNote    = document.querySelector('.returns-empty-filter');
+        const groups       = Array.from(accordion.querySelectorAll('.return-group'));
+
+        function visibleGroups() {
+            return groups.filter(function (g) { return g.style.display !== 'none'; });
+        }
+
+        function applyFilter() {
+            const pid   = filterSelect ? filterSelect.value : 'all';
+            const query = searchInput ? searchInput.value.trim().toLowerCase() : '';
+            let shown = 0;
+
+            groups.forEach(function (g) {
+                const matchPid  = pid === 'all' || g.dataset.productId === pid;
+                const matchText = !query || (g.dataset.searchName || '').includes(query);
+                const show = matchPid && matchText;
+                g.style.display = show ? '' : 'none';
+                if (show) shown++;
+            });
+
+            /* picking one product auto-expands it; "all" keeps current state */
+            if (pid !== 'all') {
+                groups.forEach(function (g) {
+                    if (g.dataset.productId === pid) setOpen(g, true);
+                });
+            }
+
+            if (emptyNote) emptyNote.classList.toggle('d-none', shown > 0);
+        }
+
+        function setOpen(group, open) {
+            group.classList.toggle('open', open);
+            const head = group.querySelector('.return-group-head');
+            if (head) head.setAttribute('aria-expanded', open ? 'true' : 'false');
+        }
+
+        accordion.addEventListener('click', function (e) {
+            const head = e.target.closest('.return-group-head');
+            if (!head) return;
+            const group = head.closest('.return-group');
+            setOpen(group, !group.classList.contains('open'));
+        });
+
+        if (filterSelect) filterSelect.addEventListener('change', applyFilter);
+        if (searchInput) searchInput.addEventListener('input', applyFilter);
+
+        /* ── exports over the visible groups ── */
+        function rowsText(delimiter) {
+            const lines = [['Product', 'Return Tx', 'Original Tx', 'Qty', 'Price', 'Subtotal', 'Reason', 'Method', 'Returned At'].join(delimiter)];
+            visibleGroups().forEach(function (g) {
+                const name = (g.querySelector('.rg-title') || {}).textContent || '';
+                g.querySelectorAll('.return-detail-table tbody tr').forEach(function (tr) {
+                    const cells = Array.from(tr.cells).map(function (c) { return c.innerText.trim(); });
+                    const row = [name].concat(cells);
+                    lines.push(delimiter === '\t' ? row.join('\t')
+                        : row.map(function (v) { return '"' + v.replace(/"/g, '""') + '"'; }).join(','));
+                });
+            });
+            return lines.join('\n');
+        }
+
+        function printReturns() {
+            const w = window.open('', '_blank', 'width=1100,height=700');
+            if (!w) return;
+            const body = visibleGroups().map(function (g) {
+                const name = (g.querySelector('.rg-title') || {}).textContent || '';
+                const sub  = (g.querySelector('.rg-sub') || {}).textContent || '';
+                return '<h3>' + name + ' <small>' + sub + '</small></h3>' +
+                       '<table>' + g.querySelector('.return-detail-table').outerHTML + '</table>';
+            }).join('<div style="page-break-after:always"></div>');
+            w.document.write('<!doctype html><html><head><title>Returned Products Report</title><style>' +
+                'body{font-family:Arial,sans-serif;padding:20px}h3 small{color:#666;font-weight:400}' +
+                'table{border-collapse:collapse;width:100%;margin-bottom:24px}th,td{border:1px solid #999;padding:6px;text-align:left;font-size:.85rem}' +
+                'th{background:#f1f5f9}</style></head><body><h2>Returned Products</h2>' + body + '</body></html>');
+            w.document.close();
+            w.focus();
+            w.print();
+        }
+
+        const copyBtn = document.querySelector('.returns-copy');
+        if (copyBtn) copyBtn.addEventListener('click', function () {
+            navigator.clipboard.writeText(rowsText('\t'));
+        });
+
+        const excelBtn = document.querySelector('.returns-excel');
+        if (excelBtn) excelBtn.addEventListener('click', function () {
+            const blob = new Blob([rowsText(',')], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'returned-products.csv';
+            link.click();
+            URL.revokeObjectURL(link.href);
+        });
+
+        const pdfBtn = document.querySelector('.returns-pdf');
+        if (pdfBtn) pdfBtn.addEventListener('click', printReturns);
+
+        const printBtn = document.querySelector('.returns-print');
+        if (printBtn) printBtn.addEventListener('click', printReturns);
+    })();
 </script>
 
 <div class="modal fade" id="addBatchModal" tabindex="-1" aria-labelledby="addBatchModalLabel" aria-hidden="true">

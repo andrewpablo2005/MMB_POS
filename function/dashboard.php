@@ -64,7 +64,7 @@ class DashboardManager
     public function getLowStockAlerts()
     {
         // Join with inventory to get actual stock and reorder level
-        $sql = "SELECT p.generic_name as name, i.current_quantity as stock_quantity, 15 as reorder_level, pc.category_name 
+        $sql = "SELECT p.generic_name as name, p.branded_name, p.imageproduct, i.current_quantity as stock_quantity, 15 as reorder_level, pc.category_name 
                 FROM products p 
                 JOIN inventory i ON p.id = i.product_id 
                 LEFT JOIN product_categories pc ON p.category_id = pc.id 
@@ -77,7 +77,7 @@ class DashboardManager
     public function getExpiringProducts()
     {
         // Join with inventory to get expiry_date
-        $sql = "SELECT p.generic_name as name, i.expiry_date, pc.category_name 
+        $sql = "SELECT p.generic_name as name, p.branded_name, p.imageproduct, i.expiry_date, pc.category_name 
                 FROM products p 
                 JOIN inventory i ON p.id = i.product_id 
                 LEFT JOIN product_categories pc ON p.category_id = pc.id 
@@ -102,10 +102,10 @@ class DashboardManager
 
     public function getTopSellingProducts($limit = 5)
     {
-        $sql = "SELECT p.generic_name as name, SUM(ti.quantity) as total_sold, ti.price 
+        $sql = "SELECT p.generic_name as name, p.branded_name, p.imageproduct, SUM(ti.quantity) as total_sold, ti.price 
                 FROM transaction_items ti 
                 JOIN products p ON ti.product_id = p.id 
-                GROUP BY ti.product_id 
+                GROUP BY ti.product_id, p.generic_name, p.branded_name, p.imageproduct, ti.price 
                 ORDER BY total_sold DESC 
                 LIMIT :limit";
         $stmt = $this->db->prepare($sql);
