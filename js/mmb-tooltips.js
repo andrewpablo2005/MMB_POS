@@ -1,7 +1,7 @@
 /* ═══════════════════════════════════════════════════════════════
-   MMB DRUGSTORE — GLOBAL TOOLTIP LAYER  v1.0
-   Hover tooltips on every interactive control so staff always
-   knows what a function does.
+   MMB DRUGSTORE — GLOBAL HELP LAYER  v1.4
+   Hover tooltips + visible "?" badges on every interactive control
+   so staff always knows what a function does.
 
    How it works
    ────────────
@@ -9,6 +9,13 @@
      lazily at hover time, so elements rendered later (DataTables
      redraws, POS cart rows, modals, quick-cash buttons) are
      covered automatically.
+   • v1.4 — "?" BADGES: every control the resolver can explain also
+     gets a small crimson question badge pinned to its corner, so
+     help is DISCOVERABLE, not accidental. Badges are injected at
+     runtime (span + FA glyph only, zero text nodes — labels and
+     dictionary lookups are untouched) and re-attached automatically
+     for DOM that appears later (MutationObserver + Bootstrap
+     shown events).
    • Resolution order:
        1. data-bs-title attribute (explicit override)
        2. existing native title="" attribute (upgraded to styled)
@@ -140,6 +147,8 @@
     var SEL = [
         'button',
         '.btn',
+        'a[href]',
+        '[role="button"]',
         'a[data-bs-toggle="pill"]',
         'a[data-bs-toggle="tab"]',
         '.dropdown-item',
@@ -150,13 +159,20 @@
         '.dt-paging-button',
         '.stat-card',
         '.wepos-add-btn-fake',
+        'select',
+        'textarea',
+        'input:not([type="hidden"])',
         '#togglePassword'
     ].join(',');
 
     /* Note: the sidebar hamburger (data-bs-toggle="offcanvas") is NOT
        skipped — the Offcanvas instance lives on the #sidebar target,
-       not the button, so a styled tooltip is safe there. */
-    var SKIP = 'input, textarea, .page-link';
+       not the button, so a styled tooltip is safe there.
+       Fields (input/select/textarea) ARE covered now — they get a
+       hover-only tooltip (never on focus, which would pop while the
+       cashier types). */
+    var SKIP = '.page-link';
+    var FIELDS = 'input, select, textarea';
     var initialized = new WeakSet();
 
     /* Elements already hosting another Bootstrap component (nav pills,
@@ -186,8 +202,22 @@
         return norm(el.textContent);
     }
 
+    /* Visible label wired to a field (closest <label> or label[for]) */
+    function labelOf(el) {
+        var lab = el.closest('label');
+        if (lab) return norm(lab.textContent);
+        if (el.id) {
+            var wired = document.querySelector('label[for="' + el.id + '"]');
+            if (wired) return norm(wired.textContent);
+        }
+        return '';
+    }
+
     /* ── Smart placement: keep bubbles inside the viewport ── */
     function placementOf(el) {
+        /* Fields: bubble above — never sideways into neighbouring inputs */
+        if (el.matches(FIELDS)) return 'top';
+
         /* Vertical navs (the app sidebar): bubble floats to the RIGHT of
            the menu. Without this the pill falls through to the .d-flex
            heuristic below (the whole layout wrapper is .d-flex) and the
@@ -209,6 +239,30 @@
 
     /* ── Element-specific rules (checked before the dictionary) ── */
     function ruleFor(el) {
+        /* Close (×) buttons — pure glyph, no label anywhere */
+        if (el.classList.contains('btn-close')) return 'Close this window';
+
+        /* Fields: search boxes, selects, checkboxes, text inputs */
+        if (el.matches(FIELDS)) {
+            if (el.closest('.dt-length')) return 'Number of rows to show per page';
+            if (el.tagName === 'SELECT') {
+                var sLabel = labelOf(el);
+                return sLabel ? 'Open this list and pick \u2014 ' + sLabel
+                              : 'Open this list and pick an option';
+            }
+            if (el.type === 'checkbox' || el.type === 'radio') {
+                return labelOf(el) || el.getAttribute('aria-label') || 'Toggle this option';
+            }
+            var ph = (el.getAttribute('placeholder') || '').trim();
+            if (/^search/i.test(ph)) return 'Type to filter this table';
+            if (ph) return ph;
+            var al = (el.getAttribute('aria-label') || '').trim();
+            if (al) return al;
+            var fLabel = labelOf(el);
+            if (fLabel) return 'Enter the ' + fLabel.toLowerCase();
+            return 'Type in this field';
+        }
+
         /* KPI tiles — keyed by their stat label */
         if (el.classList.contains('stat-card')) {
             var label = norm(el.querySelector('.stat-label') ? el.querySelector('.stat-label').textContent : '');
@@ -305,8 +359,11 @@
         /* 5. dictionary by visible label */
         if (LABEL_TIPS[t]) return LABEL_TIPS[t];
 
-        /* 6. icon-only buttons */
-        var icon = el.querySelector('i[class*="fa-"]');
+        /* 6. icon-only buttons (never the "?" badge's own glyph) */
+        var icon = null, glyphs = el.querySelectorAll('i[class*="fa-"]');
+        for (var g = 0; g < glyphs.length; g++) {
+            if (!glyphs[g].closest('.mmb-q')) { icon = glyphs[g]; break; }
+        }
         if (icon && t === '') {
             var classes = icon.className || '';
             for (var key in ICON_TIPS) {
@@ -319,8 +376,9 @@
         var aria = el.getAttribute('aria-label');
         if (aria && aria.trim()) return norm(aria) in LABEL_TIPS ? LABEL_TIPS[norm(aria)] : aria.trim();
 
-        /* Short text buttons not in the dictionary: confirm hover target only */
-        if (t && t.length <= 4 && el.querySelector('i[class*="fa-"]')) {
+        /* Short labels not in the dictionary: echo the label so the "?"
+           badge never promises a hint it cannot show. */
+        if (t && t.length <= 28) {
             return t.charAt(0).toUpperCase() + t.slice(1);
         }
 
@@ -328,18 +386,31 @@
     }
 
     /* ── Lazy initialization on hover / keyboard focus ── */
-    function maybeInit(target) {
+    function maybeInit(target, fromFocus) {
         var el = target.closest ? target.closest(SEL) : null;
         if (!el || initialized.has(el)) return;
         if (el.matches(SKIP)) return;
 
+        var isField = el.matches(FIELDS);
         var tip = resolveTip(el);
         initialized.add(el);
         if (!tip) return; // nothing meaningful to say — stay quiet
 
         /* Elements with another Bootstrap component on them: styled
-           tooltip is impossible — deliver the hint as a native title. */
-        if (hostsBootstrapComponent(el)) {
+           tooltip is impossible — deliver the hint as a native title.
+           This includes components that only materialize on FIRST
+           CLICK (pill/tab/dropdown/collapse triggers): hovering one
+           before clicking would bind a Tooltip to the element and
+           Bootstrap's Data store would then refuse the real component
+           ("doesn't allow more than one instance per element") — so
+           those triggers are detected by attribute, not just by
+           getInstance(). Modal/offcanvas triggers are safe: their
+           instance lives on the TARGET element, not the trigger. */
+        var willHostComponent = el.matches(
+            '[data-bs-toggle="pill"], [data-bs-toggle="tab"], ' +
+            '[data-bs-toggle="dropdown"], [data-bs-toggle="collapse"]'
+        );
+        if (willHostComponent || hostsBootstrapComponent(el)) {
             el.setAttribute('data-native-title', tip);
             el.setAttribute('title', tip);
             return;
@@ -353,14 +424,18 @@
             /* function title → re-resolved on every show, so state-aware
                hints (e.g. Pay Now: empty cart vs active) never go stale */
             title: function () { return resolveTip(el); },
-            trigger: 'hover focus',
+            /* fields: hover-only — a focus tooltip would pop up while the
+               cashier is typing in the box */
+            trigger: isField ? 'hover' : 'hover focus',
             delay: { show: 250, hide: 100 },
             placement: placementOf(el),
             fallbackPlacements: ['top', 'bottom', 'left', 'right'],
             customClass: 'mmb-tip'
         });
-        /* pointer is already over the element — reveal immediately */
-        tt.show();
+        /* pointer is already over the element — reveal immediately.
+           (Keyboard focus on a field is the one exception: no popup
+           mid-typing.) */
+        if (!(isField && fromFocus)) tt.show();
     }
 
     document.addEventListener('mouseover', function (e) {
@@ -369,8 +444,137 @@
 
     document.addEventListener('focusin', function (e) {
         var el = e.target.closest ? e.target.closest(SEL) : null;
-        if (el && !initialized.has(el)) maybeInit(e.target);
+        if (el && !initialized.has(el)) maybeInit(e.target, true);
     }, true);
 
-    window.mmbTooltips = { version: '1.3' };
+    /* ═══════════════════════════════════════════════════════════════
+       "?" AFFORDANCE BADGES
+       A small crimson question badge pinned to the corner of every
+       control the resolver can explain, so staff can SEE where hover
+       help exists — not only discover it by accident. Injected at
+       runtime (no markup edits) and re-attached automatically for DOM
+       that appears later (DataTables paging, POS cart re-renders,
+       modals, dropdowns).
+
+       The badge holds ONLY a Font Awesome <i> glyph — no text node —
+       so visible labels and every dictionary lookup above are
+       completely untouched. ".mmb-q" is aria-hidden and
+       pointer-events:none: hovering it hovers the control itself.
+       ═══════════════════════════════════════════════════════════════ */
+    var BADGE_SKIP = '.mmb-q, .tooltip, .popover, .modal-backdrop, noscript';
+
+    /* Fields cannot hold children — their badge is appended to a wrapper
+       but PINNED TO THE FIELD ITSELF (see positionFieldBadge), so every
+       field keeps its own personal "?" even when siblings share the
+       same wrapper div. */
+    function qHostFor(el) {
+        if (!el.matches(FIELDS)) return el;
+        var host = el.parentElement;
+        if (host && host.classList.contains('input-group')) host = host.parentElement;
+        return host;
+    }
+
+    /* Pin a field badge to the field's own top-right corner (wrapper-
+       relative). Inline styles are recomputed on every scan + resize,
+       so responsive reflows and newly opened modals stay aligned. */
+    function positionFieldBadge(host, badge, field) {
+        var fr = field.getBoundingClientRect(), hr = host.getBoundingClientRect();
+        if (!fr.width && !fr.height) return;   // hidden: CSS corner fallback
+        badge.style.top = Math.round(fr.top - hr.top - 7) + 'px';
+        badge.style.left = Math.round(fr.right - hr.left - 8) + 'px';
+        badge.style.right = 'auto';
+    }
+
+    var fieldBadges = [];   // {badge, field, host} — for repositioning
+    function repositionFieldBadges() {
+        for (var i = fieldBadges.length - 1; i >= 0; i--) {
+            var fb = fieldBadges[i];
+            if (!fb.badge.isConnected || !fb.field.isConnected) {
+                fieldBadges.splice(i, 1);
+                continue;
+            }
+            positionFieldBadge(fb.host, fb.badge, fb.field);
+        }
+    }
+
+    function addQBadge(el) {
+        if (el.closest(BADGE_SKIP)) return;
+        if (el.hasAttribute('data-mmb-q')) return;   // already processed
+
+        /* no explanation → no badge: the question mark must never lie */
+        if (!resolveTip(el)) { el.setAttribute('data-mmb-q', '0'); return; }
+
+        var host = qHostFor(el);
+        if (!host) return;
+
+        el.setAttribute('data-mmb-q', '1');
+
+        var badge = document.createElement('span');
+        badge.className = 'mmb-q';
+        badge.setAttribute('aria-hidden', 'true');
+        var glyph = document.createElement('i');
+        glyph.className = 'fa-solid fa-question';
+        badge.appendChild(glyph);
+
+        var isField = el.matches(FIELDS);
+        host.classList.add('mmb-q-host');   // position:relative anchor
+        if (isField) {
+            /* fields: compact badge pinned to the field itself */
+            badge.classList.add('mmb-q--sm', 'mmb-q--field');
+        } else {
+            /* compact badge on compact controls (qty ±, pager, row actions) */
+            if (el.offsetHeight && el.offsetHeight < 34) badge.classList.add('mmb-q--sm');
+            /* bare inline text links: badge floats at the end of the text,
+               not pinned to a padded button corner */
+            if (el.tagName === 'A' && !el.classList.contains('btn') &&
+                !el.classList.contains('nav-link') && !el.classList.contains('dropdown-item')) {
+                badge.classList.add('mmb-q--link');
+            }
+        }
+
+        host.appendChild(badge);
+        if (isField) {
+            fieldBadges.push({ badge: badge, field: el, host: host });
+            positionFieldBadge(host, badge, el);
+        }
+    }
+
+    function scanBadges(scope) {
+        var list;
+        try { list = (scope || document).querySelectorAll(SEL); } catch (err) { return; }
+        for (var i = 0; i < list.length; i++) addQBadge(list[i]);
+        repositionFieldBadges();
+    }
+
+    /* coalesce mutation bursts (POS re-renders, DT paging) into one scan */
+    var scanQueued = false;
+    function scheduleScan() {
+        if (scanQueued) return;
+        scanQueued = true;
+        (window.requestAnimationFrame || window.setTimeout)(function () {
+            scanQueued = false;
+            scanBadges(document);
+        }, 0);
+    }
+
+    function bootBadges() {
+        scanBadges(document);
+        if (window.MutationObserver && document.body) {
+            new MutationObserver(scheduleScan)
+                .observe(document.body, { childList: true, subtree: true });
+        }
+        /* Bootstrap surfaces that reveal pre-rendered controls */
+        ['shown.bs.modal', 'shown.bs.offcanvas', 'shown.bs.dropdown']
+            .forEach(function (ev) { document.addEventListener(ev, scheduleScan, true); });
+        /* responsive reflow: re-pin field badges to their fields */
+        window.addEventListener('resize', scheduleScan);
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', bootBadges);
+    } else {
+        bootBadges();
+    }
+
+    window.mmbTooltips = { version: '1.4', badges: true };
 })();
