@@ -46,7 +46,7 @@ function dash_product_thumb(?string $image, string $sizeClass = 'mmb-thumb'): st
 
 <!-- Inter Font & Dashboard CSS -->
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../css/dashboard.css?v=9">
+<link rel="stylesheet" href="../css/dashboard.css?v=10">
 
 <!-- Pass PHP data to dashboard.js without mixing PHP into the JS file -->
 <script>
@@ -84,8 +84,8 @@ function dash_product_thumb(?string $image, string $sizeClass = 'mmb-thumb'): st
   </div>
 
   <!-- ── KPI Row: one flagship Sales card with a period toggle ── -->
-  <div class="row g-3 mb-4">
-    <div class="col-12 col-xl-6">
+  <div class="row g-3 mb-3">
+    <div class="col-12 col-sm-6 col-xl-4">
       <div class="stat-card stat-card--sales">
         <div class="stat-icon crimson"><i class="fas fa-peso-sign"></i></div>
         <div class="flex-grow-1 min-w-0">
@@ -102,7 +102,7 @@ function dash_product_thumb(?string $image, string $sizeClass = 'mmb-thumb'): st
         </div>
       </div>
     </div>
-    <div class="col-12 col-sm-6 col-xl-3">
+    <div class="col-12 col-sm-6 col-xl-4">
       <div class="stat-card">
         <div class="stat-icon wine"><i class="fas fa-money-bill-trend-up"></i></div>
         <div class="min-w-0">
@@ -112,7 +112,7 @@ function dash_product_thumb(?string $image, string $sizeClass = 'mmb-thumb'): st
         </div>
       </div>
     </div>
-    <div class="col-12 col-sm-6 col-xl-3">
+    <div class="col-12 col-sm-6 col-xl-4">
       <div class="stat-card">
         <div class="stat-icon rose"><i class="fas fa-receipt"></i></div>
         <div class="min-w-0">
@@ -125,7 +125,7 @@ function dash_product_thumb(?string $image, string $sizeClass = 'mmb-thumb'): st
   </div>
 
   <!-- ── Chart + right rail ── -->
-  <div class="row g-3 mb-4">
+  <div class="row g-3 mb-3">
     <div class="col-12 col-xl-8">
       <div class="dash-card">
         <div class="dash-card-header">
@@ -183,7 +183,7 @@ function dash_product_thumb(?string $image, string $sizeClass = 'mmb-thumb'): st
   </div>
 
   <!-- ── Transactions & Top Products ── -->
-  <div class="row g-3 mb-4">
+  <div class="row g-3 mb-3">
     <!-- Recent Transactions -->
     <div class="col-12 col-xl-7">
       <div class="dash-card">
