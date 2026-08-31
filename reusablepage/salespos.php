@@ -32,7 +32,7 @@ if (!empty($_SESSION['user_id'])) {
 ?>
 
 <!-- wePOS Inspired CSS -->
-<link rel="stylesheet" href="../css/pos_wepos.css?v=1.6">
+<link rel="stylesheet" href="../css/pos_wepos.css?v=1.7">
 
 <div class="wepos-wrapper" id="weposApp">
     
@@ -325,6 +325,14 @@ if (!empty($_SESSION['user_id'])) {
                 <strong id="modalChange">₱0.00</strong>
             </div>
 
+            <!-- Remaining amount when the cash tendered does not cover the
+                 total yet — mirrors the Change box styling in amber -->
+            <div class="wepos-balance-box" id="weposBalanceBox" style="display:none;">
+                <span>Balance Due:</span>
+                <strong id="modalBalance">₱0.00</strong>
+                <small>Add <span id="modalBalanceMore">₱0.00</span> more to complete this payment.</small>
+            </div>
+
         </div>
         <div class="wepos-modal-foot">
             <button class="wepos-btn wepos-btn-outline" onclick="weposClosePayModal()">Cancel</button>
@@ -468,6 +476,9 @@ if (!empty($_SESSION['user_id'])) {
                     <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
                         <span style="color:#64748b;">Rule</span><strong id="receiptRule">Regular</strong>
                     </div>
+                    <div style="display:flex; justify-content:space-between; margin-bottom:3px; color:#64748b;">
+                        <span>VAT (12%)</span><span id="receiptVat"></span>
+                    </div>
                     <div style="display:flex; justify-content:space-between; margin-bottom:3px;">
                         <span>Subtotal</span><span id="receiptSubtotal"></span>
                     </div>
@@ -476,9 +487,6 @@ if (!empty($_SESSION['user_id'])) {
                     </div>
                     <div style="display:flex; justify-content:space-between; margin-bottom:3px; color:#64748b;" id="receiptVatExRow">
                         <span>VAT Exempt</span><span id="receiptVatEx"></span>
-                    </div>
-                    <div style="display:flex; justify-content:space-between; margin-bottom:3px; color:#64748b;">
-                        <span>VAT (12%)</span><span id="receiptVat"></span>
                     </div>
                     <div style="display:flex; justify-content:space-between; font-size:15px; font-weight:700; border-top:1px solid #e2e8f0; padding-top:6px; margin-top:4px;">
                         <span>TOTAL</span><span id="receiptTotal" style="color:#b91c1c;"></span>
@@ -653,6 +661,9 @@ if (!empty($_SESSION['user_id'])) {
             <div style="margin-bottom:0.75rem;">
                 <label style="font-size:0.85rem; font-weight:600; margin-bottom:0.25rem; display:block;">ID Number</label>
                 <input type="text" id="verifyIdNumber" placeholder="XXXX-XXXX-XXXX" style="width:100%; border-radius:4px; border:1px solid #8c8f94; padding:0.5rem; font-size:1rem;" autocomplete="off">
+                <!-- Live lookup feedback: name auto-fills from the verified
+                     registry as soon as the cashier finishes typing the ID -->
+                <div id="verifyIdLookupStatus" style="display:none; margin-top:0.4rem; font-size:0.8rem; padding:7px 10px; border-radius:4px; align-items:center; gap:6px;"></div>
             </div>
             
             <div id="verifyIdError" class="text-danger" style="font-size:0.85rem; display:none; margin-bottom:0.5rem;"></div>
@@ -695,4 +706,4 @@ if (!empty($_SESSION['user_id'])) {
 </div>
 
 <?php include __DIR__ . '/returnmodal.php'; ?>
-<script src="../js/pos_wepos.js?v=1.6"></script>
+<script src="../js/pos_wepos.js?v=1.7"></script>
