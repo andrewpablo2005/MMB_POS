@@ -13,6 +13,9 @@ let weposCustomerType = null;     // tracks customer type: 'senior', 'pwd', or n
 let weposCustomerName = null;     // tracks customer name for senior/pwd customers
 let weposCustomerId = null;       // tracks customer ID linking to senior_customers/pwd_customers table
 let weposLastReceiptData = null;  // stores last receipt data for printing
+let weposIdLookupTimer = null;    // debounce timer for the ID-number name lookup
+let weposIdLookupSeq = 0;         // guards against out-of-order lookup responses
+let weposIdNameAutoFilled = '';   // value last auto-filled by the lookup (so manual typing is never clobbered)
 
 // XSS guard: product/customer names are user-editable data and must be
 // escaped before being interpolated into innerHTML templates.
@@ -31,6 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
         weposSetupScanner();
         weposSetupSearch();
         weposSetupKeyboard();
+        weposSetupIdLookup();
         weposUpdateCart();
         console.log('wePOS initialization complete');
     } catch (error) {
@@ -698,6 +702,8 @@ function weposOpenPayModal() {
     document.getElementById('modalAmountDue').textContent = weposFormatCurrency(total);
     document.getElementById('weposTendered').value = '';
     document.getElementById('weposChangeBox').style.display = 'none';
+    const balanceBoxReset = document.getElementById('weposBalanceBox');
+    if (balanceBoxReset) balanceBoxReset.style.display = 'none';
     document.getElementById('modalConfirmBtn').disabled = true;
 
     // Render checkout items with override buttons
@@ -890,6 +896,8 @@ function weposSelectMethod(btn, method) {
     } else {
         document.querySelector('.wepos-tendered-box').style.display = 'none';
         document.getElementById('weposChangeBox').style.display = 'none';
+        const balanceBox = document.getElementById('weposBalanceBox');
+        if (balanceBox) balanceBox.style.display = 'none';
         document.getElementById('modalConfirmBtn').disabled = false;
     }
 }
@@ -914,13 +922,27 @@ function weposCalcChange() {
     const change = tendered - total;
 
     const changeBox = document.getElementById('weposChangeBox');
+    const balanceBox = document.getElementById('weposBalanceBox');
     const confirmBtn = document.getElementById('modalConfirmBtn');
 
-    if (tendered >= total) {
+    if (tendered > 0 && tendered < total) {
+        // Partial payment — show the remaining balance due
+        const balance = total - tendered;
+        if (balanceBox) {
+            balanceBox.style.display = 'block';
+            document.getElementById('modalBalance').textContent = weposFormatCurrency(balance);
+            const more = document.getElementById('modalBalanceMore');
+            if (more) more.textContent = weposFormatCurrency(balance);
+        }
+        changeBox.style.display = 'none';
+        confirmBtn.disabled = true;
+    } else if (tendered >= total) {
+        if (balanceBox) balanceBox.style.display = 'none';
         changeBox.style.display = 'block';
         document.getElementById('modalChange').textContent = weposFormatCurrency(change);
         confirmBtn.disabled = false;
     } else {
+        if (balanceBox) balanceBox.style.display = 'none';
         changeBox.style.display = 'none';
         confirmBtn.disabled = true;
     }
@@ -1156,20 +1178,151 @@ function weposRefreshInventory() {
     .catch(err => console.log('Inventory refresh:', err));
 }
 
-function weposPrintReceipt() {
+async function weposPrintReceipt() {
     const content = document.getElementById('weposReceiptPrint').innerHTML;
+
+    // Open the print window synchronously inside the click gesture so popup
+    // blockers never interfere, then fill it in.
     const win = window.open('', '_blank', 'width=320,height=600');
+    if (!win) {
+        alert('Please allow pop-ups for this site to print receipts.');
+        return;
+    }
+    win.document.write('<html><head><title>Receipt</title></head><body style="font-family:\'Courier New\',monospace; padding:20px; color:#64748b;">Preparing receipt...</body></html>');
+    win.document.close();
+
+    // Paper size comes from Settings → Receipt Printing (store-wide).
+    // Falls back to 80mm when the setting cannot be read.
+    let paper = '80';
+    try {
+        const res = await fetch('../function/store_settings.php?key=receipt_paper', { cache: 'no-store' });
+        const data = await res.json();
+        if (data && (data.value === '58' || data.value === '80')) paper = data.value;
+    } catch (e) { /* keep the 80mm default */ }
+
+    // 58mm rolls have a ~48mm printable width; 80mm rolls ~72mm.
+    // `zoom` shrinks the receipt proportionally so the on-screen layout
+    // (designed for 80mm) stays readable on the narrower paper.
+    const css = paper === '58'
+        ? `body { font-family: 'Courier New', monospace; font-size: 12px; width: 48mm; margin: 0 auto; padding: 6px 1mm; }
+           @page { size: 58mm auto; margin: 0; }
+           #rc { zoom: 0.85; }`
+        : `body { font-family: 'Courier New', monospace; font-size: 13px; width: 72mm; margin: 0 auto; padding: 8px 2mm; }
+           @page { size: 80mm auto; margin: 0; }`;
+
+    win.document.open();
     win.document.write(`
         <html><head><title>Receipt</title>
-        <style>
-            body { font-family: 'Courier New', monospace; font-size: 13px; width: 280px; margin: 0 auto; padding: 10px; }
+        <style>${css}
             @media print { body { margin: 0; } }
         </style></head>
-        <body>${content}</body></html>
+        <body><div id="rc">${content}</div></body></html>
     `);
     win.document.close();
     win.focus();
     setTimeout(() => { win.print(); win.close(); }, 300);
+}
+// ═════ ID-NUMBER → NAME AUTO-FETCH ═════
+// As the cashier types (or scans) the Senior/PWD ID number, the POS queries
+// the verified-customer registry and fills the name in automatically.
+function weposSetupIdLookup() {
+    const idInput = document.getElementById('verifyIdNumber');
+    if (!idInput) return;
+    idInput.addEventListener('input', weposOnIdNumberInput);
+    idInput.addEventListener('keydown', weposIdNumberKeydown);
+}
+
+// Debounced handler — fires 400ms after the cashier stops typing.
+function weposOnIdNumberInput() {
+    const statusEl = document.getElementById('verifyIdLookupStatus');
+    if (!statusEl) return;
+
+    // Show a subtle "checking" state while the debounce runs
+    statusEl.style.display = 'flex';
+    statusEl.style.background = '#f8fafc';
+    statusEl.style.color = '#64748b';
+    statusEl.innerHTML = '<i class="fas fa-spinner fa-spin" style="width:14px;"></i> Checking records...';
+
+    clearTimeout(weposIdLookupTimer);
+    weposIdLookupTimer = setTimeout(weposRunIdLookup, 400);
+}
+
+// Enter in the ID field submits the verification directly. If the name
+// hasn't been auto-filled yet, the lookup runs first so Enter completes the
+// whole flow in a single keystroke.
+async function weposIdNumberKeydown(event) {
+    if (event.key === 'Enter') {
+        event.preventDefault();
+        clearTimeout(weposIdLookupTimer);
+        const nameInput = document.getElementById('verifyIdName');
+        if (nameInput && !nameInput.value.trim()) {
+            await weposRunIdLookup();
+        }
+        weposSubmitVerifyId();
+    }
+}
+
+async function weposRunIdLookup() {
+    const idInput = document.getElementById('verifyIdNumber');
+    const nameInput = document.getElementById('verifyIdName');
+    const statusEl = document.getElementById('verifyIdLookupStatus');
+    const modal = document.getElementById('verifyIdModal');
+    if (!idInput || !nameInput || !statusEl) return;
+
+    const id_number = idInput.value.trim();
+    const type = modal.getAttribute('data-type');
+
+    // Too short to be a meaningful ID — reset quietly
+    if (id_number.length < 3) {
+        statusEl.style.display = 'none';
+        statusEl.innerHTML = '';
+        return;
+    }
+
+    const seq = ++weposIdLookupSeq;
+    try {
+        const res = await fetch('../function/lookup_customer_id', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ type, id_number })
+        });
+        const result = await res.json();
+
+        // A newer keystroke superseded this response — discard it
+        if (seq !== weposIdLookupSeq) return;
+
+        if (result.error) {
+            statusEl.style.display = 'none';
+            return;
+        }
+
+        if (result.found) {
+            // Fill the name — but never overwrite something the cashier
+            // deliberately typed by hand.
+            if (nameInput.value.trim() === '' || nameInput.value.trim() === weposIdNameAutoFilled) {
+                nameInput.value = result.name;
+                weposIdNameAutoFilled = result.name;
+            }
+            statusEl.style.display = 'flex';
+            statusEl.style.background = '#f0fdf4';
+            statusEl.style.color = '#15803d';
+            statusEl.innerHTML = '<i class="fas fa-circle-check" style="width:14px;"></i> Verified customer on file — name filled in automatically.';
+        } else {
+            // Unknown ID: clear any stale auto-fill so the cashier knows a
+            // manual name entry + physical inspection is required.
+            if (nameInput.value.trim() !== '' && nameInput.value.trim() === weposIdNameAutoFilled) {
+                nameInput.value = '';
+                weposIdNameAutoFilled = '';
+            }
+            statusEl.style.display = 'flex';
+            statusEl.style.background = '#fef3c7';
+            statusEl.style.color = '#92400e';
+            statusEl.innerHTML = '<i class="fas fa-circle-info" style="width:14px;"></i> Not on file yet — type the name and complete the ID checklist.';
+        }
+    } catch (e) {
+        if (seq !== weposIdLookupSeq) return;
+        statusEl.style.display = 'none';
+    }
 }
 // ═════ SENIOR / PWD DISCOUNT INTERCEPT ═════
 function weposOnDiscountChange(selectEl) {
@@ -1212,10 +1365,17 @@ function weposOnDiscountChange(selectEl) {
         document.getElementById('verifyIdFootManual').style.display = 'none';
         document.getElementById('verifyIdBtn').disabled = false;
         document.getElementById('verifyIdBtn').innerHTML = 'Verify';
+        // Reset the live ID lookup state for the new session
+        weposIdNameAutoFilled = '';
+        clearTimeout(weposIdLookupTimer);
+        weposIdLookupSeq++;
+        const lookupStatus = document.getElementById('verifyIdLookupStatus');
+        if (lookupStatus) { lookupStatus.style.display = 'none'; lookupStatus.innerHTML = ''; }
         document.getElementById('verifyIdModal').setAttribute('data-type', type);
         document.getElementById('verifyIdModal').setAttribute('data-discount-index', selectEl.selectedIndex);
         document.getElementById('verifyIdModal').style.display = 'flex';
-        setTimeout(() => document.getElementById('verifyIdName')?.focus(), 100);
+        // ID number is the primary input — typing it auto-fills the name
+        setTimeout(() => document.getElementById('verifyIdNumber')?.focus(), 100);
     } else {
         weposUpdateCart();
     }
