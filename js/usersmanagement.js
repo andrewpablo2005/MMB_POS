@@ -24,8 +24,7 @@ $(function () {
     $('.myTable').each(function () {
         if (!$.fn.DataTable.isDataTable(this)) {
             $(this).DataTable({
-                responsive: true,
-                autoWidth: false
+                responsive: true
             });
         }
     });
@@ -50,7 +49,6 @@ $(function () {
 function initDataTable(table) {
     return $(table).DataTable({
         responsive: true,
-        autoWidth: false,
         dom: 'fBrtip',
         buttons: ['copy', 'excel', 'pdf', 'print']
     });
