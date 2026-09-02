@@ -41,7 +41,7 @@
 <!-- MMB Notify — custom toasts + confirm dialogs (issue #4 item 6) -->
 <script src="<?= mmbpos_base_path() ?>/js/mmb-notify.js?v=1"></script>
 <!-- MMB Nav — keeps ?tab= in sync with the active pill (issue #4 item 1) -->
-<script src="<?= mmbpos_base_path() ?>/js/mmb-nav.js?v=1"></script>
+<script src="<?= mmbpos_base_path() ?>/js/mmb-nav.js?v=2"></script>
 <!-- MMB Barcode — Code 128 renderer + downloadable labels (issue #4 item 4) -->
 <script src="<?= mmbpos_base_path() ?>/js/mmb-barcode.js?v=1"></script>
 
