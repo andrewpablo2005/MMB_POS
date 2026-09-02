@@ -38,6 +38,17 @@
         }
     }
 
+    /* Load-time cleanup: only the hash goes away. detail_* params are kept
+       so the Sales Detail deep link (fresh load with filters) still opens
+       the report modal — they are removed later by pill clicks or when
+       the modal is closed. */
+    function stripHashOnly() {
+        if (!window.location.hash) return;
+        var url = new URL(window.location.href);
+        url.hash = '';
+        try { history.replaceState(history.state, '', url.href); } catch (e) { /* ignore */ }
+    }
+
     function activate(tabName) {
         var link = document.querySelector('#sidebar .nav-link[href="#v-pills-' + tabName + '"]');
         if (link && window.bootstrap && bootstrap.Tab) {
@@ -66,7 +77,7 @@
         if (fromHash && fromHash !== fromQuery) {
             activate(fromHash);
         }
-        cleanUrl(fromHash || fromQuery || 'dashboard');
+        stripHashOnly();
 
         /* 3. Closing the Sales Detail report clears its GET filters so a
               refresh never re-opens the modal (the deep link still works
