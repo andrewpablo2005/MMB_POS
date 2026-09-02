@@ -1192,6 +1192,13 @@ thead.table-dark th,
     border-color: var(--mmb-line-soft);
 }
 
+/* DataTables cells stay on one line so the Responsive extension can
+   measure the real width and collapse columns into child rows on
+   phones (the official DT pattern: responsive + nowrap). */
+table.dataTable > tbody > tr > td {
+    white-space: nowrap;
+}
+
 /* DataTables responsive child rows (mobile) */
 table.dataTable > tbody > tr.child {
     background: #fbfcfd;
