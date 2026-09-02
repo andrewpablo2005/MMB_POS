@@ -37,7 +37,7 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <!-- Custom JS -->
-<script src="../js/usersmanagement.js?v=2"></script>
+<script src="../js/usersmanagement.js?v=3"></script>
 <!-- MMB Notify — custom toasts + confirm dialogs (issue #4 item 6) -->
 <script src="<?= mmbpos_base_path() ?>/js/mmb-notify.js?v=1"></script>
 <!-- MMB Nav — keeps ?tab= in sync with the active pill (issue #4 item 1) -->
