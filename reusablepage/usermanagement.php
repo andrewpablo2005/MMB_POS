@@ -38,11 +38,16 @@ $users = $usersmanagement->getAllUsers();
 <!-- ALERT + REDIRECT -->
 <?php if ($result): ?>
     <script>
-        alert("<?= htmlspecialchars((string)($result['message']), ENT_QUOTES, 'UTF-8') ?>");
-
-        <?php if ($result['success']): ?>
-            window.location.href = 'dashboard.php?tab=users';
-        <?php endif; ?>
+        document.addEventListener('DOMContentLoaded', function () {
+            mmbNotify({
+                type: <?= !empty($result['success']) ? "'success'" : "'danger'" ?>,
+                title: <?= json_encode((string)($result['message'] ?? '')) ?>,
+                duration: 5000
+            });
+            <?php if ($result['success']): ?>
+                setTimeout(function () { window.location.href = 'dashboard.php?tab=users'; }, 1800);
+            <?php endif; ?>
+        });
     </script>
 <?php endif; ?>
 
@@ -133,7 +138,7 @@ $users = $usersmanagement->getAllUsers();
                                         <input type="hidden" name="id" value="<?= htmlspecialchars((string)($u['id']), ENT_QUOTES, 'UTF-8') ?>">
                                         <input type="hidden" name="status" value="<?= ($u['status'] ?? 'active') === 'active' ? 'disabled' : 'active' ?>">
                                         <button type="submit" name="toggleUserStatus" class="btn <?= ($u['status'] ?? 'active') === 'active' ? 'btn-outline-secondary' : 'btn-primary' ?> btn-sm"
-                                            onclick="return confirm('<?= ($u['status'] ?? 'active') === 'active' ? 'Disable' : 'Enable' ?> this account?')">
+                                            data-mmb-confirm="<?= ($u['status'] ?? 'active') === 'active' ? 'Disable' : 'Enable' ?> this account?">
                                             <?= ($u['status'] ?? 'active') === 'active' ? 'Disable' : 'Enable' ?>
                                         </button>
                                     </form>
@@ -141,7 +146,7 @@ $users = $usersmanagement->getAllUsers();
                                     <form method="POST" class="d-inline">
                                         <input type="hidden" name="id" value="<?= htmlspecialchars((string)($u['id']), ENT_QUOTES, 'UTF-8') ?>">
                                         <button type="submit" name="deleteUser" class="btn btn-danger btn-sm"
-                                            onclick="return confirm('Delete this user?')">
+                                            data-mmb-confirm="Delete this user? This cannot be undone." data-mmb-ok="Yes, delete">
                                             Delete
                                         </button>
                                     </form>

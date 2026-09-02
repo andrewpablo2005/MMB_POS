@@ -17,32 +17,32 @@ if (isset($_GET['deleteProduct'])) {
     // CSRF protection: deletes are only accepted with a valid per-session token
     $deleteToken = (string)($_GET['t'] ?? '');
     if (!hash_equals($_SESSION['csrf_token'] ?? '', $deleteToken)) {
-        echo "<script>alert('Invalid or expired delete request.'); window.location.href='dashboard.php?tab=product';</script>";
+        echo "<script>mmbNotify({type:'warning', title:'Invalid or expired delete request'}); setTimeout(function(){ window.location.href='dashboard.php?tab=product'; }, 1800);</script>";
         exit;
     }
 
     $id = (int) $_GET['deleteProduct'];
 
     if ($product->deleteProduct($id)) {
-        echo "<script>alert('Product deleted successfully'); window.location.href = 'dashboard.php?tab=product';</script>";
+        echo "<script>mmbNotify({type:'success', title:'Product deleted successfully'}); setTimeout(function(){ window.location.href = 'dashboard.php?tab=product'; }, 1600);</script>";
         exit;
     } else {
-        echo "<script>alert(" . json_encode($product->getResponse()) . ");</script>";
+        echo "<script>mmbNotify({type:'danger', title:'Delete failed', message:" . json_encode($product->getResponse()) . "});</script>";
     }
 }
 
 // UPDATE
 if ($product->updateProduct()) {
-    echo "<script>alert('Updated successfully'); window.location.href = 'dashboard.php?tab=product';</script>";
+    echo "<script>mmbNotify({type:'success', title:'Product updated successfully'}); setTimeout(function(){ window.location.href = 'dashboard.php?tab=product'; }, 1600);</script>";
     exit;
 }
 
 if ($product->addProduct()) {
-    echo "<script>alert('Product added successfully'); window.location.href = 'dashboard.php?tab=product';</script>";
+    echo "<script>mmbNotify({type:'success', title:'Product added successfully'}); setTimeout(function(){ window.location.href = 'dashboard.php?tab=product'; }, 1600);</script>";
     exit;
 } else {
     if (!empty($_POST) && isset($_POST['addProduct'])) {
-        echo "<script>alert(" . json_encode($product->getResponse()) . ");</script>";
+        echo "<script>mmbNotify({type:'danger', title:'Could not add product', message:" . json_encode($product->getResponse()) . "});</script>";
     }
 }
 ?>
@@ -65,14 +65,14 @@ if ($product->addProduct()) {
         <div class="table-responsive"><table class="table table-striped table-hover align-middle w-100 myTable">
             <thead class="table-dark">
                 <tr>
-                    <th>ID</th>
-                    <th>Branded</th>
-                    <th>Generic</th>
-                    <th>Strength</th>
-                    <th>Dosage Form</th>
-                    <th>Strength Qty</th>
-                    <th>Category</th>
-                    <th>Barcode</th>
+                    <th data-priority="6">ID</th>
+                    <th data-priority="1">Branded</th>
+                    <th data-priority="2">Generic</th>
+                    <th data-priority="5">Strength</th>
+                    <th data-priority="7">Dosage Form</th>
+                    <th data-priority="8">Strength Qty</th>
+                    <th data-priority="4">Category</th>
+                    <th data-priority="3">Product Code</th>
                     <th>Action</th>
                 </tr>
             </thead>
@@ -108,8 +108,12 @@ if ($product->addProduct()) {
                             ?>
                         </td>
                         <td><?= htmlspecialchars((string)($prod['category_name'] ?? 'N/A'), ENT_QUOTES, 'UTF-8') ?></td>
-                        <td><?= htmlspecialchars((string)($prod['barcode']), ENT_QUOTES, 'UTF-8') ?></td>
+                        <td><span class="mmb-code-chip" data-code="<?= htmlspecialchars((string)($prod['barcode']), ENT_QUOTES, 'UTF-8') ?>" data-name="<?= htmlspecialchars(trim(($prod['branded_name'] ?? '') . ' ' . ($prod['generic_name'] ?? '')), ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars((string)($prod['barcode']), ENT_QUOTES, 'UTF-8') ?></span></td>
                         <td>
+                            <!-- BARCODE (issue #4: preview + download the real Code 128 label) -->
+                            <button class="btn btn-outline-secondary btn-sm" data-barcode="<?= htmlspecialchars((string)($prod['barcode']), ENT_QUOTES, 'UTF-8') ?>" data-product="<?= htmlspecialchars(trim(($prod['branded_name'] ?? '') . ' ' . ($prod['generic_name'] ?? '') . ' ' . ($prod['strength'] ?? '') . ' ' . ($prod['measurement_name'] ?? '') . ' ' . trim($prod['dosage_form'] ?? '')), ENT_QUOTES, 'UTF-8') ?>" aria-label="Barcode preview">
+                                <i class="fas fa-barcode"></i>
+                            </button>
                             <!-- VIEW -->
                             <button class="btn btn-info btn-sm" data-bs-toggle="modal"
                                 data-bs-target="#viewProduct<?= htmlspecialchars((string)($prod['id']), ENT_QUOTES, 'UTF-8') ?>">
@@ -122,7 +126,7 @@ if ($product->addProduct()) {
                             </button>
                             <!-- DELETE -->
                             <a href="?deleteProduct=<?= htmlspecialchars((string)($prod['id']), ENT_QUOTES, 'UTF-8') ?>&t=<?= htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8') ?>" class="btn btn-sm btn-danger"
-                                onclick="return confirm('Delete this product?')">
+                                data-mmb-confirm="Delete this product? This cannot be undone." data-mmb-ok="Yes, delete">
                                 Delete
                             </a>
                         </td>
@@ -136,3 +140,42 @@ if ($product->addProduct()) {
 <?php include 'viewproductmodal.php'; ?>
 <?php include 'addproductmodal.php'; ?>
 <!-- usersmanagement.js is loaded globally via conn/connection_links.php (broken duplicate reference removed) -->
+<!-- ═══ BARCODE PREVIEW MODAL (issue #4) — real Code 128 label with
+     preview + PNG download + print, for sticking on packaging ═══ -->
+<div class="modal fade" id="mmbBarcodeModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="mmbBarcodeModalTitle"><i class="fas fa-barcode me-2 text-danger"></i>Product barcode</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="mmbBarcodeCanvasHolder" class="border rounded p-3 bg-white text-center"></div>
+                <div class="text-center mt-2">
+                    <span class="badge text-bg-light border" id="mmbBarcodeCodeText" style="font-family: 'Courier New', monospace; letter-spacing: 1px;"></span>
+                </div>
+                <p class="text-muted small mt-3 mb-0">
+                    Code 128 barcode generated from the product code. Download the PNG and print it as a label for the product packaging.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-outline-primary" data-mmb-barcode-print>
+                    <i class="fas fa-print me-1"></i> Print
+                </button>
+                <button type="button" class="btn btn-primary" data-mmb-barcode-download>
+                    <i class="fas fa-download me-1"></i> Download PNG
+                </button>
+            </div>
+            <div id="mmbBarcodePrintHolder" style="display:none;"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('click', function (e) {
+        var btn = e.target.closest('[data-barcode]');
+        if (!btn) return;
+        mmbShowBarcodeModal(btn.getAttribute('data-barcode'), btn.getAttribute('data-product'));
+    });
+</script>

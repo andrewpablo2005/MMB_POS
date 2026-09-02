@@ -334,7 +334,7 @@ async function submitReturnProcess() {
                 pinErr.textContent = data.error || 'Failed to process return.';
                 pinErr.style.display = 'block';
             } else {
-                alert(data.error || 'Failed to process return.');
+                mmbNotify({ type: 'danger', title: 'Return failed', message: data.error || 'Failed to process return.' });
             }
             btn.disabled = false;
             btn.innerHTML = '<i class="fas fa-check-circle me-1"></i> Confirm Refund';
@@ -345,7 +345,7 @@ async function submitReturnProcess() {
             pinErr.textContent = 'Network error. Please try again.';
             pinErr.style.display = 'block';
         } else {
-            alert('Network error. Please try again.');
+            mmbNotify({ type: 'danger', title: 'Network error', message: 'Please try again.' });
         }
         btn.disabled = false;
         btn.innerHTML = '<i class="fas fa-check-circle me-1"></i> Confirm Refund';

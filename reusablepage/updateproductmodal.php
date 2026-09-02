@@ -98,7 +98,7 @@ $dosageForms = $product->getDosageForms(); ?>
                                 </div>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="edit_barcode_<?= $prod['id'] ?>" class="form-label">Barcode <span class="text-danger">*</span></label>
+                                <label for="edit_barcode_<?= $prod['id'] ?>" class="form-label">Product Code <span class="text-danger">*</span></label>
                                 <input type="text" id="edit_barcode_<?= $prod['id'] ?>" name="barcode" class="form-control"
                                     value="<?= htmlspecialchars($prod['barcode'] ?? '') ?>" placeholder="e.g., 123456789012" required>
                             </div>
