@@ -22,8 +22,8 @@
 <script src="https://cdn.datatables.net/2.3.7/js/dataTables.js"></script>
 
 <!-- DataTables Extensions (Responsive & Buttons) -->
-<link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
-<script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+<link rel="stylesheet" href="https://cdn.datatables.net/responsive/3.0.4/css/responsive.dataTables.min.css">
+<script src="https://cdn.datatables.net/responsive/3.0.4/js/dataTables.responsive.min.js"></script>
 
 <link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.2.6/css/buttons.dataTables.css">
 <script src="https://cdn.datatables.net/buttons/3.2.6/js/dataTables.buttons.js"></script>
