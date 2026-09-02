@@ -77,7 +77,7 @@ public function pre_addUser()
         $stmt->execute([$this->username, $this->username]);
         if ($stmt->fetch()) {
             $this->response = "Username already exists";
-            echo "<script>alert('Username already exists. Please choose a different username.');</script>";
+            echo "<script>document.addEventListener('DOMContentLoaded', function(){ mmbNotify({type:'danger', title:'Username already exists', message:'Please choose a different username.'}); });</script>";
             return false;
         }
 

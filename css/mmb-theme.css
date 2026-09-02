@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════════
-   MMB'S DRUGSTORE — BRAND THEME v2.0
+   MMB'S DRUGSTORE — BRAND THEME v3.9
    Single source of truth for the brand palette + app shell look.
 
    HOW TO RE-SKIN THE ENTIRE APP:
@@ -1150,4 +1150,299 @@ thead.table-dark th,
 }
 @media print {
     .returns-toolbar { display: none !important; }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   v3.9 — TABLE DESIGN SYSTEM + NOTIFICATIONS (GitHub issue #4)
+
+   1. All table headers (including legacy .table-dark markup) share
+      the light crimson-tinted header used by DataTables tables.
+   2. Inventory tables get the card-stack mobile layout
+      (td[data-label] renders as key/value cards under 768px).
+   3. mmb-notify.js toasts + confirm dialogs get their styling.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── 1. Unified light header for .table-dark markup ── */
+.table > thead.table-dark,
+.table > thead.table-dark > tr {
+    --bs-table-bg: #f8fafc;
+    --bs-table-color: #64748b;
+    --bs-table-border-color: var(--mmb-line);
+}
+.table > thead.table-dark > tr > th {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.7px;
+    color: #64748b;
+    white-space: nowrap;
+}
+.table > thead.table-secondary > tr > th {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.7px;
+    color: #64748b;
+}
+
+/* Denser, calmer body cells everywhere */
+.table > tbody > tr > td {
+    padding: 0.58rem 0.75rem;
+    font-size: 0.86rem;
+    border-color: var(--mmb-line-soft);
+}
+
+/* DataTables responsive child rows (mobile) */
+table.dataTable > tbody > tr.child {
+    background: #fbfcfd;
+}
+table.dataTable > tbody > tr.child span.dtr-title {
+    font-size: 0.66rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--mmb-muted);
+    display: inline-block;
+    min-width: 96px;
+    padding-right: 10px;
+}
+table.dataTable > tbody > tr.child span.dtr-data {
+    font-size: 0.84rem;
+    color: var(--mmb-text);
+}
+table.dataTable > tbody > tr.child ul.dtr-details > li {
+    border-bottom-color: var(--mmb-line-soft);
+}
+/* Inline expand control (►) -> FA6 plus/minus circle */
+table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before,
+table.dataTable.dtr-column > tbody > tr > td.dtr-control:before {
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    content: "\f055"; /* fa-plus-circle */
+    font-size: 0.92rem;
+    color: var(--mmb-primary);
+    opacity: 0.8;
+}
+table.dataTable.dtr-inline.collapsed > tbody > tr.parent > td.dtr-control:before,
+table.dataTable.dtr-column > tbody > tr.parent > td.dtr-control:before {
+    content: "\f056"; /* fa-minus-circle */
+}
+
+/* ── 2. Card-stack mobile tables (inventory & friends) ── */
+@media (max-width: 767.98px) {
+    table.mmb-stack,
+    table.mmb-stack tbody,
+    table.mmb-stack tr,
+    table.mmb-stack td {
+        display: block;
+        width: 100%;
+    }
+    table.mmb-stack thead { display: none; }
+    table.mmb-stack,
+    table.mmb-stack tbody {
+        border: 0;
+    }
+    table.mmb-stack tr {
+        background: var(--mmb-surface);
+        border: 1px solid var(--mmb-line-soft);
+        border-radius: 0.85rem;
+        margin-bottom: 0.65rem;
+        padding: 0.45rem 0.85rem;
+        box-shadow: 0 1px 5px rgba(15, 23, 42, 0.05);
+    }
+    table.mmb-stack tr:hover { background: var(--mmb-surface); }
+    table.mmb-stack td {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 0.85rem;
+        border: 0;
+        border-bottom: 1px dashed var(--mmb-line-soft);
+        padding: 0.5rem 0;
+        font-size: 0.85rem;
+        background: transparent;
+        color: var(--mmb-text);
+    }
+    table.mmb-stack tbody tr:last-child td { border-bottom: 0; }
+    table.mmb-stack td::before {
+        content: attr(data-label);
+        flex: 0 0 38%;
+        font-size: 0.64rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.6px;
+        color: var(--mmb-muted);
+        padding-top: 0.16rem;
+        white-space: normal;
+    }
+    table.mmb-stack td:empty::before { display: none; }
+    table.mmb-stack td:last-child { border-bottom: 0; }
+    /* keep thumbnails+labels on one line inside a stacked cell */
+    table.mmb-stack td .d-flex { display: flex !important; }
+    .table-responsive { overflow-x: visible; }
+}
+
+/* ── 3a. Toasts (mmbNotify) ── */
+.mmb-toast-stack {
+    position: fixed;
+    top: calc(var(--mmb-topbar-h) + 12px);
+    right: 18px;
+    z-index: 1085;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: min(370px, calc(100vw - 28px));
+    pointer-events: none;
+}
+.mmb-toast {
+    pointer-events: auto;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    background: var(--mmb-surface);
+    border: 1px solid var(--mmb-line-soft);
+    border-radius: 0.85rem;
+    padding: 0.8rem 0.9rem;
+    box-shadow: 0 10px 28px rgba(15, 23, 42, 0.16);
+    opacity: 0;
+    transform: translateX(16px);
+    transition: opacity 0.22s ease, transform 0.22s ease;
+}
+.mmb-toast.mmb-toast--in { opacity: 1; transform: none; }
+.mmb-toast-icon {
+    flex: 0 0 auto;
+    width: 34px;
+    height: 34px;
+    border-radius: 0.7rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+}
+.mmb-toast-title { font-weight: 700; font-size: 0.88rem; color: var(--mmb-heading); }
+.mmb-toast-message {
+    font-size: 0.8rem;
+    color: var(--mmb-text);
+    line-height: 1.45;
+    white-space: pre-line;
+    margin-top: 2px;
+    overflow-wrap: anywhere;
+}
+.mmb-toast-body { flex: 1 1 auto; min-width: 0; }
+.mmb-toast-close {
+    flex: 0 0 auto;
+    border: 0;
+    background: transparent;
+    color: var(--mmb-muted);
+    font-size: 0.8rem;
+    padding: 2px 4px;
+    cursor: pointer;
+    border-radius: 0.4rem;
+}
+.mmb-toast-close:hover { color: var(--mmb-heading); background: var(--mmb-primary-soft); }
+.mmb-toast--success .mmb-toast-icon { background: #dcfce7; color: #15803d; }
+.mmb-toast--success { border-left: 4px solid #16a34a; }
+.mmb-toast--danger .mmb-toast-icon { background: var(--mmb-primary-soft-2); color: var(--mmb-primary); }
+.mmb-toast--danger { border-left: 4px solid var(--mmb-primary); }
+.mmb-toast--warning .mmb-toast-icon { background: #fef3c7; color: #b45309; }
+.mmb-toast--warning { border-left: 4px solid #d97706; }
+.mmb-toast--info .mmb-toast-icon { background: #dbeafe; color: #1d4ed8; }
+.mmb-toast--info { border-left: 4px solid #2563eb; }
+
+/* ── 3b. Confirm / alert dialogs (mmbConfirm / mmbAlert) ── */
+.mmb-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.5);
+    z-index: 1090;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.25rem;
+    opacity: 0;
+    transition: opacity 0.18s ease;
+}
+.mmb-modal-backdrop.mmb-modal-backdrop--in { opacity: 1; }
+.mmb-modal {
+    background: var(--mmb-surface);
+    border-radius: 1.1rem;
+    max-width: 400px;
+    width: 100%;
+    padding: 1.6rem 1.5rem 1.25rem;
+    text-align: center;
+    box-shadow: 0 24px 60px rgba(15, 23, 42, 0.3);
+    transform: translateY(10px) scale(0.98);
+    transition: transform 0.18s ease;
+}
+.mmb-modal-backdrop--in .mmb-modal { transform: none; }
+.mmb-modal-icon {
+    width: 52px;
+    height: 52px;
+    margin: 0 auto 0.9rem;
+    border-radius: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.45rem;
+}
+.mmb-modal--success .mmb-modal-icon { background: #dcfce7; color: #15803d; }
+.mmb-modal--danger .mmb-modal-icon { background: var(--mmb-primary-soft-2); color: var(--mmb-primary); }
+.mmb-modal--warning .mmb-modal-icon { background: #fef3c7; color: #b45309; }
+.mmb-modal--info .mmb-modal-icon { background: #dbeafe; color: #1d4ed8; }
+.mmb-modal-title { font-size: 1.05rem; font-weight: 700; color: var(--mmb-heading); }
+.mmb-modal-message {
+    font-size: 0.88rem;
+    color: var(--mmb-text);
+    line-height: 1.55;
+    white-space: pre-line;
+    margin-top: 0.5rem;
+    overflow-wrap: anywhere;
+}
+.mmb-modal-actions {
+    display: flex;
+    gap: 0.6rem;
+    margin-top: 1.25rem;
+}
+.mmb-modal-btn {
+    flex: 1 1 0;
+    padding: 0.62rem 0.8rem;
+    border-radius: 0.65rem;
+    font-weight: 600;
+    font-size: 0.88rem;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+.mmb-modal-btn--ok {
+    background: var(--mmb-primary);
+    color: #fff;
+}
+.mmb-modal-btn--ok:hover { background: var(--mmb-primary-hover); }
+.mmb-modal-btn--ok.mmb-modal-btn--danger {
+    background: var(--mmb-primary);
+    border-color: var(--mmb-primary-active);
+}
+.mmb-modal-btn--cancel {
+    background: var(--mmb-surface);
+    border-color: var(--mmb-line);
+    color: var(--mmb-text);
+}
+.mmb-modal-btn--cancel:hover { background: #f8fafc; border-color: #cbd5e1; }
+.mmb-modal-btn:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 0.2rem rgba(var(--mmb-primary-rgb), 0.2);
+}
+
+/* Product-code chip (product list) — monospace, easy to scan visually */
+.mmb-code-chip {
+    display: inline-block;
+    font-family: 'Courier New', monospace;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: #475569;
+    background: #f8fafc;
+    border: 1px solid var(--mmb-line-soft);
+    border-radius: 0.45rem;
+    padding: 0.18rem 0.5rem;
 }

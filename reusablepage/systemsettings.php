@@ -68,11 +68,16 @@ $currentUser = $usersmanagement->getUserById($userId);
 ?>
 <?php if ($result): ?>
     <script>
-        alert(<?= json_encode($result['message'] ?? '') ?>);
-
-        <?php if (!empty($result['success'])): ?>
-            window.location.href = 'dashboard.php?tab=system';
-        <?php endif; ?>
+        document.addEventListener('DOMContentLoaded', function () {
+            mmbNotify({
+                type: <?= !empty($result['success']) ? "'success'" : "'danger'" ?>,
+                title: <?= json_encode((string)($result['message'] ?? '')) ?>,
+                duration: 5000
+            });
+            <?php if (!empty($result['success'])): ?>
+                setTimeout(function () { window.location.href = 'dashboard.php?tab=system'; }, 1800);
+            <?php endif; ?>
+        });
     </script>
 <?php endif; ?>
 

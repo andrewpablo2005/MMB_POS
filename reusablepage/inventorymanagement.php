@@ -88,14 +88,14 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
                 <button type="button" class="btn btn-sm btn-outline-dark inventory-print"><i class="fas fa-print me-1"></i>Print</button>
             </div>
             <div class="table-responsive mb-4">
-            <table id="currentInventoryTable" class="table table-striped table-hover align-middle w-100">
+            <table id="currentInventoryTable" class="table table-striped table-hover align-middle w-100 mmb-stack">
                 <thead class="table-dark">
                     <tr>
                         <th>Batch ID</th>
                         <th>Batch No.</th>
                         <th>Product</th>
                         <th>Category</th>
-                        <th>Barcode</th>
+                        <th>Product Code</th>
                         <th>Supplier Name</th>
                         <th>Original Quantity</th>
                         <th>Current Quantity</th>
@@ -104,7 +104,7 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
                 </thead>
                 <tbody>
                     <?php if (empty($inventoryBatches)): ?>
-                        <?php // DataTables renders the empty-table message. ?>
+                        <tr><td colspan="9" class="text-center text-muted py-4">No inventory batches recorded yet — add one with the “Add Batch” button.</td></tr>
                     <?php else: ?>
                         <?php foreach ($inventoryBatches as $batch): ?>
                             <?php
@@ -114,9 +114,9 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
                                 }
                             ?>
                             <tr>
-                                <td><?= htmlspecialchars($batch['id']) ?></td>
-                                <td><?= htmlspecialchars($batchNumber) ?></td>
-                                <td>
+                                <td data-label="Batch ID"><?= htmlspecialchars($batch['id']) ?></td>
+                                <td data-label="Batch No."><?= htmlspecialchars($batchNumber) ?></td>
+                                <td data-label="Product">
                                     <div class="d-flex align-items-center">
                                         <?php if (!empty(trim((string)($batch['imageproduct'] ?? '')))): ?>
                                             <span class="mmb-thumb mmb-thumb--md">
@@ -128,12 +128,12 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
                                         <span><?= htmlspecialchars(trim(($batch['branded_name'] ?? '') . ' ' . ($batch['generic_name'] ?? '') . ' ' . ($batch['strength'] ?? '') . ' ' . ($batch['measurement_name'] ?? ''))) ?></span>
                                     </div>
                                 </td>
-                                <td><?= htmlspecialchars($batch['category_name'] ?? 'N/A') ?></td>
-                                <td><?= htmlspecialchars($batch['barcode'] ?? 'N/A') ?></td>
-                                <td><?= htmlspecialchars($batch['supplier_name'] ?? 'N/A') ?></td>
-                                <td><?= htmlspecialchars((string) ($batch['received_quantity'] ?? 0)) ?></td>
-                                <td><?= htmlspecialchars((string) ($batch['current_quantity'] ?? 0)) ?></td>
-                                <td><?= htmlspecialchars($batch['expiry_date'] ?: 'N/A') ?></td>
+                                <td data-label="Category"><?= htmlspecialchars($batch['category_name'] ?? 'N/A') ?></td>
+                                <td data-label="Product Code"><?= htmlspecialchars($batch['barcode'] ?? 'N/A') ?></td>
+                                <td data-label="Supplier"><?= htmlspecialchars($batch['supplier_name'] ?? 'N/A') ?></td>
+                                <td data-label="Original Qty"><?= htmlspecialchars((string) ($batch['received_quantity'] ?? 0)) ?></td>
+                                <td data-label="Current Qty"><?= htmlspecialchars((string) ($batch['current_quantity'] ?? 0)) ?></td>
+                                <td data-label="Expiry"><?= htmlspecialchars($batch['expiry_date'] ?: 'N/A') ?></td>
                             </tr>
                         <?php endforeach; ?>
                     <?php endif; ?>
@@ -154,7 +154,7 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
                 <button type="button" class="btn btn-sm btn-outline-dark inventory-print"><i class="fas fa-print me-1"></i>Print</button>
             </div>
             <div class="table-responsive">
-            <table id="disposedInventoryTable" class="table table-sm table-bordered align-middle w-100">
+            <table id="disposedInventoryTable" class="table table-sm table-bordered align-middle w-100 mmb-stack">
                 <thead class="table-secondary">
                     <tr>
                         <th>Dispose ID</th>
@@ -168,18 +168,13 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
                 <tbody>
                     <?php if (empty($disposedBatches)): ?>
                         <tr>
-                            <td class="text-center">No disposed or expired inventory found.</td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
+                            <td colspan="6" class="text-center text-muted py-4">No disposed or expired inventory found.</td>
                         </tr>
                     <?php else: ?>
                         <?php foreach ($disposedBatches as $disposed): ?>
                             <tr>
-                                <td><?= htmlspecialchars($disposed['id']) ?></td>
-                                <td>
+                                <td data-label="Dispose ID"><?= htmlspecialchars($disposed['id']) ?></td>
+                                <td data-label="Product">
                                     <div class="d-flex align-items-center">
                                         <?php if (!empty(trim((string)($disposed['imageproduct'] ?? '')))): ?>
                                             <span class="mmb-thumb mmb-thumb--md">
@@ -198,10 +193,10 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
                                         })))) ?></span>
                                     </div>
                                 </td>
-                                <td><?= htmlspecialchars(($disposed['quantity'] ?? 0)) ?></td>
-                                <td><?= htmlspecialchars($disposed['expiry_date'] ?: 'N/A') ?></td>
-                                <td><?= htmlspecialchars($disposed['reason'] ?? 'N/A') ?></td>
-                                <td><?= htmlspecialchars($disposed['disposed_at'] ?? 'N/A') ?></td>
+                                <td data-label="Quantity"><?= htmlspecialchars(($disposed['quantity'] ?? 0)) ?></td>
+                                <td data-label="Expiry"><?= htmlspecialchars($disposed['expiry_date'] ?: 'N/A') ?></td>
+                                <td data-label="Reason"><?= htmlspecialchars($disposed['reason'] ?? 'N/A') ?></td>
+                                <td data-label="Disposed At"><?= htmlspecialchars($disposed['disposed_at'] ?? 'N/A') ?></td>
                             </tr>
                         <?php endforeach; ?>
                     <?php endif; ?>
@@ -654,6 +649,34 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
             });
         }
 
+        // Dispose confirmation (issue #4 item 6) — branded dialog instead of
+        // a browser confirm(); applies to the Dispose Batch modal submit.
+        const disposeForm = document.querySelector('#disposeBatchModal form');
+        if (disposeForm) {
+            disposeForm.addEventListener('submit', function (event) {
+                if (disposeForm.dataset.confirmed === '1') return;
+                event.preventDefault();
+
+                const select = document.getElementById('dispose_inventory_id');
+                const qtyInput = document.getElementById('dispose_quantity');
+                const qty = qtyInput ? qtyInput.value : '?';
+                const batchLabel = (select && select.selectedIndex > 0)
+                    ? select.options[select.selectedIndex].text
+                    : 'the selected batch';
+
+                mmbConfirm({
+                    title: 'Dispose inventory?',
+                    message: 'You are about to dispose ' + qty + ' unit(s) of ' + batchLabel + '.\n\nDisposed stock is permanently removed and cannot be restored.',
+                    okLabel: 'Yes, dispose',
+                    danger: true
+                }).then(function (yes) {
+                    if (!yes) return;
+                    disposeForm.dataset.confirmed = '1';
+                    disposeForm.submit();
+                });
+            });
+        }
+
         // Check if we need to reopen the Add Batch modal after refresh
         if (sessionStorage.getItem('reopenAddBatchModal') === 'true') {
             sessionStorage.removeItem('reopenAddBatchModal');
@@ -742,7 +765,11 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
 
                         if (existingBatch) {
                             event.preventDefault();
-                            alert(`Batch number "${batchNumber}" already exists for this product.`);
+                            mmbNotify({
+                                type: 'warning',
+                                title: 'Duplicate batch number',
+                                message: 'Batch number "' + batchNumber + '" already exists for this product.'
+                            });
                             document.getElementById('batch_number').focus();
                         }
                     }
@@ -755,20 +782,35 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
     document.addEventListener('DOMContentLoaded', function () {
         const supplierForm = document.getElementById('addSupplierForm');
         const supplierModal = document.getElementById('addSupplierModal');
-        
+
         if (!supplierForm || !supplierModal) return;
+
+        // Contact number: digits only (optional leading +) — issue #4 item 5
+        const contactInput = document.getElementById('supplier_contact_number');
+        if (contactInput) {
+            contactInput.addEventListener('input', function () {
+                var raw = this.value.replace(/[^0-9+]/g, '');
+                var digits = raw.replace(/\+/g, '');
+                this.value = (raw.charAt(0) === '+' ? '+' : '') + digits;
+            });
+        }
 
         supplierForm.addEventListener('submit', function (e) {
             e.preventDefault();
 
             const supplierName = document.getElementById('supplier_name').value.trim();
-            const contactNumber = document.getElementById('supplier_contact_number').value.trim();
+            const contactNumber = contactInput ? contactInput.value.trim() : '';
             const email = document.getElementById('supplier_email').value.trim();
             const address = document.getElementById('supplier_address').value.trim();
             const submitBtn = supplierForm.querySelector('button[type="submit"]');
 
             if (!supplierName) {
-                alert('Please enter supplier name');
+                mmbNotify({ type: 'warning', title: 'Supplier name required', message: 'Please enter the supplier name before saving.' });
+                return;
+            }
+            if (contactNumber && !/^\+?[0-9]{7,15}$/.test(contactNumber)) {
+                mmbNotify({ type: 'warning', title: 'Invalid contact number', message: 'Contact numbers accept digits only (7-15 digits, optional leading +).' });
+                contactInput.focus();
                 return;
             }
 
@@ -800,37 +842,47 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
                 submitBtn.textContent = 'Add Supplier';
 
                 if (status === 200) {
-                    alert('Supplier "' + data.supplier_name + '" added successfully!\n\nRedirecting to inventory...');
-                    
+                    mmbNotify({
+                        type: 'success',
+                        title: 'Supplier added',
+                        message: '"' + data.supplier_name + '" saved. Reopening Add Batch…',
+                        duration: 3000
+                    });
+
                     // Store flag and supplier ID to reopen modal after refresh
                     sessionStorage.setItem('reopenAddBatchModal', 'true');
                     sessionStorage.setItem('selectedSupplierId', data.supplier_id);
-                    
+
                     // Redirect to inventory page
-                    setTimeout(() => {
+                    setTimeout(function () {
                         window.location.href = 'dashboard.php?tab=inventory';
-                    }, 500);
+                    }, 1200);
                 } else if (status === 409) {
                     // Duplicate found
-                    alert('Supplier Already Exists\n\n' + data.message + '\n\nRedirecting to inventory...');
-                    
+                    mmbNotify({
+                        type: 'warning',
+                        title: 'Supplier already exists',
+                        message: data.message || 'A supplier with this name is already on file.',
+                        duration: 3000
+                    });
+
                     // Store flag and supplier ID to reopen modal after refresh
                     sessionStorage.setItem('reopenAddBatchModal', 'true');
                     sessionStorage.setItem('selectedSupplierId', data.existing_id);
-                    
+
                     // Redirect to inventory page
-                    setTimeout(() => {
+                    setTimeout(function () {
                         window.location.href = 'dashboard.php?tab=inventory';
-                    }, 500);
+                    }, 1200);
                 } else {
-                    alert('Error: ' + (data.error || 'Failed to add supplier'));
+                    mmbNotify({ type: 'danger', title: 'Could not add supplier', message: data.error || 'Failed to add supplier' });
                 }
             })
             .catch(error => {
                 submitBtn.disabled = false;
                 submitBtn.textContent = 'Add Supplier';
                 console.error('Error:', error);
-                alert('Error: ' + error.message);
+                mmbNotify({ type: 'danger', title: 'Network error', message: error.message });
             });
         });
     });
@@ -851,7 +903,9 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
                     </div>
                     <div class="mb-3">
                         <label for="supplier_contact_number" class="form-label">Contact Number</label>
-                        <input type="tel" class="form-control" id="supplier_contact_number" placeholder="e.g., +1-800-123-4567">
+                        <input type="tel" class="form-control" id="supplier_contact_number" inputmode="numeric"
+                               pattern="\+?[0-9]{7,15}" placeholder="e.g., 09181234567" autocomplete="tel">
+                        <div class="form-text">Digits only (an optional leading + is allowed).</div>
                     </div>
                     <div class="mb-3">
                         <label for="supplier_email" class="form-label">Email</label>

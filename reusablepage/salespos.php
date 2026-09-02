@@ -83,6 +83,10 @@ if (!empty($_SESSION['user_id'])) {
                     <div class="wepos-product-card <?= $isOut ? 'out-of-stock' : '' ?><?= $isExpired ? ' expired' : '' ?>"
                          data-id="<?= $row['id'] ?>"
                          data-name="<?= htmlspecialchars($row['branded_name']) ?> <?= htmlspecialchars($row['generic_name']) ?> <?= htmlspecialchars($row['strength'] ?? '') ?> <?= htmlspecialchars($row['measurement_name'] ?? '') ?><?= !empty(trim($row['dosage_form'] ?? '')) ? ' ' . htmlspecialchars(trim($row['dosage_form'])) : '' ?><?= isset($row['strength_per_quantity']) && $row['strength_per_quantity'] > 0 ? ' (' . htmlspecialchars((string)$row['strength_per_quantity']) . ' ' . htmlspecialchars(trim($row['strength_per_quantity_unit'] ?? '')) . ' per unit)' : '' ?>"
+                         data-branded="<?= htmlspecialchars($row['branded_name']) ?>"
+                         data-generic="<?= htmlspecialchars($row['generic_name']) ?>"
+                         data-strength="<?= htmlspecialchars(trim(($row['strength'] ?? '') . (($row['strength'] ?? '') !== '' ? ' ' : '') . ($row['measurement_name'] ?? ''))) ?>"
+                         data-form="<?= htmlspecialchars(trim($row['dosage_form'] ?? '')) ?>"
                          data-price="<?= $salePrice ?>"
                          data-net="<?= $costPrice ?>"
                          data-barcode="<?= htmlspecialchars($row['barcode'] ?? '') ?>"
@@ -631,8 +635,8 @@ if (!empty($_SESSION['user_id'])) {
             });
             const result = await response.json();
             if (!result.success) throw new Error(result.error);
-            alert('Register closed successfully. Variance: ' + weposFormatClosingCurrency(result.variance));
-            window.location.href = '../login_logout_page/logout.php';
+            mmbNotify({ type: 'success', title: 'Register closed', message: 'Variance: ' + weposFormatClosingCurrency(result.variance) + '. Logging out…', duration: 5000 });
+            setTimeout(function () { window.location.href = '../login_logout_page/logout.php'; }, 2600);
         } catch (requestError) {
             error.textContent = requestError.message || 'Unable to close register.';
             error.style.display = 'block';
@@ -706,4 +710,4 @@ if (!empty($_SESSION['user_id'])) {
 </div>
 
 <?php include __DIR__ . '/returnmodal.php'; ?>
-<script src="../js/pos_wepos.js?v=1.7"></script>
+<script src="../js/pos_wepos.js?v=1.8"></script>

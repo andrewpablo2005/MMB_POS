@@ -33,6 +33,13 @@ try {
         echo json_encode(['error' => 'Supplier name is required']);
         exit;
     }
+
+    // Validate contact number: digits only, optional leading + (issue #4 item 5)
+    if ($contact_number !== '' && !preg_match('/^\+?[0-9]{7,15}$/', $contact_number)) {
+        http_response_code(400);
+        echo json_encode(['error' => 'Contact number must be digits only (7-15 digits, optional leading +)']);
+        exit;
+    }
     
     // Check for duplicate (case-insensitive)
     $stmt = $db->prepare("SELECT id, supplier_name FROM suppliers WHERE LOWER(TRIM(supplier_name)) = LOWER(TRIM(:supplier_name))");

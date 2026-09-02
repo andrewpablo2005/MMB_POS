@@ -86,7 +86,7 @@ function weposFindAndAdd(code) {
             return true;
         }
     }
-    alert('Product not found or out of stock: ' + code);
+    mmbNotify({ type: 'warning', title: 'Product not found', message: 'No product matches "' + code + '" (or it is out of stock).' });
     return false;
 }
 
@@ -127,7 +127,7 @@ function weposAddToCart(cardEl) {
     // Validate that cardEl is provided and is an element
     if (!cardEl || !cardEl.dataset) {
         console.error('Invalid element passed to weposAddToCart');
-        alert('Error: Could not add product to cart. Please refresh the page.');
+        mmbNotify({ type: 'danger', title: 'Could not add product', message: 'Please refresh the page and try again.' });
         return;
     }
     
@@ -138,25 +138,25 @@ function weposAddToCart(cardEl) {
     // Validate required data
     if (!id) {
         console.error('Product ID missing from data attributes', cardEl.dataset);
-        alert('Error: Product information is incomplete. Please refresh the page.');
+        mmbNotify({ type: 'danger', title: 'Incomplete product data', message: 'Please refresh the page and try again.' });
         return;
     }
     
     console.log('Product ID:', id, 'Stock:', stock, 'Expired:', isExpired);
 
     if (isExpired) {
-        alert('Cannot add expired product to cart!');
+        mmbNotify({ type: 'danger', title: 'Expired product', message: 'This product has expired and cannot be sold.' });
         return;
     }
 
     if (stock <= 0) {
-        alert('Item is Out of Stock!');
+        mmbNotify({ type: 'warning', title: 'Out of stock', message: 'This item has no available stock.' });
         return;
     }
 
     if (weposCart[id]) {
         if (weposCart[id].qty >= stock) {
-            alert('Cannot add more. Only ' + stock + ' in stock.');
+            mmbNotify({ type: 'warning', title: 'Stock limit reached', message: 'Only ' + stock + ' unit(s) available.' });
             return;
         }
         weposCart[id].qty++;
@@ -168,13 +168,17 @@ function weposAddToCart(cardEl) {
         // Validate prices
         if (isNaN(price) || price < 0) {
             console.error('Invalid price:', cardEl.dataset.price, 'parsed to:', price);
-            alert('Error: Product price is invalid. Please refresh the page.');
+            mmbNotify({ type: 'danger', title: 'Invalid price', message: 'Product price looks wrong — please refresh the page.' });
             return;
         }
         
         weposCart[id] = {
             id: id,
             name: cardEl.dataset.name,
+            branded: cardEl.dataset.branded || '',
+            generic: cardEl.dataset.generic || '',
+            strength: cardEl.dataset.strength || '',
+            form: cardEl.dataset.form || '',
             price: price,
             net: isNaN(net) ? price : net,
             qty: 1,
@@ -226,7 +230,7 @@ function weposUpdateQty(id, delta) {
         delete weposCart[id];
     } else if (weposCart[id].qty > weposCart[id].stock) {
         weposCart[id].qty = weposCart[id].stock;
-        alert('Maximum stock reached');
+        mmbNotify({ type: 'warning', title: 'Maximum stock reached' });
     }
     
     weposUpdateCart();
@@ -265,7 +269,7 @@ function weposSetQty(id, value) {
 
     if (qty > weposCart[id].stock) {
         qty = weposCart[id].stock;
-        alert('Maximum stock reached');
+        mmbNotify({ type: 'warning', title: 'Maximum stock reached' });
     }
 
     weposCart[id].qty = qty;
@@ -312,7 +316,7 @@ function weposHandleQtyInput(event, input) {
 
     if (newQty > weposCart[id].stock) {
         input.value = weposCart[id].stock;
-        alert('Maximum stock reached');
+        mmbNotify({ type: 'warning', title: 'Maximum stock reached' });
         return;
     }
 }
@@ -789,7 +793,13 @@ function weposRequestOverride(cartId) {
 
     // If already overridden, remove it
     if (item.override) {
-        if (confirm('Remove the override discount from "' + weposEscapeHtml(item.name) + '"?')) {
+        mmbConfirm({
+            title: 'Remove override discount?',
+            message: 'Remove the override discount from "' + weposEscapeHtml(item.name) + '"?',
+            okLabel: 'Yes, remove it',
+            danger: true
+        }).then(function (yes) {
+            if (!yes) return;
             item.override = false;
             item.overrideRate = 0;
             item.overrideApprover = null;
@@ -798,7 +808,7 @@ function weposRequestOverride(cartId) {
             // Refresh modal amount
             const totalText = document.getElementById('calcTotal').textContent.replace('₱', '');
             document.getElementById('modalAmountDue').textContent = weposFormatCurrency(parseFloat(totalText));
-        }
+        });
         return;
     }
 
@@ -1045,12 +1055,12 @@ async function weposSubmitTransaction() {
             weposVerified = false;
             weposCustomerType = null;
         } else {
-            alert('Payment Error: ' + result.error);
+            mmbNotify({ type: 'danger', title: 'Payment failed', message: result.error || 'The transaction was not completed.' });
             btn.disabled = false;
             btn.innerHTML = 'Confirm Payment';
         }
     } catch (err) {
-        alert('Network Error. Please try again.');
+        mmbNotify({ type: 'danger', title: 'Network error', message: 'Please check your connection and try again.' });
         btn.disabled = false;
         btn.innerHTML = 'Confirm Payment';
     }
@@ -1068,16 +1078,33 @@ function weposShowReceipt(data) {
     document.getElementById('receiptCustomerId').textContent = data.customerId || '—';
     document.getElementById('receiptRule').textContent = data.discountRule === 'statutory' ? 'Statutory Senior/PWD' : 'Regular';
 
-    // Items list
-    let itemsHtml = '';
+    // Items list — columnar (issue #4 item 7): product, dosage, form,
+    // qty and amount each get their own column so nothing sticks together.
+    let itemsHtml = `
+        <div style="display:flex; border-bottom:1px solid #cbd5e1; padding-bottom:3px; margin-bottom:4px; font-size:9.5px; font-weight:700; letter-spacing:0.6px; color:#94a3b8;">
+            <div style="flex:1 1 auto; min-width:0;">ITEM</div>
+            <div style="flex:0 0 15%; text-align:center;">DOSAGE</div>
+            <div style="flex:0 0 14%; text-align:center;">FORM</div>
+            <div style="flex:0 0 6%; text-align:center;">QTY</div>
+            <div style="flex:0 0 22%; text-align:right;">AMOUNT</div>
+        </div>`;
     data.items.forEach(item => {
         const c = weposCalcItem(item, data.dRate, data.isVatExempt, data.discountRule || 'regular');
-        itemsHtml += `<div style="display:flex; justify-content:space-between; margin-bottom:8px; align-items: flex-start;">
-            <div style="flex:1; margin-right:8px;">
-                <div style="font-weight:500; line-height:1.2;">${weposEscapeHtml(item.name)}</div>
-                <div style="font-size:11px; color:#64748b;">${item.qty} x &#8369;${item.price.toFixed(2)}</div>
+        const product = (item.branded || item.generic)
+            ? ((item.branded || '') + ' ' + (item.generic || '')).trim()
+            : (item.name || '');
+        const dose = item.strength || '\u2014';
+        const form = item.form || '\u2014';
+        itemsHtml += `
+        <div style="display:flex; align-items:flex-start; padding:4px 0; border-bottom:1px dashed #e2e8f0;">
+            <div style="flex:1 1 auto; min-width:0; padding-right:6px;">
+                <div style="font-weight:600; line-height:1.25; overflow-wrap:anywhere;">${weposEscapeHtml(product)}</div>
+                <div style="font-size:10px; color:#94a3b8; margin-top:1px;">@ &#8369;${item.price.toFixed(2)}</div>
             </div>
-            <div style="font-weight:600; white-space:nowrap;">&#8369;${c.final.toFixed(2)}</div>
+            <div style="flex:0 0 15%; text-align:center; font-size:10.5px; color:#475569; line-height:1.25; padding-top:1px; overflow-wrap:anywhere;">${weposEscapeHtml(dose)}</div>
+            <div style="flex:0 0 14%; text-align:center; font-size:10.5px; color:#475569; line-height:1.25; padding-top:1px; overflow-wrap:anywhere;">${weposEscapeHtml(form)}</div>
+            <div style="flex:0 0 6%; text-align:center; font-size:10.5px; color:#475569; padding-top:1px;">${item.qty}</div>
+            <div style="flex:0 0 22%; text-align:right; font-weight:600; font-size:10.5px; color:#1e293b; padding-top:1px; white-space:nowrap;">&#8369;${c.final.toFixed(2)}</div>
         </div>`;
     });
     document.getElementById('receiptItems').innerHTML = itemsHtml;
@@ -1185,7 +1212,7 @@ async function weposPrintReceipt() {
     // blockers never interfere, then fill it in.
     const win = window.open('', '_blank', 'width=320,height=600');
     if (!win) {
-        alert('Please allow pop-ups for this site to print receipts.');
+        mmbNotify({ type: 'warning', title: 'Pop-up blocked', message: 'Allow pop-ups for this site to print receipts.' });
         return;
     }
     win.document.write('<html><head><title>Receipt</title></head><body style="font-family:\'Courier New\',monospace; padding:20px; color:#64748b;">Preparing receipt...</body></html>');

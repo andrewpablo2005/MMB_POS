@@ -45,6 +45,23 @@ $dosageForms = $product->getDosageForms();
 
                     <div class="row">
                         <div class="col-md-6 mb-3">
+                            <label for="category_search" class="form-label">Category <span class="text-danger">*</span></label>
+                            <input type="text" id="category_search" class="form-control" list="category_list" placeholder="Select Category" autocomplete="off" required>
+                            <input type="hidden" id="category_id" name="category_id" value="">
+                            <datalist id="category_list">
+                                <?php foreach ($categories as $cat): ?>
+                                    <option value="<?= htmlspecialchars($cat['category_name'] ?? '') ?>"
+                                        data-id="<?= (int)($cat['id'] ?? 0) ?>"
+                                        data-senior="<?= (int)($cat['senior_discount'] ?? 0) ?>"
+                                        data-pwd="<?= (int)($cat['pwd_discount'] ?? 0) ?>"
+                                        data-vat="<?= (int)($cat['has_vat'] ?? 0) ?>">
+                                <?php endforeach; ?>
+                            </datalist>
+                            <div id="categoryRuleNote" class="form-text text-muted mt-1">
+                                Select a category to see whether senior/PWD discounts apply.
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
                             <label for="unit_measurement_search" class="form-label">Unit of Measurement</label>
                             <input type="text" id="unit_measurement_search" class="form-control" list="unit_measurement_list" placeholder="Select Unit" autocomplete="off">
                             <input type="hidden" id="unit_measurement" name="unit_measurement" value="">
@@ -54,6 +71,9 @@ $dosageForms = $product->getDosageForms();
                                 <?php endforeach; ?>
                             </datalist>
                         </div>
+                    </div>
+
+                    <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="strength" class="form-label">Strength <span class="text-danger">*</span></label>
                             <div class="input-group">
@@ -61,10 +81,7 @@ $dosageForms = $product->getDosageForms();
                                     placeholder="e.g., 200,500,1000" required>
                             </div>
                         </div>
-                    </div>
-
-                    <div id="dosageFormContainer" class="row" style="display:none;">
-                        <div class="col-md-12 mb-3">
+                        <div id="dosageFormContainer" class="col-md-6 mb-3" style="display:none;">
                             <label for="dosage_form_search" class="form-label">Dosage Form</label>
                             <input type="text" id="dosage_form_search" class="form-control" list="dosage_form_list" placeholder="Select dosage form" autocomplete="off">
                             <input type="hidden" id="dosage_form" name="dosage_form" value="">
@@ -91,35 +108,22 @@ $dosageForms = $product->getDosageForms();
                     </div>
 
                     <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="barcode" class="form-label">Barcode <span class="text-danger">*</span></label>
+                        <div class="col-md-12 mb-3">
+                            <label for="barcode" class="form-label">Product Code <span class="text-danger">*</span></label>
                             <div class="input-group">
                                 <input type="text" id="barcode" name="barcode" class="form-control"
                                     placeholder="e.g., 123456789012" required>
                                 <button type="button" class="btn btn-outline-secondary" onclick="generateBarcode()">
-                                    <i class="fas fa-sync-alt"></i> Auto
+                                    <i class="fas fa-barcode"></i> Auto
                                 </button>
                             </div>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="category_search" class="form-label">Category <span
-                                    class="text-danger">*</span></label>
-                            <input type="text" id="category_search" class="form-control" list="category_list" placeholder="Select Category" autocomplete="off" required>
-                            <input type="hidden" id="category_id" name="category_id" value="">
-                            <datalist id="category_list">
-                                <?php foreach ($categories as $cat): ?>
-                                    <option value="<?= htmlspecialchars($cat['category_name'] ?? '') ?>"
-                                        data-id="<?= (int) ($cat['id'] ?? 0) ?>"
-                                        data-senior="<?= (int) ($cat['senior_discount'] ?? 0) ?>"
-                                        data-pwd="<?= (int) ($cat['pwd_discount'] ?? 0) ?>"
-                                        data-vat="<?= (int) ($cat['has_vat'] ?? 0) ?>">
-                                <?php endforeach; ?>
-                            </datalist>
-                            <div id="categoryRuleNote" class="form-text text-muted mt-1">
-                                Select a category to see whether senior/PWD discounts apply.
+                            <div id="barcodePreviewWrap" class="border rounded mt-2 p-2 bg-light d-none">
+                                <canvas id="barcodePreviewCanvas" style="width:100%; max-width:440px; display:block; margin:0 auto;"></canvas>
+                            </div>
+                            <div class="form-text text-muted mt-1">
+                                This code renders a scannable Code 128 barcode — preview it here and download the label PNG from the product list.
                             </div>
                         </div>
-
                     </div>
 
                     <div class="mb-3">
@@ -219,7 +223,7 @@ $dosageForms = $product->getDosageForms();
         </div>
     </div>
 </div>
-<script src="../js/auto_generatebarcode.js?v=2"></script>
+<script src="../js/auto_generatebarcode.js?v=3"></script>
 
 <script>
     function previewImage(event) {
@@ -501,7 +505,7 @@ $dosageForms = $product->getDosageForms();
         if (!brandedName.value.trim()) errors.push('Brand Name is required');
         if (!genericName.value.trim()) errors.push('Generic Name is required');
         if (!strength.value.trim()) errors.push('Strength is required');
-        if (!barcodeInput.value.trim()) errors.push('Barcode is required');
+        if (!barcodeInput.value.trim()) errors.push('Product Code is required');
         if (!imageInput.value) errors.push('Product Image is required');
 
         if (!categoryValue.value) errors.push('Category is required - Please select a category');
@@ -517,11 +521,46 @@ $dosageForms = $product->getDosageForms();
         }
 
         if (errors.length > 0) {
-            alert('Form Validation Error:\n\n' + errors.join('\n'));
+            mmbAlert({
+                type: 'warning',
+                title: 'Form Validation Error',
+                message: errors.join('\n'),
+                okLabel: 'Fix it'
+            });
             event.preventDefault();
             return false;
         }
 
         return true;
     }
+
+    // ── LIVE BARCODE PREVIEW (issue #4) ──────────────────────────
+    // Renders a real Code 128 barcode from the product code as the
+    // user types / clicks Auto. Full-size preview + PNG download live
+    // in the product list (barcode button per row).
+    document.addEventListener('DOMContentLoaded', function () {
+        var barcodeInput = document.getElementById('barcode');
+        var previewWrap = document.getElementById('barcodePreviewWrap');
+        var previewCanvas = document.getElementById('barcodePreviewCanvas');
+        if (!barcodeInput || !previewWrap || !previewCanvas || !window.mmbBarcodePreview) return;
+
+        var previewTimer = null;
+        function renderPreview() {
+            var code = barcodeInput.value.trim();
+            if (code.length < 4) {
+                previewWrap.classList.add('d-none');
+                return;
+            }
+            var label = (document.getElementById('branded_name').value.trim() + ' ' +
+                document.getElementById('generic_name').value.trim()).trim();
+            var drawn = mmbBarcodePreview(previewCanvas, code, { label: label, moduleWidth: 2, barHeight: 54 });
+            previewWrap.classList.toggle('d-none', !drawn);
+        }
+
+        barcodeInput.addEventListener('input', function () {
+            clearTimeout(previewTimer);
+            previewTimer = setTimeout(renderPreview, 250);
+        });
+        renderPreview();
+    });
 </script>

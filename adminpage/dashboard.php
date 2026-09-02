@@ -33,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 // ALERT AFTER REDIRECT
 if (isset($_GET['added'])) {
-    echo "<script>alert('User added successfully!');</script>";
+    echo "<script>document.addEventListener('DOMContentLoaded', function(){ mmbNotify({type:'success', title:'User added successfully'}); });</script>";
 }
 ?>
 <!DOCTYPE html>

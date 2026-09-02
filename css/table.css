@@ -1,22 +1,6 @@
-@media (max-width: 768px) {
-
-    /* USERS TABLE */
-    .userstable th:nth-child(1),
-    .userstable td:nth-child(1),
-    .userstable th:nth-child(3),
-    .userstable td:nth-child(3) {
-        display: none;
-    }
-
-    /* REGISTRATION USERS TABLE */
-    .pendingtable th:nth-child(2),
-    .pendingtable th:nth-child(5),
-    .pendingtable td:nth-child(2),
-    .pendingtable td:nth-child(5) {
-    display: none; /* Hide Position and Contact on mobile */
-    }
-
-}
+/* Legacy mobile column-hiding removed (v3.9) — hiding columns made data
+   unreachable on phones. DataTables Responsive now collapses columns into
+   expandable child rows (see js/usersmanagement.js + css/mmb-theme.css). */
 
 
 .myTable td,
