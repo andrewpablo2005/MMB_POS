@@ -500,7 +500,11 @@ h1, h2, h3, h4, h5, h6 { color: var(--mmb-heading); letter-spacing: -0.01em; }
     background: var(--mmb-primary-soft-2);
     color: var(--mmb-primary-hover);
     font-weight: 700;
-    box-shadow: inset 4px 0 0 var(--mmb-primary);
+    /* Symmetric 1px inset ring — follows the pill's border-radius cleanly.
+       The previous `inset 4px 0 0` left stripe curved against the rounded
+       left edge and read as a dark-red double-layer border outside the pill,
+       and it crowded the icon badge (GitHub issue #5 item 3). */
+    box-shadow: inset 0 0 0 1px rgba(var(--mmb-primary-rgb), 0.32);
 }
 
 #sidebar .nav-pills .nav-link.active i {

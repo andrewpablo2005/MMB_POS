@@ -111,7 +111,7 @@ if ($product->addProduct()) {
                         <td><span class="mmb-code-chip" data-code="<?= htmlspecialchars((string)($prod['barcode']), ENT_QUOTES, 'UTF-8') ?>" data-name="<?= htmlspecialchars(trim(($prod['branded_name'] ?? '') . ' ' . ($prod['generic_name'] ?? '')), ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars((string)($prod['barcode']), ENT_QUOTES, 'UTF-8') ?></span></td>
                         <td>
                             <!-- BARCODE (issue #4: preview + download the real Code 128 label) -->
-                            <button class="btn btn-outline-secondary btn-sm" data-barcode="<?= htmlspecialchars((string)($prod['barcode']), ENT_QUOTES, 'UTF-8') ?>" data-product="<?= htmlspecialchars(trim(($prod['branded_name'] ?? '') . ' ' . ($prod['generic_name'] ?? '') . ' ' . ($prod['strength'] ?? '') . ' ' . ($prod['measurement_name'] ?? '') . ' ' . trim($prod['dosage_form'] ?? '')), ENT_QUOTES, 'UTF-8') ?>" aria-label="Barcode preview">
+                            <button class="btn btn-outline-secondary btn-sm mmb-barcode-btn" data-barcode="<?= htmlspecialchars((string)($prod['barcode']), ENT_QUOTES, 'UTF-8') ?>" data-product="<?= htmlspecialchars(trim(($prod['branded_name'] ?? '') . ' ' . ($prod['generic_name'] ?? '') . ' ' . ($prod['strength'] ?? '') . ' ' . ($prod['measurement_name'] ?? '') . ' ' . trim($prod['dosage_form'] ?? '')), ENT_QUOTES, 'UTF-8') ?>" aria-label="Barcode preview">
                                 <i class="fas fa-barcode"></i>
                             </button>
                             <!-- VIEW -->
@@ -174,7 +174,13 @@ if ($product->addProduct()) {
 
 <script>
     document.addEventListener('click', function (e) {
-        var btn = e.target.closest('[data-barcode]');
+        // Scoped to .mmb-barcode-btn buttons ONLY. The previous selector
+        // [data-barcode] also matched POS product cards (they carry a
+        // data-barcode attribute), so adding an item to the cart on the
+        // owner/admin shell opened the barcode preview modal and darkened
+        // the whole screen (GitHub issue #5 item 2). Staff pages never
+        // include this script's markup, which is why only owner/admin saw it.
+        var btn = e.target.closest('.mmb-barcode-btn');
         if (!btn) return;
         mmbShowBarcodeModal(btn.getAttribute('data-barcode'), btn.getAttribute('data-product'));
     });

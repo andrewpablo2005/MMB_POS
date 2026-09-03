@@ -1,5 +1,18 @@
 $(function () {
 
+    // DataTables must never block the POS UI with a native alert() dialog
+    // (GitHub issue #5 item 1: a "DataTables warning: Requested unknown
+    // parameter" alert froze the whole page on load). errMode 'none' is the
+    // hard guarantee; prepareDataTableEmptyState() below (upstream fix by
+    // andrewpablo2005) removes the colspan placeholder rows that trigger
+    // the error and keeps their text as the emptyTable message.
+    if ($.fn.dataTable) {
+        $.fn.dataTable.ext.errMode = 'none';
+        $.fn.dataTable.defaults.language = $.fn.dataTable.defaults.language || {};
+        $.fn.dataTable.defaults.language.emptyTable = 'No records found.';
+        $.fn.dataTable.defaults.language.zeroRecords = 'No matching records found.';
+    }
+
     // Auto-assign DataTables Responsive priorities before init so wide
     // tables collapse into child rows on mobile instead of overflowing.
     // Hand-tuned data-priority attributes on <th> always win.
