@@ -3,36 +3,44 @@ require_once __DIR__ . '/guard.php'; guard_require_roles(['owner','admin']);
 $dosageForms = $product->getDosageForms(); ?>
 <?php foreach ($products as $prod): ?>
     <div class="modal fade" id="editProduct<?= $prod['id'] ?>" tabindex="-1" aria-labelledby="updateproductLabel<?= $prod['id'] ?>" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
+        <div class="modal-dialog modal-lg add-product-dialog">
+            <div class="modal-content add-product-modal">
                 <form method="POST" enctype="multipart/form-data">
                     <div class="modal-header">
                         <h5 class="modal-title" id="updateproductLabel<?= $prod['id'] ?>"><span class="modal-head-icon"><i class="fas fa-pen-to-square"></i></span> Edit Product</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
 
-                    <div class="modal-body">
+                    <div class="modal-body add-product-body">
                         <input type="hidden" name="id" value="<?= $prod['id'] ?? '' ?>">
                         <input type="hidden" name="old_image" value="<?= $prod['imageproduct'] ?? '' ?>">
                         <input type="hidden" name="updateProduct" value="1">
 
-                        <h6 class="mb-3 text-secondary fw-bold">Basic Information</h6>
+                        <div class="add-product-section-head">
+                            <div><span class="add-product-section-kicker">01</span><h6>Product identity</h6></div>
+                            <span>Names and classification</span>
+                        </div>
 
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
+                        <div class="add-product-row">
+                            <div class="add-product-field">
                                 <label for="edit_branded_name_<?= $prod['id'] ?>" class="form-label">Brand Name</label>
                                 <input type="text" id="edit_branded_name_<?= $prod['id'] ?>" name="branded_name" class="form-control"
                                     value="<?= htmlspecialchars($prod['branded_name'] ?? '') ?>" placeholder="e.g., Tylenol">
                             </div>
-                            <div class="col-md-6 mb-3">
+                            <div class="add-product-field">
                                 <label for="edit_generic_name_<?= $prod['id'] ?>" class="form-label">Generic Name</label>
                                 <input type="text" id="edit_generic_name_<?= $prod['id'] ?>" name="generic_name" class="form-control"
                                     value="<?= htmlspecialchars($prod['generic_name'] ?? '') ?>" placeholder="e.g., Paracetamol" required>
                             </div>
                         </div>
 
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
+                        <div class="add-product-section-head add-product-section-head--spaced">
+                            <div><span class="add-product-section-kicker">02</span><h6>Dosage details</h6></div>
+                            <span>Strength and presentation</span>
+                        </div>
+
+                        <div class="add-product-row">
+                            <div class="add-product-field">
                                 <label for="edit_unit_measurement_search_<?= $prod['id'] ?>" class="form-label">Unit of Measurement</label>
                                 <input type="text" id="edit_unit_measurement_search_<?= $prod['id'] ?>" class="form-control" list="edit_unit_measurement_list_<?= $prod['id'] ?>" placeholder="Select Unit" autocomplete="off"
                                     value="<?= htmlspecialchars($prod['measurement_name'] ?? '') ?>">
@@ -43,15 +51,15 @@ $dosageForms = $product->getDosageForms(); ?>
                                     <?php endforeach; ?>
                                 </datalist>
                             </div>
-                            <div class="col-md-6 mb-3">
+                            <div class="add-product-field">
                                 <label for="edit_strength_<?= $prod['id'] ?>" class="form-label">Strength <span class="text-danger">*</span></label>
                                 <input type="number" id="edit_strength_<?= $prod['id'] ?>" name="strength" class="form-control"
                                     placeholder="e.g., 200,500,1000" value="<?= htmlspecialchars((string) ($prod['strength'] ?? '')) ?>" required>
                             </div>
                         </div>
 
-                        <div id="edit_dosageFormContainer_<?= $prod['id'] ?>" class="row" style="display:none;">
-                            <div class="col-md-12 mb-3">
+                        <div id="edit_dosageFormContainer_<?= $prod['id'] ?>" class="add-product-row add-product-row--single" style="display:none;">
+                            <div class="add-product-field add-product-field--full">
                                 <label for="edit_dosage_form_search_<?= $prod['id'] ?>" class="form-label">Dosage Form</label>
                                 <input type="text" id="edit_dosage_form_search_<?= $prod['id'] ?>" class="form-control" list="edit_dosage_form_list_<?= $prod['id'] ?>" placeholder="Select dosage form" autocomplete="off"
                                     value="<?= htmlspecialchars($prod['dosage_form'] ?? '') ?>">
@@ -65,21 +73,26 @@ $dosageForms = $product->getDosageForms(); ?>
                             </div>
                         </div>
 
-                        <div id="edit_strengthQuantityFields_<?= $prod['id'] ?>" class="row" style="display:none;">
-                            <div class="col-md-6 mb-3">
+                        <div id="edit_strengthQuantityFields_<?= $prod['id'] ?>" class="add-product-row" style="display:none;">
+                            <div class="add-product-field">
                                 <label for="edit_strength_per_quantity_<?= $prod['id'] ?>" class="form-label">Strength per Quantity</label>
                                 <input type="number" id="edit_strength_per_quantity_<?= $prod['id'] ?>" name="strength_per_quantity" step="0.01" class="form-control"
                                     value="<?= htmlspecialchars((string) ($prod['strength_per_quantity'] ?? '')) ?>" placeholder="e.g., 500">
                             </div>
-                            <div class="col-md-6 mb-3">
+                            <div class="add-product-field">
                                 <label for="edit_strength_per_unit_<?= $prod['id'] ?>" class="form-label">Strength Unit</label>
                                 <input type="text" id="edit_strength_per_unit_<?= $prod['id'] ?>" name="strength_per_quantity_unit" class="form-control"
                                     value="<?= htmlspecialchars($prod['strength_per_quantity_unit'] ?? '') ?>" placeholder="e.g., mg, g, ml">
                             </div>
                         </div>
 
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
+                        <div class="add-product-section-head add-product-section-head--spaced">
+                            <div><span class="add-product-section-kicker">03</span><h6>Classification and code</h6></div>
+                            <span>Category and scanning</span>
+                        </div>
+
+                        <div class="add-product-row">
+                            <div class="add-product-field">
                                 <label for="edit_category_search_<?= $prod['id'] ?>" class="form-label">Category <span class="text-danger">*</span></label>
                                 <input type="text" id="edit_category_search_<?= $prod['id'] ?>" class="form-control" list="edit_category_list_<?= $prod['id'] ?>" placeholder="Select Category" autocomplete="off"
                                     value="<?= htmlspecialchars($prod['category_name'] ?? '') ?>" required>
@@ -97,32 +110,37 @@ $dosageForms = $product->getDosageForms(); ?>
                                     This is controlled by the selected category.
                                 </div>
                             </div>
-                            <div class="col-md-6 mb-3">
+                            <div class="add-product-field">
                                 <label for="edit_barcode_<?= $prod['id'] ?>" class="form-label">Product Code <span class="text-danger">*</span></label>
                                 <input type="text" id="edit_barcode_<?= $prod['id'] ?>" name="barcode" class="form-control"
                                     value="<?= htmlspecialchars($prod['barcode'] ?? '') ?>" placeholder="e.g., 123456789012" required>
                             </div>
                         </div>
 
-                        <hr class="my-4">
-
-                        <h6 class="mb-3 text-secondary fw-bold">Product Image</h6>
+                        <div class="add-product-section-head add-product-section-head--spaced">
+                            <div><span class="add-product-section-kicker">04</span><h6>Product image</h6></div>
+                            <span>Catalog display image</span>
+                        </div>
 
                         <?php if (!empty($prod['imageproduct'])): ?>
-                            <div class="mb-3">
+                            <div class="add-product-row add-product-row--single">
+                                <div class="add-product-field add-product-field--full">
                                 <label class="form-label">Current Image</label>
                                 <div class="text-center">
                                     <img src="../img/<?= htmlspecialchars($prod['imageproduct']) ?>" alt="Current Product Image"
                                         style="max-width: 100%; max-height: 200px; border: 1px solid #ddd; border-radius: 8px; padding: 10px; background-color: #f8f9fa;">
                                 </div>
+                                </div>
                             </div>
                         <?php endif; ?>
 
-                        <div class="mb-3">
+                        <div class="add-product-row add-product-row--single">
+                        <div class="add-product-field add-product-field--full">
                             <label for="edit_product_image_<?= $prod['id'] ?>" class="form-label">Replace Image (Optional)</label>
                             <input type="file" id="edit_product_image_<?= $prod['id'] ?>" name="product_image" class="form-control" accept="image/*"
                                 onchange="previewUpdateImage(event, <?= $prod['id'] ?>)">
                             <small class="text-muted d-block mt-2"><i class="fas fa-info-circle"></i> Recommended: 500x500px, JPG/PNG, max 5MB</small>
+                        </div>
                         </div>
 
                         <div id="image_preview_container_<?= $prod['id'] ?>" style="display: none;">
