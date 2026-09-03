@@ -66,7 +66,8 @@ $(function () {
 
 function initDataTable(table) {
     return $(table).DataTable({
-        responsive: true,
+        responsive: table.dataset.noResponsive !== '1',
+        scrollX: table.dataset.noResponsive === '1',
         dom: 'fBrtip',
         buttons: ['copy', 'excel', 'pdf', 'print'],
         language: { emptyTable: $(table).attr('data-empty-message') || 'No records found.' }

@@ -54,7 +54,7 @@
                                 <th>Product</th>
                                 <th class="text-center" style="width: 70px;">Price</th>
                                 <th class="text-center" style="width: 100px;">Return Qty</th>
-                                <th class="text-center" style="width: 100px;">Condition</th>
+                                <th class="text-center" style="width: 120px; min-width: 120px;">Condition</th>
                             </tr>
                         </thead>
                         <tbody id="returnItemsBody">
@@ -230,8 +230,8 @@ function renderReturnTxUI(data) {
                 <td class="text-center">
                     <input type="number" class="form-control form-control-sm num-return-qty" id="returnQty_${item.product_id}" value="${avail > 0 ? 1 : 0}" min="1" max="${avail}" ${disabled ? 'disabled' : ''} style="width:65px; text-align:center; margin:0 auto;" oninput="calcReturnTotal()">
                 </td>
-                <td class="text-center">
-                    <select class="form-select form-select-sm sel-return-condition" id="returnCond_${item.product_id}" ${disabled ? 'disabled' : ''} style="font-size:0.75rem;">
+                <td class="text-center" style="width: 120px; min-width: 120px;">
+                    <select class="form-select form-select-sm sel-return-condition" id="returnCond_${item.product_id}" ${disabled ? 'disabled' : ''} style="font-size:0.75rem; min-width:110px;">
                         <option value="1">Restock</option>
                         <option value="0">Dispose</option>
                     </select>

@@ -89,7 +89,7 @@ foreach ($salesDetailRows as $detailRow) {
                     <div class="card shadow-sm summary-card" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#salesDetailModal">
                         <div><i class="fas fa-calendar-check"></i> Sales Detail Report</div>
                         <div class="summary-value">₱<?= number_format($detailRealRevenueTotal, 2) ?></div>
-                        <small class="text-muted">Real revenue for <?= htmlspecialchars($salesDetail['value']) ?></small>
+                        <small class="text-muted">Real profit for <?= htmlspecialchars($salesDetail['value']) ?></small>
                     </div>
                 </div>
 
@@ -170,8 +170,8 @@ foreach ($salesDetailRows as $detailRow) {
                             </div>
                         </form>
                         <div class="table-responsive">
-                            <table class="table table-striped table-hover table-sm align-middle myTableExport" data-empty="<?= !$salesDetailRows ? '1' : '0' ?>">
-                                <thead class="table-dark"><tr><th>Ref #</th><th>Date & Time</th><th>Cashier</th><th>Items</th><th>Before Discount/VAT</th><th>Discount</th><th>VAT Exempt</th><th>Total Amount</th><th>Refund / Return</th><th>COGS Return Status</th><th>Net After Refund</th><th>Real Revenue</th></tr></thead>
+                            <table id="salesDetailTable" class="table table-striped table-hover table-sm align-middle myTableExport" data-empty="<?= !$salesDetailRows ? '1' : '0' ?>" data-no-responsive="1">
+                                <thead class="table-dark"><tr><th>Ref #</th><th>Date & Time</th><th>Cashier</th><th>Items</th><th>Before Discount/VAT</th><th>Discount</th><th>VAT Exempt</th><th>Total Amount</th><th>Refund / Return</th><th>COGS Return Status</th><th>Net After Refund</th><th>Real Profit</th></tr></thead>
                                 <tbody>
                                     <?php if (!$salesDetailRows): ?>
                                         <tr><td colspan="12" class="text-center text-muted">No sales found for this period.</td></tr>
@@ -204,7 +204,7 @@ foreach ($salesDetailRows as $detailRow) {
                             </table>
                         </div>
                         <div class="alert alert-light border mt-3 mb-0 small">
-                            <strong>Real Revenue formula:</strong> Net After Refund − COGS + COGS Reversed. A restocked return reverses its cost; a disposed return keeps the cost as an expense.
+                            <strong>Real Profit formula:</strong> Net After Refund − COGS + COGS Reversed. A restocked return reverses its cost; a disposed return keeps the cost as an expense.
                         </div>
                     </div>
                     <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button></div>
@@ -817,7 +817,8 @@ foreach ($salesDetailRows as $detailRow) {
                     }
                     if (!$.fn.DataTable.isDataTable(this)) {
                         $(this).DataTable({
-                            responsive: true,                                                                                                                                                                                                       
+                            responsive: this.dataset.noResponsive !== '1',
+                            scrollX: this.dataset.noResponsive === '1',
                             autoWidth: false,
                             dom: 'fBrtip',
                             buttons: ['copy', 'excel', 'pdf', 'print']
