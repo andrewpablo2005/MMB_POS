@@ -29,6 +29,38 @@ if ($businessDate !== $today) {
 }
 
 try {
+    $db->exec("CREATE TABLE IF NOT EXISTS register_openings (
+        id INT NOT NULL AUTO_INCREMENT,
+        user_id INT NOT NULL,
+        business_date DATE NOT NULL,
+        opening_cash DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+        notes VARCHAR(255) DEFAULT NULL,
+        opened_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        PRIMARY KEY (id),
+        UNIQUE KEY uq_register_opening_user_date (user_id, business_date),
+        CONSTRAINT fk_register_opening_user FOREIGN KEY (user_id) REFERENCES users(id)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci");
+
+    $openingStmt = $db->prepare("SELECT opening_cash, notes, opened_at FROM register_openings WHERE user_id = ? AND business_date = ?");
+    $openingStmt->execute([$userId, $businessDate]);
+    $opening = $openingStmt->fetch(PDO::FETCH_ASSOC) ?: null;
+
+    if ($action === 'open') {
+        if ($opening) {
+            echo json_encode(['success' => false, 'error' => 'The register is already opened for this date.']);
+            exit;
+        }
+        $openingCash = round((float)($body['opening_cash'] ?? -1), 2);
+        if ($openingCash <= 0) {
+            echo json_encode(['success' => false, 'error' => 'Opening cash must be greater than zero.']);
+            exit;
+        }
+        $insertOpening = $db->prepare("INSERT INTO register_openings (user_id, business_date, opening_cash, notes) VALUES (?, ?, ?, ?)");
+        $insertOpening->execute([$userId, $businessDate, $openingCash, trim((string)($body['notes'] ?? '')) ?: null]);
+        echo json_encode(['success' => true, 'opened' => true, 'opening_cash' => $openingCash]);
+        exit;
+    }
+
     $salesStmt = $db->prepare("SELECT COALESCE(SUM(total_amount), 0) AS sales_total,
                                       COUNT(*) AS transaction_count
                                FROM transactions
@@ -43,9 +75,10 @@ try {
                                   AND LOWER(rt.refund_method) = 'cash'");
     $refundStmt->execute([$userId, $businessDate]);
     $refundTotal = (float)($refundStmt->fetchColumn() ?: 0);
-    $systemCash = round((float)($sales['sales_total'] ?? 0) - $refundTotal, 2);
+    $openingCash = (float)($opening['opening_cash'] ?? 0);
+    $systemCash = round($openingCash + (float)($sales['sales_total'] ?? 0) - $refundTotal, 2);
 
-    if ($systemCash <= 0) {
+    if ($action !== 'preview' && $systemCash <= 0) {
         echo json_encode(['success' => false, 'error' => 'Register cannot be closed because there is no system cash for today.']);
         exit;
     }
@@ -61,6 +94,8 @@ try {
             'business_date' => $businessDate,
             'sales_total' => (float)($sales['sales_total'] ?? 0),
             'refund_total' => $refundTotal,
+            'opening_cash' => $openingCash,
+            'opening_exists' => (bool)$opening,
             'system_cash' => $systemCash,
             'transaction_count' => (int)($sales['transaction_count'] ?? 0),
             'already_closed' => (bool)$existing,

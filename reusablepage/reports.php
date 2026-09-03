@@ -123,9 +123,9 @@ foreach ($salesDetailRows as $detailRow) {
 
                 <div class="col-md-6 col-xl-4">
                     <div class="card shadow-sm summary-card" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#registerClosingReportModal">
-                        <div><i class="fas fa-cash-register"></i> Register Closing Report</div>
+                        <div><i class="fas fa-cash-register"></i> Register Opening &amp; Closing Report</div>
                         <div class="summary-value"><?= count($registerClosings) ?></div>
-                        <small class="text-muted">Saved cashier closing(s)</small>
+                        <small class="text-muted">Opening and closing drawer records</small>
                     </div>
                 </div>
             </div>
@@ -217,7 +217,7 @@ foreach ($salesDetailRows as $detailRow) {
             <div class="modal-dialog modal-xl modal-fullscreen-lg-down">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="registerClosingReportModalLabel"><span class="modal-head-icon"><i class="fas fa-cash-register"></i></span>Register Closing Report</h5>
+                        <h5 class="modal-title" id="registerClosingReportModalLabel"><span class="modal-head-icon"><i class="fas fa-cash-register"></i></span>Register Opening &amp; Closing Report</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
@@ -225,32 +225,40 @@ foreach ($salesDetailRows as $detailRow) {
                             <table class="table table-striped table-hover table-sm align-middle myTableExport">
                                 <thead class="table-dark">
                                     <tr>
+                                        <th>Opening ID</th>
                                         <th>Close ID</th>
                                         <th>Business Date</th>
                                         <th>Cashier</th>
+                                        <th>Opening Cash</th>
                                         <th>System Cash</th>
                                         <th>Counted Cash</th>
                                         <th>Variance</th>
+                                        <th>Status</th>
                                         <th>Notes</th>
+                                        <th>Opened At</th>
                                         <th>Closed At</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <?php if (!$registerClosings): ?>
-                                        <tr><td colspan="8" class="text-center text-muted">No register closings recorded.</td></tr>
+                                        <tr><td colspan="12" class="text-center text-muted">No register opening or closing records.</td></tr>
                                     <?php else: foreach ($registerClosings as $closing): ?>
                                         <?php $variance = (float)($closing['variance'] ?? 0); ?>
                                         <tr>
-                                            <td>#<?= (int)$closing['id'] ?></td>
+                                            <td><?= $closing['opening_id'] ? '#' . (int)$closing['opening_id'] : '—' ?></td>
+                                            <td><?= $closing['closing_id'] ? '#' . (int)$closing['closing_id'] : '—' ?></td>
                                             <td><?= htmlspecialchars($closing['business_date']) ?></td>
                                             <td><?= htmlspecialchars($closing['cashier_name'] ?? 'N/A') ?></td>
+                                            <td>₱<?= number_format((float)$closing['opening_cash'], 2) ?></td>
                                             <td>₱<?= number_format((float)$closing['system_cash'], 2) ?></td>
                                             <td>₱<?= number_format((float)$closing['counted_cash'], 2) ?></td>
                                             <td class="<?= $variance === 0.0 ? 'text-body' : ($variance < 0 ? 'text-danger' : 'text-warning') ?>">
                                                 <?= $variance < 0 ? '-₱' : '₱' ?><?= number_format(abs($variance), 2) ?>
                                             </td>
-                                            <td><?= htmlspecialchars($closing['notes'] ?? '—') ?></td>
-                                            <td><?= date('M d, Y h:i A', strtotime($closing['closed_at'])) ?></td>
+                                            <td><?= htmlspecialchars($closing['register_status'] ?? '—') ?></td>
+                                            <td><?= htmlspecialchars($closing['closing_notes'] ?? $closing['opening_notes'] ?? '—') ?></td>
+                                            <td><?= $closing['opened_at'] ? date('M d, Y h:i A', strtotime($closing['opened_at'])) : '—' ?></td>
+                                            <td><?= $closing['closed_at'] ? date('M d, Y h:i A', strtotime($closing['closed_at'])) : '—' ?></td>
                                         </tr>
                                     <?php endforeach; endif; ?>
                                 </tbody>

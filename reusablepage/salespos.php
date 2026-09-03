@@ -254,6 +254,7 @@ if (!empty($_SESSION['user_id'])) {
             </div>
             <div id="closingSummary" style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:6px; padding:12px; margin-bottom:12px;">
                 <div style="display:flex; justify-content:space-between;"><span>Transactions</span><strong id="closingTransactions">—</strong></div>
+                <div style="display:flex; justify-content:space-between;"><span>Opening cash</span><strong id="closingOpeningCash">₱0.00</strong></div>
                 <div style="display:flex; justify-content:space-between;"><span>Sales collected</span><strong id="closingSales">₱0.00</strong></div>
                 <div style="display:flex; justify-content:space-between;"><span>Cash refunds</span><strong id="closingRefunds" class="text-danger">-₱0.00</strong></div>
                 <div style="display:flex; justify-content:space-between; border-top:1px solid #cbd5e1; margin-top:8px; padding-top:8px; font-size:1.05rem;"><span>System cash</span><strong id="closingSystemCash" class="text-primary">₱0.00</strong></div>
@@ -276,6 +277,28 @@ if (!empty($_SESSION['user_id'])) {
     </div>
 </div>
 
+<!-- REGISTER OPENING MODAL -->
+<div class="wepos-modal-overlay" id="registerOpeningModal" style="display:none;" onclick="weposCloseOpeningModal(event)">
+    <div class="wepos-modal" onclick="event.stopPropagation()" style="max-width:440px;">
+        <div class="wepos-modal-head" style="background:#f0fdf4; border-bottom:1px solid #bbf7d0;">
+            <h5 style="color:#166534;"><i class="fas fa-hand-sparkles me-2"></i>Welcome to the POS</h5>
+            <button type="button" onclick="weposCloseOpeningModal()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="wepos-modal-body">
+            <p class="text-muted" style="font-size:0.9rem;">Start your shift by recording the cash currently placed in the drawer. This is optional and can be skipped.</p>
+            <label for="openingCashAmount" style="font-weight:600; display:block; margin-bottom:4px;">Opening cash</label>
+            <input type="number" id="openingCashAmount" class="wepos-input-lg" min="0" step="0.01" placeholder="0.00" autofocus>
+            <label for="openingCashNotes" style="font-weight:600; display:block; margin:12px 0 4px;">Notes (optional)</label>
+            <textarea id="openingCashNotes" rows="2" class="form-control" placeholder="Drawer handover or starting cash note"></textarea>
+            <div id="openingCashError" class="text-danger" style="display:none; margin-top:10px;"></div>
+        </div>
+        <div class="wepos-modal-foot">
+            <button type="button" class="wepos-btn wepos-btn-outline" onclick="weposSkipOpeningModal()">Skip for now</button>
+            <button type="button" class="wepos-btn wepos-btn-primary" id="confirmOpeningBtn" onclick="weposSubmitRegisterOpening()">Open Register</button>
+        </div>
+    </div>
+</div>
+
 <!-- REGISTER CLOSING CONFIRMATION MODAL -->
 <div class="wepos-modal-overlay" id="registerClosingConfirmModal" style="display:none;" onclick="weposCloseClosingConfirmModal(event)">
     <div class="wepos-modal" onclick="event.stopPropagation()" style="max-width:440px;">
@@ -287,6 +310,7 @@ if (!empty($_SESSION['user_id'])) {
             <p>Are you sure you want to close the register? This action cannot be repeated for the same business date.</p>
             <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:6px; padding:12px;">
                 <div style="display:flex; justify-content:space-between;"><span>Business date</span><strong id="closingConfirmDate"></strong></div>
+                <div style="display:flex; justify-content:space-between;"><span>Opening cash</span><strong id="closingConfirmOpeningCash"></strong></div>
                 <div style="display:flex; justify-content:space-between;"><span>System cash</span><strong id="closingConfirmSystemCash"></strong></div>
                 <div style="display:flex; justify-content:space-between;"><span>Counted cash</span><strong id="closingConfirmCountedCash"></strong></div>
                 <div style="display:flex; justify-content:space-between; border-top:1px solid #cbd5e1; margin-top:8px; padding-top:8px;"><span>Variance</span><strong id="closingConfirmVariance"></strong></div>
@@ -531,9 +555,70 @@ if (!empty($_SESSION['user_id'])) {
     const WEPOS_CASHIER = <?= json_encode($cashierName) ?>;
 
     let weposClosingSystemCash = 0;
+    let weposRegisterOpened = false;
 
     function weposFormatClosingCurrency(value) {
         return '₱' + Number(value || 0).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    async function weposOpenOpeningModal() {
+        const modal = document.getElementById('registerOpeningModal');
+        const error = document.getElementById('openingCashError');
+        const button = document.getElementById('confirmOpeningBtn');
+        error.style.display = 'none';
+        button.disabled = false;
+        document.getElementById('openingCashAmount').value = '';
+        document.getElementById('openingCashNotes').value = '';
+        modal.style.display = 'flex';
+        setTimeout(() => document.getElementById('openingCashAmount')?.focus(), 100);
+    }
+
+    function weposCloseOpeningModal(event) {
+        if (!event || event.target === event.currentTarget) {
+            document.getElementById('registerOpeningModal').style.display = 'none';
+        }
+    }
+
+    function weposSkipOpeningModal() {
+        weposRegisterOpened = false;
+        document.getElementById('registerOpeningModal').style.display = 'none';
+        mmbNotify({ type: 'warning', title: 'POS locked', message: 'Enter opening cash before processing a sale.' });
+    }
+
+    async function weposSubmitRegisterOpening() {
+        const amountInput = document.getElementById('openingCashAmount');
+        const error = document.getElementById('openingCashError');
+        const button = document.getElementById('confirmOpeningBtn');
+        const amount = Number(amountInput.value);
+        error.style.display = 'none';
+        if (!Number.isFinite(amount) || amount <= 0) {
+            error.textContent = 'Enter a positive amount, or choose Skip for now.';
+            error.style.display = 'block';
+            return;
+        }
+        button.disabled = true;
+        try {
+            const response = await fetch('../function/close_register.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    action: 'open',
+                    business_date: document.getElementById('closingBusinessDate').value,
+                    opening_cash: amount,
+                    notes: document.getElementById('openingCashNotes').value
+                })
+            });
+            const result = await response.json();
+            if (!result.success) throw new Error(result.error);
+            weposCloseOpeningModal();
+            weposRegisterOpened = true;
+            if (typeof weposUpdateCart === 'function') weposUpdateCart();
+            mmbNotify({ type: 'success', title: 'Register opened', message: 'Opening cash recorded: ' + weposFormatClosingCurrency(result.opening_cash) });
+        } catch (requestError) {
+            error.textContent = requestError.message || 'Unable to open register.';
+            error.style.display = 'block';
+            button.disabled = false;
+        }
     }
 
     async function weposOpenClosingModal() {
@@ -554,7 +639,9 @@ if (!empty($_SESSION['user_id'])) {
             if (!result.success) throw new Error(result.error);
 
             weposClosingSystemCash = Number(result.system_cash || 0);
+            weposRegisterOpened = result.opening_exists === true;
             document.getElementById('closingTransactions').textContent = result.transaction_count;
+            document.getElementById('closingOpeningCash').textContent = weposFormatClosingCurrency(result.opening_cash);
             document.getElementById('closingSales').textContent = weposFormatClosingCurrency(result.sales_total);
             document.getElementById('closingRefunds').textContent = '-' + weposFormatClosingCurrency(result.refund_total);
             document.getElementById('closingSystemCash').textContent = weposFormatClosingCurrency(weposClosingSystemCash);
@@ -604,6 +691,7 @@ if (!empty($_SESSION['user_id'])) {
 
         const variance = Math.round((counted - weposClosingSystemCash) * 100) / 100;
         document.getElementById('closingConfirmDate').textContent = document.getElementById('closingBusinessDate').value;
+        document.getElementById('closingConfirmOpeningCash').textContent = document.getElementById('closingOpeningCash').textContent;
         document.getElementById('closingConfirmSystemCash').textContent = weposFormatClosingCurrency(weposClosingSystemCash);
         document.getElementById('closingConfirmCountedCash').textContent = weposFormatClosingCurrency(counted);
         document.getElementById('closingConfirmVariance').textContent = (variance < 0 ? '-' : '') + weposFormatClosingCurrency(Math.abs(variance));
@@ -643,6 +731,24 @@ if (!empty($_SESSION['user_id'])) {
             button.disabled = false;
         }
     }
+
+    async function weposEnsureRegisterOpened() {
+        try {
+            const response = await fetch('../function/close_register.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'preview', business_date: document.getElementById('closingBusinessDate').value })
+            });
+            const result = await response.json();
+            weposRegisterOpened = Boolean(result.success && result.opening_exists === true);
+            if (!weposRegisterOpened) weposOpenOpeningModal();
+        } catch (requestError) {
+            weposRegisterOpened = false;
+            weposOpenOpeningModal();
+        }
+    }
+
+    setTimeout(weposEnsureRegisterOpened, 250);
 </script>
 
 <!-- ═══════════════ SENIOR/PWD VERIFY MODAL ═══════════════ -->

@@ -693,6 +693,11 @@ function weposSetupKeyboard() {
 function weposOpenPayModal() {
     if (Object.keys(weposCart).length === 0) return;
 
+    if (typeof weposRegisterOpened !== 'undefined' && !weposRegisterOpened) {
+        if (typeof weposOpenOpeningModal === 'function') weposOpenOpeningModal();
+        return;
+    }
+
     // Gate: Senior/PWD requires verification before payment
     const discountSelect = document.getElementById('weposDiscount');
     const selOpt = discountSelect.options[discountSelect.selectedIndex];
