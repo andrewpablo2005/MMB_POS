@@ -46,6 +46,12 @@ $detailRefundTotal = 0.0;
 $detailCogsReversedTotal = 0.0;
 $detailNetAfterRefundTotal = 0.0;
 $detailRealRevenueTotal = 0.0;
+function report_text($value): string
+{
+    $value = trim((string)$value);
+    return htmlspecialchars($value !== '' ? $value : 'N/A', ENT_QUOTES, 'UTF-8');
+}
+
 foreach ($salesDetailRows as $detailRow) {
     $detailGrossTotal += (float)($detailRow['gross_subtotal'] ?? 0);
     $detailDiscountTotal += (float)($detailRow['discount_total'] ?? 0);
@@ -465,15 +471,19 @@ foreach ($salesDetailRows as $detailRow) {
                         <table class="table table-striped table-hover myTableExport">
                             <thead class="table-dark">
                                 <tr>
-                                    <th><i class="fas fa-cube"></i> Product Name</th>
-                                    <th><i class="fas fa-chart-pie"></i> Units Sold</th>
+                                    <th>Product</th><th>Strength</th><th>Dosage Form</th><th>Category</th><th>Barcode</th><th>Average Price</th><th>Units Sold</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php foreach ($topProducts as $row): ?>
                                     <tr>
-                                        <td><?= htmlspecialchars($row['product_name']) ?></td>
-                                        <td><span class="badge badge-soft-dark"><?= $row['total_sold'] ?> units</span></td>
+                                        <td><strong><?= report_text(trim(($row['branded_name'] ?? '') . ' ' . ($row['generic_name'] ?? ''))) ?></strong></td>
+                                        <td><?= report_text(trim(($row['strength'] ?? '') . ' ' . ($row['measurement_name'] ?? ''))) ?></td>
+                                        <td><?= report_text($row['dosage_form'] ?? '') ?></td>
+                                        <td><?= report_text($row['category_name'] ?? '') ?></td>
+                                        <td><?= report_text($row['barcode'] ?? '') ?></td>
+                                        <td>₱<?= number_format((float)($row['average_price'] ?? 0), 2) ?></td>
+                                        <td><span class="badge badge-soft-dark"><?= (int)$row['total_sold'] ?> units</span></td>
                                     </tr>
                                 <?php endforeach; ?>
                             </tbody>
@@ -501,11 +511,7 @@ foreach ($salesDetailRows as $detailRow) {
                     <div class="table-responsive">
                         <table class="table table-striped table-hover myTableExport">
                             <thead class="table-dark">
-                                <tr>
-                                    <th><i class="fas fa-cube me-2"></i>Rank</th>
-                                    <th><i class="fas fa-tag me-2"></i>Product Name</th>
-                                    <th><i class="fas fa-shopping-cart me-2"></i>Units Sold</th>
-                                </tr>
+                                <tr><th>Rank</th><th>Product</th><th>Strength</th><th>Dosage Form</th><th>Category</th><th>Barcode</th><th>Average Price</th><th>Units Sold</th></tr>
                             </thead>
                             <tbody>
                                 <?php 
@@ -514,8 +520,13 @@ foreach ($salesDetailRows as $detailRow) {
                                 ?>
                                     <tr>
                                         <td><strong><?= $i + 1 ?></strong></td>
-                                        <td><?= htmlspecialchars($product['product_name']) ?></td>
-                                        <td><span class="badge badge-soft-dark"><?= $product['total_sold'] ?> units</span></td>
+                                        <td><strong><?= report_text(trim(($product['branded_name'] ?? '') . ' ' . ($product['generic_name'] ?? ''))) ?></strong></td>
+                                        <td><?= report_text(trim(($product['strength'] ?? '') . ' ' . ($product['measurement_name'] ?? ''))) ?></td>
+                                        <td><?= report_text($product['dosage_form'] ?? '') ?></td>
+                                        <td><?= report_text($product['category_name'] ?? '') ?></td>
+                                        <td><?= report_text($product['barcode'] ?? '') ?></td>
+                                        <td>₱<?= number_format((float)($product['average_price'] ?? 0), 2) ?></td>
+                                        <td><span class="badge badge-soft-dark"><?= (int)$product['total_sold'] ?> units</span></td>
                                     </tr>
                                 <?php endfor; ?>
                             </tbody>
@@ -591,17 +602,22 @@ foreach ($salesDetailRows as $detailRow) {
                             <table class="table table-striped table-hover myTableExport">
                                 <thead class="table-dark">
                                     <tr>
-                                        <th><i class="fas fa-cube me-2"></i>Product Name</th>
-                                        <th><i class="fas fa-hourglass-end me-2"></i>Expiry Date</th>
-                                        <th><i class="fas fa-boxes me-2"></i>Quantity</th>
+                                        <th>Product</th><th>Strength</th><th>Dosage Form</th><th>Category</th><th>Barcode</th><th>Batch No</th><th>Expiry Date</th><th>Quantity</th><th>Purchase Cost</th><th>Sale Price</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <?php foreach ($expiredProducts as $row): ?>
                                         <tr class="table-danger">
-                                            <td><strong><?= htmlspecialchars($row['product_name']) ?></strong></td>
+                                            <td><strong><?= report_text(trim(($row['branded_name'] ?? '') . ' ' . ($row['generic_name'] ?? ''))) ?></strong></td>
+                                            <td><?= report_text(trim(($row['strength'] ?? '') . ' ' . ($row['measurement_name'] ?? ''))) ?></td>
+                                            <td><?= report_text($row['dosage_form'] ?? '') ?></td>
+                                            <td><?= report_text($row['category_name'] ?? '') ?></td>
+                                            <td><?= report_text($row['barcode'] ?? '') ?></td>
+                                            <td><?= report_text($row['batch_number'] ?? '') ?></td>
                                             <td><?= date('M d, Y', strtotime($row['expiry_date'])) ?> <span class="badge bg-danger"><?= ceil((time() - strtotime($row['expiry_date'])) / 86400) ?> days ago</span></td>
                                             <td><span class="badge bg-warning"><?= $row['quantity'] ?> units</span></td>
+                                            <td>₱<?= number_format((float)($row['purchase_cost'] ?? 0), 2) ?></td>
+                                            <td>₱<?= number_format((float)($row['sale_price'] ?? 0), 2) ?></td>
                                         </tr>
                                     <?php endforeach; ?>
                                 </tbody>

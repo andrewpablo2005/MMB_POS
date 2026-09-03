@@ -57,10 +57,23 @@ class Reports
     public function getTopProducts(): array
     {
         $stmt = $this->db->prepare("
-            SELECT p.generic_name AS product_name, SUM(ti.quantity) total_sold
+                 SELECT p.id AS product_id,
+                     CONCAT_WS(' ', NULLIF(p.branded_name, ''), NULLIF(p.generic_name, '')) AS product_name,
+                   p.branded_name,
+                   p.generic_name,
+                   p.strength,
+                   um.different_measurement AS measurement_name,
+                   COALESCE(p.dosage_form, df.form_name) AS dosage_form,
+                   pc.category_name,
+                   p.barcode,
+                   SUM(ti.quantity) AS total_sold,
+                   AVG(ti.price) AS average_price
             FROM transaction_items ti
             JOIN products p ON ti.product_id = p.id
-            GROUP BY p.generic_name
+            LEFT JOIN unit_measurement um ON um.unit_id = p.measurement_id
+            LEFT JOIN dosage_forms df ON df.id = p.dosage_form_id
+            LEFT JOIN product_categories pc ON pc.id = p.category_id
+            GROUP BY p.id, p.branded_name, p.generic_name, p.strength, um.different_measurement, p.dosage_form, df.form_name, pc.category_name, p.barcode
             ORDER BY total_sold DESC
             LIMIT 5
         ");
@@ -74,9 +87,24 @@ class Reports
     public function getInventory(): array
     {
         $stmt = $this->db->prepare("
-            SELECT p.generic_name, i.current_quantity as quantity, i.expiry_date
+            SELECT p.id AS product_id,
+                   p.branded_name,
+                   p.generic_name,
+                   p.strength,
+                   um.different_measurement AS measurement_name,
+                   COALESCE(p.dosage_form, df.form_name) AS dosage_form,
+                   pc.category_name,
+                   p.barcode,
+                   i.batch_number,
+                   i.purchase_cost,
+                   i.sale_price,
+                   i.current_quantity AS quantity,
+                   i.expiry_date
             FROM inventory i
             JOIN products p ON i.product_id = p.id
+            LEFT JOIN unit_measurement um ON um.unit_id = p.measurement_id
+            LEFT JOIN dosage_forms df ON df.id = p.dosage_form_id
+            LEFT JOIN product_categories pc ON pc.id = p.category_id
             ORDER BY i.expiry_date ASC
         ");
         $stmt->execute();
