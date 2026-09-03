@@ -499,18 +499,33 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
 </script>
 
 <div class="modal fade" id="addBatchModal" tabindex="-1" aria-labelledby="addBatchModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
+    <div class="modal-dialog modal-lg add-product-dialog">
+        <div class="modal-content add-product-modal">
             <form method="POST">
                 <input type="hidden" name="addInventoryBatch" value="1">
                 <div class="modal-header">
                     <h5 class="modal-title" id="addBatchModalLabel">Add Stock Batch</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body add-product-body">
+                    <div class="add-product-section-head">
+                        <div><span class="add-product-section-kicker">01</span><h6>Product selection</h6></div>
+                        <span>Choose the item to stock</span>
+                    </div>
                     
-                    <div class="mb-3">
-                        <label for="batch_supplier_id" class="form-label">Supplier (optional)</label>
+                    <div class="add-product-row">
+                    <div class="add-product-field">
+                        <label for="batch_product_search" class="form-label">Product</label>
+                        <input type="text" id="batch_product_search" class="form-control" placeholder="Search product..." list="batch_product_list" autocomplete="off" required>
+                        <input type="hidden" id="batch_product_id" name="product_id">
+                        <datalist id="batch_product_list">
+                            <?php foreach ($products as $product): ?>
+                                <option value="<?= htmlspecialchars(trim(($product['branded_name'] ?? '') . ' ' . ($product['generic_name'] ?? ''))) ?>" data-id="<?= (int)($product['id'] ?? 0) ?>">
+                            <?php endforeach; ?>
+                        </datalist>
+                    </div>
+                    <div class="add-product-field">
+                        <label for="batch_supplier_id" class="form-label">Supplier <span class="text-muted fw-normal">(optional)</span></label>
                         <div class="d-flex gap-2">
                             <select id="batch_supplier_id" name="supplier_id" class="form-select">
                                 <option value="">Select supplier or leave blank</option>
@@ -540,39 +555,51 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
                             </button>
                         </div>
                     </div>
-                    <div class="mb-3">
-                        <label for="batch_product_search" class="form-label">Product</label>
-                        <input type="text" id="batch_product_search" class="form-control" placeholder="Search product..." list="batch_product_list" autocomplete="off" required>
-                        <input type="hidden" id="batch_product_id" name="product_id">
-                        <datalist id="batch_product_list">
-                            <?php foreach ($products as $product): ?>
-                                <option value="<?= htmlspecialchars(trim(($product['branded_name'] ?? '') . ' ' . ($product['generic_name'] ?? ''))) ?>" data-id="<?= (int)($product['id'] ?? 0) ?>">
-                            <?php endforeach; ?>
-                        </datalist>
                     </div>
-                    <div class="mb-3">
+
+                    <div class="add-product-section-head add-product-section-head--spaced">
+                        <div><span class="add-product-section-kicker">02</span><h6>Batch details</h6></div>
+                        <span>Traceable inventory information</span>
+                    </div>
+                    <div class="add-product-row">
+                    <div class="add-product-field">
                         <label for="batch_number" class="form-label">Batch No</label>
                         <input type="text" id="batch_number" name="batch_number" class="form-control" placeholder="e.g. BATCH-001" required>
                     </div>
-                    <div class="mb-3">
+                    <div class="add-product-field">
                         <label for="batch_quantity" class="form-label">Quantity Received</label>
                         <input type="number" id="batch_quantity" name="quantity" class="form-control" min="1" required>
                     </div>
-                    <div class="mb-3">
-                        <label for="batch_purchase_cost" class="form-label">Purchase Cost per Unit (optional)</label>
-                        <input type="number" id="batch_purchase_cost" name="purchase_cost" class="form-control" step="0.01" min="0" placeholder="e.g. 50.00">
                     </div>
-                    <div class="mb-3">
-                        <label for="batch_markup" class="form-label">Markup % (optional)</label>
-                        <input type="number" id="batch_markup" name="markup" class="form-control" step="0.01" min="0" value="5" placeholder="e.g. 20">
+
+                    <div class="add-product-section-head add-product-section-head--spaced">
+                        <div><span class="add-product-section-kicker">03</span><h6>Pricing</h6></div>
+                        <span>Cost, markup, and selling price</span>
                     </div>
-                    <div class="mb-3">
-                        <label for="batch_sale_price" class="form-label">Sale Price per Unit (optional)</label>
-                        <input type="number" id="batch_sale_price" name="sale_price" class="form-control" step="0.01" min="0" placeholder="e.g. 75.00" readonly>
+                    <div class="add-product-row add-product-row--three">
+                        <div class="add-product-field">
+                            <label for="batch_purchase_cost" class="form-label">Purchase Cost per Unit (optional)</label>
+                            <input type="number" id="batch_purchase_cost" name="purchase_cost" class="form-control" step="0.01" min="0" placeholder="e.g. 50.00">
+                        </div>
+                        <div class="add-product-field">
+                            <label for="batch_markup" class="form-label">Markup % (optional)</label>
+                            <input type="number" id="batch_markup" name="markup" class="form-control" step="0.01" min="0" value="5" placeholder="e.g. 20">
+                        </div>
+                        <div class="add-product-field">
+                            <label for="batch_sale_price" class="form-label">Sale Price per Unit (optional)</label>
+                            <input type="number" id="batch_sale_price" name="sale_price" class="form-control" step="0.01" min="0" placeholder="e.g. 75.00" readonly>
+                        </div>
                     </div>
-                    <div class="mb-3">
+
+                    <div class="add-product-section-head add-product-section-head--spaced">
+                        <div><span class="add-product-section-kicker">04</span><h6>Expiry</h6></div>
+                        <span>Product shelf-life information</span>
+                    </div>
+                    <div class="add-product-row add-product-row--single">
+                    <div class="add-product-field add-product-field--full">
                         <label for="batch_expiry_date" class="form-label">Expiry Date</label>
                         <input type="date" id="batch_expiry_date" name="expiry_date" class="form-control">
+                    </div>
                     </div>
                 </div>
                 <div class="modal-footer">
