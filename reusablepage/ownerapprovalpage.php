@@ -100,4 +100,9 @@ $users = $userAction->getAllPreUsers();
 
 <?php endif; ?>
 
-<script src="../js/usersmanagement.js?v=2"></script>
+<!-- usersmanagement.js loads globally via conn/connection_links.php.
+     This duplicate tag double-loaded the script with a stale ?v=2 cache
+     entry whose old function declarations (initDataTable without
+     prepareDataTableEmptyState/language) overrode the current code at
+     runtime — the root cause of the issue #5 DataTables alert and of the
+     custom empty-table messages never rendering. -->
