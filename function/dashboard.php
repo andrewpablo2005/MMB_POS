@@ -54,6 +54,23 @@ class DashboardManager
         return $result['total'] ?? 0;
     }
 
+    public function getTransactionCountMonth()
+    {
+        $sql = "SELECT COUNT(*) as total FROM transactions
+                WHERE MONTH(created_at) = MONTH(CURDATE()) AND YEAR(created_at) = YEAR(CURDATE())";
+        $stmt = $this->db->query($sql);
+        $result = $stmt->fetch();
+        return $result['total'] ?? 0;
+    }
+
+    public function getTransactionCountYear()
+    {
+        $sql = "SELECT COUNT(*) as total FROM transactions WHERE YEAR(created_at) = YEAR(CURDATE())";
+        $stmt = $this->db->query($sql);
+        $result = $stmt->fetch();
+        return $result['total'] ?? 0;
+    }
+
     public function getTotalProducts()
     {
         $sql = "SELECT COUNT(*) as total FROM products";

@@ -31,6 +31,8 @@
       swapText(document.getElementById('salesSub'), p.sub);
       swapText(document.getElementById('revenueValue'), p.revenue);
       swapText(document.getElementById('revenueSub'), p.revSub);
+      swapText(document.getElementById('transactionsLabel'), p.transactionsLabel);
+      swapText(document.getElementById('transactionsValue'), p.transactions);
     });
   }
 
