@@ -43,6 +43,28 @@ if (empty($items)) {
     exit;
 }
 
+try {
+    $db->exec("CREATE TABLE IF NOT EXISTS register_openings (
+        id INT NOT NULL AUTO_INCREMENT,
+        user_id INT NOT NULL,
+        business_date DATE NOT NULL,
+        opening_cash DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+        notes VARCHAR(255) DEFAULT NULL,
+        opened_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        PRIMARY KEY (id),
+        UNIQUE KEY uq_register_opening_user_date (user_id, business_date)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci");
+    $openingCheck = $db->prepare("SELECT id FROM register_openings WHERE user_id = ? AND business_date = ?");
+    $openingCheck->execute([(int)$_SESSION['user_id'], date('Y-m-d')]);
+    if (!$openingCheck->fetchColumn()) {
+        echo json_encode(['success' => false, 'error' => 'Opening cash is required before processing a POS sale.']);
+        exit;
+    }
+} catch (Throwable $e) {
+    echo json_encode(['success' => false, 'error' => 'Unable to verify the POS register opening.']);
+    exit;
+}
+
 // Convert discountId to proper int/null
 $discountId = (!empty($discountId) && $discountId != '0') ? (int)$discountId : null;
 

@@ -235,18 +235,54 @@ class Reports
 
     public function getRegisterClosings(): array
     {
-        $stmt = $this->db->prepare("SELECT rc.id,
-                   rc.business_date,
-                   rc.system_cash,
-                   rc.counted_cash,
-                   rc.variance,
-                   rc.notes,
-                   rc.closed_at,
-                   COALESCE(NULLIF(CONCAT_WS(' ', ui.firstname, ui.lastname), ''), u.username) AS cashier_name
-            FROM register_closings rc
-            LEFT JOIN users u ON u.id = rc.user_id
-            LEFT JOIN users_info ui ON ui.user_id = u.id
-            ORDER BY rc.business_date DESC, rc.closed_at DESC");
+                $this->db->exec("CREATE TABLE IF NOT EXISTS register_openings (
+                        id INT NOT NULL AUTO_INCREMENT,
+                        user_id INT NOT NULL,
+                        business_date DATE NOT NULL,
+                        opening_cash DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+                        notes VARCHAR(255) DEFAULT NULL,
+                        opened_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                        PRIMARY KEY (id),
+                        UNIQUE KEY uq_register_opening_user_date (user_id, business_date)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci");
+
+                $stmt = $this->db->prepare("SELECT r.opening_id,
+                                     r.closing_id,
+                                     r.user_id,
+                                     r.business_date,
+                                     r.opening_cash,
+                                     r.system_cash,
+                                     r.counted_cash,
+                                     r.variance,
+                                     r.opening_notes,
+                                     r.closing_notes,
+                                     r.opened_at,
+                                     r.closed_at,
+                                     CASE WHEN r.opening_id IS NULL THEN 'Closed without opening record'
+                                                WHEN r.closing_id IS NULL THEN 'Opened - not closed'
+                                                ELSE 'Opened and closed' END AS register_status,
+                                     COALESCE(NULLIF(CONCAT_WS(' ', ui.firstname, ui.lastname), ''), u.username) AS cashier_name
+                        FROM (
+                                SELECT ro.id AS opening_id, rc.id AS closing_id, ro.user_id, ro.business_date,
+                                             ro.opening_cash, rc.system_cash, rc.counted_cash, rc.variance,
+                                             ro.notes AS opening_notes, rc.notes AS closing_notes,
+                                             ro.opened_at, rc.closed_at
+                                FROM register_openings ro
+                                LEFT JOIN register_closings rc
+                                    ON rc.user_id = ro.user_id AND rc.business_date = ro.business_date
+                                UNION ALL
+                                SELECT NULL AS opening_id, rc.id AS closing_id, rc.user_id, rc.business_date,
+                                             0 AS opening_cash, rc.system_cash, rc.counted_cash, rc.variance,
+                                             NULL AS opening_notes, rc.notes AS closing_notes,
+                                             NULL AS opened_at, rc.closed_at
+                                FROM register_closings rc
+                                LEFT JOIN register_openings ro
+                                    ON ro.user_id = rc.user_id AND ro.business_date = rc.business_date
+                                WHERE ro.id IS NULL
+                        ) r
+                        LEFT JOIN users u ON u.id = r.user_id
+                        LEFT JOIN users_info ui ON ui.user_id = u.id
+                        ORDER BY r.business_date DESC, COALESCE(r.opened_at, r.closed_at) DESC");
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }

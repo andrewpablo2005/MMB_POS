@@ -21,12 +21,25 @@ SET time_zone = "+00:00";
 -- Database: `mmbpos`
 --
 
+
+-- Table structure for table `register_openings`
+--
+-- Table structure for table `discounts`
+CREATE TABLE `register_openings` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL,
+  `business_date` date NOT NULL,
+  `opening_cash` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `notes` varchar(255) DEFAULT NULL,
+  `opened_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uq_register_opening_user_date` (`user_id`,`business_date`),
+  KEY `idx_register_openings_date` (`business_date`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+--
 -- --------------------------------------------------------
 
 --
--- Table structure for table `discounts`
---
-
 CREATE TABLE `discounts` (
   `id` int(11) NOT NULL,
   `discount_name` varchar(50) DEFAULT NULL,
