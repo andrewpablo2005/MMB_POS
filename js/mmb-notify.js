@@ -53,11 +53,27 @@
         var duration = typeof opts.duration === 'number' ? opts.duration : 4200;
 
         var stack = container();
+        var duplicateKey = type + '|' + String(opts.title || '') + '|' + String(opts.message || '');
+        var existing = Array.prototype.find.call(stack.children, function (toast) {
+            return toast.dataset.notifyKey === duplicateKey && !toast._closing;
+        });
+        if (existing) {
+            clearTimeout(existing._timer);
+            existing.classList.remove('mmb-toast--in');
+            void existing.offsetWidth;
+            existing.classList.add('mmb-toast--in');
+            if (duration > 0) {
+                existing._timer = setTimeout(function () { dismiss(existing); }, duration);
+            }
+            return existing;
+        }
+
         while (stack.children.length >= 4) {
             dismiss(stack.firstElementChild);
         }
 
         var toast = el('div', 'mmb-toast mmb-toast--' + type);
+        toast.dataset.notifyKey = duplicateKey;
         toast.innerHTML =
             '<span class="mmb-toast-icon"><i class="' + ICONS[type] + '"></i></span>' +
             '<div class="mmb-toast-body">' +
