@@ -55,7 +55,7 @@ function dash_product_thumb(?string $image, string $sizeClass = 'mmb-thumb'): st
     periods: {
       today: {
         sales:   <?php echo json_encode('₱' . number_format($netSalesToday, 2)); ?>,
-        sub:     <?php echo json_encode('Refunds today: -₱' . number_format($totalRefundToday, 2)); ?>,
+        sub:     <?php echo json_encode("Returns from today's sales: -₱" . number_format($totalRefundToday, 2)); ?>,
         revenue: <?php echo json_encode('₱' . number_format($realRevenueToday, 2)); ?>,
         revSub:  'Net of refunds & restock costs — today'
       },
@@ -98,7 +98,7 @@ function dash_product_thumb(?string $image, string $sizeClass = 'mmb-thumb'): st
             </select>
           </div>
           <div class="stat-value stat-value--xl" id="salesValue">₱<?php echo number_format($netSalesToday, 2); ?></div>
-          <div class="stat-sub" id="salesSub">Refunds today: -₱<?php echo number_format($totalRefundToday, 2); ?></div>
+          <div class="stat-sub" id="salesSub">Returns from today's sales: -₱<?php echo number_format($totalRefundToday, 2); ?></div>
         </div>
       </div>
     </div>
