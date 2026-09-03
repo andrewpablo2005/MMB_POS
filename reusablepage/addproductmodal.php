@@ -16,8 +16,8 @@ $dosageForms = $product->getDosageForms();
 
 <!-- ADD PRODUCT MODAL -->
 <div class="modal fade" id="addProductModal" tabindex="-1">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
+    <div class="modal-dialog modal-lg add-product-dialog">
+        <div class="modal-content add-product-modal">
 
             <form method="POST" enctype="multipart/form-data" onsubmit="return validateAddProductForm(event)">
                 <div class="modal-header">
@@ -25,26 +25,32 @@ $dosageForms = $product->getDosageForms();
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
 
-                <div class="modal-body">
+                <div class="modal-body add-product-body">
 
                     <!-- BASIC INFORMATION SECTION -->
-                    <h6 class="mb-3 text-secondary fw-bold">Basic Information</h6>
+                    <div class="add-product-section-head">
+                        <div>
+                            <span class="add-product-section-kicker">01</span>
+                            <h6>Product identity</h6>
+                        </div>
+                        <span>Names and classification</span>
+                    </div>
 
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
+                    <div class="add-product-row">
+                        <div class="add-product-field">
                             <label for="branded_name" class="form-label">Brand Name</label>
                             <input type="text" id="branded_name" name="branded_name" class="form-control"
                                 placeholder="e.g., Tylenol">
                         </div>
-                        <div class="col-md-6 mb-3">
+                        <div class="add-product-field">
                             <label for="generic_name" class="form-label">Generic Name</label>
                             <input type="text" id="generic_name" name="generic_name" class="form-control"
                                 placeholder="e.g., Paracetamol" required>
                         </div>
                     </div>
 
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
+                    <div class="add-product-row">
+                        <div class="add-product-field">
                             <label for="category_search" class="form-label">Category <span class="text-danger">*</span></label>
                             <input type="text" id="category_search" class="form-control" list="category_list" placeholder="Select Category" autocomplete="off" required>
                             <input type="hidden" id="category_id" name="category_id" value="">
@@ -61,7 +67,7 @@ $dosageForms = $product->getDosageForms();
                                 Select a category to see whether senior/PWD discounts apply.
                             </div>
                         </div>
-                        <div class="col-md-6 mb-3">
+                        <div class="add-product-field">
                             <label for="unit_measurement_search" class="form-label">Unit of Measurement</label>
                             <input type="text" id="unit_measurement_search" class="form-control" list="unit_measurement_list" placeholder="Select Unit" autocomplete="off">
                             <input type="hidden" id="unit_measurement" name="unit_measurement" value="">
@@ -73,15 +79,23 @@ $dosageForms = $product->getDosageForms();
                         </div>
                     </div>
 
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
+                    <div class="add-product-section-head add-product-section-head--spaced">
+                        <div>
+                            <span class="add-product-section-kicker">02</span>
+                            <h6>Dosage details</h6>
+                        </div>
+                        <span>Strength and presentation</span>
+                    </div>
+
+                    <div class="add-product-row">
+                        <div class="add-product-field">
                             <label for="strength" class="form-label">Strength <span class="text-danger">*</span></label>
                             <div class="input-group">
                                 <input type="number" id="strength" name="strength" class="form-control"
                                     placeholder="e.g., 200,500,1000" required>
                             </div>
                         </div>
-                        <div id="dosageFormContainer" class="col-md-6 mb-3" style="display:none;">
+                        <div id="dosageFormContainer" class="add-product-field" style="display:none;">
                             <label for="dosage_form_search" class="form-label">Dosage Form</label>
                             <input type="text" id="dosage_form_search" class="form-control" list="dosage_form_list" placeholder="Select dosage form" autocomplete="off">
                             <input type="hidden" id="dosage_form" name="dosage_form" value="">
@@ -94,21 +108,29 @@ $dosageForms = $product->getDosageForms();
                         </div>
                     </div>
 
-                    <div id="strengthQuantityFields" class="row" style="display: none;">
-                        <div class="col-md-6 mb-3">
+                    <div id="strengthQuantityFields" class="add-product-row" style="display: none;">
+                        <div class="add-product-field">
                             <label for="strength_per_quantity" class="form-label">Strength per Quantity</label>
                             <input type="number" id="strength_per_quantity" name="strength_per_quantity" step="0.01"
                                 class="form-control" placeholder="e.g., 500">
                         </div>
-                        <div class="col-md-6 mb-3">
+                        <div class="add-product-field">
                             <label for="strength_per_quantity_unit" class="form-label">Strength Unit</label>
                             <input type="text" id="strength_per_quantity_unit" name="strength_per_quantity_unit" class="form-control"
                                 placeholder="e.g., mg, g, ml">
                         </div>
                     </div>
 
-                    <div class="row">
-                        <div class="col-md-12 mb-3">
+                    <div class="add-product-section-head add-product-section-head--spaced">
+                        <div>
+                            <span class="add-product-section-kicker">03</span>
+                            <h6>Product code</h6>
+                        </div>
+                        <span>Barcode and scanning</span>
+                    </div>
+
+                    <div class="add-product-row">
+                        <div class="add-product-field add-product-field--full">
                             <label for="barcode" class="form-label">Product Code <span class="text-danger">*</span></label>
                             <div class="input-group">
                                 <input type="text" id="barcode" name="barcode" class="form-control"
@@ -126,22 +148,32 @@ $dosageForms = $product->getDosageForms();
                         </div>
                     </div>
 
-                    <div class="mb-3">
+                    <div class="add-product-section-head add-product-section-head--spaced">
+                        <div>
+                            <span class="add-product-section-kicker">04</span>
+                            <h6>Opening stock</h6>
+                        </div>
+                        <span>Optional inventory batch</span>
+                    </div>
+
+                    <div class="add-product-row add-product-row--single">
+                        <div class="add-product-field add-product-field--full">
                         <label class="form-label">Do you want to add a batch and quantity now?</label>
                         <div class="btn-group w-100" role="group" aria-label="Add batch prompt">
                             <button type="button" class="btn btn-outline-primary" data-batch-option="yes">Yes</button>
                             <button type="button" class="btn btn-secondary active" data-batch-option="no">No</button>
                         </div>
                         <input type="hidden" name="add_batch_prompt" id="add_batch_prompt" value="no">
+                        </div>
                     </div>
 
-                    <div id="batchPromptFields" class="border rounded p-3 bg-light" style="display:none;">
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
+                    <div id="batchPromptFields" class="add-product-batch-panel" style="display:none;">
+                        <div class="add-product-row">
+                            <div class="add-product-field">
                                 <label for="batch_number" class="form-label">Batch No</label>
                                 <input type="text" id="batch_number" name="batch_number" class="form-control" placeholder="e.g. BATCH-001">
                             </div>
-                            <div class="col-md-6 mb-3">
+                            <div class="add-product-field">
                                 <label for="batch_supplier_search" class="form-label">Supplier (optional)</label>
                                 <input type="text" id="batch_supplier_search" class="form-control" list="batch_supplier_list" placeholder="Select supplier or leave blank" autocomplete="off">
                                 <input type="hidden" id="batch_supplier_id" name="supplier_id" value="">
@@ -162,44 +194,50 @@ $dosageForms = $product->getDosageForms();
                             </div>
                         </div>
 
-                        <div class="row">
-                            <div class="col-md-4 mb-3">
+                        <div class="add-product-row add-product-row--three">
+                            <div class="add-product-field">
                                 <label for="batch_quantity" class="form-label">Quantity Received</label>
                                 <input type="number" id="batch_quantity" name="received_quantity" class="form-control" min="1" placeholder="e.g. 10">
                             </div>
-                            <div class="col-md-4 mb-3">
+                            <div class="add-product-field">
                                 <label for="batch_purchase_cost" class="form-label">Purchase Cost</label>
                                 <input type="number" id="batch_purchase_cost" name="purchase_cost" class="form-control" step="0.01" min="0" placeholder="e.g. 50.00">
                             </div>
-                            <div class="col-md-4 mb-3">
+                            <div class="add-product-field">
                                 <label for="batch_sale_price" class="form-label">Sale Price</label>
                                 <input type="number" id="batch_sale_price" name="sale_price" class="form-control" step="0.01" min="0" placeholder="e.g. 75.00">
                             </div>
                         </div>
 
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
+                        <div class="add-product-row">
+                            <div class="add-product-field">
                                 <label for="batch_markup" class="form-label">Markup %</label>
                                 <input type="number" id="batch_markup" name="markup" class="form-control" step="0.01" min="0" value="5" placeholder="e.g. 20">
                             </div>
-                            <div class="col-md-6 mb-3">
+                            <div class="add-product-field">
                                 <label for="batch_expiry_date" class="form-label">Expiry Date</label>
                                 <input type="date" id="batch_expiry_date" name="expiry_date" class="form-control">
                             </div>
                         </div>
                     </div>
 
-                    <hr class="my-4">
-
                     <!-- IMAGE SECTION -->
-                    <h6 class="mb-3 text-secondary fw-bold">Product Image</h6>
-                    <div class="mb-3">
+                    <div class="add-product-section-head add-product-section-head--spaced">
+                        <div>
+                            <span class="add-product-section-kicker">05</span>
+                            <h6>Product image</h6>
+                        </div>
+                        <span>Catalog display image</span>
+                    </div>
+                    <div class="add-product-row add-product-row--single">
+                    <div class="add-product-field add-product-field--full">
                         <label for="product_image_input" class="form-label">Upload Image <span
                                 class="text-danger">*</span></label>
                         <input type="file" id="product_image_input" name="product_image" class="form-control"
                             accept="image/*" required onchange="previewImage(event)">
                         <small class="text-muted d-block mt-2"><i class="fas fa-info-circle"></i> Recommended:
                             500x500px, JPG/PNG, max 5MB</small>
+                    </div>
                     </div>
 
                     <!-- IMAGE PREVIEW -->

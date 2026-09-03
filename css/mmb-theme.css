@@ -1360,6 +1360,32 @@ table.dataTable.dtr-column > tbody > tr.parent > td.dtr-control:before {
 .mmb-toast--info .mmb-toast-icon { background: #dbeafe; color: #1d4ed8; }
 .mmb-toast--info { border-left: 4px solid #2563eb; }
 
+/* Add-product modal: structured field rows and section separators */
+.add-product-dialog { max-width: 780px; }
+.add-product-modal { border: 0; overflow: hidden; }
+.add-product-body { padding: 1.5rem 1.75rem; }
+.add-product-section-head { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding-bottom: 0.7rem; border-bottom: 1px solid var(--mmb-line-soft); }
+.add-product-section-head--spaced { margin-top: 1.25rem; }
+.add-product-section-head > div { display: flex; align-items: center; gap: 0.65rem; }
+.add-product-section-head h6 { margin: 0; color: var(--mmb-heading); font-size: 0.95rem; font-weight: 800; }
+.add-product-section-head > span:last-child { color: var(--mmb-muted); font-size: 0.75rem; }
+.add-product-section-kicker { display: inline-flex; align-items: center; justify-content: center; width: 1.7rem; height: 1.7rem; border-radius: 0.5rem; background: var(--mmb-primary-soft-2); color: var(--mmb-primary); font-size: 0.7rem; font-weight: 800; }
+.add-product-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; padding: 1rem 0; border-bottom: 1px solid var(--mmb-line-soft); }
+.add-product-row--single { grid-template-columns: minmax(0, 1fr); }
+.add-product-row--three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.add-product-field { min-width: 0; }
+.add-product-field .form-label { margin-bottom: 0.4rem; font-weight: 700; color: var(--mmb-text); }
+.add-product-field .form-text { line-height: 1.45; }
+.add-product-batch-panel { margin-top: 1rem; padding: 0 1rem; border: 1px solid #bfdbfe; border-left: 4px solid #2563eb; border-radius: 0.7rem; background: #f8fbff; }
+.add-product-batch-panel .add-product-row:last-child { border-bottom: 0; }
+.add-product-body .btn-group .btn { font-weight: 700; }
+@media (max-width: 575.98px) {
+    .add-product-body { padding: 1.1rem; }
+    .add-product-section-head > span:last-child { display: none; }
+    .add-product-row, .add-product-row--three { grid-template-columns: minmax(0, 1fr); }
+    .add-product-batch-panel { padding: 0 0.75rem; }
+}
+
 /* ── 3b. Confirm / alert dialogs (mmbConfirm / mmbAlert) ── */
 .mmb-modal-backdrop {
     position: fixed;

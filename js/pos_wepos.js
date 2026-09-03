@@ -574,6 +574,11 @@ function weposUpdateCart() {
         const overrideBadge = item.override
             ? ` <span style="font-size:10px; color:#b91c1c; font-weight:600;"><i class="fas fa-tag"></i> ${(item.overrideRate*100).toFixed(0)}% OFF</span>`
             : '';
+        const quantityPresets = [1, 6, 12]
+            .filter(quantity => quantity <= item.stock)
+            .concat(item.qty > 0 && ![1, 6, 12].includes(item.qty) ? [item.qty] : [])
+            .filter((quantity, index, values) => values.indexOf(quantity) === index)
+            .sort((first, second) => first - second);
 
 
              //Minus Product
@@ -597,7 +602,7 @@ function weposUpdateCart() {
                     </div>
                     <div style="margin-top:6px;">
                         <select class="wepos-qty-preset" onchange="weposSetQty('${item.id}', this.value)" style="width:100%; padding:4px; border:1px solid #d1d5db; border-radius:4px;">
-                            ${[1, 6, 12].map(q => `<option value="${q}"${item.qty === q ? ' selected' : ''}>${q} pcs</option>`).join('')}
+                            ${quantityPresets.map(q => `<option value="${q}"${item.qty === q ? ' selected' : ''}>${q} pcs</option>`).join('')}
                         </select>
                     </div>
                 </td>
