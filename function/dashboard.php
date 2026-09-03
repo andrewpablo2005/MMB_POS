@@ -22,8 +22,9 @@ class DashboardManager
     public function getTotalRefundToday()
     {
         $sql = "SELECT COALESCE(SUM(refund_amount), 0) AS total
-                FROM return_transactions
-                WHERE DATE(created_at) = CURDATE()";
+            FROM return_transactions rt
+            JOIN transactions t ON t.id = rt.original_transaction_id
+            WHERE DATE(t.created_at) = CURDATE()";
         $stmt = $this->db->query($sql);
         $result = $stmt->fetch();
         return $result['total'] ?? 0;
