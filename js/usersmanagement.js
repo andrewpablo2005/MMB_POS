@@ -42,7 +42,7 @@ $(function () {
         if (!$.fn.DataTable.isDataTable(this)) {
             $(this).DataTable({
                 responsive: true,
-                language: { emptyTable: $(this).data('empty-message') || 'No records found.' }
+                language: { emptyTable: $(this).attr('data-empty-message') || 'No records found.' }
             });
         }
     });
@@ -69,7 +69,7 @@ function initDataTable(table) {
         responsive: true,
         dom: 'fBrtip',
         buttons: ['copy', 'excel', 'pdf', 'print'],
-        language: { emptyTable: $(table).data('empty-message') || 'No records found.' }
+        language: { emptyTable: $(table).attr('data-empty-message') || 'No records found.' }
     });
 }
 
