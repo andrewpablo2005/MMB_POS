@@ -1,0 +1,42 @@
+name: Deploy (Neil -> live site)
+
+# Auto-deploys every push to the Neil branch to the live InfinityFree site
+# via FTP. Only changed files are uploaded (diff against the .deploy-sha
+# marker on the server). Manual runs can force a full sync.
+on:
+  push:
+    branches: [Neil]
+  workflow_dispatch:
+    inputs:
+      full_sync:
+        description: "Upload every tracked file (ignore deploy marker)"
+        type: boolean
+        default: false
+
+# Never overlap two deploys; queue them instead
+concurrency:
+  group: deploy-live
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  ftp-deploy:
+    if: github.repository == 'andrewpablo2005/MMB_POS'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Check out full history (needed for the deploy diff)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Deploy changed files to live FTP
+        env:
+          IF_FTP_HOST: ${{ secrets.IF_FTP_HOST }}
+          IF_FTP_USER: ${{ secrets.IF_FTP_USER }}
+          IF_FTP_PASS: ${{ secrets.IF_FTP_PASS }}
+          EVENT_BEFORE: ${{ github.event.before }}
+          FULL_SYNC: ${{ github.event.inputs.full_sync }}
+        run: python3 .github/ftp_deploy.py
