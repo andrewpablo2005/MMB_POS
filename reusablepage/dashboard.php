@@ -17,6 +17,8 @@ $realRevenueToday  = $dashboardManager->getRealRevenueToday();
 $realRevenueMonth  = $dashboardManager->getRealRevenueMonth();
 $realRevenueYear   = $dashboardManager->getRealRevenueYear();
 $transactionsToday = $dashboardManager->getTransactionCountToday();
+$transactionsMonth = $dashboardManager->getTransactionCountMonth();
+$transactionsYear  = $dashboardManager->getTransactionCountYear();
 $totalProducts     = $dashboardManager->getTotalProducts();
 $totalDiscountToday = $dashboardManager->getTotalDiscountToday();
 $totalDiscountMonth = $dashboardManager->getTotalDiscountMonth();
@@ -57,19 +59,25 @@ function dash_product_thumb(?string $image, string $sizeClass = 'mmb-thumb'): st
         sales:   <?php echo json_encode('₱' . number_format($netSalesToday, 2)); ?>,
         sub:     <?php echo json_encode("Returns from today's sales: -₱" . number_format($totalRefundToday, 2)); ?>,
         revenue: <?php echo json_encode('₱' . number_format($realRevenueToday, 2)); ?>,
-        revSub:  'Net of refunds & restock costs — today'
+        revSub:  'Net of refunds & restock costs — today',
+        transactions: <?php echo json_encode(number_format((float)$transactionsToday)); ?>,
+        transactionsLabel: 'Transactions Today'
       },
       month: {
         sales:   <?php echo json_encode('₱' . number_format($totalSalesMonth, 2)); ?>,
         sub:     <?php echo json_encode(date('F Y') . ' · gross'); ?>,
         revenue: <?php echo json_encode('₱' . number_format($realRevenueMonth, 2)); ?>,
-        revSub:  <?php echo json_encode(date('F Y')); ?>
+        revSub:  <?php echo json_encode(date('F Y')); ?>,
+        transactions: <?php echo json_encode(number_format((float)$transactionsMonth)); ?>,
+        transactionsLabel: 'Transactions This Month'
       },
       year: {
         sales:   <?php echo json_encode('₱' . number_format($totalSalesYear, 2)); ?>,
         sub:     <?php echo json_encode(date('Y') . ' · gross'); ?>,
         revenue: <?php echo json_encode('₱' . number_format($realRevenueYear, 2)); ?>,
-        revSub:  <?php echo json_encode(date('Y')); ?>
+        revSub:  <?php echo json_encode(date('Y') ); ?>,
+        transactions: <?php echo json_encode(number_format((float)$transactionsYear)); ?>,
+        transactionsLabel: 'Transactions This Year'
       }
     }
   };
@@ -116,8 +124,8 @@ function dash_product_thumb(?string $image, string $sizeClass = 'mmb-thumb'): st
       <div class="stat-card">
         <div class="stat-icon rose"><i class="fas fa-receipt"></i></div>
         <div class="min-w-0">
-          <div class="stat-label">Transactions Today</div>
-          <div class="stat-value"><?php echo number_format((float)$transactionsToday); ?></div>
+          <div class="stat-label" id="transactionsLabel">Transactions Today</div>
+          <div class="stat-value" id="transactionsValue"><?php echo number_format((float)$transactionsToday); ?></div>
           <div class="stat-sub">Avg basket ₱<?php echo number_format((float)$averageTransactionValue, 2); ?> · <?php echo number_format((float)$totalTransactionsAllTime); ?> all-time</div>
         </div>
       </div>
@@ -326,4 +334,4 @@ function dash_product_thumb(?string $image, string $sizeClass = 'mmb-thumb'): st
 </div><!-- end .dash-wrapper -->
 
 <!-- Dashboard Chart -->
-<script src="../js/dashboard.js?v=8"></script>
+<script src="../js/dashboard.js?v=9"></script>
