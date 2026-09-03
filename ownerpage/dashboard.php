@@ -48,7 +48,6 @@ $activeTab = $_GET['tab'] ?? 'dashboard';
             </div>
 
             <div class="offcanvas-body">
-                <div class="sidebar-label">Menu</div>
                 <div class="nav flex-column nav-pills me-3" role="tablist">
 
                     <a class="nav-link <?= $activeTab === 'dashboard' ? 'active' : '' ?>" data-bs-toggle="pill"
