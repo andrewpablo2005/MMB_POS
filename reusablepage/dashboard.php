@@ -79,7 +79,7 @@ function dash_product_thumb(?string $image, string $sizeClass = 'mmb-thumb'): st
 
   <!-- Header -->
   <div class="dash-header">
-    <h4>Business Overview tite</h4>
+    <h4>Business Overview</h4>
     <span class="date-badge"><?php echo date('l, F j, Y'); ?></span>
   </div>
 
