@@ -181,6 +181,7 @@
     position: absolute;
     inset: 0;
     background: rgba(220, 38, 38, 0.06);
+    pointer-events: none;
     display: flex;
     align-items: center;
     justify-content: center;

@@ -20,11 +20,16 @@ $(function () {
         mmbApplyResponsivePriorities(this);
     });
 
+    $('.myTable, .myTableExport').each(function () {
+        prepareDataTableEmptyState(this);
+    });
+
     // NORMAL TABLES (no buttons)
     $('.myTable').each(function () {
         if (!$.fn.DataTable.isDataTable(this)) {
             $(this).DataTable({
-                responsive: true
+                responsive: true,
+                language: { emptyTable: $(this).data('empty-message') || 'No records found.' }
             });
         }
     });
@@ -50,8 +55,20 @@ function initDataTable(table) {
     return $(table).DataTable({
         responsive: true,
         dom: 'fBrtip',
-        buttons: ['copy', 'excel', 'pdf', 'print']
+        buttons: ['copy', 'excel', 'pdf', 'print'],
+        language: { emptyTable: $(table).data('empty-message') || 'No records found.' }
     });
+}
+
+function prepareDataTableEmptyState(table) {
+    var emptyRow = $(table).find('tbody tr').filter(function () {
+        return $(this).children('td').length === 1 && $(this).children('td').is('[colspan]');
+    }).first();
+
+    if (!emptyRow.length) return;
+
+    $(table).attr('data-empty-message', emptyRow.text().trim() || 'No records found.');
+    emptyRow.remove();
 }
 
 function focusSearchInput() {

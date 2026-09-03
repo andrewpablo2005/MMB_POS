@@ -97,7 +97,7 @@ if (!empty($_SESSION['user_id'])) {
                          data-stock="<?= $stock ?>"
                          data-pcs="<?= (int)($row['pcs'] ?? 1) ?>"
                          data-expired="<?= $isExpired ? '1' : '0' ?>"
-                         onclick="weposAddToCart(this)">
+                         onclick="event.stopPropagation(); weposAddToCart(this)">
                         
                         <div class="wepos-card-img">
                             <?php if ($image): ?>
