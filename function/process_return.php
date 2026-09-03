@@ -70,6 +70,13 @@ if (!preg_match('/^[0-9]{7}$/', $voidPin)) {
     exit;
 }
 
+$columnStmt = $db->prepare("SELECT COUNT(*) FROM information_schema.columns
+    WHERE table_schema = DATABASE() AND table_name = 'return_transactions' AND column_name = 'approver_id'");
+$columnStmt->execute();
+if ((int)$columnStmt->fetchColumn() === 0) {
+    $db->exec("ALTER TABLE return_transactions ADD COLUMN approver_id INT NULL DEFAULT NULL");
+}
+
 // Verify the manager Void PIN against hashed (and legacy plaintext) PINs
 $managerStmt = $db->prepare("
     SELECT u.id, u.void_password
@@ -209,13 +216,6 @@ try {
     }
 
     $refundTotal = round($refundTotal, 2);
-
-    // Attribute the refund to the manager who authorized it (audit trail)
-    try {
-        $db->exec("ALTER TABLE return_transactions ADD COLUMN approver_id INT NULL DEFAULT NULL");
-    } catch (PDOException $ignore) {
-        // column already exists
-    }
 
     $stmtInsertReturn = $db->prepare("INSERT INTO return_transactions (original_transaction_id, user_id, refund_amount, reason, refund_method, approver_id, created_at)
         VALUES (?, ?, ?, ?, ?, ?, NOW())");
