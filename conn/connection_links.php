@@ -7,7 +7,7 @@
 <?php //Bootstrap Links for CSS and JS ?>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
 <!-- MMB Brand Theme (design tokens + Bootstrap primary overrides) — keep AFTER bootstrap -->
-<link rel="stylesheet" href="<?= mmbpos_base_path() ?>/css/mmb-theme.css?v=3.9.1">
+<link rel="stylesheet" href="<?= mmbpos_base_path() ?>/css/mmb-theme.css?v=3.10">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 
 <!-- Font Awesome -->
@@ -37,7 +37,7 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <!-- Custom JS -->
-<script src="../js/usersmanagement.js?v=3"></script>
+<script src="../js/usersmanagement.js?v=4"></script>
 <!-- MMB Notify — custom toasts + confirm dialogs (issue #4 item 6) -->
 <script src="<?= mmbpos_base_path() ?>/js/mmb-notify.js?v=1"></script>
 <!-- MMB Nav — keeps ?tab= in sync with the active pill (issue #4 item 1) -->

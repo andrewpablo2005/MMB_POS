@@ -46,7 +46,7 @@ require_once __DIR__ . '/guard.php'; guard_require_roles(['owner','admin']);
                             <strong>Product Code:</strong><br>
                             <?= htmlspecialchars($prod['barcode'] ?? 'N/A') ?>
                             <?php if (!empty(trim((string)($prod['barcode'] ?? '')))): ?>
-                                <button type="button" class="btn btn-sm btn-outline-secondary ms-1"
+                                <button type="button" class="btn btn-sm btn-outline-secondary ms-1 mmb-barcode-btn"
                                         data-barcode="<?= htmlspecialchars((string)$prod['barcode'], ENT_QUOTES, 'UTF-8') ?>"
                                         data-product="<?= htmlspecialchars(trim(($prod['branded_name'] ?? '') . ' ' . ($prod['generic_name'] ?? '') . ' ' . ($prod['strength'] ?? '') . ' ' . ($prod['measurement_name'] ?? '') . ' ' . trim($prod['dosage_form'] ?? '')), ENT_QUOTES, 'UTF-8') ?>">
                                     <i class="fas fa-barcode"></i>
