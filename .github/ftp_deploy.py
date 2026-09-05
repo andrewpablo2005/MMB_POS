@@ -30,7 +30,9 @@ FULL_SYNC = (os.environ.get("FULL_SYNC") or "").strip().lower() in ("1", "true",
 ROOT_DIR = "htdocs"
 MARKER = ".deploy-sha"
 
-EXCLUDE_TOP = {".git", ".github", "docs"}          # whole directories, never deployed
+EXCLUDE_TOP = {".git", ".github", "docs", "img"}      # never deployed: img/ is runtime
+# content (product photos uploaded by the app / manually via file manager) —
+# deploys must never PUT or DEL anything under img/
 EXCLUDE_FILES = {".gitignore", ".gitattributes", ".gitmodules", "README.md", "mmbpos.sql"}
 
 
@@ -144,7 +146,14 @@ class Deployer:
         return False
 
     def verify_sizes(self, rels) -> list:
-        """Final pass: re-check sizes of all uploaded files once the dust settled."""
+        """Final pass: re-check sizes of all uploaded files once the dust settled.
+
+        Tolerant polling: the FTP backend is load-balanced over nodes whose
+        filesystem sync lags, so a single SIZE right after a batch of uploads
+        can still return a stale number even though the upload itself was
+        verified moments earlier. Each file gets checked at 0s / 5s / 10s and
+        passes if ANY check matches; only a sustained mismatch fails.
+        """
         bad = []
         for rel in rels:
             local = os.path.join(WS, rel)
@@ -152,20 +161,30 @@ class Deployer:
                 size = os.path.getsize(local)
             except OSError:
                 continue
-            try:
-                if self.ftp.size(rel) != size:
-                    bad.append(rel)
-            except Exception:
+            ok = False
+            for wait_s in (0, 5, 10):
+                if wait_s:
+                    time.sleep(wait_s)
                 try:
-                    self.ftp.quit()
+                    got = self.ftp.size(rel)
                 except Exception:
-                    pass
-                self.connect()
-                try:
-                    if self.ftp.size(rel) != size:
-                        bad.append(rel)
-                except Exception:
-                    bad.append(rel)
+                    got = None
+                    try:
+                        self.ftp.quit()
+                    except Exception:
+                        pass
+                    self.connect()
+                    try:
+                        got = self.ftp.size(rel)
+                    except Exception:
+                        got = None
+                if got == size:
+                    ok = True
+                    break
+                print(f"    verify {rel}: expected {size}, got {got}"
+                      + (f", rechecking in {wait_s}s" if wait_s else ""))
+            if not ok:
+                bad.append(rel)
         return bad
 
     def delete(self, rel: str) -> bool:
