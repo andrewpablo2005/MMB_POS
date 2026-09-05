@@ -231,6 +231,17 @@ def main():
     dels = [p for a, p in plan if a == "DEL"]
     if not puts and not dels:
         print("Nothing to deploy (only excluded files changed or marker already current).")
+        # Keep the marker tracking HEAD so the next run's diff starts here.
+        d = Deployer()
+        d.connect()
+        marker = d.read_marker()
+        if marker != head_sha:
+            d.write_marker(head_sha)
+            print(f"Marker advanced to {head_sha[:10]} (deployable state unchanged).")
+        try:
+            d.ftp.quit()
+        except Exception:
+            pass
         return
 
     print(f"Files: {len(puts)} to upload, {len(dels)} to delete")
