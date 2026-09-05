@@ -69,8 +69,17 @@ $dosageForms = $product->getDosageForms(); ?>
                             </div>
                             <div class="add-product-field">
                                 <label for="edit_unit_measurement_search_<?= $prod['id'] ?>" class="form-label">Serving Unit</label>
-                                <input type="text" id="edit_unit_measurement_search_<?= $prod['id'] ?>" class="form-control" list="edit_unit_measurement_list_<?= $prod['id'] ?>" placeholder="Select Unit" autocomplete="off"
-                                    value="<?= htmlspecialchars($prod['measurement_name'] ?? '') ?>">
+                                <div class="input-group">
+                                    <input type="text" id="edit_unit_measurement_search_<?= $prod['id'] ?>" class="form-control" list="edit_unit_measurement_list_<?= $prod['id'] ?>" placeholder="Select Unit" autocomplete="off"
+                                        value="<?= htmlspecialchars($prod['measurement_name'] ?? '') ?>">
+                                    <button type="button" class="btn btn-danger btn-add-measurement"
+                                        data-bs-toggle="modal" data-bs-target="#addMeasurementModal"
+                                        data-measurement-target="edit_unit_measurement_search_<?= $prod['id'] ?>"
+                                        data-measurement-hidden="edit_unit_measurement_<?= $prod['id'] ?>"
+                                        title="Add a new measurement unit">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                </div>
                                 <input type="hidden" id="edit_unit_measurement_<?= $prod['id'] ?>" name="unit_measurement" value="<?= (int) ($prod['measurement_id'] ?? 0) ?>">
                                 <datalist id="edit_unit_measurement_list_<?= $prod['id'] ?>">
                                     <?php foreach ($unitMeasurements as $unit): ?>
@@ -106,8 +115,16 @@ $dosageForms = $product->getDosageForms(); ?>
                             </div>
                             <div class="add-product-field">
                                 <label for="edit_strength_per_unit_<?= $prod['id'] ?>" class="form-label">Volume / Quantity Unit</label>
-                                <input type="text" id="edit_strength_per_unit_<?= $prod['id'] ?>" name="strength_per_quantity_unit" class="form-control"
-                                    value="<?= htmlspecialchars($prod['strength_per_quantity_unit'] ?? '') ?>" list="edit_unit_measurement_list_<?= $prod['id'] ?>" placeholder="Select Unit">
+                                <div class="input-group">
+                                    <input type="text" id="edit_strength_per_unit_<?= $prod['id'] ?>" name="strength_per_quantity_unit" class="form-control"
+                                        value="<?= htmlspecialchars($prod['strength_per_quantity_unit'] ?? '') ?>" list="edit_unit_measurement_list_<?= $prod['id'] ?>" placeholder="Select Unit">
+                                    <button type="button" class="btn btn-danger btn-add-measurement"
+                                        data-bs-toggle="modal" data-bs-target="#addMeasurementModal"
+                                        data-measurement-target="edit_strength_per_unit_<?= $prod['id'] ?>"
+                                        title="Add a new measurement unit">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                </div>
                                 <div class="form-text text-muted mt-1">Choose the unit for the total package contents, such as ml, g, kg, or pieces.</div>
                             </div>
                         </div>
@@ -247,6 +264,104 @@ $dosageForms = $product->getDosageForms(); ?>
     }
 
     document.addEventListener('DOMContentLoaded', function () {
+        const measurementModal = document.getElementById('addMeasurementModal');
+        const measurementButtons = document.querySelectorAll('.btn-add-measurement');
+        let activeMeasurementTarget = null;
+
+        measurementButtons.forEach(function (button) {
+            button.addEventListener('click', function () {
+                activeMeasurementTarget = this.getAttribute('data-measurement-target') || null;
+                const input = activeMeasurementTarget ? document.getElementById(activeMeasurementTarget) : null;
+                if (input) input.focus();
+            });
+        });
+
+        const measurementForm = document.getElementById('addMeasurementForm');
+        if (measurementForm) {
+            measurementForm.addEventListener('submit', function (event) {
+                event.preventDefault();
+                const nameInput = document.getElementById('new_measurement_name');
+                const measurementName = nameInput ? nameInput.value.trim() : '';
+
+                if (!measurementName) {
+                    mmbNotify({ type: 'warning', title: 'Measurement required', message: 'Please enter a unit name before saving.' });
+                    return;
+                }
+
+                const submitBtn = measurementForm.querySelector('button[type="submit"]');
+                if (submitBtn) {
+                    submitBtn.disabled = true;
+                    submitBtn.textContent = 'Saving...';
+                }
+
+                const formData = new FormData();
+                formData.append('measurement_name', measurementName);
+
+                fetch('../function/add_measurement_ajax.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then((response) => response.json().then((data) => ({ status: response.status, data })))
+                .then(({ status, data }) => {
+                    if (submitBtn) {
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = 'Save Unit';
+                    }
+
+                    if (status === 200 && data.success) {
+                        document.querySelectorAll('datalist').forEach(function (list) {
+                            const listId = list.id || '';
+                            if (!listId.includes('measurement') && !listId.includes('unit')) return;
+                            const exists = Array.from(list.options).some((option) => option.value.trim().toLowerCase() === measurementName.toLowerCase());
+                            if (!exists) {
+                                const option = document.createElement('option');
+                                option.value = data.name || measurementName;
+                                option.setAttribute('data-id', String(data.id || ''));
+                                list.appendChild(option);
+                            }
+                        });
+
+                        if (activeMeasurementTarget) {
+                            const targetInput = document.getElementById(activeMeasurementTarget);
+                            if (targetInput) {
+                                targetInput.value = data.name || measurementName;
+                                targetInput.dispatchEvent(new Event('input', { bubbles: true }));
+                                targetInput.dispatchEvent(new Event('change', { bubbles: true }));
+                            }
+                        }
+
+                        if (measurementModal) {
+                            const modal = bootstrap.Modal.getInstance(measurementModal);
+                            if (modal) modal.hide();
+                        }
+
+                        const openEditModal = document.querySelector('.modal.show');
+                        if (openEditModal) {
+                            const editModalInstance = bootstrap.Modal.getOrCreateInstance(openEditModal);
+                            setTimeout(() => {
+                                editModalInstance.show();
+                            }, 180);
+                        }
+
+                        measurementForm.reset();
+                        mmbNotify({ type: 'success', title: 'Measurement saved', message: 'The new unit has been added and is ready to use.' });
+                        return;
+                    }
+
+                    const message = data && data.message ? data.message : 'Unable to save the measurement unit.';
+                    mmbNotify({ type: 'warning', title: 'Could not save measurement', message: message });
+                })
+                .catch((error) => {
+                    if (submitBtn) {
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = 'Save Unit';
+                    }
+                    console.error('Measurement save failed:', error);
+                    mmbNotify({ type: 'danger', title: 'Network error', message: 'Could not save the measurement unit.' });
+                });
+            });
+        }
+
         document.querySelectorAll('[id^="edit_category_search_"]').forEach(function (categoryInput) {
             const productId = categoryInput.id.replace('edit_category_search_', '');
             const listId = 'edit_category_list_' + productId;

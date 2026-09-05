@@ -102,8 +102,17 @@ $dosageForms = $product->getDosageForms();
                         </div>
                         <div class="add-product-field">
                             <label for="unit_measurement_search" class="form-label">Serving Unit</label>
-                            <input type="text" id="unit_measurement_search" class="form-control"
-                                list="unit_measurement_list" placeholder="Select Unit" autocomplete="off">
+                            <div class="input-group">
+                                <input type="text" id="unit_measurement_search" class="form-control"
+                                    list="unit_measurement_list" placeholder="Select Unit" autocomplete="off">
+                                <button type="button" class="btn btn-danger btn-add-measurement"
+                                    data-bs-toggle="modal" data-bs-target="#addMeasurementModal"
+                                    data-measurement-target="unit_measurement_search"
+                                    data-measurement-hidden="unit_measurement"
+                                    title="Add a new measurement unit">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
                             <input type="hidden" id="unit_measurement" name="unit_measurement" value="">
                             <datalist id="unit_measurement_list">
                                 <?php foreach ($unitMeasurements as $unit): ?>
@@ -146,9 +155,17 @@ $dosageForms = $product->getDosageForms();
                         </div>
                         <div class="add-product-field">
                             <label for="strength_per_quantity_unit" class="form-label">Volume / Quantity Unit</label>
-                            <input type="text" id="strength_per_quantity_unit" name="strength_per_quantity_unit"
-                                class="form-control" list="strength_per_quantity_unit_list" placeholder="Select Unit"
-                                autocomplete="off">
+                            <div class="input-group">
+                                <input type="text" id="strength_per_quantity_unit" name="strength_per_quantity_unit"
+                                    class="form-control" list="strength_per_quantity_unit_list" placeholder="Select Unit"
+                                    autocomplete="off">
+                                <button type="button" class="btn btn-danger btn-add-measurement"
+                                    data-bs-toggle="modal" data-bs-target="#addMeasurementModal"
+                                    data-measurement-target="strength_per_quantity_unit"
+                                    title="Add a new measurement unit">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
                             <datalist id="strength_per_quantity_unit_list">
                                 <?php foreach ($unitMeasurements as $unit): ?>
                                     <option value="<?= htmlspecialchars($unit['name'] ?? '') ?>"></option>
@@ -334,6 +351,31 @@ $dosageForms = $product->getDosageForms();
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="addMeasurementModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-dialog-centered">
+        <div class="modal-content">
+            <form id="addMeasurementForm">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add measurement unit</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="new_measurement_name" class="form-label">Measurement</label>
+                        <input type="text" id="new_measurement_name" name="measurement_name" class="form-control"
+                            placeholder="e.g., tbsp, can, pcs" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger">Save Unit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <script src="../js/auto_generatebarcode.js?v=3"></script>
 
 <script>
@@ -476,6 +518,111 @@ $dosageForms = $product->getDosageForms();
             valueId: 'batch_supplier_id',
             listId: 'batch_supplier_list'
         });
+
+        const measurementModal = document.getElementById('addMeasurementModal');
+        const measurementButtonTargets = document.querySelectorAll('.btn-add-measurement');
+        let activeMeasurementTarget = null;
+
+        measurementButtonTargets.forEach((button) => {
+            button.addEventListener('click', function () {
+                activeMeasurementTarget = this.getAttribute('data-measurement-target') || null;
+                const input = activeMeasurementTarget ? document.getElementById(activeMeasurementTarget) : null;
+                if (input) {
+                    input.focus();
+                }
+            });
+        });
+
+        const measurementForm = document.getElementById('addMeasurementForm');
+        if (measurementForm) {
+            measurementForm.addEventListener('submit', function (event) {
+                event.preventDefault();
+
+                const nameInput = document.getElementById('new_measurement_name');
+                const measurementName = nameInput ? nameInput.value.trim() : '';
+
+                if (!measurementName) {
+                    mmbNotify({ type: 'warning', title: 'Measurement required', message: 'Please enter a unit name before saving.' });
+                    return;
+                }
+
+                const submitBtn = measurementForm.querySelector('button[type="submit"]');
+                if (submitBtn) {
+                    submitBtn.disabled = true;
+                    submitBtn.textContent = 'Saving...';
+                }
+
+                const formData = new FormData();
+                formData.append('measurement_name', measurementName);
+
+                fetch('../function/add_measurement_ajax.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then((response) => response.json().then((data) => ({ status: response.status, data })))
+                .then(({ status, data }) => {
+                    if (submitBtn) {
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = 'Save Unit';
+                    }
+
+                    if (status === 200 && data.success) {
+                        const unitListIds = ['unit_measurement_list', 'strength_per_quantity_unit_list'];
+                        unitListIds.forEach((listId) => {
+                            const list = document.getElementById(listId);
+                            if (!list) return;
+
+                            const exists = Array.from(list.options).some((option) => option.value.trim().toLowerCase() === measurementName.toLowerCase());
+                            if (!exists) {
+                                const option = document.createElement('option');
+                                option.value = data.name || measurementName;
+                                option.setAttribute('data-id', String(data.id || ''));
+                                list.appendChild(option);
+                            }
+                        });
+
+                        if (activeMeasurementTarget) {
+                            const targetInput = document.getElementById(activeMeasurementTarget);
+                            if (targetInput) {
+                                targetInput.value = data.name || measurementName;
+                                targetInput.dispatchEvent(new Event('input', { bubbles: true }));
+                                targetInput.dispatchEvent(new Event('change', { bubbles: true }));
+                            }
+                        }
+
+                        const addProductModalEl = document.getElementById('addProductModal');
+                        if (measurementModal) {
+                            const measurementModalInstance = bootstrap.Modal.getInstance(measurementModal);
+                            if (measurementModalInstance) {
+                                measurementModalInstance.hide();
+                            }
+                        }
+
+                        if (addProductModalEl) {
+                            const addProductModalInstance = bootstrap.Modal.getOrCreateInstance(addProductModalEl);
+                            setTimeout(() => {
+                                addProductModalInstance.show();
+                            }, 180);
+                        }
+
+                        measurementForm.reset();
+                        mmbNotify({ type: 'success', title: 'Measurement saved', message: 'The new unit has been added and is ready to use.' });
+                        return;
+                    }
+
+                    const message = data && data.message ? data.message : 'Unable to save the measurement unit.';
+                    mmbNotify({ type: 'warning', title: 'Could not save measurement', message: message });
+                })
+                .catch((error) => {
+                    if (submitBtn) {
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = 'Save Unit';
+                    }
+                    console.error('Measurement save failed:', error);
+                    mmbNotify({ type: 'danger', title: 'Network error', message: 'Could not save the measurement unit.' });
+                });
+            });
+        }
 
         const batchPromptInput = document.getElementById('add_batch_prompt');
         const batchFields = document.getElementById('batchPromptFields');

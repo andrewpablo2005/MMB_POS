@@ -75,6 +75,51 @@ class ProductManagement
         }
     }
 
+    public function addMeasurement(string $measurementName): array
+    {
+        $name = trim((string) $measurementName);
+        if ($name === '') {
+            return ['success' => false, 'message' => 'Measurement name is required.'];
+        }
+
+        $normalized = preg_replace('/\s+/', ' ', $name);
+        if ($normalized === '') {
+            return ['success' => false, 'message' => 'Measurement name is required.'];
+        }
+
+        try {
+            $existingStmt = $this->con->prepare("SELECT unit_id, different_measurement FROM unit_measurement WHERE LOWER(TRIM(different_measurement)) = LOWER(?) LIMIT 1");
+            $existingStmt->execute([$normalized]);
+            $existing = $existingStmt->fetch();
+
+            if ($existing) {
+                return [
+                    'success' => false,
+                    'message' => 'This measurement already exists.',
+                    'existing_id' => (int) ($existing['unit_id'] ?? 0),
+                    'existing_name' => trim((string) ($existing['different_measurement'] ?? ''))
+                ];
+            }
+
+            $insertStmt = $this->con->prepare("INSERT INTO unit_measurement (different_measurement) VALUES (?)");
+            $insertResult = $insertStmt->execute([$normalized]);
+
+            if (!$insertResult) {
+                return ['success' => false, 'message' => 'Failed to save the measurement unit.'];
+            }
+
+            $unitId = (int) $this->con->lastInsertId();
+            return [
+                'success' => true,
+                'message' => 'Measurement saved successfully.',
+                'id' => $unitId,
+                'name' => $normalized,
+            ];
+        } catch (\Exception $e) {
+            return ['success' => false, 'message' => 'Database error: ' . $e->getMessage()];
+        }
+    }
+
     public function getDosageForms(): array
     {
         try {
