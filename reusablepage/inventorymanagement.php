@@ -10,6 +10,10 @@ $disposedBatches = $inventoryManager->getDisposedBatches();
 $returnedProducts = $inventoryManager->getReturnedProducts();
 $products = $inventoryManager->getAllProducts();
 
+usort($inventoryBatches, static function (array $first, array $second): int {
+    return ((int) ($first['id'] ?? 0)) <=> ((int) ($second['id'] ?? 0));
+});
+
 $inventoryErrorMessage = '';
 if ($inventoryManager->addInventoryBatch()) {
     echo "<script>setTimeout(function(){ window.location.href = 'dashboard.php?tab=inventory&success=1'; }, 10);</script>";
@@ -564,7 +568,8 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
                     <div class="add-product-row">
                     <div class="add-product-field">
                         <label for="batch_number" class="form-label">Batch No</label>
-                        <input type="text" id="batch_number" name="batch_number" class="form-control" placeholder="e.g. BATCH-001" required>
+                        <input type="text" id="batch_number" class="form-control" data-next-batch="" placeholder="Select a product first" readonly>
+                        <div class="form-text text-muted mt-1">The system will automatically assign the next batch number for this item.</div>
                     </div>
                     <div class="add-product-field">
                         <label for="batch_quantity" class="form-label">Quantity Received</label>
@@ -733,6 +738,32 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
 
         const productSearch = document.getElementById('batch_product_search');
         const productIdInput = document.getElementById('batch_product_id');
+        const batchNumberInput = document.getElementById('batch_number');
+        const inventoryBatches = <?= json_encode($inventoryBatches, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT) ?>;
+
+        const showNextBatchNumber = (productId) => {
+            if (!batchNumberInput) return;
+
+            const selectedProductId = Number(productId || 0);
+            if (selectedProductId <= 0) {
+                batchNumberInput.value = '';
+                batchNumberInput.placeholder = 'Select a product first';
+                return;
+            }
+
+            let highestBatchNumber = 0;
+            inventoryBatches.forEach((batch) => {
+                if (Number(batch.product_id) !== selectedProductId) return;
+
+                const match = String(batch.batch_number || '').trim().match(/^batch-(\d+)$/i);
+                if (match) {
+                    highestBatchNumber = Math.max(highestBatchNumber, Number(match[1]));
+                }
+            });
+
+            batchNumberInput.value = `Batch-${highestBatchNumber + 1}`;
+            batchNumberInput.placeholder = 'Automatically generated';
+        };
 
         if (productSearch && productIdInput) {
             const form = productSearch.closest('form');
@@ -745,10 +776,12 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
                 if (matched) {
                     productIdInput.value = matched.getAttribute('data-id') || '';
                     productSearch.setCustomValidity('');
+                    showNextBatchNumber(productIdInput.value);
                     return true;
                 }
 
                 productIdInput.value = '';
+                showNextBatchNumber('');
                 productSearch.setCustomValidity('Please select a product from the list.');
                 return false;
             };
@@ -756,6 +789,7 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
             productSearch.addEventListener('input', function () {
                 if (this.value.trim() === '') {
                     productIdInput.value = '';
+                    showNextBatchNumber('');
                     productSearch.setCustomValidity('Please select a product from the list.');
                     return;
                 }
@@ -763,9 +797,11 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
                 const matched = productOptions.find((option) => option.value.trim().toLowerCase() === this.value.trim().toLowerCase());
                 if (matched) {
                     productIdInput.value = matched.getAttribute('data-id') || '';
+                    showNextBatchNumber(productIdInput.value);
                     productSearch.setCustomValidity('');
                 } else {
                     productIdInput.value = '';
+                    showNextBatchNumber('');
                     productSearch.setCustomValidity('Please select a product from the list.');
                 }
             });

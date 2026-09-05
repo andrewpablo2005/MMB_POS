@@ -40,9 +40,19 @@ $(function () {
     // NORMAL TABLES (no buttons)
     $('.myTable').each(function () {
         if (!$.fn.DataTable.isDataTable(this)) {
-            $(this).DataTable({
+            var tableOptions = {
                 responsive: true,
                 language: { emptyTable: $(this).attr('data-empty-message') || 'No records found.' }
+            };
+
+            if (this.id === 'productManagementTable') {
+                tableOptions.ordering = false;
+            }
+
+            var dataTable = $(this).DataTable(tableOptions);
+            addResponsiveControlHints(this);
+            $(this).on('draw.dt responsive-display.dt', function () {
+                addResponsiveControlHints(this);
             });
         }
     });
@@ -63,6 +73,19 @@ $(function () {
     }
 
 });
+
+function addResponsiveControlHints(table) {
+    $(table).find('tbody td.dtr-control').each(function () {
+        var cell = $(this);
+        var row = cell.closest('tr');
+        var isExpanded = row.hasClass('parent');
+        var message = isExpanded ? 'Click to hide details' : 'Click to show more details';
+
+        cell.attr('title', message);
+        cell.attr('aria-label', message);
+        cell.attr('role', 'button');
+    });
+}
 
 function initDataTable(table) {
     return $(table).DataTable({

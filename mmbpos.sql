@@ -264,7 +264,7 @@ CREATE TABLE `products` (
   `branded_name` varchar(255) NOT NULL COMMENT 'Brand name (e.g., Amoxil)',
   `generic_name` varchar(255) NOT NULL COMMENT 'Generic/active ingredient (e.g., Amoxicillin)',
   `strength` decimal(10,2) NOT NULL DEFAULT 0.00 COMMENT 'Main strength value (e.g., 500mg)',
-  `measurement_id` int(11) NOT NULL COMMENT 'FK to unit_measurement table',
+  `measurement_id` int(11) DEFAULT NULL COMMENT 'FK to unit_measurement table',
   `barcode` varchar(100) DEFAULT NULL COMMENT 'Barcode for POS scanning',
   `category_id` int(11) DEFAULT NULL,
   `classification_id` int(11) DEFAULT NULL,
@@ -761,7 +761,8 @@ CREATE TABLE `users` (
   `position` varchar(20) DEFAULT NULL,
   `failed_attempts` int(11) DEFAULT 0,
   `last_attempt` timestamp NULL DEFAULT NULL,
-  `status` enum('active','disabled') NOT NULL DEFAULT 'active'
+  `status` enum('active','disabled') NOT NULL DEFAULT 'active',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --

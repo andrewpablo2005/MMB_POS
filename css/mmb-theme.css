@@ -1057,6 +1057,21 @@ thead.table-dark th,
     object-fit: cover;
     display: block;
 }
+.table .mmb-thumb {
+    overflow: visible;
+}
+.table .mmb-thumb img {
+    position: relative;
+    z-index: 1;
+    border-radius: 9px;
+    cursor: zoom-in;
+    transition: transform .2s ease, box-shadow .2s ease;
+}
+.table .mmb-thumb:hover img {
+    z-index: 5;
+    transform: scale(2.8);
+    box-shadow: 0 8px 22px rgba(15, 23, 42, .28);
+}
 .mmb-thumb--md {
     width: 42px;
     height: 42px;
@@ -1237,6 +1252,10 @@ table.dataTable.dtr-column > tbody > tr > td.dtr-control:before {
 table.dataTable.dtr-inline.collapsed > tbody > tr.parent > td.dtr-control:before,
 table.dataTable.dtr-column > tbody > tr.parent > td.dtr-control:before {
     content: "\f056"; /* fa-minus-circle */
+}
+table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control,
+table.dataTable.dtr-column > tbody > tr > td.dtr-control {
+    cursor: pointer;
 }
 
 /* ── 2. Card-stack mobile tables (inventory & friends) ── */

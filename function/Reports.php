@@ -52,7 +52,7 @@ class Reports
     }
 
     /* =========================
-       TOP PRODUCTS
+    SELLING PRODUCTS
     ========================= */
     public function getTopProducts(): array
     {
@@ -63,6 +63,8 @@ class Reports
                    p.generic_name,
                    p.strength,
                    um.different_measurement AS measurement_name,
+                   p.strength_per_quantity,
+                   p.strength_per_quantity_unit,
                    COALESCE(p.dosage_form, df.form_name) AS dosage_form,
                    pc.category_name,
                    p.barcode,
@@ -73,12 +75,73 @@ class Reports
             LEFT JOIN unit_measurement um ON um.unit_id = p.measurement_id
             LEFT JOIN dosage_forms df ON df.id = p.dosage_form_id
             LEFT JOIN product_categories pc ON pc.id = p.category_id
-            GROUP BY p.id, p.branded_name, p.generic_name, p.strength, um.different_measurement, p.dosage_form, df.form_name, pc.category_name, p.barcode
-            ORDER BY total_sold DESC
-            LIMIT 5
+            GROUP BY p.id, p.branded_name, p.generic_name, p.strength, um.different_measurement, p.strength_per_quantity, p.strength_per_quantity_unit, p.dosage_form, df.form_name, pc.category_name, p.barcode
+            ORDER BY total_sold DESC, p.id ASC
         ");
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getSellingProductsReport(string $period, string $value, ?int $cashierId = null): array
+    {
+        $period = in_array($period, ['date', 'month', 'year'], true) ? $period : 'date';
+        $value = trim($value);
+        $cashierId = (int) ($cashierId ?? 0);
+
+        if ($period === 'date' && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $value)) {
+            $value = date('Y-m-d');
+        } elseif ($period === 'month' && !preg_match('/^\d{4}-\d{2}$/', $value)) {
+            $value = date('Y-m');
+        } elseif ($period === 'year' && !preg_match('/^\d{4}$/', $value)) {
+            $value = date('Y');
+        }
+
+        $where = '1 = 1';
+        $parameters = [];
+        if ($period === 'date') {
+            $where = 'DATE(t.created_at) = ?';
+            $parameters[] = $value;
+        } elseif ($period === 'month') {
+            $where = "DATE_FORMAT(t.created_at, '%Y-%m') = ?";
+            $parameters[] = $value;
+        } else {
+            $where = 'YEAR(t.created_at) = ?';
+            $parameters[] = (int) $value;
+        }
+
+        if ($cashierId > 0) {
+            $where .= ' AND t.user_id = ?';
+            $parameters[] = $cashierId;
+        }
+
+        $stmt = $this->db->prepare("SELECT p.id AS product_id,
+                   CONCAT_WS(' ', NULLIF(p.branded_name, ''), NULLIF(p.generic_name, '')) AS product_name,
+                   p.branded_name, p.generic_name, p.strength,
+                   um.different_measurement AS measurement_name,
+                   p.strength_per_quantity, p.strength_per_quantity_unit,
+                   COALESCE(p.dosage_form, df.form_name) AS dosage_form,
+                   pc.category_name, p.barcode,
+                   SUM(ti.quantity) AS total_sold,
+                   AVG(ti.price) AS average_price
+            FROM transaction_items ti
+            JOIN transactions t ON t.id = ti.transaction_id
+            JOIN products p ON ti.product_id = p.id
+            LEFT JOIN unit_measurement um ON um.unit_id = p.measurement_id
+            LEFT JOIN dosage_forms df ON df.id = p.dosage_form_id
+            LEFT JOIN product_categories pc ON pc.id = p.category_id
+            WHERE {$where}
+            GROUP BY p.id, p.branded_name, p.generic_name, p.strength, um.different_measurement,
+                     p.strength_per_quantity, p.strength_per_quantity_unit, p.dosage_form,
+                     df.form_name, pc.category_name, p.barcode
+            ORDER BY total_sold DESC, p.id ASC");
+        $stmt->execute($parameters);
+
+        return [
+            'period' => $period,
+            'value' => $value,
+            'cashier_id' => $cashierId,
+            'rows' => $stmt->fetchAll(PDO::FETCH_ASSOC),
+        ];
     }
 
     /* =========================
@@ -131,14 +194,67 @@ class Reports
     ========================= */
     public function getCashierPerformance(): array
     {
+        $columnStmt = $this->db->prepare("SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'users' AND COLUMN_NAME = 'created_at'");
+        $columnStmt->execute();
+        if ((int) $columnStmt->fetchColumn() === 0) {
+            $this->db->exec("ALTER TABLE users ADD COLUMN created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP");
+        }
+
         $stmt = $this->db->prepare("
-            SELECT u.username, COUNT(t.id) total_transactions
-            FROM transactions t
-            JOIN users u ON t.user_id = u.id
-            GROUP BY u.username
+            SELECT u.id, u.username, u.position, u.status, u.created_at,
+                   COALESCE(NULLIF(CONCAT_WS(' ', ui.firstname, ui.lastname), ''), u.username) AS account_name,
+                   COUNT(t.id) AS total_transactions,
+                   COALESCE(SUM(t.total_amount), 0) AS total_sales
+            FROM users u
+            LEFT JOIN users_info ui ON ui.user_id = u.id
+            LEFT JOIN transactions t ON t.user_id = u.id
+            GROUP BY u.id, u.username, u.position, u.status, u.created_at, account_name
+            ORDER BY u.created_at ASC, u.id ASC
         ");
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getAccountActivityReport(string $period, string $value, ?int $cashierId = null): array
+    {
+        $period = in_array($period, ['date', 'month', 'year'], true) ? $period : 'date';
+        $value = trim($value);
+        $cashierId = (int) ($cashierId ?? 0);
+
+        if ($period === 'date' && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $value)) {
+            $value = date('Y-m-d');
+        } elseif ($period === 'month' && !preg_match('/^\d{4}-\d{2}$/', $value)) {
+            $value = date('Y-m');
+        } elseif ($period === 'year' && !preg_match('/^\d{4}$/', $value)) {
+            $value = date('Y');
+        }
+
+        $createdWhere = $period === 'date' ? 'DATE(u.created_at) = ?' : ($period === 'month' ? "DATE_FORMAT(u.created_at, '%Y-%m') = ?" : 'YEAR(u.created_at) = ?');
+        $parameters = [$period === 'year' ? (int) $value : $value];
+        $userWhere = "WHERE {$createdWhere}";
+        if ($cashierId > 0) {
+            $userWhere .= $userWhere === '' ? 'WHERE u.id = ?' : ' AND u.id = ?';
+            $parameters[] = $cashierId;
+        }
+
+        $stmt = $this->db->prepare("SELECT u.id, u.username, u.position, u.status, u.created_at,
+                   COALESCE(NULLIF(CONCAT_WS(' ', ui.firstname, ui.lastname), ''), u.username) AS account_name,
+                   COUNT(t.id) AS total_transactions,
+                   COALESCE(SUM(t.total_amount), 0) AS total_sales
+            FROM users u
+            LEFT JOIN users_info ui ON ui.user_id = u.id
+            LEFT JOIN transactions t ON t.user_id = u.id
+            {$userWhere}
+            GROUP BY u.id, u.username, u.position, u.status, u.created_at, account_name
+            ORDER BY u.created_at ASC, u.id ASC");
+        $stmt->execute($parameters);
+
+        return [
+            'period' => $period,
+            'value' => $value,
+            'cashier_id' => $cashierId,
+            'rows' => $stmt->fetchAll(PDO::FETCH_ASSOC),
+        ];
     }
 
     public function getCashierList(): array
@@ -261,7 +377,7 @@ class Reports
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function getRegisterClosings(): array
+    public function getRegisterClosings(?string $period = null, ?string $value = null, ?int $cashierId = null): array
     {
                 $this->db->exec("CREATE TABLE IF NOT EXISTS register_openings (
                         id INT NOT NULL AUTO_INCREMENT,
@@ -273,6 +389,27 @@ class Reports
                         PRIMARY KEY (id),
                         UNIQUE KEY uq_register_opening_user_date (user_id, business_date)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci");
+
+                $where = [];
+                $parameters = [];
+                if ($period !== null) {
+                    $period = in_array($period, ['date', 'month', 'year'], true) ? $period : 'date';
+                    $value = trim((string) $value);
+                    if ($period === 'date' && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $value)) {
+                        $value = date('Y-m-d');
+                    } elseif ($period === 'month' && !preg_match('/^\d{4}-\d{2}$/', $value)) {
+                        $value = date('Y-m');
+                    } elseif ($period === 'year' && !preg_match('/^\d{4}$/', $value)) {
+                        $value = date('Y');
+                    }
+                    $where[] = $period === 'date' ? 'r.business_date = ?' : ($period === 'month' ? "DATE_FORMAT(r.business_date, '%Y-%m') = ?" : 'YEAR(r.business_date) = ?');
+                    $parameters[] = $period === 'year' ? (int) $value : $value;
+                }
+                if ((int) ($cashierId ?? 0) > 0) {
+                    $where[] = 'r.user_id = ?';
+                    $parameters[] = (int) $cashierId;
+                }
+                $whereSql = $where ? 'WHERE ' . implode(' AND ', $where) : '';
 
                 $stmt = $this->db->prepare("SELECT r.opening_id,
                                      r.closing_id,
@@ -310,8 +447,9 @@ class Reports
                         ) r
                         LEFT JOIN users u ON u.id = r.user_id
                         LEFT JOIN users_info ui ON ui.user_id = u.id
+                        {$whereSql}
                         ORDER BY r.business_date DESC, COALESCE(r.opened_at, r.closed_at) DESC");
-        $stmt->execute();
+        $stmt->execute($parameters);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
@@ -406,6 +544,48 @@ class Reports
             GROUP BY t.id
             ORDER BY t.created_at DESC");
         $stmt->execute($parameters);
+        return [
+            'period' => $period,
+            'value' => $value,
+            'cashier_id' => $cashierId,
+            'rows' => $stmt->fetchAll(PDO::FETCH_ASSOC),
+        ];
+    }
+
+    public function getVatDiscountReport(string $period, string $value, ?int $cashierId = null): array
+    {
+        $period = in_array($period, ['date', 'month', 'year'], true) ? $period : 'date';
+        $value = trim($value);
+        $cashierId = (int) ($cashierId ?? 0);
+
+        if ($period === 'date' && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $value)) {
+            $value = date('Y-m-d');
+        } elseif ($period === 'month' && !preg_match('/^\d{4}-\d{2}$/', $value)) {
+            $value = date('Y-m');
+        } elseif ($period === 'year' && !preg_match('/^\d{4}$/', $value)) {
+            $value = date('Y');
+        }
+
+        $where = $period === 'date' ? 'DATE(t.created_at) = ?' : ($period === 'month' ? "DATE_FORMAT(t.created_at, '%Y-%m') = ?" : 'YEAR(t.created_at) = ?');
+        $parameters = [$period === 'year' ? (int) $value : $value];
+        if ($cashierId > 0) {
+            $where .= ' AND t.user_id = ?';
+            $parameters[] = $cashierId;
+        }
+
+        $stmt = $this->db->prepare("SELECT t.id, t.created_at transaction_date, t.customer_name, t.customer_id, t.customer_type,
+                   CASE
+                       WHEN t.customer_type = 'senior' THEN (SELECT id_number FROM senior_customers WHERE id = t.customer_id LIMIT 1)
+                       WHEN t.customer_type = 'pwd' THEN (SELECT id_number FROM pwd_customers WHERE id = t.customer_id LIMIT 1)
+                       ELSE NULL
+                   END AS govt_id_number,
+                   t.discount_total, t.total_vat_exemption, t.total_amount
+            FROM transactions t
+            WHERE {$where}
+              AND (COALESCE(t.total_vat_exemption, 0) > 0 OR COALESCE(t.discount_total, 0) > 0)
+            ORDER BY t.created_at DESC, t.id DESC");
+        $stmt->execute($parameters);
+
         return [
             'period' => $period,
             'value' => $value,
