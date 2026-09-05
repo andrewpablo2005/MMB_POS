@@ -50,7 +50,7 @@ $dosageForms = $product->getDosageForms();
                         </div>
                         
                         <div class="add-product-field">
-                            <label for="generic_name" class="form-label">Product Name</label>
+                            <label for="generic_name" class="form-label">Generic/Product Name</label>
                             <input type="text" id="generic_name" name="generic_name" class="form-control"
                                 placeholder="e.g., Paracetamol or Potato Chips" required>
                             <div class="form-text text-muted mt-1">
@@ -187,11 +187,10 @@ $dosageForms = $product->getDosageForms();
 
                     <div class="add-product-row">
                         <div class="add-product-field add-product-field--full">
-                            <label for="barcode" class="form-label">Product Code <span
-                                    class="text-danger">*</span></label>
+                            <label for="barcode" class="form-label">Product Code</label>
                             <div class="input-group">
                                 <input type="text" id="barcode" name="barcode" class="form-control"
-                                    placeholder="e.g., 123456789012" required>
+                                    placeholder="e.g., 123456789012">
                                 <button type="button" class="btn btn-outline-secondary" onclick="generateBarcode()">
                                     <i class="fas fa-barcode"></i> Auto
                                 </button>
@@ -232,10 +231,10 @@ $dosageForms = $product->getDosageForms();
                         <div class="add-product-row">
                             <div class="add-product-field">
                                 <label for="batch_number" class="form-label">Batch No</label>
-                                <input type="text" id="batch_number" name="batch_number" class="form-control"
-                                    placeholder="e.g. BATCH-001">
+                                <input type="text" id="batch_number" class="form-control"
+                                    placeholder="Automatically generated" readonly>
                                 <div class="form-text text-muted mt-1">
-                                    Enter the supplier or manufacturer batch reference.
+                                    The system will automatically assign the next batch number for this item.
                                 </div>
                             </div>
                             <div class="add-product-field">
@@ -321,10 +320,9 @@ $dosageForms = $product->getDosageForms();
                     </div>
                     <div class="add-product-row add-product-row--single">
                         <div class="add-product-field add-product-field--full">
-                            <label for="product_image_input" class="form-label">Upload Image <span
-                                    class="text-danger">*</span></label>
+                            <label for="product_image_input" class="form-label">Upload Image</label>
                             <input type="file" id="product_image_input" name="product_image" class="form-control"
-                                accept="image/*" required onchange="previewImage(event)">
+                                accept="image/*" onchange="previewImage(event)">
                             <small class="text-muted d-block mt-2"><i class="fas fa-info-circle"></i> Recommended:
                                 500x500px, JPG/PNG, max 5MB</small>
                         </div>
@@ -696,29 +694,20 @@ $dosageForms = $product->getDosageForms();
     // ADD FORM VALIDATION BEFORE SUBMIT
     function validateAddProductForm(event) {
         const categoryValue = document.getElementById('category_id');
-        const unitValue = document.getElementById('unit_measurement');
         const brandedName = document.getElementById('branded_name');
         const genericName = document.getElementById('generic_name');
         const strength = document.getElementById('strength');
         const barcodeInput = document.getElementById('barcode');
         const imageInput = document.getElementById('product_image_input');
         const addBatchPrompt = document.getElementById('add_batch_prompt');
-        const batchNumber = document.getElementById('batch_number');
         const receivedQuantity = document.getElementById('batch_quantity');
 
         let errors = [];
 
         if (!genericName.value.trim()) errors.push('Generic Name is required');
-        if (!barcodeInput.value.trim()) errors.push('Product Code is required');
-        if (!imageInput.value) errors.push('Product Image is required');
-
         if (!categoryValue.value) errors.push('Category is required - Please select a category');
-        if (!unitValue.value) errors.push('Unit of Measurement is required - Please select a unit');
 
         if (addBatchPrompt && addBatchPrompt.value === 'yes') {
-            if (batchNumber && !batchNumber.value.trim()) {
-                errors.push('Batch No is required when adding a batch');
-            }
             if (receivedQuantity && (!receivedQuantity.value || Number(receivedQuantity.value) <= 0)) {
                 errors.push('Quantity Received must be greater than zero when adding a batch');
             }

@@ -37,6 +37,24 @@ $detailValue = $_GET['detail_value'] ?? date('Y-m-d');
 $cashierList = $report->getCashierList();
 $salesDetail = $report->getSalesDetailReport($detailPeriod, $detailValue, $detailCashierId);
 $salesDetailRows = $salesDetail['rows'];
+$sellingCashierId = isset($_GET['selling_cashier']) ? (int) $_GET['selling_cashier'] : 0;
+$sellingPeriod = $_GET['selling_period'] ?? 'date';
+$sellingValue = $_GET['selling_value'] ?? date('Y-m-d');
+$sellingReport = $report->getSellingProductsReport($sellingPeriod, $sellingValue, $sellingCashierId);
+$sellingProducts = $sellingReport['rows'];
+$vatCashierId = isset($_GET['vat_cashier']) ? (int) $_GET['vat_cashier'] : 0;
+$vatPeriod = $_GET['vat_period'] ?? 'date';
+$vatValue = $_GET['vat_value'] ?? date('Y-m-d');
+$vatReport = $report->getVatDiscountReport($vatPeriod, $vatValue, $vatCashierId);
+$vatDiscountRows = $vatReport['rows'];
+$registerCashierId = isset($_GET['register_cashier']) ? (int) $_GET['register_cashier'] : 0;
+$registerPeriod = $_GET['register_period'] ?? 'date';
+$registerValue = $_GET['register_value'] ?? date('Y-m-d');
+$filteredRegisterClosings = $report->getRegisterClosings($registerPeriod, $registerValue, $registerCashierId);
+$accountPeriod = $_GET['account_period'] ?? 'date';
+$accountValue = $_GET['account_value'] ?? date('Y-m-d');
+$accountReport = $report->getAccountActivityReport($accountPeriod, $accountValue, 0);
+$accountActivityRows = $accountReport['rows'];
 $registerClosings = $report->getRegisterClosings();
 $detailGrossTotal = 0.0;
 $detailDiscountTotal = 0.0;
@@ -72,7 +90,7 @@ foreach ($salesDetailRows as $detailRow) {
         <div class="page-head">
             <div>
                 <h2>Reports &amp; Analytics</h2>
-                <p class="page-sub">Sales details, refunds, cashier performance and inventory insights.</p>
+                <p class="page-sub">Sales details, account activity, refunds, and inventory insights.</p>
             </div>
             <span class="report-date-pill"><?= date('F j, Y') ?></span>
         </div>
@@ -132,6 +150,14 @@ foreach ($salesDetailRows as $detailRow) {
                         <div><i class="fas fa-cash-register"></i> Register Opening &amp; Closing Report</div>
                         <div class="summary-value"><?= count($registerClosings) ?></div>
                         <small class="text-muted">Opening and closing drawer records</small>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-xl-4">
+                    <div class="card shadow-sm summary-card" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#cashierModal">
+                        <div><i class="fas fa-users"></i> All Account Activity</div>
+                        <div class="summary-value"><?= count($accountActivityRows) ?></div>
+                        <small class="text-muted">Accounts and transactions processed</small>
                     </div>
                 </div>
             </div>
@@ -227,6 +253,35 @@ foreach ($salesDetailRows as $detailRow) {
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
+                        <form method="GET" id="registerFilterForm" class="row g-2 align-items-end mb-3">
+                            <input type="hidden" name="tab" value="reports">
+                            <div class="col-md-3">
+                                <label for="register_period" class="form-label">Report period</label>
+                                <select id="register_period" name="register_period" class="form-select">
+                                    <option value="date" <?= $registerPeriod === 'date' ? 'selected' : '' ?>>Specific date</option>
+                                    <option value="month" <?= $registerPeriod === 'month' ? 'selected' : '' ?>>Month</option>
+                                    <option value="year" <?= $registerPeriod === 'year' ? 'selected' : '' ?>>Year</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="register_cashier" class="form-label">Cashier</label>
+                                <select id="register_cashier" name="register_cashier" class="form-select">
+                                    <option value="0" <?= $registerCashierId === 0 ? 'selected' : '' ?>>All cashiers</option>
+                                    <?php foreach ($cashierList as $cashier): ?>
+                                        <option value="<?= (int) $cashier['id'] ?>" <?= $registerCashierId === (int) $cashier['id'] ? 'selected' : '' ?>>
+                                            <?= htmlspecialchars($cashier['cashier_name'] ?? $cashier['username'] ?? 'Unknown') ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="register_value" class="form-label">Choose date, month, or year</label>
+                                <input id="register_value" name="register_value" class="form-control" value="<?= htmlspecialchars($registerValue) ?>" required>
+                            </div>
+                            <div class="col-md-2">
+                                <button type="submit" class="btn btn-primary w-100"><i class="fas fa-filter me-1"></i>View Report</button>
+                            </div>
+                        </form>
                         <div class="table-responsive">
                             <table class="table table-striped table-hover table-sm align-middle myTableExport">
                                 <thead class="table-dark">
@@ -246,9 +301,9 @@ foreach ($salesDetailRows as $detailRow) {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php if (!$registerClosings): ?>
+                                    <?php if (!$filteredRegisterClosings): ?>
                                         <tr><td colspan="12" class="text-center text-muted">No register opening or closing records.</td></tr>
-                                    <?php else: foreach ($registerClosings as $closing): ?>
+                                    <?php else: foreach ($filteredRegisterClosings as $closing): ?>
                                         <?php $variance = (float)($closing['variance'] ?? 0); ?>
                                         <tr>
                                             <td><?= $closing['opening_id'] ? '#' . (int)$closing['opening_id'] : '—' ?></td>
@@ -462,28 +517,59 @@ foreach ($salesDetailRows as $detailRow) {
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="topProductsModalLabel">
-                        <span class="modal-head-icon"><i class="fas fa-star"></i></span>Top 5 Best-Selling Products
+                        <span class="modal-head-icon"><i class="fas fa-star"></i></span>All Selling Products
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
+                    <form method="GET" id="sellingProductsFilterForm" class="row g-2 align-items-end mb-3">
+                        <input type="hidden" name="tab" value="reports">
+                        <div class="col-md-3">
+                            <label for="selling_period" class="form-label">Report period</label>
+                            <select id="selling_period" name="selling_period" class="form-select">
+                                <option value="date" <?= $sellingReport['period'] === 'date' ? 'selected' : '' ?>>Specific date</option>
+                                <option value="month" <?= $sellingReport['period'] === 'month' ? 'selected' : '' ?>>Month</option>
+                                <option value="year" <?= $sellingReport['period'] === 'year' ? 'selected' : '' ?>>Year</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="selling_cashier" class="form-label">Cashier</label>
+                            <select id="selling_cashier" name="selling_cashier" class="form-select">
+                                <option value="0" <?= $sellingReport['cashier_id'] === 0 ? 'selected' : '' ?>>All cashiers</option>
+                                <?php foreach ($cashierList as $cashier): ?>
+                                    <option value="<?= (int) $cashier['id'] ?>" <?= $sellingReport['cashier_id'] === (int) $cashier['id'] ? 'selected' : '' ?>>
+                                        <?= htmlspecialchars($cashier['cashier_name'] ?? $cashier['username'] ?? 'Unknown') ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="selling_value" class="form-label">Choose date, month, or year</label>
+                            <input id="selling_value" name="selling_value" class="form-control" value="<?= htmlspecialchars($sellingReport['value']) ?>" required>
+                        </div>
+                        <div class="col-md-2">
+                            <button type="submit" class="btn btn-primary w-100"><i class="fas fa-filter me-1"></i>View Report</button>
+                        </div>
+                    </form>
                     <div class="table-responsive">
                         <table class="table table-striped table-hover myTableExport">
                             <thead class="table-dark">
                                 <tr>
-                                    <th>Product</th><th>Strength</th><th>Dosage Form</th><th>Category</th><th>Barcode</th><th>Average Price</th><th>Units Sold</th>
+                                    <th>Rank</th><th>Item Name</th><th>Serving Size</th><th>Product Form</th><th>Package Quantity</th><th>Category</th><th>Product Code</th><th>Average Price</th><th data-priority="1">Quantity Purchased</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php foreach ($topProducts as $row): ?>
+                                <?php foreach ($sellingProducts as $rank => $row): ?>
                                     <tr>
+                                        <td><strong><?= $rank + 1 ?></strong></td>
                                         <td><strong><?= report_text(trim(($row['branded_name'] ?? '') . ' ' . ($row['generic_name'] ?? ''))) ?></strong></td>
                                         <td><?= report_text(trim(($row['strength'] ?? '') . ' ' . ($row['measurement_name'] ?? ''))) ?></td>
                                         <td><?= report_text($row['dosage_form'] ?? '') ?></td>
+                                        <td><?= report_text(((float)($row['strength_per_quantity'] ?? 0) > 0 ? (string)$row['strength_per_quantity'] . ' ' : '') . trim((string)($row['strength_per_quantity_unit'] ?? ''))) ?></td>
                                         <td><?= report_text($row['category_name'] ?? '') ?></td>
                                         <td><?= report_text($row['barcode'] ?? '') ?></td>
                                         <td>₱<?= number_format((float)($row['average_price'] ?? 0), 2) ?></td>
-                                        <td><span class="badge badge-soft-dark"><?= (int)$row['total_sold'] ?> units</span></td>
+                                        <td><span class="badge bg-primary fs-6"><?= (int)$row['total_sold'] ?> units</span></td>
                                     </tr>
                                 <?php endforeach; ?>
                             </tbody>
@@ -497,13 +583,13 @@ foreach ($salesDetailRows as $detailRow) {
         </div>
     </div>
 
-    <!-- TOP 5 PRODUCTS MODAL -->
+    <!-- ALL SELLING PRODUCTS MODAL -->
     <div class="modal fade" id="top5ProductsModal" tabindex="-1" aria-labelledby="top5ProductsModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="top5ProductsModalLabel">
-                        <span class="modal-head-icon"><i class="fas fa-box"></i></span>Top 5 Best-Selling Products
+                        <span class="modal-head-icon"><i class="fas fa-box"></i></span>All Selling Products
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
@@ -511,24 +597,24 @@ foreach ($salesDetailRows as $detailRow) {
                     <div class="table-responsive">
                         <table class="table table-striped table-hover myTableExport">
                             <thead class="table-dark">
-                                <tr><th>Rank</th><th>Product</th><th>Strength</th><th>Dosage Form</th><th>Category</th><th>Barcode</th><th>Average Price</th><th>Units Sold</th></tr>
+                                <tr><th>Rank</th><th>Item Name</th><th>Serving Size</th><th>Product Form</th><th>Package Quantity</th><th>Category</th><th>Product Code</th><th>Average Price</th><th data-priority="1">Quantity Purchased</th></tr>
                             </thead>
                             <tbody>
                                 <?php 
-                                    for ($i = 0; $i < min(5, count($topProducts)); $i++):
-                                        $product = $topProducts[$i];
+                                    foreach ($sellingProducts as $i => $product):
                                 ?>
                                     <tr>
                                         <td><strong><?= $i + 1 ?></strong></td>
                                         <td><strong><?= report_text(trim(($product['branded_name'] ?? '') . ' ' . ($product['generic_name'] ?? ''))) ?></strong></td>
                                         <td><?= report_text(trim(($product['strength'] ?? '') . ' ' . ($product['measurement_name'] ?? ''))) ?></td>
                                         <td><?= report_text($product['dosage_form'] ?? '') ?></td>
+                                        <td><?= report_text(((float)($product['strength_per_quantity'] ?? 0) > 0 ? (string)$product['strength_per_quantity'] . ' ' : '') . trim((string)($product['strength_per_quantity_unit'] ?? ''))) ?></td>
                                         <td><?= report_text($product['category_name'] ?? '') ?></td>
                                         <td><?= report_text($product['barcode'] ?? '') ?></td>
                                         <td>₱<?= number_format((float)($product['average_price'] ?? 0), 2) ?></td>
-                                        <td><span class="badge badge-soft-dark"><?= (int)$product['total_sold'] ?> units</span></td>
+                                        <td><span class="badge bg-primary fs-6"><?= (int)$product['total_sold'] ?> units</span></td>
                                     </tr>
-                                <?php endfor; ?>
+                                <?php endforeach; ?>
                             </tbody>
                         </table>
                     </div>
@@ -540,30 +626,56 @@ foreach ($salesDetailRows as $detailRow) {
         </div>
     </div>
 
-    <!-- CASHIER PERFORMANCE MODAL -->
+    <!-- ALL ACCOUNT ACTIVITY MODAL -->
     <div class="modal fade" id="cashierModal" tabindex="-1" aria-labelledby="cashierModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="cashierModalLabel">
-                        <span class="modal-head-icon"><i class="fas fa-user-tie"></i></span>Cashier Performance Report
+                        <span class="modal-head-icon"><i class="fas fa-user-tie"></i></span>All Account Activity Report
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
+                    <form method="GET" id="accountActivityFilterForm" class="row g-2 align-items-end mb-3">
+                        <input type="hidden" name="tab" value="reports">
+                        <div class="col-md-3">
+                            <label for="account_period" class="form-label">Report period</label>
+                            <select id="account_period" name="account_period" class="form-select">
+                                <option value="date" <?= $accountReport['period'] === 'date' ? 'selected' : '' ?>>Specific date</option>
+                                <option value="month" <?= $accountReport['period'] === 'month' ? 'selected' : '' ?>>Month</option>
+                                <option value="year" <?= $accountReport['period'] === 'year' ? 'selected' : '' ?>>Year</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="account_value" class="form-label">Choose date, month, or year</label>
+                            <input id="account_value" name="account_value" class="form-control" value="<?= htmlspecialchars($accountReport['value']) ?>" required>
+                        </div>
+                        <div class="col-md-3">
+                            <button type="submit" class="btn btn-primary w-100"><i class="fas fa-filter me-1"></i>View Report</button>
+                        </div>
+                    </form>
                     <div class="table-responsive">
                         <table class="table table-striped table-hover myTableExport">
                             <thead class="table-dark">
                                 <tr>
-                                    <th><i class="fas fa-user"></i> Cashier Name</th>
-                                    <th><i class="fas fa-shopping-cart"></i> Transactions Processed</th>
+                                    <th data-priority="4"><i class="fas fa-user"></i> Account Name</th>
+                                    <th data-priority="5"><i class="fas fa-id-badge"></i> Username</th>
+                                    <th data-priority="6"><i class="fas fa-user-tag"></i> Position</th>
+                                    <th data-priority="1"><i class="fas fa-calendar-plus"></i> Account Created</th>
+                                    <th data-priority="3"><i class="fas fa-shopping-cart"></i> Transactions Processed</th>
+                                    <th data-priority="2"><i class="fas fa-peso-sign"></i> Total Sales</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php foreach ($cashiers as $row): ?>
+                                <?php foreach ($accountActivityRows as $row): ?>
                                     <tr>
-                                        <td><strong><?= htmlspecialchars($row['username']) ?></strong></td>
-                                        <td><span class="badge bg-info"><?= $row['total_transactions'] ?> transactions</span></td>
+                                        <td><strong><?= report_text($row['account_name'] ?? '') ?></strong></td>
+                                        <td><?= report_text($row['username'] ?? '') ?></td>
+                                        <td><?= report_text($row['position'] ?? '') ?></td>
+                                        <td><?= !empty($row['created_at']) ? date('M d, Y', strtotime($row['created_at'])) : 'N/A' ?></td>
+                                        <td><span class="badge bg-info"><?= (int) ($row['total_transactions'] ?? 0) ?> transactions</span></td>
+                                        <td>₱<?= number_format((float) ($row['total_sales'] ?? 0), 2) ?></td>
                                     </tr>
                                 <?php endforeach; ?>
                             </tbody>
@@ -602,7 +714,7 @@ foreach ($salesDetailRows as $detailRow) {
                             <table class="table table-striped table-hover myTableExport">
                                 <thead class="table-dark">
                                     <tr>
-                                        <th>Product</th><th>Strength</th><th>Dosage Form</th><th>Category</th><th>Barcode</th><th>Batch No</th><th>Expiry Date</th><th>Quantity</th><th>Purchase Cost</th><th>Sale Price</th>
+                                        <th data-priority="1">Product</th><th data-priority="2">Strength</th><th data-priority="3">Product Form</th><th data-priority="9">Category</th><th data-priority="10">Product Code</th><th data-priority="4">Batch No</th><th data-priority="5">Date Expired</th><th data-priority="6">Quantity</th><th data-priority="7">Purchase Cost</th><th data-priority="8">Sale Price</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -695,6 +807,35 @@ foreach ($salesDetailRows as $detailRow) {
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
+                    <form method="GET" id="vatDiscountFilterForm" class="row g-2 align-items-end mb-3">
+                        <input type="hidden" name="tab" value="reports">
+                        <div class="col-md-3">
+                            <label for="vat_period" class="form-label">Report period</label>
+                            <select id="vat_period" name="vat_period" class="form-select">
+                                <option value="date" <?= $vatReport['period'] === 'date' ? 'selected' : '' ?>>Specific date</option>
+                                <option value="month" <?= $vatReport['period'] === 'month' ? 'selected' : '' ?>>Month</option>
+                                <option value="year" <?= $vatReport['period'] === 'year' ? 'selected' : '' ?>>Year</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="vat_cashier" class="form-label">Cashier</label>
+                            <select id="vat_cashier" name="vat_cashier" class="form-select">
+                                <option value="0" <?= $vatReport['cashier_id'] === 0 ? 'selected' : '' ?>>All cashiers</option>
+                                <?php foreach ($cashierList as $cashier): ?>
+                                    <option value="<?= (int) $cashier['id'] ?>" <?= $vatReport['cashier_id'] === (int) $cashier['id'] ? 'selected' : '' ?>>
+                                        <?= htmlspecialchars($cashier['cashier_name'] ?? $cashier['username'] ?? 'Unknown') ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="vat_value" class="form-label">Choose date, month, or year</label>
+                            <input id="vat_value" name="vat_value" class="form-control" value="<?= htmlspecialchars($vatReport['value']) ?>" required>
+                        </div>
+                        <div class="col-md-2">
+                            <button type="submit" class="btn btn-primary w-100"><i class="fas fa-filter me-1"></i>View Report</button>
+                        </div>
+                    </form>
                     <div class="table-responsive">
                         <table class="table table-striped table-hover table-sm myTableExport">
                             <thead class="table-dark">
@@ -713,7 +854,7 @@ foreach ($salesDetailRows as $detailRow) {
                                 $grandTotalVatExemp = 0;
                                 $grandTotalDiscount = 0;
                                 $grandTotal = 0;
-                                foreach ($allTransactions as $row): 
+                                foreach ($vatDiscountRows as $row): 
                                     $vatAmount = $row['total_vat_exemption'] ?? 0;
                                     $discAmount = $row['discount_total'] ?? 0;
                                     
@@ -824,12 +965,202 @@ foreach ($salesDetailRows as $detailRow) {
             updatePeriodInput();
         }());
 
+        (function () {
+            const periodSelect = document.getElementById('selling_period');
+            const cashierSelect = document.getElementById('selling_cashier');
+            const valueInput = document.getElementById('selling_value');
+            const filterForm = document.getElementById('sellingProductsFilterForm');
+            if (!periodSelect || !valueInput || !filterForm) return;
+
+            const defaults = {
+                date: '<?= date('Y-m-d') ?>',
+                month: '<?= date('Y-m') ?>',
+                year: '<?= date('Y') ?>'
+            };
+
+            function updateSellingPeriodInput() {
+                const period = periodSelect.value;
+                valueInput.type = period === 'date' ? 'date' : period === 'month' ? 'month' : 'number';
+                if (period === 'year') {
+                    valueInput.min = '2000';
+                    valueInput.max = '2100';
+                } else {
+                    valueInput.removeAttribute('min');
+                    valueInput.removeAttribute('max');
+                }
+                const validValue = period === 'date' ? /^\d{4}-\d{2}-\d{2}$/.test(valueInput.value)
+                    : period === 'month' ? /^\d{4}-\d{2}$/.test(valueInput.value)
+                    : /^\d{4}$/.test(valueInput.value);
+                if (!validValue) valueInput.value = defaults[period];
+            }
+
+            function refreshSellingReport() {
+                if (valueInput.value) filterForm.requestSubmit();
+            }
+
+            periodSelect.addEventListener('change', function () {
+                updateSellingPeriodInput();
+                refreshSellingReport();
+            });
+            if (cashierSelect) cashierSelect.addEventListener('change', refreshSellingReport);
+            valueInput.addEventListener('change', refreshSellingReport);
+            updateSellingPeriodInput();
+        }());
+
+        (function () {
+            const periodSelect = document.getElementById('vat_period');
+            const cashierSelect = document.getElementById('vat_cashier');
+            const valueInput = document.getElementById('vat_value');
+            const filterForm = document.getElementById('vatDiscountFilterForm');
+            if (!periodSelect || !valueInput || !filterForm) return;
+
+            const defaults = {
+                date: '<?= date('Y-m-d') ?>',
+                month: '<?= date('Y-m') ?>',
+                year: '<?= date('Y') ?>'
+            };
+
+            function updateVatPeriodInput() {
+                const period = periodSelect.value;
+                valueInput.type = period === 'date' ? 'date' : period === 'month' ? 'month' : 'number';
+                if (period === 'year') {
+                    valueInput.min = '2000';
+                    valueInput.max = '2100';
+                } else {
+                    valueInput.removeAttribute('min');
+                    valueInput.removeAttribute('max');
+                }
+                const validValue = period === 'date' ? /^\d{4}-\d{2}-\d{2}$/.test(valueInput.value)
+                    : period === 'month' ? /^\d{4}-\d{2}$/.test(valueInput.value)
+                    : /^\d{4}$/.test(valueInput.value);
+                if (!validValue) valueInput.value = defaults[period];
+            }
+
+            function refreshVatReport() {
+                if (valueInput.value) filterForm.requestSubmit();
+            }
+
+            periodSelect.addEventListener('change', function () {
+                updateVatPeriodInput();
+                refreshVatReport();
+            });
+            if (cashierSelect) cashierSelect.addEventListener('change', refreshVatReport);
+            valueInput.addEventListener('change', refreshVatReport);
+            updateVatPeriodInput();
+        }());
+
+        (function () {
+            const periodSelect = document.getElementById('register_period');
+            const cashierSelect = document.getElementById('register_cashier');
+            const valueInput = document.getElementById('register_value');
+            const filterForm = document.getElementById('registerFilterForm');
+            if (!periodSelect || !valueInput || !filterForm) return;
+
+            const defaults = {
+                date: '<?= date('Y-m-d') ?>',
+                month: '<?= date('Y-m') ?>',
+                year: '<?= date('Y') ?>'
+            };
+
+            function updateRegisterPeriodInput() {
+                const period = periodSelect.value;
+                valueInput.type = period === 'date' ? 'date' : period === 'month' ? 'month' : 'number';
+                if (period === 'year') {
+                    valueInput.min = '2000';
+                    valueInput.max = '2100';
+                } else {
+                    valueInput.removeAttribute('min');
+                    valueInput.removeAttribute('max');
+                }
+                const validValue = period === 'date' ? /^\d{4}-\d{2}-\d{2}$/.test(valueInput.value)
+                    : period === 'month' ? /^\d{4}-\d{2}$/.test(valueInput.value)
+                    : /^\d{4}$/.test(valueInput.value);
+                if (!validValue) valueInput.value = defaults[period];
+            }
+
+            function refreshRegisterReport() {
+                if (valueInput.value) filterForm.requestSubmit();
+            }
+
+            periodSelect.addEventListener('change', function () {
+                updateRegisterPeriodInput();
+                refreshRegisterReport();
+            });
+            if (cashierSelect) cashierSelect.addEventListener('change', refreshRegisterReport);
+            valueInput.addEventListener('change', refreshRegisterReport);
+            updateRegisterPeriodInput();
+        }());
+
+        (function () {
+            const periodSelect = document.getElementById('account_period');
+            const valueInput = document.getElementById('account_value');
+            const filterForm = document.getElementById('accountActivityFilterForm');
+            if (!periodSelect || !valueInput || !filterForm) return;
+
+            const defaults = {
+                date: '<?= date('Y-m-d') ?>',
+                month: '<?= date('Y-m') ?>',
+                year: '<?= date('Y') ?>'
+            };
+
+            function updateAccountPeriodInput() {
+                const period = periodSelect.value;
+                valueInput.type = period === 'date' ? 'date' : period === 'month' ? 'month' : 'number';
+                if (period === 'year') {
+                    valueInput.min = '2000';
+                    valueInput.max = '2100';
+                } else {
+                    valueInput.removeAttribute('min');
+                    valueInput.removeAttribute('max');
+                }
+                const validValue = period === 'date' ? /^\d{4}-\d{2}-\d{2}$/.test(valueInput.value)
+                    : period === 'month' ? /^\d{4}-\d{2}$/.test(valueInput.value)
+                    : /^\d{4}$/.test(valueInput.value);
+                if (!validValue) valueInput.value = defaults[period];
+            }
+
+            function refreshAccountReport() {
+                if (valueInput.value) filterForm.requestSubmit();
+            }
+
+            periodSelect.addEventListener('change', function () {
+                updateAccountPeriodInput();
+                refreshAccountReport();
+            });
+            valueInput.addEventListener('change', refreshAccountReport);
+            updateAccountPeriodInput();
+        }());
+
         $(function () {
             const reportUrl = new URL(window.location.href);
             if (reportUrl.searchParams.has('detail_period') && reportUrl.searchParams.has('detail_value')) {
                 const salesDetailModal = document.getElementById('salesDetailModal');
                 if (salesDetailModal && window.bootstrap) {
                     bootstrap.Modal.getOrCreateInstance(salesDetailModal).show();
+                }
+            }
+            if (reportUrl.searchParams.has('selling_period') && reportUrl.searchParams.has('selling_value')) {
+                const sellingProductsModal = document.getElementById('topProductsModal');
+                if (sellingProductsModal && window.bootstrap) {
+                    bootstrap.Modal.getOrCreateInstance(sellingProductsModal).show();
+                }
+            }
+            if (reportUrl.searchParams.has('vat_period') && reportUrl.searchParams.has('vat_value')) {
+                const vatDiscountModal = document.getElementById('vatDiscountModal');
+                if (vatDiscountModal && window.bootstrap) {
+                    bootstrap.Modal.getOrCreateInstance(vatDiscountModal).show();
+                }
+            }
+            if (reportUrl.searchParams.has('register_period') && reportUrl.searchParams.has('register_value')) {
+                const registerModal = document.getElementById('registerClosingReportModal');
+                if (registerModal && window.bootstrap) {
+                    bootstrap.Modal.getOrCreateInstance(registerModal).show();
+                }
+            }
+            if (reportUrl.searchParams.has('account_period') && reportUrl.searchParams.has('account_value')) {
+                const accountActivityModal = document.getElementById('cashierModal');
+                if (accountActivityModal && window.bootstrap) {
+                    bootstrap.Modal.getOrCreateInstance(accountActivityModal).show();
                 }
             }
 

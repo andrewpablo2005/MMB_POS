@@ -10,6 +10,10 @@ $products = $product->getAllProducts();
 $categories = $product->getCategories();
 $unitMeasurements = $product->getUnitMeasurements();
 
+usort($products, static function (array $first, array $second): int {
+    return ((int) ($first['id'] ?? 0)) <=> ((int) ($second['id'] ?? 0));
+});
+
 $pmUserRole = strtolower($_SESSION['position'] ?? 'staff');
 $pmIsManager = in_array($pmUserRole, ['owner', 'admin']);
 
@@ -62,53 +66,54 @@ if ($product->addProduct()) {
             </div>
         </div>
 
-        <div class="table-responsive"><table class="table table-striped table-hover align-middle w-100 myTable">
+        <div class="table-responsive"><table id="productManagementTable" class="table table-striped table-hover align-middle w-100 myTable">
             <thead class="table-dark">
                 <tr>
                     <th data-priority="6">ID</th>
-                    <th data-priority="1">Branded</th>
-                    <th data-priority="2">Generic</th>
-                    <th data-priority="5">Strength</th>
-                    <th data-priority="7">Dosage Form</th>
-                    <th data-priority="8">Strength Qty</th>
-                    <th data-priority="4">Category</th>
-                    <th data-priority="3">Product Code</th>
-                    <th>Action</th>
+                    <th data-priority="2">Image</th>
+                    <th data-priority="3">Branded</th>
+                    <th data-priority="4">Generic</th>
+                    <th data-priority="5">Strength/Serving Size</th>
+                    <th data-priority="6">Total Volume/Quantity per Package</th>
+                    <th data-priority="7">Category</th>
+                    <th data-priority="1">Action</th>
                 </tr>
             </thead>
 
             <tbody>
                 <?php foreach ($products as $prod): ?>
+                    <?php
+                        $brandName = trim((string) ($prod['branded_name'] ?? ''));
+                        $itemName = trim((string) ($prod['generic_name'] ?? ''));
+                        $strength = trim((string) ($prod['strength'] ?? ''));
+                        $measurementName = trim((string) ($prod['measurement_name'] ?? ''));
+                        $servingSize = $strength !== ''
+                            ? $strength . ($measurementName !== '' ? ' ' . $measurementName : '')
+                            : 'N/A';
+                        $quantity = $prod['strength_per_quantity'] ?? null;
+                        $quantityUnit = trim((string) ($prod['strength_per_quantity_unit'] ?? ''));
+                        $packageQuantity = isset($quantity) && $quantity !== '' && (float) $quantity > 0
+                            ? (string) $quantity . ($quantityUnit !== '' ? ' ' . $quantityUnit : '')
+                            : 'N/A';
+                        $categoryName = trim((string) ($prod['category_name'] ?? ''));
+                    ?>
                     <tr>
                         <td><?= htmlspecialchars((string)($prod['id']), ENT_QUOTES, 'UTF-8') ?></td>
                         <td>
-                            <div class="d-flex align-items-center">
-                                <?php if (!empty(trim((string)($prod['imageproduct'] ?? '')))): ?>
-                                    <span class="mmb-thumb mmb-thumb--md">
-                                        <img src="../img/<?= htmlspecialchars($prod['imageproduct'], ENT_QUOTES, 'UTF-8') ?>" alt="" loading="lazy">
-                                    </span>
-                                <?php else: ?>
-                                    <span class="mmb-thumb mmb-thumb--md mmb-thumb--empty"><i class="fas fa-capsules"></i></span>
-                                <?php endif; ?>
-                                <span><?= htmlspecialchars((string)($prod['branded_name']), ENT_QUOTES, 'UTF-8') ?></span>
-                            </div>
+                            <?php if (!empty(trim((string)($prod['imageproduct'] ?? '')))): ?>
+                                <span class="mmb-thumb mmb-thumb--md">
+                                    <img src="../img/<?= htmlspecialchars($prod['imageproduct'], ENT_QUOTES, 'UTF-8') ?>" alt="<?= htmlspecialchars((string)($prod['generic_name'] ?? 'Product'), ENT_QUOTES, 'UTF-8') ?>" loading="lazy">
+                                </span>
+                            <?php else: ?>
+                                <span class="mmb-thumb mmb-thumb--md mmb-thumb--empty"><i class="fas fa-capsules"></i></span>
+                            <?php endif; ?>
                         </td>
-                        <td><?= htmlspecialchars((string)($prod['generic_name']), ENT_QUOTES, 'UTF-8') ?></td>
-                        <td><?= htmlspecialchars((string)($prod['strength'] ?? 'N/A'), ENT_QUOTES, 'UTF-8') ?> <?= htmlspecialchars((string)($prod['measurement_name'] ?? 'N/A'), ENT_QUOTES, 'UTF-8') ?></td>
-                        <td><?= !empty(trim($prod['dosage_form'] ?? '')) ? htmlspecialchars(trim($prod['dosage_form'])) : 'N/A' ?></td>
-                        <td>
-                            <?php
-                                $qty = $prod['strength_per_quantity'] ?? null;
-                                $unit = trim($prod['strength_per_quantity_unit'] ?? '');
-                                if (isset($qty) && $qty !== '' && $qty !== null && (float)$qty > 0) {
-                                    echo htmlspecialchars((string) $qty) . ($unit ? ' ' . htmlspecialchars($unit) : '');
-                                } else {
-                                    echo 'N/A';
-                                }
-                            ?>
-                        </td>
-                        <td><?= htmlspecialchars((string)($prod['category_name'] ?? 'N/A'), ENT_QUOTES, 'UTF-8') ?></td>
-                        <td><span class="mmb-code-chip" data-code="<?= htmlspecialchars((string)($prod['barcode']), ENT_QUOTES, 'UTF-8') ?>" data-name="<?= htmlspecialchars(trim(($prod['branded_name'] ?? '') . ' ' . ($prod['generic_name'] ?? '')), ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars((string)($prod['barcode']), ENT_QUOTES, 'UTF-8') ?></span></td>
+                        <td><?= htmlspecialchars($brandName !== '' ? $brandName : 'N/A', ENT_QUOTES, 'UTF-8') ?></td>
+                        <td><?= htmlspecialchars($itemName !== '' ? $itemName : 'N/A', ENT_QUOTES, 'UTF-8') ?></td>
+                        <td><?= htmlspecialchars($servingSize, ENT_QUOTES, 'UTF-8') ?></td>
+                        <td><?= htmlspecialchars($packageQuantity, ENT_QUOTES, 'UTF-8') ?></td>
+                        <td><?= htmlspecialchars($categoryName !== '' ? $categoryName : 'N/A', ENT_QUOTES, 'UTF-8') ?></td>
+                       
                         <td>
                             <!-- BARCODE (issue #4: preview + download the real Code 128 label) -->
                             <button class="btn btn-outline-secondary btn-sm mmb-barcode-btn" data-barcode="<?= htmlspecialchars((string)($prod['barcode']), ENT_QUOTES, 'UTF-8') ?>" data-product="<?= htmlspecialchars(trim(($prod['branded_name'] ?? '') . ' ' . ($prod['generic_name'] ?? '') . ' ' . ($prod['strength'] ?? '') . ' ' . ($prod['measurement_name'] ?? '') . ' ' . trim($prod['dosage_form'] ?? '')), ENT_QUOTES, 'UTF-8') ?>" aria-label="Barcode preview">

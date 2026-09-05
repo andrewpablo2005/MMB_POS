@@ -387,7 +387,8 @@ CREATE TABLE `users` (
   `position` varchar(20) DEFAULT NULL,
   `status` enum('active','disabled') NOT NULL DEFAULT 'active',
   `failed_attempts` int(11) DEFAULT 0,
-  `last_attempt` timestamp NULL DEFAULT NULL
+  `last_attempt` timestamp NULL DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --

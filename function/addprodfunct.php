@@ -46,6 +46,43 @@ class ProductManagement
         $stmt->execute([$table, $column]);
         return (int)$stmt->fetchColumn() > 0;
     }
+    
+    private function generateBatchNumber(int $productId): string
+    {
+        $stmt = $this->con->prepare("SELECT batch_number FROM inventory WHERE product_id = ? FOR UPDATE");
+        $stmt->execute([$productId]);
+
+        $highestNumber = 0;
+        $existingNames = [];
+        while ($row = $stmt->fetch()) {
+            $existingName = trim((string) ($row['batch_number'] ?? ''));
+            if ($existingName !== '') {
+                $existingNames[strtolower($existingName)] = true;
+            }
+
+            if (preg_match('/^batch-(\d+)$/i', $existingName, $matches)) {
+                $highestNumber = max($highestNumber, (int) $matches[1]);
+            }
+        }
+
+        do {
+            $highestNumber++;
+            $batchNumber = 'Batch-' . $highestNumber;
+        } while (isset($existingNames[strtolower($batchNumber)]));
+
+        return $batchNumber;
+    }
+
+    private function ensureMeasurementColumnOptional(): void
+    {
+        $stmt = $this->con->prepare("SELECT IS_NULLABLE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'products' AND COLUMN_NAME = 'measurement_id'");
+        $stmt->execute();
+        $isNullable = strtoupper((string) ($stmt->fetchColumn() ?? 'YES')) === 'YES';
+
+        if (!$isNullable) {
+            $this->con->exec("ALTER TABLE products MODIFY measurement_id INT NULL");
+        }
+    }
 
     // Supplier columns are no longer in products table - they belong in suppliers table
     // Pricing columns are no longer in products table - they belong in inventory table
@@ -215,11 +252,8 @@ class ProductManagement
             $this->response = "Category is required. Please select a valid category.";
             return false;
         }
-        if ($this->unit_measurement <= 0) {
-            $this->response = "Unit of Measurement is required. Please select a valid unit.";
-            return false;
-        }
         try {
+            $this->ensureMeasurementColumnOptional();
             $this->con->beginTransaction();
 
             // INSERT THIS BLOCK HERE
@@ -262,7 +296,7 @@ class ProductManagement
                 $this->generic_name,
                 $this->branded_name,
                 $this->strength,
-                $this->unit_measurement,
+                $this->unit_measurement > 0 ? $this->unit_measurement : null,
                 $this->barcode,
                 $this->category_id,
                 $this->units_per_package,
@@ -291,17 +325,13 @@ class ProductManagement
             $addBatch = isset($_POST['add_batch_prompt']) && strtolower((string) $_POST['add_batch_prompt']) === 'yes';
 
             if ($addBatch) {
-                if (trim((string) $this->batch_number) === '') {
-                    $this->con->rollBack();
-                    $this->response = "Batch number is required when adding a batch.";
-                    return false;
-                }
-
                 if ($this->received_quantity <= 0) {
                     $this->con->rollBack();
                     $this->response = "Quantity received must be greater than zero when adding a batch.";
                     return false;
                 }
+
+                $this->batch_number = $this->generateBatchNumber((int) $productId);
 
                 $stmt = $this->con->prepare("
                     INSERT INTO inventory (product_id, supplier_id, batch_number, date_received, expiry_date, purchase_cost, markup, sale_price, received_quantity, current_quantity)
@@ -327,7 +357,9 @@ class ProductManagement
             return true;
 
         } catch (\Exception $e) {
-            $this->con->rollBack();
+            if ($this->con->inTransaction()) {
+                $this->con->rollBack();
+            }
             $this->response = "Transaction failed: " . $e->getMessage();
             return false;
         }
@@ -731,17 +763,13 @@ class ProductManagement
 
                 $addBatch = isset($_POST['add_batch_prompt']) && strtolower((string) $_POST['add_batch_prompt']) === 'yes';
                 if ($addBatch) {
-                    if (trim((string) ($this->batch_number ?? '')) === '') {
-                        $this->con->rollBack();
-                        $this->response = "Batch number is required when adding a batch.";
-                        return false;
-                    }
-
                     if ((int) ($_POST['received_quantity'] ?? 0) <= 0) {
                         $this->con->rollBack();
                         $this->response = "Quantity received must be greater than zero when adding a batch.";
                         return false;
                     }
+
+                    $this->batch_number = $this->generateBatchNumber($this->id);
 
                     $batchStmt = $this->con->prepare("
                         INSERT INTO inventory (product_id, supplier_id, batch_number, date_received, expiry_date, purchase_cost, markup, sale_price, received_quantity, current_quantity)
@@ -751,7 +779,7 @@ class ProductManagement
                     $batchStmt->execute([
                         $this->id,
                         ((int) ($_POST['supplier_id'] ?? 0) > 0) ? (int) $_POST['supplier_id'] : null,
-                        trim((string) ($_POST['batch_number'] ?? '')) ?: null,
+                        $this->batch_number,
                         $_POST['expiry_date'] ?? null,
                         isset($_POST['purchase_cost']) && $_POST['purchase_cost'] !== '' ? (float) $_POST['purchase_cost'] : 0,
                         isset($_POST['markup']) && $_POST['markup'] !== '' ? (float) $_POST['markup'] : 0,
@@ -853,7 +881,6 @@ class ProductManagement
         $productId = (int) ($_POST['product_id'] ?? 0);
         $quantity = (int) ($_POST['quantity'] ?? 0);
         $expiryDate = $_POST['expiry_date'] ?? null;
-        $batchNumber = trim($_POST['batch_number'] ?? '');
         $supplierId = (int) ($_POST['supplier_id'] ?? 0);
         $purchaseCost = isset($_POST['purchase_cost']) && $_POST['purchase_cost'] !== '' ? (float) $_POST['purchase_cost'] : 0;
         $markup = isset($_POST['markup']) && $_POST['markup'] !== '' ? (float) $_POST['markup'] : 0;
@@ -870,18 +897,6 @@ class ProductManagement
             return false;
         }
 
-        if (empty($batchNumber)) {
-            $this->response = "Batch number is required.";
-            return false;
-        }
-
-        $checkBatch = $this->con->prepare("SELECT id FROM inventory WHERE batch_number = ? AND product_id = ?");
-        $checkBatch->execute([$batchNumber, $productId]);
-        if ($checkBatch->fetch()) {
-            $this->response = "This batch number already exists for the selected product.";
-            return false;
-        }
-
         if ($supplierId > 0) {
             $supplierCheck = $this->con->prepare("SELECT id FROM suppliers WHERE id = ?");
             $supplierCheck->execute([$supplierId]);
@@ -893,6 +908,8 @@ class ProductManagement
 
         try {
             $this->con->beginTransaction();
+
+            $batchNumber = $this->generateBatchNumber($productId);
 
             $stmt = $this->con->prepare("
                 INSERT INTO inventory 
@@ -916,7 +933,9 @@ class ProductManagement
             $this->response = "Stock batch added successfully";
             return true;
         } catch (\Exception $e) {
-            $this->con->rollBack();
+            if ($this->con->inTransaction()) {
+                $this->con->rollBack();
+            }
             $this->response = "Failed to add stock batch: " . $e->getMessage();
             return false;
         }
@@ -1139,7 +1158,7 @@ class ProductManagement
             }
 
             if ($batchNumber !== '') {
-                $displayName .= ' (Batch: ' . $batchNumber . ')';
+                $displayName .= ' (' . $batchNumber . ')';
             }
 
             if ($expDate <= $today) {
