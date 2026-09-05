@@ -32,7 +32,7 @@ foreach ($lowStockItems as $item) {
 
 foreach ($expiryItems as $item) {
     $message = $item['status'] === 'Expired'
-        ? htmlspecialchars($item['name']) . ' has already expired and needs immediate attention.'
+        ? htmlspecialchars($item['name']) . ' has expired. Remove it from sale immediately.'
         : htmlspecialchars($item['name']) . ' will expire in ' . $item['days_left'] . ' day(s).';
 
     $globalAlertItems[] = [

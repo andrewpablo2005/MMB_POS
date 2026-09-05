@@ -1094,7 +1094,7 @@ class ProductManagement
             }
 
             if ($batchNumber !== '') {
-                $displayName .= ' (Batch ' . $batchNumber . ')';
+                $displayName .= ' (Batch: ' . $batchNumber . ')';
             }
 
             if ($expDate <= $today) {
