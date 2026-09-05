@@ -1,5 +1,6 @@
 /* ===================================
    PHARMACY LOGIN PAGE STYLES
+   v3 — Mobile hero-card layout (< 992px)
    =================================== */
 
 /* Form Controls Styling */
@@ -137,5 +138,153 @@
 
     .btn-login {
         padding: 10px 20px !important;
+    }
+}
+
+/* ===================================
+   v3 — MOBILE HERO CARD (screens < 992px)
+   Desktop (>= lg) is untouched: the hero and footer are d-lg-none,
+   and .login-card is an unstyled transparent wrapper.
+   =================================== */
+@media (max-width: 991.98px) {
+    /* Top-flow layout instead of vertical centering */
+    body {
+        display: block !important;
+    }
+
+    .login-row {
+        min-height: 100vh !important;
+        min-height: 100dvh !important;
+    }
+
+    .login-col {
+        padding: 0 !important;
+        align-items: flex-start !important;
+    }
+
+    /* Crimson brand hero */
+    .login-hero {
+        position: relative;
+        overflow: hidden;
+        text-align: center;
+        background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+        border-radius: 0 0 26px 26px;
+        padding: 46px 24px 78px;
+    }
+
+    .login-hero .hero-deco {
+        position: absolute;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.08);
+    }
+
+    .login-hero .hero-deco-1 {
+        width: 210px;
+        height: 210px;
+        top: -70px;
+        right: -60px;
+        animation: float 6s ease-in-out infinite;
+    }
+
+    .login-hero .hero-deco-2 {
+        width: 280px;
+        height: 280px;
+        bottom: -110px;
+        left: -90px;
+        animation: float 8s ease-in-out infinite 2s;
+    }
+
+    .login-hero .hero-inner {
+        position: relative;
+        z-index: 2;
+    }
+
+    .login-hero .hero-icon {
+        width: 66px;
+        height: 66px;
+        margin: 0 auto 14px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.16);
+        border: 1px solid rgba(255, 255, 255, 0.28);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+    }
+
+    .login-hero .hero-icon i {
+        font-size: 28px;
+        color: #fff;
+    }
+
+    .login-hero .hero-wordmark {
+        color: #fff;
+        font-size: 1.35rem;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+    }
+
+    .login-hero .hero-sub {
+        color: rgba(255, 255, 255, 0.85);
+        font-size: 0.82rem;
+        margin-top: 5px;
+    }
+
+    /* Form card overlapping the hero */
+    .login-card {
+        position: relative;
+        z-index: 2;
+        margin: -54px 16px 0;
+        background: #fff;
+        border-radius: 18px;
+        padding: 26px 22px 22px;
+        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.10);
+    }
+
+    /* Centered header under the brand hero */
+    .login-header {
+        text-align: center;
+        border-bottom: none;
+        margin-bottom: 18px;
+        padding-bottom: 0;
+    }
+
+    .login-header h2 {
+        font-size: 1.5rem;
+    }
+
+    .login-header p {
+        font-size: 0.85rem;
+    }
+
+    /* Unified, thumb-friendly inputs (16px prevents iOS focus zoom) */
+    .form-control,
+    .input-group-text {
+        min-height: 48px;
+        font-size: 16px;
+        border-radius: 12px !important;
+    }
+
+    .form-label {
+        font-size: 0.8rem;
+        margin-bottom: 6px;
+    }
+
+    .btn-login {
+        border-radius: 12px !important;
+        padding: 13px 24px !important;
+    }
+
+    .security-badge {
+        font-size: 12px;
+    }
+
+    /* Footer grounding */
+    .login-footer {
+        text-align: center;
+        color: #94a3b8;
+        font-size: 0.72rem;
+        padding: 20px 0 calc(18px + env(safe-area-inset-bottom, 0px));
     }
 }

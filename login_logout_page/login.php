@@ -38,15 +38,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pharmacy Management System - Login</title>
     <?php require_once __DIR__ . "/../conn/connection_links.php"; ?>
-    <link rel="stylesheet" href="<?= mmbpos_base_path() ?>/css/login.css?v=2">
+    <link rel="stylesheet" href="<?= mmbpos_base_path() ?>/css/login.css?v=3">
 </head>
 
 <body class="bg-light d-flex align-items-center justify-content-center" style="min-height: 100vh;">
     <div class="container-fluid">
-        <div class="row g-0 align-items-center" style="min-height: 100vh;">
+        <div class="row g-0 align-items-center login-row" style="min-height: 100vh;">
             <!-- Left Column - Login Form -->
-            <div class="col-lg-6 d-flex align-items-center justify-content-center p-5">
+            <div class="col-lg-6 d-flex align-items-center justify-content-center p-5 login-col">
                 <div style="width: 100%; max-width: 420px;">
+                    <!-- Mobile brand hero (hidden on desktop >= lg) -->
+                    <div class="login-hero d-lg-none">
+                        <div class="hero-deco hero-deco-1"></div>
+                        <div class="hero-deco hero-deco-2"></div>
+                        <div class="hero-inner">
+                            <div class="hero-icon"><i class="fas fa-prescription-bottle-medical"></i></div>
+                            <div class="hero-wordmark">MMB Drugstore</div>
+                            <div class="hero-sub">Pharmacy Management System</div>
+                        </div>
+                    </div>
+
+                    <div class="login-card">
                     <div class="login-header">
                         <h2>Welcome Back</h2>
                         <p>Login to your Pharmacy Management System</p>
@@ -71,7 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
                                     <i class="fas fa-user text-muted" style="width: 16px;"></i>
                                 </span>
                                 <input type="text" class="form-control" name="username" id="username"
-                                    placeholder="Enter your username" required autofocus>
+                                    placeholder="Username" required autofocus>
                             </div>
                         </div>
 
@@ -83,7 +95,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
                                 </span>
                                 <input type="password" class="form-control" 
                                     id="password" name="password"
-                                    placeholder="Enter your password" required>
+                                    placeholder="Password" required>
                                 <span class="input-group-text cursor-pointer" id="togglePassword" style="border-left: none;">
                                     <i class="fa fa-eye text-muted" style="width: 16px; cursor: pointer;"></i>
                                 </span>
@@ -100,6 +112,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
                             <i class="fas fa-shield-alt"></i> 
                             <span>Secure Login - Authorized Only</span>
                         </div>
+                    </div>
+                    </div><!-- /.login-card -->
+
+                    <div class="login-footer d-lg-none">
+                        <span>&copy; 2026 MMB Drugstore &middot; POS v1.0</span>
                     </div>
                 </div>
             </div>
