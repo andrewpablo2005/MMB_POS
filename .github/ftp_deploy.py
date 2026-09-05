@@ -101,18 +101,25 @@ class Deployer:
                 pass  # already exists
 
     def upload(self, rel: str) -> bool:
+        """STOR once, then poll SIZE with backoff before re-uploading.
+
+        Why: the hosting FTP backend can serve a STALE size for a freshly
+        stored file (SIZE != uploaded bytes for a short while after the
+        server already ack'd the transfer). Re-uploading instantly (the old
+        behavior) just hits the same stale value 4 times in a row and fails
+        the run even though the file landed correctly. So: check size
+        immediately (happy path, no delay), then re-check with growing
+        waits, and only re-upload if it still mismatches.
+        """
         local = os.path.join(WS, rel)
         size = os.path.getsize(local)
-        for i in range(4):
+        for attempt in range(3):
             try:
                 parent = "/".join(rel.split("/")[:-1])
                 if parent:
                     self.ensure_dir(parent)
                 with open(local, "rb") as fh:
                     self.ftp.storbinary(f"STOR {rel}", fh, blocksize=65536)
-                if self.ftp.size(rel) == size:
-                    return True
-                print(f"    size mismatch on {rel}, retrying")
             except Exception as e:
                 print(f"    transfer error on {rel} ({e.__class__.__name__}), reconnecting")
                 time.sleep(3)
@@ -121,7 +128,45 @@ class Deployer:
                 except Exception:
                     pass
                 self.connect()
+                continue
+            for wait_s in (0, 1, 2, 4, 8):
+                if wait_s:
+                    time.sleep(wait_s)
+                try:
+                    got = self.ftp.size(rel)
+                except Exception:
+                    got = None
+                if got == size:
+                    return True
+                print(f"    size check on {rel}: expected {size}, got {got}"
+                      + (f", waiting {wait_s}s" if wait_s else ""))
+            print(f"    re-uploading {rel} (attempt {attempt + 2}/3)")
         return False
+
+    def verify_sizes(self, rels) -> list:
+        """Final pass: re-check sizes of all uploaded files once the dust settled."""
+        bad = []
+        for rel in rels:
+            local = os.path.join(WS, rel)
+            try:
+                size = os.path.getsize(local)
+            except OSError:
+                continue
+            try:
+                if self.ftp.size(rel) != size:
+                    bad.append(rel)
+            except Exception:
+                try:
+                    self.ftp.quit()
+                except Exception:
+                    pass
+                self.connect()
+                try:
+                    if self.ftp.size(rel) != size:
+                        bad.append(rel)
+                except Exception:
+                    bad.append(rel)
+        return bad
 
     def delete(self, rel: str) -> bool:
         try:
@@ -211,6 +256,15 @@ def main():
     if failed:
         print("::error::Failed after retries: " + ", ".join(failed[:20]))
         raise SystemExit(1)
+
+    # Final verification pass: the FTP backend can lag on fresh uploads, so
+    # re-check every uploaded file's size once all transfers are done.
+    if puts:
+        print("Final verification pass...")
+        bad = d.verify_sizes(puts)
+        if bad:
+            print("::error::Size verification failed for: " + ", ".join(bad[:20]))
+            raise SystemExit(1)
 
     d.write_marker(head_sha)
     print(f"Deployed {len(puts)} file(s), deleted {len(dels)}, in {elapsed:.0f}s. Marker -> {head_sha[:10]}")
