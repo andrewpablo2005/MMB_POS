@@ -23,75 +23,20 @@ $dosageForms = $product->getDosageForms(); ?>
 
                         <div class="add-product-row">
                             <div class="add-product-field">
-                                <label for="edit_branded_name_<?= $prod['id'] ?>" class="form-label">Brand Name</label>
+                                <label for="edit_branded_name_<?= $prod['id'] ?>" class="form-label">Brand Name (if applicable)</label>
                                 <input type="text" id="edit_branded_name_<?= $prod['id'] ?>" name="branded_name" class="form-control"
                                     value="<?= htmlspecialchars($prod['branded_name'] ?? '') ?>" placeholder="e.g., Tylenol">
+                                <div class="form-text text-muted mt-1">Enter the brand printed on the package, or leave blank if there is no brand.</div>
                             </div>
                             <div class="add-product-field">
-                                <label for="edit_generic_name_<?= $prod['id'] ?>" class="form-label">Generic Name</label>
+                                <label for="edit_generic_name_<?= $prod['id'] ?>" class="form-label">Product Name</label>
                                 <input type="text" id="edit_generic_name_<?= $prod['id'] ?>" name="generic_name" class="form-control"
-                                    value="<?= htmlspecialchars($prod['generic_name'] ?? '') ?>" placeholder="e.g., Paracetamol" required>
+                                    value="<?= htmlspecialchars($prod['generic_name'] ?? '') ?>" placeholder="e.g., Paracetamol or Potato Chips" required>
+                                <div class="form-text text-muted mt-1">Enter the name customers will recognize.</div>
                             </div>
                         </div>
 
-                        <div class="add-product-section-head add-product-section-head--spaced">
-                            <div><span class="add-product-section-kicker">02</span><h6>Dosage details</h6></div>
-                            <span>Strength and presentation</span>
-                        </div>
-
-                        <div class="add-product-row">
-                            <div class="add-product-field">
-                                <label for="edit_unit_measurement_search_<?= $prod['id'] ?>" class="form-label">Unit of Measurement</label>
-                                <input type="text" id="edit_unit_measurement_search_<?= $prod['id'] ?>" class="form-control" list="edit_unit_measurement_list_<?= $prod['id'] ?>" placeholder="Select Unit" autocomplete="off"
-                                    value="<?= htmlspecialchars($prod['measurement_name'] ?? '') ?>">
-                                <input type="hidden" id="edit_unit_measurement_<?= $prod['id'] ?>" name="unit_measurement" value="<?= (int) ($prod['measurement_id'] ?? 0) ?>">
-                                <datalist id="edit_unit_measurement_list_<?= $prod['id'] ?>">
-                                    <?php foreach ($unitMeasurements as $unit): ?>
-                                        <option value="<?= htmlspecialchars($unit['name'] ?? '') ?>" data-id="<?= (int) ($unit['id'] ?? 0) ?>">
-                                    <?php endforeach; ?>
-                                </datalist>
-                            </div>
-                            <div class="add-product-field">
-                                <label for="edit_strength_<?= $prod['id'] ?>" class="form-label">Strength <span class="text-danger">*</span></label>
-                                <input type="number" id="edit_strength_<?= $prod['id'] ?>" name="strength" class="form-control"
-                                    placeholder="e.g., 200,500,1000" value="<?= htmlspecialchars((string) ($prod['strength'] ?? '')) ?>" required>
-                            </div>
-                        </div>
-
-                        <div id="edit_dosageFormContainer_<?= $prod['id'] ?>" class="add-product-row add-product-row--single" style="display:none;">
-                            <div class="add-product-field add-product-field--full">
-                                <label for="edit_dosage_form_search_<?= $prod['id'] ?>" class="form-label">Dosage Form</label>
-                                <input type="text" id="edit_dosage_form_search_<?= $prod['id'] ?>" class="form-control" list="edit_dosage_form_list_<?= $prod['id'] ?>" placeholder="Select dosage form" autocomplete="off"
-                                    value="<?= htmlspecialchars($prod['dosage_form'] ?? '') ?>">
-                                <input type="hidden" id="edit_dosage_form_<?= $prod['id'] ?>" name="dosage_form" value="<?= htmlspecialchars($prod['dosage_form'] ?? '') ?>">
-                                <input type="hidden" id="edit_dosage_form_id_<?= $prod['id'] ?>" name="dosage_form_id" value="<?= (int) ($prod['dosage_form_id'] ?? 0) ?>">
-                                <datalist id="edit_dosage_form_list_<?= $prod['id'] ?>">
-                                    <?php foreach ($dosageForms as $form): ?>
-                                        <option value="<?= htmlspecialchars($form['name'] ?? '') ?>" data-id="<?= (int) ($form['id'] ?? 0) ?>">
-                                    <?php endforeach; ?>
-                                </datalist>
-                            </div>
-                        </div>
-
-                        <div id="edit_strengthQuantityFields_<?= $prod['id'] ?>" class="add-product-row" style="display:none;">
-                            <div class="add-product-field">
-                                <label for="edit_strength_per_quantity_<?= $prod['id'] ?>" class="form-label">Strength per Quantity</label>
-                                <input type="number" id="edit_strength_per_quantity_<?= $prod['id'] ?>" name="strength_per_quantity" step="0.01" class="form-control"
-                                    value="<?= htmlspecialchars((string) ($prod['strength_per_quantity'] ?? '')) ?>" placeholder="e.g., 500">
-                            </div>
-                            <div class="add-product-field">
-                                <label for="edit_strength_per_unit_<?= $prod['id'] ?>" class="form-label">Strength Unit</label>
-                                <input type="text" id="edit_strength_per_unit_<?= $prod['id'] ?>" name="strength_per_quantity_unit" class="form-control"
-                                    value="<?= htmlspecialchars($prod['strength_per_quantity_unit'] ?? '') ?>" placeholder="e.g., mg, g, ml">
-                            </div>
-                        </div>
-
-                        <div class="add-product-section-head add-product-section-head--spaced">
-                            <div><span class="add-product-section-kicker">03</span><h6>Classification and code</h6></div>
-                            <span>Category and scanning</span>
-                        </div>
-
-                        <div class="add-product-row">
+                        <div class="add-product-row add-product-row--single">
                             <div class="add-product-field">
                                 <label for="edit_category_search_<?= $prod['id'] ?>" class="form-label">Category <span class="text-danger">*</span></label>
                                 <input type="text" id="edit_category_search_<?= $prod['id'] ?>" class="form-control" list="edit_category_list_<?= $prod['id'] ?>" placeholder="Select Category" autocomplete="off"
@@ -106,14 +51,78 @@ $dosageForms = $product->getDosageForms(); ?>
                                             data-vat="<?= (int) ($cat['has_vat'] ?? 0) ?>">
                                     <?php endforeach; ?>
                                 </datalist>
-                                <div id="edit_categoryRuleNote_<?= $prod['id'] ?>" class="form-text text-muted mt-1">
-                                    This is controlled by the selected category.
-                                </div>
+                                <div id="edit_categoryRuleNote_<?= $prod['id'] ?>" class="form-text text-muted mt-1">Category controls pricing and discount rules.</div>
+                            </div>
+                        </div>
+
+                        <div class="add-product-section-head add-product-section-head--spaced">
+                            <div><span class="add-product-section-kicker">02</span><h6>Product details</h6></div>
+                            <span>Size, amount, and product form</span>
+                        </div>
+
+                        <div class="add-product-row">
+                            <div class="add-product-field">
+                                <label for="edit_strength_<?= $prod['id'] ?>" class="form-label">Amount per Serving <span class="text-muted">(if applicable)</span></label>
+                                <input type="number" id="edit_strength_<?= $prod['id'] ?>" name="strength" class="form-control"
+                                    placeholder="e.g., 250" value="<?= htmlspecialchars((string) ($prod['strength'] ?? '')) ?>">
+                                <div class="form-text text-muted mt-1">Use this for a measured serving or portion, such as 250 mg, 30 g, or 1 piece.</div>
                             </div>
                             <div class="add-product-field">
+                                <label for="edit_unit_measurement_search_<?= $prod['id'] ?>" class="form-label">Serving Unit</label>
+                                <input type="text" id="edit_unit_measurement_search_<?= $prod['id'] ?>" class="form-control" list="edit_unit_measurement_list_<?= $prod['id'] ?>" placeholder="Select Unit" autocomplete="off"
+                                    value="<?= htmlspecialchars($prod['measurement_name'] ?? '') ?>">
+                                <input type="hidden" id="edit_unit_measurement_<?= $prod['id'] ?>" name="unit_measurement" value="<?= (int) ($prod['measurement_id'] ?? 0) ?>">
+                                <datalist id="edit_unit_measurement_list_<?= $prod['id'] ?>">
+                                    <?php foreach ($unitMeasurements as $unit): ?>
+                                        <option value="<?= htmlspecialchars($unit['name'] ?? '') ?>" data-id="<?= (int) ($unit['id'] ?? 0) ?>">
+                                    <?php endforeach; ?>
+                                </datalist>
+                                <div class="form-text text-muted mt-1">Choose the unit for the serving amount, such as mg, g, ml, or pieces.</div>
+                            </div>
+                        </div>
+
+                        <div id="edit_dosageFormContainer_<?= $prod['id'] ?>" class="add-product-row add-product-row--single">
+                            <div class="add-product-field add-product-field--full">
+                                <label for="edit_dosage_form_search_<?= $prod['id'] ?>" class="form-label">Product Form <span class="text-muted">(if applicable)</span></label>
+                                <input type="text" id="edit_dosage_form_search_<?= $prod['id'] ?>" class="form-control" list="edit_dosage_form_list_<?= $prod['id'] ?>" placeholder="Select dosage form" autocomplete="off"
+                                    value="<?= htmlspecialchars($prod['dosage_form'] ?? '') ?>">
+                                <input type="hidden" id="edit_dosage_form_<?= $prod['id'] ?>" name="dosage_form" value="<?= htmlspecialchars($prod['dosage_form'] ?? '') ?>">
+                                <input type="hidden" id="edit_dosage_form_id_<?= $prod['id'] ?>" name="dosage_form_id" value="<?= (int) ($prod['dosage_form_id'] ?? 0) ?>">
+                                <datalist id="edit_dosage_form_list_<?= $prod['id'] ?>">
+                                    <?php foreach ($dosageForms as $form): ?>
+                                        <option value="<?= htmlspecialchars($form['name'] ?? '') ?>" data-id="<?= (int) ($form['id'] ?? 0) ?>">
+                                    <?php endforeach; ?>
+                                </datalist>
+                                <div class="form-text text-muted mt-1">Select a form such as tablet, syrup, bag, bottle, or box, or leave blank when it does not apply.</div>
+                            </div>
+                        </div>
+
+                        <div id="edit_strengthQuantityFields_<?= $prod['id'] ?>" class="add-product-row">
+                            <div class="add-product-field">
+                                <label for="edit_strength_per_quantity_<?= $prod['id'] ?>" class="form-label">Total Volume / Quantity per Package</label>
+                                <input type="number" id="edit_strength_per_quantity_<?= $prod['id'] ?>" name="strength_per_quantity" step="0.01" class="form-control"
+                                    value="<?= htmlspecialchars((string) ($prod['strength_per_quantity'] ?? '')) ?>" placeholder="e.g., 500">
+                                <div class="form-text text-muted mt-1">Total contents of one package, such as 100 ml, 50 g, or 10 tablets.</div>
+                            </div>
+                            <div class="add-product-field">
+                                <label for="edit_strength_per_unit_<?= $prod['id'] ?>" class="form-label">Volume / Quantity Unit</label>
+                                <input type="text" id="edit_strength_per_unit_<?= $prod['id'] ?>" name="strength_per_quantity_unit" class="form-control"
+                                    value="<?= htmlspecialchars($prod['strength_per_quantity_unit'] ?? '') ?>" list="edit_unit_measurement_list_<?= $prod['id'] ?>" placeholder="Select Unit">
+                                <div class="form-text text-muted mt-1">Choose the unit for the total package contents, such as ml, g, kg, or pieces.</div>
+                            </div>
+                        </div>
+
+                        <div class="add-product-section-head add-product-section-head--spaced">
+                            <div><span class="add-product-section-kicker">03</span><h6>Product code</h6></div>
+                            <span>Barcode and scanning</span>
+                        </div>
+
+                        <div class="add-product-row add-product-row--single">
+                            <div class="add-product-field add-product-field--full">
                                 <label for="edit_barcode_<?= $prod['id'] ?>" class="form-label">Product Code <span class="text-danger">*</span></label>
                                 <input type="text" id="edit_barcode_<?= $prod['id'] ?>" name="barcode" class="form-control"
                                     value="<?= htmlspecialchars($prod['barcode'] ?? '') ?>" placeholder="e.g., 123456789012" required>
+                                <div class="form-text text-muted mt-1">Use the product barcode for scanning at checkout.</div>
                             </div>
                         </div>
 
@@ -213,49 +222,11 @@ $dosageForms = $product->getDosageForms(); ?>
     }
 
     function toggleEditDosageFormVisibility(productId) {
-        const categoryInput = document.getElementById('edit_category_search_' + productId);
-        const categoryList = document.getElementById('edit_category_list_' + productId);
-        const dosageInput = document.getElementById('edit_dosage_form_search_' + productId);
         const dosageContainer = document.getElementById('edit_dosageFormContainer_' + productId);
         const dosageFields = document.getElementById('edit_strengthQuantityFields_' + productId);
-        const dosageValue = document.getElementById('edit_dosage_form_' + productId);
-        const dosageId = document.getElementById('edit_dosage_form_id_' + productId);
 
-        if (!categoryInput || !dosageInput) return;
-
-        const categoryName = categoryInput.value.trim();
-        const match = categoryList ? Array.from(categoryList.options).find((option) => option.value.trim() === categoryName) : null;
-        const selectedCategory = match ? (match.value || categoryName) : categoryName;
-        const selectedDosage = (dosageInput.value || '').trim();
-
-        const dosageRequiredCategories = [
-            'Prescription Medicines',
-            'Over-the-Counter (OTC)',
-            'Vitamins & Supplements',
-            'Herbal Products',
-            'First Aid',
-            'Health & Wellness'
-        ].map(normalizeCategoryName);
-
-        const strengthDependentDosageForms = ['Syrup', 'Suspension', 'Solution', 'Oral Drops', 'Oral Suspension', 'Emulsion', 'Elixir'];
-        const isCategoryAllowed = dosageRequiredCategories.includes(normalizeCategoryName(selectedCategory));
-        const isDosageLiquid = strengthDependentDosageForms.some((form) => form.toLowerCase() === selectedDosage.toLowerCase());
-
-        if (dosageContainer) dosageContainer.style.display = isCategoryAllowed ? 'block' : 'none';
-        if (dosageFields) dosageFields.style.display = (isCategoryAllowed && isDosageLiquid) ? 'flex' : 'none';
-
-        if (!isCategoryAllowed) {
-            dosageInput.value = '';
-            if (dosageValue) dosageValue.value = '';
-            if (dosageId) dosageId.value = '';
-        }
-
-        if (isCategoryAllowed && !isDosageLiquid) {
-            const qty = document.getElementById('edit_strength_per_quantity_' + productId);
-            const unit = document.getElementById('edit_strength_per_unit_' + productId);
-            if (qty) qty.value = '';
-            if (unit) unit.value = '';
-        }
+        if (dosageContainer) dosageContainer.style.display = 'grid';
+        if (dosageFields) dosageFields.style.display = 'grid';
     }
 
     function previewUpdateImage(event, productId) {

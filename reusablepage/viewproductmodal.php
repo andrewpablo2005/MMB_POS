@@ -2,35 +2,57 @@
 require_once __DIR__ . '/guard.php'; guard_require_roles(['owner','admin']);
  foreach ($products as $prod): ?>
     <div class="modal fade" id="viewProduct<?= $prod['id'] ?>" tabindex="-1" aria-labelledby="viewProductLabel<?= $prod['id'] ?>" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-scrollable">
-            <div class="modal-content">
-                <div class="modal-header">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable mmb-view-modal-dialog">
+            <div class="modal-content mmb-view-modal">
+                <div class="modal-header mmb-view-header">
                     <h5 class="modal-title" id="viewProductLabel<?= $prod['id'] ?>"><span class="modal-head-icon"><i class="fas fa-capsules"></i></span> Product Details</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <strong>Brand Name:</strong><br>
-                            <?= htmlspecialchars($prod['branded_name'] ?? 'N/A') ?>
+                <div class="modal-body mmb-view-body">
+                    <div class="mmb-view-identity">
+                        <div class="mmb-view-image-wrap">
+                            <?php if (!empty($prod['imageproduct'])): ?>
+                                <img src="../img/<?= htmlspecialchars($prod['imageproduct']) ?>" alt="<?= htmlspecialchars($prod['generic_name'] ?? 'Product') ?>" class="mmb-view-image">
+                            <?php else: ?>
+                                <div class="mmb-view-image-placeholder"><i class="fas fa-box-open"></i></div>
+                            <?php endif; ?>
                         </div>
-                        <div class="col-md-6 mb-3">
-                            <strong>Generic Name:</strong><br>
-                            <?= htmlspecialchars($prod['generic_name'] ?? 'N/A') ?>
+                        <div class="mmb-view-identity-copy">
+                            <span class="mmb-view-eyebrow">Product overview</span>
+                            <h4><?= htmlspecialchars($prod['generic_name'] ?? 'Unnamed product') ?></h4>
+                            <p><?= !empty(trim($prod['branded_name'] ?? '')) ? htmlspecialchars(trim($prod['branded_name'])) : 'No brand' ?> · <?= htmlspecialchars($prod['category_name'] ?? 'Uncategorized') ?></p>
+                            <?php if (!empty(trim((string)($prod['barcode'] ?? '')))): ?>
+                                <button type="button" class="btn btn-sm btn-outline-secondary mmb-barcode-btn" data-barcode="<?= htmlspecialchars((string)$prod['barcode'], ENT_QUOTES, 'UTF-8') ?>" data-product="<?= htmlspecialchars(trim(($prod['branded_name'] ?? '') . ' ' . ($prod['generic_name'] ?? '')), ENT_QUOTES, 'UTF-8') ?>">
+                                    <i class="fas fa-barcode"></i> View barcode
+                                </button>
+                            <?php endif; ?>
                         </div>
-                        <div class="col-md-6 mb-3">
-                            <strong>Strength:</strong><br>
-                            <?= htmlspecialchars((string) ($prod['strength'] ?? 'N/A')) ?>
+                    </div>
+
+                    <section class="mmb-view-section">
+                        <h6 class="mmb-view-section-title">Product information</h6>
+                        <div class="mmb-view-grid">
+                        <div class="mmb-view-item">
+                            <strong>Brand Name</strong>
+                            <span><?= !empty(trim($prod['branded_name'] ?? '')) ? htmlspecialchars(trim($prod['branded_name'])) : 'No brand' ?></span>
                         </div>
-                        <div class="col-md-6 mb-3">
-                            <strong>Dosage Form:</strong><br>
-                            <?= !empty(trim($prod['dosage_form'] ?? '')) ? htmlspecialchars(trim($prod['dosage_form'])) : 'N/A' ?>
+                        <div class="mmb-view-item">
+                            <strong>Product Name</strong>
+                            <span><?= htmlspecialchars($prod['generic_name'] ?? 'N/A') ?></span>
                         </div>
-                        <div class="col-md-6 mb-3">
-                            <strong>Strength per Quantity:</strong><br>
+                        <div class="mmb-view-item">
+                            <strong>Amount per Serving</strong>
+                            <span><?= !empty(trim((string) ($prod['strength'] ?? ''))) ? htmlspecialchars((string) $prod['strength']) . (!empty(trim($prod['measurement_name'] ?? '')) ? ' ' . htmlspecialchars(trim($prod['measurement_name'])) : '') : 'N/A' ?></span>
+                        </div>
+                        <div class="mmb-view-item">
+                            <strong>Product Form</strong>
+                            <span><?= !empty(trim($prod['dosage_form'] ?? '')) ? htmlspecialchars(trim($prod['dosage_form'])) : 'N/A' ?></span>
+                        </div>
+                        <div class="mmb-view-item">
+                            <strong>Total Volume / Quantity per Package</strong>
                             <?php
                                 $qty = $prod['strength_per_quantity'] ?? null;
-                                $unit = trim($prod['strength_per_unit'] ?? '');
+                                $unit = trim($prod['strength_per_quantity_unit'] ?? '');
                                 if (isset($qty) && $qty !== '' && $qty !== null && (float)$qty > 0) {
                                     echo htmlspecialchars((string) $qty) . ($unit ? ' ' . htmlspecialchars($unit) : '');
                                 } else {
@@ -38,62 +60,52 @@ require_once __DIR__ . '/guard.php'; guard_require_roles(['owner','admin']);
                                 }
                             ?>
                         </div>
-                        <div class="col-md-6 mb-3">
-                            <strong>Category:</strong><br>
-                            <?= htmlspecialchars($prod['category_name'] ?? 'N/A') ?>
+                        <div class="mmb-view-item">
+                            <strong>Category</strong>
+                            <span><?= htmlspecialchars($prod['category_name'] ?? 'N/A') ?></span>
                         </div>
-                        <div class="col-md-6 mb-3">
-                            <strong>Product Code:</strong><br>
-                            <?= htmlspecialchars($prod['barcode'] ?? 'N/A') ?>
-                            <?php if (!empty(trim((string)($prod['barcode'] ?? '')))): ?>
-                                <button type="button" class="btn btn-sm btn-outline-secondary ms-1 mmb-barcode-btn"
-                                        data-barcode="<?= htmlspecialchars((string)$prod['barcode'], ENT_QUOTES, 'UTF-8') ?>"
-                                        data-product="<?= htmlspecialchars(trim(($prod['branded_name'] ?? '') . ' ' . ($prod['generic_name'] ?? '') . ' ' . ($prod['strength'] ?? '') . ' ' . ($prod['measurement_name'] ?? '') . ' ' . trim($prod['dosage_form'] ?? '')), ENT_QUOTES, 'UTF-8') ?>">
-                                    <i class="fas fa-barcode"></i>
-                                </button>
-                            <?php endif; ?>
+                        <div class="mmb-view-item">
+                            <strong>Product Code</strong>
+                            <span><?= htmlspecialchars($prod['barcode'] ?? 'N/A') ?></span>
                         </div>
-                        <div class="col-md-6 mb-3">
-                            <strong>Price:</strong><br>
-                            ₱ <?= number_format((float) ($prod['display_price'] ?? $prod['total_price'] ?? 0), 2) ?>
                         </div>
-                        <div class="col-md-6 mb-3">
-                            <strong>Original Stock:</strong><br>
-                            <?= htmlspecialchars((string) ($prod['received_quantity'] ?? 0)) ?>
+                    </section>
+
+                    <section class="mmb-view-section mmb-view-section--spaced">
+                        <h6 class="mmb-view-section-title">Price and stock</h6>
+                        <div class="mmb-view-metrics">
+                        <div class="mmb-view-metric">
+                            <strong>Price</strong>
+                            <span>₱ <?= number_format((float) ($prod['display_price'] ?? $prod['total_price'] ?? 0), 2) ?></span>
                         </div>
-                        <div class="col-md-6 mb-3">
-                            <strong>Current Stock:</strong><br>
-                            <?= htmlspecialchars((string) ($prod['current_quantity'] ?? 0)) ?>
+                        <div class="mmb-view-metric">
+                            <strong>Original Stock</strong>
+                            <span><?= htmlspecialchars((string) ($prod['received_quantity'] ?? 0)) ?></span>
                         </div>
-                        <div class="col-md-6 mb-3">
-                            <strong>Net Price:</strong><br>
-                            ₱ <?= number_format((float) ($prod['net_price'] ?? 0), 2) ?>
+                        <div class="mmb-view-metric">
+                            <strong>Current Stock</strong>
+                            <span><?= htmlspecialchars((string) ($prod['current_quantity'] ?? 0)) ?></span>
                         </div>
-                        <div class="col-md-6 mb-3">
-                            <strong>Sale Price:</strong><br>
-                            ₱ <?= number_format((float) ($prod['total_price'] ?? 0), 2) ?>
+                        <div class="mmb-view-metric">
+                            <strong>Net Price</strong>
+                            <span>₱ <?= number_format((float) ($prod['net_price'] ?? 0), 2) ?></span>
                         </div>
-                        <div class="col-md-6 mb-3">
-                            <strong>Expiry Date:</strong><br>
-                            <?= !empty($prod['expiry_date']) ? htmlspecialchars($prod['expiry_date']) : 'No expiry date' ?>
+                        <div class="mmb-view-metric">
+                            <strong>Sale Price</strong>
+                            <span>₱ <?= number_format((float) ($prod['total_price'] ?? 0), 2) ?></span>
                         </div>
-                        <div class="col-md-6 mb-3">
-                            <strong>Image:</strong><br>
-                            <?php if (!empty($prod['imageproduct'])): ?>
-                                <img src="../img/<?= htmlspecialchars($prod['imageproduct']) ?>" alt="Product Image"
-                                    style="max-width: 150px; max-height: 150px; border-radius: 8px;">
-                            <?php else: ?>
-                                N/A
-                            <?php endif; ?>
+                        <div class="mmb-view-metric">
+                            <strong>Expiry Date</strong>
+                            <span><?= !empty($prod['expiry_date']) ? htmlspecialchars($prod['expiry_date']) : 'No expiry date' ?></span>
+                        </div>
                         </div>
                     </div>
 
-                    <hr>
-
-                    <h6 class="fw-bold text-secondary">Batch Details</h6>
+                    <section class="mmb-view-section mmb-view-section--spaced mmb-view-batch-section">
+                    <h6 class="mmb-view-section-title">Batch details</h6>
                     <?php $batchDetails = $prod['inventory_batches'] ?? []; ?>
                     <?php if (!empty($batchDetails)): ?>
-                        <div class="table-responsive mb-3">
+                        <div class="table-responsive mmb-view-table-wrap mb-3">
                             <table class="table table-sm table-bordered align-middle">
                                 <thead class="table-light">
                                     <tr>
@@ -169,6 +181,7 @@ require_once __DIR__ . '/guard.php'; guard_require_roles(['owner','admin']);
                     <?php else: ?>
                         <p class="text-muted mb-3">No batch details available for this product.</p>
                     <?php endif; ?>
+                    </section>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

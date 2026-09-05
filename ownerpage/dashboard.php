@@ -50,57 +50,57 @@ $activeTab = $_GET['tab'] ?? 'dashboard';
             <div class="offcanvas-body">
                 <div class="nav flex-column nav-pills me-3" role="tablist">
 
-                    <a class="nav-link <?= $activeTab === 'dashboard' ? 'active' : '' ?>" data-bs-toggle="pill"
-                        href="#v-pills-dashboard"><i class="fas fa-chart-line"></i>Dashboard</a>
+                    <a class="nav-link <?= $activeTab === 'dashboard' ? 'active' : '' ?>"
+                        href="?tab=dashboard"><i class="fas fa-chart-line"></i>Dashboard</a>
 
-                    <a class="nav-link <?= $activeTab === 'product' ? 'active' : '' ?>" data-bs-toggle="pill"
-                        href="#v-pills-product"><i class="fas fa-box"></i>Product Management</a>
+                    <a class="nav-link <?= $activeTab === 'product' ? 'active' : '' ?>"
+                        href="?tab=product"><i class="fas fa-box"></i>Product Management</a>
 
-                    <a class="nav-link <?= $activeTab === 'inventory' ? 'active' : '' ?>" data-bs-toggle="pill"
-                        href="#v-pills-inventory"><i class="fas fa-warehouse"></i>Inventory</a>
+                    <a class="nav-link <?= $activeTab === 'inventory' ? 'active' : '' ?>"
+                        href="?tab=inventory"><i class="fas fa-warehouse"></i>Inventory</a>
 
-                    <a class="nav-link <?= $activeTab === 'sales' ? 'active' : '' ?>" data-bs-toggle="pill"
-                        href="#v-pills-sales"><i class="fas fa-shopping-cart"></i>Sales (POS)</a>
+                    <a class="nav-link <?= $activeTab === 'sales' ? 'active' : '' ?>"
+                        href="?tab=sales"><i class="fas fa-shopping-cart"></i>Sales (POS)</a>
 
-                    <a class="nav-link <?= $activeTab === 'reports' ? 'active' : '' ?>" data-bs-toggle="pill"
-                        href="#v-pills-reports"><i class="fas fa-file-alt"></i>Reports</a>
+                    <a class="nav-link <?= $activeTab === 'reports' ? 'active' : '' ?>"
+                        href="?tab=reports"><i class="fas fa-file-alt"></i>Reports</a>
 
-                    <a class="nav-link <?= $activeTab === 'security' ? 'active' : '' ?>" data-bs-toggle="pill"
-                        href="#v-pills-security"><i class="fas fa-shield-alt"></i>Security</a>
+                    <a class="nav-link <?= $activeTab === 'security' ? 'active' : '' ?>"
+                        href="?tab=security"><i class="fas fa-shield-alt"></i>Security</a>
 
-                    <a class="nav-link <?= $activeTab === 'users' ? 'active' : '' ?>" data-bs-toggle="pill"
-                        href="#v-pills-users"><i class="fas fa-users"></i>User Management</a>
+                    <a class="nav-link <?= $activeTab === 'users' ? 'active' : '' ?>"
+                        href="?tab=users"><i class="fas fa-users"></i>User Management</a>
 
-                    <a class="nav-link <?= $activeTab === 'system' ? 'active' : '' ?>" data-bs-toggle="pill"
-                        href="#v-pills-system"><i class="fas fa-cog"></i>System Settings</a>
+                    <a class="nav-link <?= $activeTab === 'system' ? 'active' : '' ?>"
+                        href="?tab=system"><i class="fas fa-cog"></i>System Settings</a>
                 </div>
             </div>
         </div>
 
         <div class="tab-content flex-grow-1 w-100" id="v-pills-tabContent" style="min-height: 100vh; overflow: hidden;">
             <div class="tab-pane fade px-3 px-lg-4 py-4 <?= $activeTab === 'dashboard' ? 'show active' : '' ?>" id="v-pills-dashboard">
-                <?php include __DIR__ . "/../reusablepage/dashboard.php"; ?>
+                <?php if ($activeTab === 'dashboard') include __DIR__ . "/../reusablepage/dashboard.php"; ?>
             </div>
             <div class="tab-pane fade px-3 px-lg-4 py-4 <?= $activeTab === 'product' ? 'show active' : '' ?>" id="v-pills-product">
-                <?php include __DIR__ . "/../reusablepage/productmanagement.php"; ?>
+                <?php if ($activeTab === 'product') include __DIR__ . "/../reusablepage/productmanagement.php"; ?>
             </div>
             <div class="tab-pane fade px-3 px-lg-4 py-4 <?= $activeTab === 'inventory' ? 'show active' : '' ?>" id="v-pills-inventory">
-                <?php include __DIR__ . "/../reusablepage/inventorymanagement.php"; ?>
+                <?php if ($activeTab === 'inventory') include __DIR__ . "/../reusablepage/inventorymanagement.php"; ?>
             </div>
             <div class="tab-pane fade <?= $activeTab === 'sales' ? 'show active' : '' ?>" id="v-pills-sales" style="padding: 0; height: 100%; overflow: hidden;">
-                <?php include __DIR__ . "/../reusablepage/salespos.php"; ?>
+                <?php if ($activeTab === 'sales') include __DIR__ . "/../reusablepage/salespos.php"; ?>
             </div>
             <div class="tab-pane fade px-3 px-lg-4 py-4 <?= $activeTab === 'reports' ? 'show active' : '' ?>" id="v-pills-reports">
-                <?php include __DIR__ . "/../reusablepage/reports.php"; ?>
+                <?php if ($activeTab === 'reports') include __DIR__ . "/../reusablepage/reports.php"; ?>
             </div>
             <div class="tab-pane fade px-3 px-lg-4 py-4 <?= $activeTab === 'security' ? 'show active' : '' ?>" id="v-pills-security">
-                <?php include __DIR__ . "/../reusablepage/userauthentication.php"; ?>
+                <?php if ($activeTab === 'security') include __DIR__ . "/../reusablepage/userauthentication.php"; ?>
             </div>
             <div class="tab-pane fade px-3 px-lg-4 py-4 <?= $activeTab === 'users' ? 'show active' : '' ?>" id="v-pills-users">
-                <?php include __DIR__ . "/../reusablepage/usermanagement.php"; ?>
+                <?php if ($activeTab === 'users') include __DIR__ . "/../reusablepage/usermanagement.php"; ?>
             </div>
             <div class="tab-pane fade px-3 px-lg-4 py-4 <?= $activeTab === 'system' ? 'show active' : '' ?>" id="v-pills-system">
-                <?php include __DIR__ . "/../reusablepage/systemsettings.php"; ?>
+                <?php if ($activeTab === 'system') include __DIR__ . "/../reusablepage/systemsettings.php"; ?>
             </div>
         </div>
     </div>
