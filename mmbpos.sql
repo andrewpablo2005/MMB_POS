@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 03, 2026 at 10:19 AM
+-- Generation Time: Sep 05, 2026 at 11:05 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -111,9 +111,17 @@ CREATE TABLE `inventory` (
 
 INSERT INTO `inventory` (`id`, `product_id`, `supplier_id`, `batch_number`, `date_received`, `manufacture_date`, `purchase_cost`, `markup`, `sale_price`, `received_quantity`, `created_at`, `updated_at`, `current_quantity`, `expiry_date`) VALUES
 (1, 1, 1, 'Batch-1', '2026-08-19', NULL, 12.00, 5.00, 12.60, 100, '2026-08-19 07:54:08', '2026-09-03 07:41:08', 90, '2036-02-02'),
-(2, 2, 1, 'Batch-1', '2026-08-19', NULL, 14.00, 5.00, 14.70, 100, '2026-08-19 08:03:49', '2026-09-03 08:14:03', 91, '2035-02-02'),
+(2, 2, 1, 'Batch-1', '2026-08-19', NULL, 14.00, 5.00, 14.70, 100, '2026-08-19 08:03:49', '2026-09-03 08:24:57', 90, '2035-02-02'),
 (3, 3, 1, 'Batch-1', '2026-09-03', NULL, 7.00, 5.00, 7.35, 100, '2026-09-03 04:49:04', '2026-09-03 08:04:26', 0, '2026-11-26'),
-(4, 1, 1, 'Batch-377', '2026-09-03', NULL, 10.00, 5.00, 10.50, 100, '2026-09-03 07:40:31', '2026-09-03 07:40:31', 100, '2036-02-02');
+(4, 1, 1, 'Batch-377', '2026-09-03', NULL, 10.00, 5.00, 10.50, 100, '2026-09-03 07:40:31', '2026-09-03 07:40:31', 100, '2036-02-02'),
+(5, 2, 1, 'Batch-333', '2026-09-03', NULL, 23.00, 5.00, 24.15, 100, '2026-09-03 08:43:05', '2026-09-03 08:43:05', 100, '2020-02-02'),
+(6, 4, 1, 'Batch-1', '2026-09-05', NULL, 13.50, 5.00, 14.18, 100, '2026-09-05 04:05:36', '2026-09-05 04:05:36', 100, '2030-02-02'),
+(7, 4, 1, 'Batch-2', '2026-09-05', NULL, 122.00, 5.00, 128.10, 12, '2026-09-05 04:06:33', '2026-09-05 04:06:33', 12, '2020-02-02'),
+(8, 4, 1, 'Batch-3', '2026-09-05', NULL, 15.00, 5.00, 15.75, 12, '2026-09-05 04:10:25', '2026-09-05 04:10:25', 12, '2029-02-02'),
+(9, 7, 2, 'Batch-1', '2026-09-05', NULL, 50.00, 5.00, 52.50, 100, '2026-09-05 08:06:03', '2026-09-05 08:06:03', 100, '2036-02-02'),
+(10, 7, 1, 'Batch-2', '2026-09-05', NULL, 50.00, 5.00, 52.50, 200, '2026-09-05 08:06:43', '2026-09-05 08:06:43', 200, '2029-02-02'),
+(11, 7, 1, 'Batch-3', '2026-09-05', NULL, 50.00, 5.00, 52.50, 122, '2026-09-05 08:07:12', '2026-09-05 08:07:12', 122, '2020-02-02'),
+(12, 7, 2, 'Batch-4', '2026-09-05', NULL, 50.00, 5.00, 52.50, 122, '2026-09-05 08:13:58', '2026-09-05 08:13:58', 122, '2036-02-02');
 
 -- --------------------------------------------------------
 
@@ -264,7 +272,7 @@ CREATE TABLE `products` (
   `branded_name` varchar(255) NOT NULL COMMENT 'Brand name (e.g., Amoxil)',
   `generic_name` varchar(255) NOT NULL COMMENT 'Generic/active ingredient (e.g., Amoxicillin)',
   `strength` decimal(10,2) NOT NULL DEFAULT 0.00 COMMENT 'Main strength value (e.g., 500mg)',
-  `measurement_id` int(11) DEFAULT NULL COMMENT 'FK to unit_measurement table',
+  `measurement_id` int(11) DEFAULT NULL,
   `barcode` varchar(100) DEFAULT NULL COMMENT 'Barcode for POS scanning',
   `category_id` int(11) DEFAULT NULL,
   `classification_id` int(11) DEFAULT NULL,
@@ -284,9 +292,13 @@ CREATE TABLE `products` (
 --
 
 INSERT INTO `products` (`id`, `branded_name`, `generic_name`, `strength`, `measurement_id`, `barcode`, `category_id`, `classification_id`, `units_per_package`, `imageproduct`, `is_basic_necessities`, `package_type`, `dosage_form`, `dosage_form_id`, `strength_per_quantity`, `strength_per_quantity_unit`, `is_hidden`) VALUES
-(1, 'Amoxil', 'Amoxicillin', 200.00, 2, '694534915640', 17, NULL, 0, '6a8560e5147e9-1787125989774510531_2439958649832097_7033540453150071412_n.jpg', 0, '', 'Capsule', 2, 0.00, '', 0),
+(1, 'Amoxilf', 'Amoxicillinf', 201.00, 2, '694534915640', 17, NULL, 0, '6a9b9937e0b11-1788582199piatos.jpg', 0, '', 'Oral Liquid', 19, 1000.00, 'mmol', 0),
 (2, 'Paracetamol', 'Ibuprofen', 500.00, 2, '715262585513', 17, NULL, 0, '6a8563658d84f-1787126629771540037_1571619234448543_1070791071661010716_n.jpg', 0, '', 'Capsule', 2, 0.00, '', 0),
-(3, 'SkyFlakes', 'N/A', 25.00, 3, '750515018402', 28, NULL, 0, '6a98fc40662e3-1788410944images.jpg', 0, '', '', NULL, 0.00, '', 0);
+(3, 'SkyFlakes', 'N/A', 25.00, 3, '750515018402', 28, NULL, 0, '6a98fc40662e3-1788410944images.jpg', 0, '', '', NULL, 0.00, '', 0),
+(4, '', 'Piatos', 212.00, 3, '890891237952', 28, NULL, 0, '6a9b94d7b4dae-1788581079piatos.jpg', 0, '', '', NULL, 1.00, 'pc', 0),
+(5, '', 'Kopiko Lucky Day', 180.00, 6, '972798043463', 27, NULL, 0, '6a9bb296a08a2-1788588694ff9435ce118ef605999fd0e12e5400f7.jpg', 0, '', '', NULL, 1.00, 'pc', 0),
+(6, 'Paracetamol', 'Amoxicillin', 10.00, 6, '381837391256', 18, NULL, 0, '6a9bb30598553-1788588805piatos.jpg', 0, '', 'Syrup', 3, 100.00, 'mL', 0),
+(7, 'Trust', 'Condom', 0.00, NULL, '880164770639', 25, NULL, 0, '6a9bcc678664a-1788595303ff9435ce118ef605999fd0e12e5400f7.jpg', 0, '', '', NULL, 1.00, 'box', 0);
 
 -- --------------------------------------------------------
 
@@ -558,7 +570,8 @@ CREATE TABLE `suppliers` (
 --
 
 INSERT INTO `suppliers` (`id`, `supplier_name`, `contact_person`, `contact_number`, `email`, `address`, `supplier_type`, `is_active`, `created_at`, `updated_at`) VALUES
-(1, 'ABC PHARMA', NULL, '+639651800675', 'andrewpablo2005@gmail.com', 'Niyugan Jaen Nueva Ecija Philippines', NULL, 1, '2026-08-19 07:53:41', '2026-08-19 07:53:41');
+(1, 'ABC PHARMA', NULL, '+639651800675', 'andrewpablo2005@gmail.com', 'Niyugan Jaen Nueva Ecija Philippines', NULL, 1, '2026-08-19 07:53:41', '2026-08-19 07:53:41'),
+(2, 'Andrew Pharma', NULL, '+639651800675', 'andrewpablo2005@gmail.com', 'N/A', NULL, 1, '2026-09-05 07:55:47', '2026-09-05 07:55:47');
 
 -- --------------------------------------------------------
 
@@ -603,7 +616,8 @@ INSERT INTO `transactions` (`id`, `user_id`, `discount_id`, `customer_name`, `cu
 (17, 1, 1, 'Walk-in', NULL, '', 7.35, '2026-09-03 04:50:00', 0.00, 0.00),
 (18, 1, 1, 'Walk-in', NULL, '', 720.30, '2026-09-03 05:53:00', 0.00, 0.00),
 (19, 3, 1, 'Walk-in', NULL, '', 7.35, '2026-09-03 08:04:26', 0.00, 0.00),
-(20, 4, 1, 'Walk-in', NULL, '', 14.70, '2026-09-03 08:14:03', 0.00, 0.00);
+(20, 4, 1, 'Walk-in', NULL, '', 14.70, '2026-09-03 08:14:03', 0.00, 0.00),
+(21, 1, 1, 'Walk-in', NULL, '', 14.70, '2026-09-03 08:24:57', 0.00, 0.00);
 
 -- --------------------------------------------------------
 
@@ -666,7 +680,8 @@ INSERT INTO `transaction_items` (`id`, `transaction_id`, `product_id`, `batch_id
 (23, 17, 3, 3, 1, 7.35, 7.35),
 (24, 18, 3, 3, 98, 7.35, 720.30),
 (25, 19, 3, 3, 1, 7.35, 7.35),
-(26, 20, 2, 2, 1, 14.70, 14.70);
+(26, 20, 2, 2, 1, 14.70, 14.70),
+(27, 21, 2, 2, 1, 14.70, 14.70);
 
 -- --------------------------------------------------------
 
@@ -713,7 +728,8 @@ INSERT INTO `transaction_item_batches` (`id`, `transaction_item_id`, `inventory_
 (23, 23, 3, 1, 7.00, '2026-09-03 04:50:00'),
 (24, 24, 3, 98, 7.00, '2026-09-03 05:53:00'),
 (25, 25, 3, 1, 7.00, '2026-09-03 08:04:26'),
-(26, 26, 2, 1, 14.00, '2026-09-03 08:14:03');
+(26, 26, 2, 1, 14.00, '2026-09-03 08:14:03'),
+(27, 27, 2, 1, 14.00, '2026-09-03 08:24:57');
 
 -- --------------------------------------------------------
 
@@ -745,7 +761,12 @@ INSERT INTO `unit_measurement` (`unit_id`, `different_measurement`) VALUES
 (12, 'IU'),
 (13, 'mEq'),
 (14, 'mmol'),
-(15, 'Units');
+(15, 'Units'),
+(16, 'pc'),
+(17, 'pcs'),
+(18, 'tbsp'),
+(19, 'tsp'),
+(20, 'box');
 
 -- --------------------------------------------------------
 
@@ -769,13 +790,14 @@ CREATE TABLE `users` (
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `username`, `password`, `void_password`, `position`, `failed_attempts`, `last_attempt`, `status`) VALUES
-(1, 'andrew_owner', '$2y$10$U9nvr0YPYlqswVjqumcw1OTvtVJYVwdl5MFcCfvumt.nUzhqJTe9C', '1234567', 'Owner', 0, '2026-09-03 08:00:52', 'active'),
-(2, 'andrew_admin', '$2y$10$.pMY78gCNdiWGwCw8DAIse7SS./j5d9T8pQ87YhhLoOum4yKzJL.m', '1234567', 'Admin', 0, '2026-08-20 01:56:58', 'active'),
-(3, 'andrew_staff', '$2y$10$WESQ6f2mApseNhMhKMmW8e6gg.tp9AU8CsY/mQrU4g6GHEWmFCWGG', '1234567', 'Staff', 0, '2026-07-26 14:50:35', 'active'),
-(4, 'staff1', '$2y$10$U60z2JyVRKxJ.x36cqpJkuzZDPRFtOF5aZqUO7QCyBBN.P614oIoy', NULL, 'Staff', 0, NULL, 'active'),
-(5, 'sampleAccount', '$2y$10$G.IAWGX.MPWQ8E1bIvuykO7Ph//70zWAqxZdMdDVMFiZDu7qFtBLm', NULL, 'Staff', 0, NULL, 'active'),
-(6, 'ownerewew', '$2y$10$ksJeBpMxV9gjhPxayLmxSexH68mbQj4MK8ImAs8aCsGYldOCYOJgG', NULL, 'Staff', 0, NULL, 'active');
+INSERT INTO `users` (`id`, `username`, `password`, `void_password`, `position`, `failed_attempts`, `last_attempt`, `status`, `created_at`) VALUES
+(1, 'andrew_owner', '$2y$10$U9nvr0YPYlqswVjqumcw1OTvtVJYVwdl5MFcCfvumt.nUzhqJTe9C', '1234567', 'Owner', 0, '2026-09-03 08:00:52', 'active', '2026-09-05 08:53:02'),
+(2, 'andrew_admin', '$2y$10$.pMY78gCNdiWGwCw8DAIse7SS./j5d9T8pQ87YhhLoOum4yKzJL.m', '1234567', 'Admin', 0, '2026-08-20 01:56:58', 'active', '2026-09-05 08:53:02'),
+(3, 'andrew_staff', '$2y$10$WESQ6f2mApseNhMhKMmW8e6gg.tp9AU8CsY/mQrU4g6GHEWmFCWGG', '1234567', 'Staff', 0, '2026-07-26 14:50:35', 'active', '2026-09-05 08:53:02'),
+(4, 'staff1', '$2y$10$U60z2JyVRKxJ.x36cqpJkuzZDPRFtOF5aZqUO7QCyBBN.P614oIoy', NULL, 'Staff', 0, NULL, 'active', '2026-09-05 08:53:02'),
+(5, 'sampleAccount', '$2y$10$G.IAWGX.MPWQ8E1bIvuykO7Ph//70zWAqxZdMdDVMFiZDu7qFtBLm', NULL, 'Staff', 0, NULL, 'active', '2026-09-05 08:53:02'),
+(6, 'ownerewew', '$2y$10$ksJeBpMxV9gjhPxayLmxSexH68mbQj4MK8ImAs8aCsGYldOCYOJgG', NULL, 'Staff', 0, NULL, 'active', '2026-09-05 08:53:02'),
+(8, 'nokkkkkk', '$2y$10$0X1yddbjSnlz62SzMZDrM.BXlBO7Jkj1eACodyDzl3ZOYB7Nn9D6q', '$2y$10$wZJHXgcm8XCPw62rB.AFqenueraiaxuy8q7/AR8ihhxs/.8tcQZ5K', 'Staff', 0, NULL, 'active', '2026-09-05 08:54:32');
 
 -- --------------------------------------------------------
 
@@ -810,7 +832,8 @@ INSERT INTO `users_info` (`id`, `user_id`, `firstname`, `middlename`, `lastname`
 (4, 4, 'Ivhan Grace', 'De Belen', 'Aguilar', 20, 'N/A', 'Niyugan', 'Jaen', 'Nueva Ecija', 'Philippines', 'andrewpablo2005@gmail.com', '09651800675'),
 (5, 5, 'Sample', 'Gonzales', 'Pablo', 19, 'Purok', 'Niyugan', 'JAEN (NUEVA ECIJA)', 'Nueva Ecija', 'Philippines', 'andrewpablo2005@gmail.com', '09651800675'),
 (6, 6, 'Dut', 'Gonzales', 'Pablo', 27, 'df', 'Malapit', 'fd', 'df', 'Philippines', 'andrewpablo2005@gmail.com', '09651800675'),
-(7, 7, 'Sampleee12', 'Gonzales', 'Pablo', 18, 'Purok', 'Poblacion', 'JAEN (NUEVA ECIJA)', 'Nueva Ecija', 'Philippines', 'andrewpablo2005@gmail.com', '09651800675');
+(7, 7, 'Sampleee12', 'Gonzales', 'Pablo', 18, 'Purok', 'Poblacion', 'JAEN (NUEVA ECIJA)', 'Nueva Ecija', 'Philippines', 'andrewpablo2005@gmail.com', '09651800675'),
+(8, 8, 'Andrewsfsef', 'Gonzales', 'Pablo', 23, 'Purok', 'Poblacion', 'JAEN (NUEVA ECIJA)', 'Nueva Ecija', 'Philippines', 'andrewpablo2005@gmail.com', '09651800675');
 
 --
 -- Indexes for dumped tables
@@ -1041,7 +1064,7 @@ ALTER TABLE `dosage_forms`
 -- AUTO_INCREMENT for table `inventory`
 --
 ALTER TABLE `inventory`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `inventory_disposals`
@@ -1083,7 +1106,7 @@ ALTER TABLE `pre_approved_users_info`
 -- AUTO_INCREMENT for table `products`
 --
 ALTER TABLE `products`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `product_categories`
@@ -1131,13 +1154,13 @@ ALTER TABLE `senior_customers`
 -- AUTO_INCREMENT for table `suppliers`
 --
 ALTER TABLE `suppliers`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `transactions`
 --
 ALTER TABLE `transactions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT for table `transaction_batch_allocations`
@@ -1149,31 +1172,31 @@ ALTER TABLE `transaction_batch_allocations`
 -- AUTO_INCREMENT for table `transaction_items`
 --
 ALTER TABLE `transaction_items`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
 
 --
 -- AUTO_INCREMENT for table `transaction_item_batches`
 --
 ALTER TABLE `transaction_item_batches`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
 
 --
 -- AUTO_INCREMENT for table `unit_measurement`
 --
 ALTER TABLE `unit_measurement`
-  MODIFY `unit_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `unit_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `users_info`
 --
 ALTER TABLE `users_info`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- Constraints for dumped tables
