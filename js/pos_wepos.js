@@ -882,10 +882,14 @@ function weposSetupCartResizer() {
     const handle = document.getElementById('weposCartResizer');
     if (!panel || !handle) return;
 
-    // Restore the saved width (desktop layout only — mobile stacks the panes)
+    // Restore the saved width (desktop layout only — mobile stacks the panes).
+    // Clearing max-width lets the saved/dragged width win over the default cap.
     if (window.innerWidth >= 992) {
         const saved = parseFloat(localStorage.getItem('weposCartWidth'));
-        if (saved >= 320 && saved <= 560) panel.style.width = saved + 'px';
+        if (saved >= 320 && saved <= 560) {
+            panel.style.width = saved + 'px';
+            panel.style.maxWidth = 'none';
+        }
     }
 
     let dragging = false;
@@ -904,11 +908,16 @@ function weposSetupCartResizer() {
         localStorage.setItem('weposCartWidth', panel.style.width.replace('px', ''));
     };
 
+    const applyWidth = (px) => {
+        panel.style.width = px + 'px';
+        panel.style.maxWidth = 'none';
+    };
+
     handle.addEventListener('mousedown', startDrag);
     document.addEventListener('mousemove', (e) => {
         if (!dragging) return;
         const w = Math.min(560, Math.max(320, window.innerWidth - e.clientX));
-        panel.style.width = w + 'px';
+        applyWidth(w);
     });
     document.addEventListener('mouseup', endDrag);
 
@@ -921,7 +930,7 @@ function weposSetupCartResizer() {
         const t = e.touches[0];
         if (!t) return;
         const w = Math.min(560, Math.max(320, window.innerWidth - t.clientX));
-        panel.style.width = w + 'px';
+        applyWidth(w);
     }, { passive: true });
     document.addEventListener('touchend', endDrag);
 }
