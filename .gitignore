@@ -7,9 +7,6 @@ Thumbs.db
 
 # Logs
 *.log
-<<<<<<< HEAD
-=======
 
 # Runtime product photos - uploaded via the app / file manager, never deployed
 img/
->>>>>>> e8a6e690db37038ff803974010cb2ad942b8c18a

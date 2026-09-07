@@ -35,6 +35,8 @@ document.addEventListener('DOMContentLoaded', () => {
         weposSetupSearch();
         weposSetupKeyboard();
         weposSetupIdLookup();
+        weposSetupCartResizer();     // issue #7.5 — draggable cart panel width
+        weposSetupCategoriesWheel(); // issue #7.6 — wheel scrolls the category strip
         weposUpdateCart();
         console.log('wePOS initialization complete');
     } catch (error) {
@@ -624,6 +626,10 @@ function weposUpdateCart() {
     const finalTotal = totalFinalAmount; // use per-item final prices so VAT exemption is applied
     weposSetTotals(rawSubtotal, totalDiscount, dRate, totalVatExemption, collectibleVat, finalTotal);
     document.getElementById('weposPayBtn').disabled = false;
+
+    // If the payment modal is open (e.g. customer type just switched or a
+    // Senior/PWD verification just completed), refresh its live totals too.
+    weposSyncPayModal();
 }
 
 function weposSetTotals(sub, disc, dRate, vatExempt, vat, total) {
@@ -686,6 +692,46 @@ function weposSetupKeyboard() {
             weposCancelVerifyId();
             weposCancelVoidAuth();
         }
+
+        // Enter completes the payment flow (issue #7.3) — the POS must be
+        // fully usable without a mouse: tender amount -> Enter -> confirm -> Enter.
+        if (e.key === 'Enter') {
+            // Second stage: the confirmation modal is open -> Enter pays.
+            const confirmModal = document.getElementById('weposConfirmModal');
+            if (confirmModal && confirmModal.style.display !== 'none') {
+                const payBtn = document.getElementById('confirmPayBtn');
+                if (payBtn && !payBtn.disabled) {
+                    e.preventDefault();
+                    weposSubmitTransaction();
+                }
+                return;
+            }
+
+            // First stage: the payment modal is open -> Enter advances to the
+            // confirmation step, but only when focus is in the tendered field
+            // / quick-cash area / nowhere — never steal Enter from another
+            // open modal's inputs (verify-ID, override, void auth) or buttons.
+            const payModal = document.getElementById('weposPayModal');
+            if (!payModal || payModal.style.display === 'none') return;
+
+            const stackedModalOpen = ['verifyIdModal', 'overridePinModal', 'voidAuthModal', 'weposReceiptModal'].some(id => {
+                const m = document.getElementById(id);
+                return m && m.style.display !== 'none';
+            });
+            if (stackedModalOpen) return;
+
+            const active = document.activeElement;
+            const fromTendered = !!active && (
+                active.id === 'weposTendered' ||
+                active === document.body ||
+                (active.closest && active.closest('#weposQuickCash'))
+            );
+            const nextBtn = document.getElementById('modalConfirmBtn');
+            if (fromTendered && nextBtn && !nextBtn.disabled) {
+                e.preventDefault();
+                weposOpenConfirmModal();
+            }
+        }
     });
 }
 
@@ -722,6 +768,7 @@ function weposOpenPayModal() {
 
     // Render checkout items with override buttons
     weposRenderCheckoutItems();
+    weposSyncCustomerTypeUI();
 
     weposGenerateQuickCash(total);
     document.getElementById('weposPayModal').style.display = 'flex';
@@ -742,7 +789,7 @@ function weposOpenConfirmModal() {
 
     if (confirmBtn) {
         confirmBtn.disabled = false;
-        confirmBtn.innerHTML = 'Pay Now';
+        confirmBtn.innerHTML = 'Pay Now <kbd>Enter</kbd>';
     }
 
     document.getElementById('confirmAmount').textContent = amountDue;
@@ -759,6 +806,147 @@ function weposCloseConfirmModal(e) {
     if (e && e.target !== e.currentTarget) return;
     document.getElementById('weposConfirmModal').style.display = 'none';
     document.getElementById('weposPayModal').style.display = 'flex';
+    setTimeout(() => document.getElementById('weposTendered')?.focus(), 50);
+}
+
+// ═════ CUSTOMER TYPE — MOVED INTO THE PAYMENT FLOW (issue #7.1) ═════
+// The sidebar discount select is hidden; the cashier picks Regular / Senior /
+// PWD inside the payment modal AFTER clicking Pay. The hidden select keeps
+// driving every pricing / statutory / receipt code path unchanged.
+function weposSetCustomerType(type, btn) {
+    const sel = document.getElementById('weposDiscount');
+    if (!sel) return;
+
+    // What type does the select currently represent?
+    const currentText = (sel.options[sel.selectedIndex]?.text || '').toLowerCase();
+    const currentType = currentText.includes('senior') ? 'senior'
+        : (currentText.includes('pwd') ? 'pwd' : 'regular');
+
+    if (type === currentType) {
+        // Already on this type. Senior/PWD still needs (re-)verification if
+        // the session isn't verified yet — re-run the existing change flow.
+        if (type !== 'regular' && !weposVerified) weposOnDiscountChange(sel);
+        return;
+    }
+
+    if (type === 'regular') {
+        sel.selectedIndex = 0;
+        weposVerified = false;
+        weposCustomerType = null;
+        weposCustomerName = null;
+        weposCustomerId = null;
+        weposUpdateCart();
+    } else {
+        // Select the matching discount option, then run the existing change
+        // handler — it opens the ID verification modal on top of this one.
+        const idx = Array.from(sel.options).findIndex(o => o.text.toLowerCase().includes(type));
+        if (idx < 0) {
+            mmbNotify({ type: 'warning', title: 'Discount not configured',
+                message: 'No ' + (type === 'senior' ? 'Senior Citizen' : 'PWD') + ' discount exists in Discount settings.' });
+            return;
+        }
+        sel.selectedIndex = idx;
+        weposOnDiscountChange(sel);
+    }
+}
+
+// Reflect the hidden select's state on the payment modal's segmented buttons.
+function weposSyncCustomerTypeUI() {
+    const sel = document.getElementById('weposDiscount');
+    if (!sel) return;
+    const text = (sel.options[sel.selectedIndex]?.text || '').toLowerCase();
+    const type = text.includes('senior') ? 'senior' : (text.includes('pwd') ? 'pwd' : 'regular');
+    document.querySelectorAll('.wepos-ctype-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.ctype === type);
+    });
+}
+
+// Keep an open payment modal in sync with cart/total changes (customer type
+// switch, verification success, override changes) — amounts, checkout items,
+// segmented buttons and the tendered-vs-total logic all refresh together.
+function weposSyncPayModal() {
+    const payModal = document.getElementById('weposPayModal');
+    if (!payModal || payModal.style.display === 'none') return;
+    const totalText = document.getElementById('calcTotal').textContent.replace('₱', '');
+    document.getElementById('modalAmountDue').textContent = weposFormatCurrency(parseFloat(totalText) || 0);
+    weposRenderCheckoutItems();
+    weposSyncCustomerTypeUI();
+    weposCalcChange();
+}
+
+// ═════ CART PANEL RESIZER (issue #7.5) ═════
+// Drag the grip on the cart's left edge to resize the panel (320-560px).
+// The chosen width persists in localStorage across shifts.
+function weposSetupCartResizer() {
+    const panel = document.querySelector('.wepos-right');
+    const handle = document.getElementById('weposCartResizer');
+    if (!panel || !handle) return;
+
+    // Restore the saved width (desktop layout only — mobile stacks the panes).
+    // Clearing max-width lets the saved/dragged width win over the default cap.
+    if (window.innerWidth >= 992) {
+        const saved = parseFloat(localStorage.getItem('weposCartWidth'));
+        if (saved >= 320 && saved <= 560) {
+            panel.style.width = saved + 'px';
+            panel.style.maxWidth = 'none';
+        }
+    }
+
+    let dragging = false;
+
+    const startDrag = (e) => {
+        dragging = true;
+        if (e.cancelable) e.preventDefault();
+        document.body.classList.add('wepos-resizing');
+        handle.classList.add('dragging');
+    };
+    const endDrag = () => {
+        if (!dragging) return;
+        dragging = false;
+        document.body.classList.remove('wepos-resizing');
+        handle.classList.remove('dragging');
+        localStorage.setItem('weposCartWidth', panel.style.width.replace('px', ''));
+    };
+
+    const applyWidth = (px) => {
+        panel.style.width = px + 'px';
+        panel.style.maxWidth = 'none';
+    };
+
+    handle.addEventListener('mousedown', startDrag);
+    document.addEventListener('mousemove', (e) => {
+        if (!dragging) return;
+        const w = Math.min(560, Math.max(320, window.innerWidth - e.clientX));
+        applyWidth(w);
+    });
+    document.addEventListener('mouseup', endDrag);
+
+    handle.addEventListener('touchstart', () => {
+        dragging = true;
+        document.body.classList.add('wepos-resizing');
+    }, { passive: true });
+    document.addEventListener('touchmove', (e) => {
+        if (!dragging) return;
+        const t = e.touches[0];
+        if (!t) return;
+        const w = Math.min(560, Math.max(320, window.innerWidth - t.clientX));
+        applyWidth(w);
+    }, { passive: true });
+    document.addEventListener('touchend', endDrag);
+}
+
+// ═════ CATEGORY BAR WHEEL SCROLL (issue #7.6) ═════
+// A vertical wheel over the category strip scrolls it horizontally, so the
+// cashier never needs the horizontal-wheel gesture or a drag.
+function weposSetupCategoriesWheel() {
+    const bar = document.querySelector('.wepos-categories');
+    if (!bar) return;
+    bar.addEventListener('wheel', (e) => {
+        if (bar.scrollWidth <= bar.clientWidth) return;    // nothing to scroll
+        if (Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return; // native horizontal scroll wins
+        e.preventDefault();
+        bar.scrollLeft += e.deltaY;
+    }, { passive: false });
 }
 
 // ═════ CHECKOUT ITEMS WITH OVERRIDE ═════
@@ -785,9 +973,11 @@ function weposRenderCheckoutItems() {
                 <div style="font-weight:500; font-size:13px;">${item.name}</div>
                 <div style="font-size:12px; color:#50575e;">${item.qty} × ₱${item.price.toFixed(2)} = ₱${c.final.toFixed(2)} ${overrideLabel}</div>
             </div>
-            <button onclick="weposRequestOverride('${item.id}')" 
-                    style="padding:4px 10px; font-size:11px; border-radius:3px; border:1px solid ${item.override ? '#dc2626' : '#8c8f94'}; background:${item.override ? '#fef2f2' : '#f6f7f7'}; color:${item.override ? '#dc2626' : '#50575e'}; cursor:pointer; white-space:nowrap;">
-                <i class="fas fa-tag"></i> ${item.override ? 'Remove' : 'Override'}
+            <button onclick="weposRequestOverride('${item.id}')"
+                    class="wepos-override-btn${item.override ? ' active' : ''}"
+                    title="${item.override ? 'Remove override discount (' + (item.overrideRate * 100).toFixed(0) + '% off)' : 'Apply override discount'}"
+                    aria-label="${item.override ? 'Remove override discount' : 'Apply override discount'}">
+                <i class="fas fa-tag"></i>
             </button>
         </div>`;
     });
@@ -1064,15 +1254,22 @@ async function weposSubmitTransaction() {
             weposCart = {};
             weposVerified = false;
             weposCustomerType = null;
+            weposCustomerName = null;
+            weposCustomerId = null;
+            // Reset the (hidden) discount select so the NEXT customer starts
+            // as Regular — otherwise the segmented buttons would show the
+            // previous customer's type and the receipt label would leak.
+            const discountSel = document.getElementById('weposDiscount');
+            if (discountSel) discountSel.selectedIndex = 0;
         } else {
             mmbNotify({ type: 'danger', title: 'Payment failed', message: result.error || 'The transaction was not completed.' });
             btn.disabled = false;
-            btn.innerHTML = 'Confirm Payment';
+            btn.innerHTML = 'Pay Now <kbd>Enter</kbd>';
         }
     } catch (err) {
         mmbNotify({ type: 'danger', title: 'Network error', message: 'Please check your connection and try again.' });
         btn.disabled = false;
-        btn.innerHTML = 'Confirm Payment';
+        btn.innerHTML = 'Pay Now <kbd>Enter</kbd>';
     }
 }
 
@@ -1410,6 +1607,8 @@ function weposOnDiscountChange(selectEl) {
         if (lookupStatus) { lookupStatus.style.display = 'none'; lookupStatus.innerHTML = ''; }
         document.getElementById('verifyIdModal').setAttribute('data-type', type);
         document.getElementById('verifyIdModal').setAttribute('data-discount-index', selectEl.selectedIndex);
+        // Stack above the payment modal when opened from the payment flow
+        document.getElementById('verifyIdModal').style.zIndex = '10002';
         document.getElementById('verifyIdModal').style.display = 'flex';
         // ID number is the primary input — typing it auto-fills the name
         setTimeout(() => document.getElementById('verifyIdNumber')?.focus(), 100);
@@ -1424,6 +1623,12 @@ function weposCancelVerifyId() {
     if (sel) sel.selectedIndex = 0;
     document.getElementById('verifyIdModal').style.display = 'none';
     weposUpdateCart();
+
+    // Payment flow (issue #7.1): return focus to the tendered field when the
+    // verification was cancelled from inside the payment modal.
+    if (document.getElementById('weposPayModal').style.display !== 'none') {
+        setTimeout(() => document.getElementById('weposTendered')?.focus(), 100);
+    }
 }
 
 async function weposSubmitVerifyId() {
@@ -1479,7 +1684,13 @@ async function weposSubmitVerifyId() {
             weposCustomerId = result.customer_id; // Store the customer ID
             document.getElementById('verifyIdModal').style.display = 'none';
             weposUpdateCart();
-            
+
+            // Payment flow (issue #7.1): verification just completed on top of
+            // the payment modal — put the cashier back on the tendered field.
+            if (document.getElementById('weposPayModal').style.display !== 'none') {
+                setTimeout(() => document.getElementById('weposTendered')?.focus(), 100);
+            }
+
             btn.disabled = false;
             btn.innerHTML = 'Verify';
         }
@@ -1548,6 +1759,11 @@ async function weposApproveVerify() {
             weposCustomerId = result.customer_id; // Store the customer ID
             document.getElementById('verifyIdModal').style.display = 'none';
             weposUpdateCart();
+
+            // Payment flow (issue #7.1): return to the tendered field.
+            if (document.getElementById('weposPayModal').style.display !== 'none') {
+                setTimeout(() => document.getElementById('weposTendered')?.focus(), 100);
+            }
         } else {
             errEl.textContent = result.error || 'Failed to save customer.';
             errEl.style.display = 'block';
