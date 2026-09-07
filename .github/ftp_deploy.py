@@ -30,7 +30,13 @@ FULL_SYNC = (os.environ.get("FULL_SYNC") or "").strip().lower() in ("1", "true",
 ROOT_DIR = "htdocs"
 MARKER = ".deploy-sha"
 
+<<<<<<< HEAD
 EXCLUDE_TOP = {".git", ".github", "docs"}          # whole directories, never deployed
+=======
+EXCLUDE_TOP = {".git", ".github", "docs", "img"}      # never deployed: img/ is runtime
+# content (product photos uploaded by the app / manually via file manager) —
+# deploys must never PUT or DEL anything under img/
+>>>>>>> e8a6e690db37038ff803974010cb2ad942b8c18a
 EXCLUDE_FILES = {".gitignore", ".gitattributes", ".gitmodules", "README.md", "mmbpos.sql"}
 
 
@@ -101,18 +107,37 @@ class Deployer:
                 pass  # already exists
 
     def upload(self, rel: str) -> bool:
+<<<<<<< HEAD
         local = os.path.join(WS, rel)
         size = os.path.getsize(local)
         for i in range(4):
+=======
+        """STOR once, then poll SIZE with backoff before re-uploading.
+
+        Why: the hosting FTP backend can serve a STALE size for a freshly
+        stored file (SIZE != uploaded bytes for a short while after the
+        server already ack'd the transfer). Re-uploading instantly (the old
+        behavior) just hits the same stale value 4 times in a row and fails
+        the run even though the file landed correctly. So: check size
+        immediately (happy path, no delay), then re-check with growing
+        waits, and only re-upload if it still mismatches.
+        """
+        local = os.path.join(WS, rel)
+        size = os.path.getsize(local)
+        for attempt in range(3):
+>>>>>>> e8a6e690db37038ff803974010cb2ad942b8c18a
             try:
                 parent = "/".join(rel.split("/")[:-1])
                 if parent:
                     self.ensure_dir(parent)
                 with open(local, "rb") as fh:
                     self.ftp.storbinary(f"STOR {rel}", fh, blocksize=65536)
+<<<<<<< HEAD
                 if self.ftp.size(rel) == size:
                     return True
                 print(f"    size mismatch on {rel}, retrying")
+=======
+>>>>>>> e8a6e690db37038ff803974010cb2ad942b8c18a
             except Exception as e:
                 print(f"    transfer error on {rel} ({e.__class__.__name__}), reconnecting")
                 time.sleep(3)
@@ -121,8 +146,68 @@ class Deployer:
                 except Exception:
                     pass
                 self.connect()
+<<<<<<< HEAD
         return False
 
+=======
+                continue
+            for wait_s in (0, 1, 2, 4, 8):
+                if wait_s:
+                    time.sleep(wait_s)
+                try:
+                    got = self.ftp.size(rel)
+                except Exception:
+                    got = None
+                if got == size:
+                    return True
+                print(f"    size check on {rel}: expected {size}, got {got}"
+                      + (f", waiting {wait_s}s" if wait_s else ""))
+            print(f"    re-uploading {rel} (attempt {attempt + 2}/3)")
+        return False
+
+    def verify_sizes(self, rels) -> list:
+        """Final pass: re-check sizes of all uploaded files once the dust settled.
+
+        Tolerant polling: the FTP backend is load-balanced over nodes whose
+        filesystem sync lags, so a single SIZE right after a batch of uploads
+        can still return a stale number even though the upload itself was
+        verified moments earlier. Each file gets checked at 0s / 5s / 10s and
+        passes if ANY check matches; only a sustained mismatch fails.
+        """
+        bad = []
+        for rel in rels:
+            local = os.path.join(WS, rel)
+            try:
+                size = os.path.getsize(local)
+            except OSError:
+                continue
+            ok = False
+            for wait_s in (0, 5, 10):
+                if wait_s:
+                    time.sleep(wait_s)
+                try:
+                    got = self.ftp.size(rel)
+                except Exception:
+                    got = None
+                    try:
+                        self.ftp.quit()
+                    except Exception:
+                        pass
+                    self.connect()
+                    try:
+                        got = self.ftp.size(rel)
+                    except Exception:
+                        got = None
+                if got == size:
+                    ok = True
+                    break
+                print(f"    verify {rel}: expected {size}, got {got}"
+                      + (f", rechecking in {wait_s}s" if wait_s else ""))
+            if not ok:
+                bad.append(rel)
+        return bad
+
+>>>>>>> e8a6e690db37038ff803974010cb2ad942b8c18a
     def delete(self, rel: str) -> bool:
         try:
             self.ftp.delete(rel)
@@ -186,6 +271,20 @@ def main():
     dels = [p for a, p in plan if a == "DEL"]
     if not puts and not dels:
         print("Nothing to deploy (only excluded files changed or marker already current).")
+<<<<<<< HEAD
+=======
+        # Keep the marker tracking HEAD so the next run's diff starts here.
+        d = Deployer()
+        d.connect()
+        marker = d.read_marker()
+        if marker != head_sha:
+            d.write_marker(head_sha)
+            print(f"Marker advanced to {head_sha[:10]} (deployable state unchanged).")
+        try:
+            d.ftp.quit()
+        except Exception:
+            pass
+>>>>>>> e8a6e690db37038ff803974010cb2ad942b8c18a
         return
 
     print(f"Files: {len(puts)} to upload, {len(dels)} to delete")
@@ -212,6 +311,18 @@ def main():
         print("::error::Failed after retries: " + ", ".join(failed[:20]))
         raise SystemExit(1)
 
+<<<<<<< HEAD
+=======
+    # Final verification pass: the FTP backend can lag on fresh uploads, so
+    # re-check every uploaded file's size once all transfers are done.
+    if puts:
+        print("Final verification pass...")
+        bad = d.verify_sizes(puts)
+        if bad:
+            print("::error::Size verification failed for: " + ", ".join(bad[:20]))
+            raise SystemExit(1)
+
+>>>>>>> e8a6e690db37038ff803974010cb2ad942b8c18a
     d.write_marker(head_sha)
     print(f"Deployed {len(puts)} file(s), deleted {len(dels)}, in {elapsed:.0f}s. Marker -> {head_sha[:10]}")
 

@@ -3,7 +3,11 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
+<<<<<<< HEAD
 -- Generation Time: Sep 07, 2026 at 04:43 AM
+=======
+-- Generation Time: Sep 05, 2026 at 11:05 AM
+>>>>>>> e8a6e690db37038ff803974010cb2ad942b8c18a
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -105,6 +109,27 @@ CREATE TABLE `inventory` (
   `expiry_date` date DEFAULT NULL COMMENT 'Expiry date (critical for FEFO)'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+<<<<<<< HEAD
+=======
+--
+-- Dumping data for table `inventory`
+--
+
+INSERT INTO `inventory` (`id`, `product_id`, `supplier_id`, `batch_number`, `date_received`, `manufacture_date`, `purchase_cost`, `markup`, `sale_price`, `received_quantity`, `created_at`, `updated_at`, `current_quantity`, `expiry_date`) VALUES
+(1, 1, 1, 'Batch-1', '2026-08-19', NULL, 12.00, 5.00, 12.60, 100, '2026-08-19 07:54:08', '2026-09-03 07:41:08', 90, '2036-02-02'),
+(2, 2, 1, 'Batch-1', '2026-08-19', NULL, 14.00, 5.00, 14.70, 100, '2026-08-19 08:03:49', '2026-09-03 08:24:57', 90, '2035-02-02'),
+(3, 3, 1, 'Batch-1', '2026-09-03', NULL, 7.00, 5.00, 7.35, 100, '2026-09-03 04:49:04', '2026-09-03 08:04:26', 0, '2026-11-26'),
+(4, 1, 1, 'Batch-377', '2026-09-03', NULL, 10.00, 5.00, 10.50, 100, '2026-09-03 07:40:31', '2026-09-03 07:40:31', 100, '2036-02-02'),
+(5, 2, 1, 'Batch-333', '2026-09-03', NULL, 23.00, 5.00, 24.15, 100, '2026-09-03 08:43:05', '2026-09-03 08:43:05', 100, '2020-02-02'),
+(6, 4, 1, 'Batch-1', '2026-09-05', NULL, 13.50, 5.00, 14.18, 100, '2026-09-05 04:05:36', '2026-09-05 04:05:36', 100, '2030-02-02'),
+(7, 4, 1, 'Batch-2', '2026-09-05', NULL, 122.00, 5.00, 128.10, 12, '2026-09-05 04:06:33', '2026-09-05 04:06:33', 12, '2020-02-02'),
+(8, 4, 1, 'Batch-3', '2026-09-05', NULL, 15.00, 5.00, 15.75, 12, '2026-09-05 04:10:25', '2026-09-05 04:10:25', 12, '2029-02-02'),
+(9, 7, 2, 'Batch-1', '2026-09-05', NULL, 50.00, 5.00, 52.50, 100, '2026-09-05 08:06:03', '2026-09-05 08:06:03', 100, '2036-02-02'),
+(10, 7, 1, 'Batch-2', '2026-09-05', NULL, 50.00, 5.00, 52.50, 200, '2026-09-05 08:06:43', '2026-09-05 08:06:43', 200, '2029-02-02'),
+(11, 7, 1, 'Batch-3', '2026-09-05', NULL, 50.00, 5.00, 52.50, 122, '2026-09-05 08:07:12', '2026-09-05 08:07:12', 122, '2020-02-02'),
+(12, 7, 2, 'Batch-4', '2026-09-05', NULL, 50.00, 5.00, 52.50, 122, '2026-09-05 08:13:58', '2026-09-05 08:13:58', 122, '2036-02-02');
+
+>>>>>>> e8a6e690db37038ff803974010cb2ad942b8c18a
 -- --------------------------------------------------------
 
 --
@@ -143,6 +168,13 @@ CREATE TABLE `inventory_disposals` (
   `reason` varchar(100) NOT NULL DEFAULT 'Expired',
   `disposed_at` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `inventory_disposals`
+--
+
+INSERT INTO `inventory_disposals` (`id`, `product_id`, `batch_number`, `quantity`, `expiry_date`, `reason`, `disposed_at`) VALUES
+(1, 1, 'Batch-1', 4, '2036-02-02', 'Water Damages', '2026-09-03 15:41:08');
 
 -- --------------------------------------------------------
 
@@ -262,6 +294,22 @@ CREATE TABLE `products` (
   `is_hidden` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+<<<<<<< HEAD
+=======
+--
+-- Dumping data for table `products`
+--
+
+INSERT INTO `products` (`id`, `branded_name`, `generic_name`, `strength`, `measurement_id`, `barcode`, `category_id`, `classification_id`, `units_per_package`, `imageproduct`, `is_basic_necessities`, `package_type`, `dosage_form`, `dosage_form_id`, `strength_per_quantity`, `strength_per_quantity_unit`, `is_hidden`) VALUES
+(1, 'Amoxilf', 'Amoxicillinf', 201.00, 2, '694534915640', 17, NULL, 0, '6a9b9937e0b11-1788582199piatos.jpg', 0, '', 'Oral Liquid', 19, 1000.00, 'mmol', 0),
+(2, 'Paracetamol', 'Ibuprofen', 500.00, 2, '715262585513', 17, NULL, 0, '6a8563658d84f-1787126629771540037_1571619234448543_1070791071661010716_n.jpg', 0, '', 'Capsule', 2, 0.00, '', 0),
+(3, 'SkyFlakes', 'N/A', 25.00, 3, '750515018402', 28, NULL, 0, '6a98fc40662e3-1788410944images.jpg', 0, '', '', NULL, 0.00, '', 0),
+(4, '', 'Piatos', 212.00, 3, '890891237952', 28, NULL, 0, '6a9b94d7b4dae-1788581079piatos.jpg', 0, '', '', NULL, 1.00, 'pc', 0),
+(5, '', 'Kopiko Lucky Day', 180.00, 6, '972798043463', 27, NULL, 0, '6a9bb296a08a2-1788588694ff9435ce118ef605999fd0e12e5400f7.jpg', 0, '', '', NULL, 1.00, 'pc', 0),
+(6, 'Paracetamol', 'Amoxicillin', 10.00, 6, '381837391256', 18, NULL, 0, '6a9bb30598553-1788588805piatos.jpg', 0, '', 'Syrup', 3, 100.00, 'mL', 0),
+(7, 'Trust', 'Condom', 0.00, NULL, '880164770639', 25, NULL, 0, '6a9bcc678664a-1788595303ff9435ce118ef605999fd0e12e5400f7.jpg', 0, '', '', NULL, 1.00, 'box', 0);
+
+>>>>>>> e8a6e690db37038ff803974010cb2ad942b8c18a
 -- --------------------------------------------------------
 
 --
@@ -367,6 +415,22 @@ CREATE TABLE `register_closings` (
 -- Table structure for table `register_openings`
 --
 
+<<<<<<< HEAD
+=======
+INSERT INTO `register_closings` (`id`, `user_id`, `business_date`, `system_cash`, `counted_cash`, `variance`, `notes`, `closed_at`) VALUES
+(1, 1, '2026-08-19', 68.39, 68.00, -0.39, 'no cents the customer', '2026-08-19 08:35:44'),
+(2, 1, '2026-08-20', 0.00, 0.00, 0.00, NULL, '2026-08-20 00:52:23'),
+(3, 3, '2026-08-20', 0.00, 0.00, 0.00, NULL, '2026-08-20 02:00:48'),
+(4, 3, '2026-08-21', 0.00, 455.00, 455.00, NULL, '2026-08-20 02:02:46'),
+(5, 4, '2026-09-03', 15.00, 15.00, 0.00, NULL, '2026-09-03 08:14:40');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `register_openings`
+--
+
+>>>>>>> e8a6e690db37038ff803974010cb2ad942b8c18a
 CREATE TABLE `register_openings` (
   `id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
@@ -375,6 +439,18 @@ CREATE TABLE `register_openings` (
   `notes` varchar(255) DEFAULT NULL,
   `opened_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+<<<<<<< HEAD
+=======
+
+--
+-- Dumping data for table `register_openings`
+--
+
+INSERT INTO `register_openings` (`id`, `user_id`, `business_date`, `opening_cash`, `notes`, `opened_at`) VALUES
+(1, 3, '2026-09-03', 1000.00, NULL, '2026-09-03 08:07:48'),
+(2, 1, '2026-09-03', 1000.00, NULL, '2026-09-03 08:10:39'),
+(3, 4, '2026-09-03', 0.30, NULL, '2026-09-03 08:13:52');
+>>>>>>> e8a6e690db37038ff803974010cb2ad942b8c18a
 
 -- --------------------------------------------------------
 
@@ -395,6 +471,25 @@ CREATE TABLE `return_items` (
   `cost_of_goods` decimal(10,2) NOT NULL DEFAULT 0.00
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+<<<<<<< HEAD
+=======
+--
+-- Dumping data for table `return_items`
+--
+
+INSERT INTO `return_items` (`id`, `return_transaction_id`, `product_id`, `quantity`, `price`, `subtotal`, `item_type`, `restocked`, `restockable`, `cost_of_goods`) VALUES
+(1, 1, 1, 1, 12.60, 12.60, 'returned', 0, 0, 0.00),
+(2, 2, 1, 1, 12.60, 12.60, 'returned', 1, 0, 0.00),
+(3, 3, 1, 1, 9.00, 9.00, 'returned', 1, 0, 0.00),
+(4, 4, 2, 1, 10.49, 10.49, 'returned', 0, 0, 0.00),
+(5, 5, 1, 1, 12.60, 12.60, 'returned', 1, 0, 0.00),
+(6, 6, 2, 1, 14.70, 14.70, 'returned', 1, 0, 0.00),
+(7, 7, 1, 1, 12.60, 12.60, 'returned', 1, 0, 0.00),
+(8, 8, 1, 1, 12.60, 12.60, 'returned', 1, 0, 0.00),
+(9, 9, 1, 1, 9.00, 9.00, 'returned', 0, 0, 0.00),
+(10, 10, 2, 1, 14.70, 14.70, 'returned', 1, 0, 0.00);
+
+>>>>>>> e8a6e690db37038ff803974010cb2ad942b8c18a
 -- --------------------------------------------------------
 
 --
@@ -414,6 +509,25 @@ CREATE TABLE `return_transactions` (
   `approver_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+<<<<<<< HEAD
+=======
+--
+-- Dumping data for table `return_transactions`
+--
+
+INSERT INTO `return_transactions` (`id`, `original_transaction_id`, `user_id`, `refund_amount`, `replacement_product_id`, `replacement_quantity`, `reason`, `refund_method`, `created_at`, `approver_id`) VALUES
+(1, 6, 1, 12.60, NULL, 0, 'Customer Request / Change of Mind', 'Cash', '2026-08-20 08:51:46', NULL),
+(2, 7, 1, 12.60, NULL, 0, 'Customer Request / Change of Mind', 'Cash', '2026-08-20 09:08:38', NULL),
+(3, 8, 1, 9.00, NULL, 0, 'Customer Request / Change of Mind', 'Cash', '2026-08-20 09:15:00', NULL),
+(4, 8, 1, 10.49, NULL, 0, 'Customer Request / Change of Mind', 'Cash', '2026-08-20 09:15:51', NULL),
+(5, 11, 1, 12.60, NULL, 0, 'Customer Request / Change of Mind', 'Cash', '2026-08-21 14:31:56', NULL),
+(6, 13, 1, 14.70, NULL, 0, 'Customer Request / Change of Mind', 'Cash', '2026-09-03 12:14:17', 1),
+(7, 1, 1, 12.60, NULL, 0, 'Customer Request / Change of Mind', 'Cash', '2026-09-03 12:17:35', 1),
+(8, 14, 1, 12.60, NULL, 0, 'Customer Request / Change of Mind', 'Cash', '2026-09-03 12:21:06', 1),
+(9, 16, 1, 9.00, NULL, 0, 'Customer Request / Change of Mind', 'Cash', '2026-09-03 12:37:12', 1),
+(10, 15, 1, 14.70, NULL, 0, 'Customer Request / Change of Mind', 'Cash', '2026-09-03 12:41:54', 1);
+
+>>>>>>> e8a6e690db37038ff803974010cb2ad942b8c18a
 -- --------------------------------------------------------
 
 --
@@ -426,6 +540,18 @@ CREATE TABLE `senior_customers` (
   `id_number` varchar(100) NOT NULL,
   `cashier_id` int(11) NOT NULL,
   `verified_at` datetime NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `store_settings`
+--
+
+CREATE TABLE `store_settings` (
+  `setting_key` varchar(50) NOT NULL,
+  `setting_value` varchar(255) DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -459,6 +585,17 @@ CREATE TABLE `suppliers` (
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+<<<<<<< HEAD
+=======
+--
+-- Dumping data for table `suppliers`
+--
+
+INSERT INTO `suppliers` (`id`, `supplier_name`, `contact_person`, `contact_number`, `email`, `address`, `supplier_type`, `is_active`, `created_at`, `updated_at`) VALUES
+(1, 'ABC PHARMA', NULL, '+639651800675', 'andrewpablo2005@gmail.com', 'Niyugan Jaen Nueva Ecija Philippines', NULL, 1, '2026-08-19 07:53:41', '2026-08-19 07:53:41'),
+(2, 'Andrew Pharma', NULL, '+639651800675', 'andrewpablo2005@gmail.com', 'N/A', NULL, 1, '2026-09-05 07:55:47', '2026-09-05 07:55:47');
+
+>>>>>>> e8a6e690db37038ff803974010cb2ad942b8c18a
 -- --------------------------------------------------------
 
 --
@@ -478,6 +615,36 @@ CREATE TABLE `transactions` (
   `total_vat_exemption` decimal(10,2) DEFAULT 0.00
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+<<<<<<< HEAD
+=======
+--
+-- Dumping data for table `transactions`
+--
+
+INSERT INTO `transactions` (`id`, `user_id`, `discount_id`, `customer_name`, `customer_id`, `customer_type`, `total_amount`, `created_at`, `discount_total`, `total_vat_exemption`) VALUES
+(1, 1, 1, 'Walk-in', NULL, '', 12.60, '2026-08-19 07:55:19', 0.00, 0.00),
+(2, 1, 2, 'Andrew ofsf', '1', 'senior', 9.00, '2026-08-19 07:56:56', 2.25, 1.35),
+(3, 1, 1, 'Walk-in', NULL, '', 27.30, '2026-08-19 08:04:12', 0.00, 0.00),
+(4, 1, 3, 'Andrew Pablo', '1', 'pwd', 19.49, '2026-08-19 08:29:59', 4.88, 2.93),
+(5, 1, 1, 'Walk-in', NULL, '', 27.30, '2026-08-19 08:38:01', 0.00, 0.00),
+(6, 1, 1, 'Walk-in', NULL, '', 12.60, '2026-08-20 00:46:09', 0.00, 0.00),
+(7, 1, 1, 'Walk-in', NULL, '', 27.30, '2026-08-20 01:05:10', 0.00, 0.00),
+(8, 1, 2, 'Andrew pablo', '1', 'senior', 19.49, '2026-08-20 01:05:45', 4.88, 2.93),
+(9, 1, 1, 'Walk-in', NULL, '', 27.30, '2026-08-20 02:01:31', 0.00, 0.00),
+(10, 1, 2, 'Andrew Pablo', '1', 'senior', 10.49, '2026-08-21 05:06:13', 2.63, 1.58),
+(11, 1, 1, 'Walk-in', NULL, '', 12.60, '2026-08-21 05:26:11', 0.00, 0.00),
+(12, 1, 1, 'Walk-in', NULL, '', 14.70, '2026-08-21 06:34:24', 0.00, 0.00),
+(13, 1, 1, 'Walk-in', NULL, '', 14.70, '2026-09-03 04:13:56', 0.00, 0.00),
+(14, 1, 1, 'Walk-in', NULL, '', 12.60, '2026-09-03 04:19:59', 0.00, 0.00),
+(15, 1, 1, 'Walk-in', NULL, '', 14.70, '2026-09-03 04:35:17', 0.00, 0.00),
+(16, 1, 2, 'Andrew Pablo', '1', 'senior', 9.00, '2026-09-03 04:35:41', 2.25, 1.35),
+(17, 1, 1, 'Walk-in', NULL, '', 7.35, '2026-09-03 04:50:00', 0.00, 0.00),
+(18, 1, 1, 'Walk-in', NULL, '', 720.30, '2026-09-03 05:53:00', 0.00, 0.00),
+(19, 3, 1, 'Walk-in', NULL, '', 7.35, '2026-09-03 08:04:26', 0.00, 0.00),
+(20, 4, 1, 'Walk-in', NULL, '', 14.70, '2026-09-03 08:14:03', 0.00, 0.00),
+(21, 1, 1, 'Walk-in', NULL, '', 14.70, '2026-09-03 08:24:57', 0.00, 0.00);
+
+>>>>>>> e8a6e690db37038ff803974010cb2ad942b8c18a
 -- --------------------------------------------------------
 
 --
@@ -509,6 +676,42 @@ CREATE TABLE `transaction_items` (
   `subtotal` decimal(10,2) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+<<<<<<< HEAD
+=======
+--
+-- Dumping data for table `transaction_items`
+--
+
+INSERT INTO `transaction_items` (`id`, `transaction_id`, `product_id`, `batch_id`, `quantity`, `price`, `subtotal`) VALUES
+(1, 1, 1, 1, 1, 12.60, 12.60),
+(2, 2, 1, 1, 1, 12.60, 9.00),
+(3, 3, 1, 1, 1, 12.60, 12.60),
+(4, 3, 2, 2, 1, 14.70, 14.70),
+(5, 4, 1, 1, 1, 12.60, 9.00),
+(6, 4, 2, 2, 1, 14.70, 10.49),
+(7, 5, 1, 1, 1, 12.60, 12.60),
+(8, 5, 2, 2, 1, 14.70, 14.70),
+(9, 6, 1, 1, 1, 12.60, 12.60),
+(10, 7, 1, 1, 1, 12.60, 12.60),
+(11, 7, 2, 2, 1, 14.70, 14.70),
+(12, 8, 1, 1, 1, 12.60, 9.00),
+(13, 8, 2, 2, 1, 14.70, 10.49),
+(14, 9, 1, 1, 1, 12.60, 12.60),
+(15, 9, 2, 2, 1, 14.70, 14.70),
+(16, 10, 2, 2, 1, 14.70, 10.49),
+(17, 11, 1, 1, 1, 12.60, 12.60),
+(18, 12, 2, 2, 1, 14.70, 14.70),
+(19, 13, 2, 2, 1, 14.70, 14.70),
+(20, 14, 1, 1, 1, 12.60, 12.60),
+(21, 15, 2, 2, 1, 14.70, 14.70),
+(22, 16, 1, 1, 1, 12.60, 9.00),
+(23, 17, 3, 3, 1, 7.35, 7.35),
+(24, 18, 3, 3, 98, 7.35, 720.30),
+(25, 19, 3, 3, 1, 7.35, 7.35),
+(26, 20, 2, 2, 1, 14.70, 14.70),
+(27, 21, 2, 2, 1, 14.70, 14.70);
+
+>>>>>>> e8a6e690db37038ff803974010cb2ad942b8c18a
 -- --------------------------------------------------------
 
 --
@@ -524,6 +727,42 @@ CREATE TABLE `transaction_item_batches` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+<<<<<<< HEAD
+=======
+--
+-- Dumping data for table `transaction_item_batches`
+--
+
+INSERT INTO `transaction_item_batches` (`id`, `transaction_item_id`, `inventory_id`, `quantity`, `purchase_cost`, `created_at`) VALUES
+(1, 1, 1, 1, 12.00, '2026-08-19 07:55:19'),
+(2, 2, 1, 1, 12.00, '2026-08-19 07:56:56'),
+(3, 3, 1, 1, 12.00, '2026-08-19 08:04:12'),
+(4, 4, 2, 1, 14.00, '2026-08-19 08:04:12'),
+(5, 5, 1, 1, 12.00, '2026-08-19 08:29:59'),
+(6, 6, 2, 1, 14.00, '2026-08-19 08:29:59'),
+(7, 7, 1, 1, 12.00, '2026-08-19 08:38:01'),
+(8, 8, 2, 1, 14.00, '2026-08-19 08:38:01'),
+(9, 9, 1, 1, 12.00, '2026-08-20 00:46:09'),
+(10, 10, 1, 1, 12.00, '2026-08-20 01:05:10'),
+(11, 11, 2, 1, 14.00, '2026-08-20 01:05:10'),
+(12, 12, 1, 1, 12.00, '2026-08-20 01:05:45'),
+(13, 13, 2, 1, 14.00, '2026-08-20 01:05:45'),
+(14, 14, 1, 1, 12.00, '2026-08-20 02:01:31'),
+(15, 15, 2, 1, 14.00, '2026-08-20 02:01:31'),
+(16, 16, 2, 1, 14.00, '2026-08-21 05:06:13'),
+(17, 17, 1, 1, 12.00, '2026-08-21 05:26:11'),
+(18, 18, 2, 1, 14.00, '2026-08-21 06:34:24'),
+(19, 19, 2, 1, 14.00, '2026-09-03 04:13:56'),
+(20, 20, 1, 1, 12.00, '2026-09-03 04:19:59'),
+(21, 21, 2, 1, 14.00, '2026-09-03 04:35:17'),
+(22, 22, 1, 1, 12.00, '2026-09-03 04:35:41'),
+(23, 23, 3, 1, 7.00, '2026-09-03 04:50:00'),
+(24, 24, 3, 98, 7.00, '2026-09-03 05:53:00'),
+(25, 25, 3, 1, 7.00, '2026-09-03 08:04:26'),
+(26, 26, 2, 1, 14.00, '2026-09-03 08:14:03'),
+(27, 27, 2, 1, 14.00, '2026-09-03 08:24:57');
+
+>>>>>>> e8a6e690db37038ff803974010cb2ad942b8c18a
 -- --------------------------------------------------------
 
 --
@@ -857,13 +1096,17 @@ ALTER TABLE `dosage_forms`
 -- AUTO_INCREMENT for table `inventory`
 --
 ALTER TABLE `inventory`
+<<<<<<< HEAD
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+=======
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+>>>>>>> e8a6e690db37038ff803974010cb2ad942b8c18a
 
 --
 -- AUTO_INCREMENT for table `inventory_disposals`
 --
 ALTER TABLE `inventory_disposals`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `inventory_transactions`
@@ -899,7 +1142,11 @@ ALTER TABLE `pre_approved_users_info`
 -- AUTO_INCREMENT for table `products`
 --
 ALTER TABLE `products`
+<<<<<<< HEAD
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+=======
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+>>>>>>> e8a6e690db37038ff803974010cb2ad942b8c18a
 
 --
 -- AUTO_INCREMENT for table `product_categories`
@@ -917,25 +1164,41 @@ ALTER TABLE `pwd_customers`
 -- AUTO_INCREMENT for table `register_closings`
 --
 ALTER TABLE `register_closings`
+<<<<<<< HEAD
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+=======
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+>>>>>>> e8a6e690db37038ff803974010cb2ad942b8c18a
 
 --
 -- AUTO_INCREMENT for table `register_openings`
 --
 ALTER TABLE `register_openings`
+<<<<<<< HEAD
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+=======
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+>>>>>>> e8a6e690db37038ff803974010cb2ad942b8c18a
 
 --
 -- AUTO_INCREMENT for table `return_items`
 --
 ALTER TABLE `return_items`
+<<<<<<< HEAD
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+=======
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+>>>>>>> e8a6e690db37038ff803974010cb2ad942b8c18a
 
 --
 -- AUTO_INCREMENT for table `return_transactions`
 --
 ALTER TABLE `return_transactions`
+<<<<<<< HEAD
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+=======
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+>>>>>>> e8a6e690db37038ff803974010cb2ad942b8c18a
 
 --
 -- AUTO_INCREMENT for table `senior_customers`
@@ -947,13 +1210,21 @@ ALTER TABLE `senior_customers`
 -- AUTO_INCREMENT for table `suppliers`
 --
 ALTER TABLE `suppliers`
+<<<<<<< HEAD
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+=======
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+>>>>>>> e8a6e690db37038ff803974010cb2ad942b8c18a
 
 --
 -- AUTO_INCREMENT for table `transactions`
 --
 ALTER TABLE `transactions`
+<<<<<<< HEAD
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+=======
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+>>>>>>> e8a6e690db37038ff803974010cb2ad942b8c18a
 
 --
 -- AUTO_INCREMENT for table `transaction_batch_allocations`
@@ -965,13 +1236,21 @@ ALTER TABLE `transaction_batch_allocations`
 -- AUTO_INCREMENT for table `transaction_items`
 --
 ALTER TABLE `transaction_items`
+<<<<<<< HEAD
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+=======
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
+>>>>>>> e8a6e690db37038ff803974010cb2ad942b8c18a
 
 --
 -- AUTO_INCREMENT for table `transaction_item_batches`
 --
 ALTER TABLE `transaction_item_batches`
+<<<<<<< HEAD
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+=======
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
+>>>>>>> e8a6e690db37038ff803974010cb2ad942b8c18a
 
 --
 -- AUTO_INCREMENT for table `unit_measurement`
