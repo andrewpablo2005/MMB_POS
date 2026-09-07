@@ -35,6 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
         weposSetupSearch();
         weposSetupKeyboard();
         weposSetupIdLookup();
+        weposSetupVerifyInputs();     // issue #9 — name/ID format guards
         weposSetupCartResizer();     // issue #7.5 — draggable cart panel width
         weposSetupCategoriesWheel(); // issue #7.6 — wheel scrolls the category strip
         weposUpdateCart();
@@ -43,6 +44,77 @@ document.addEventListener('DOMContentLoaded', () => {
         console.error('Error during wePOS initialization:', error);
     }
 });
+
+// ═════ ISSUE #9 — VERIFY-MODAL INPUT VALIDATION ═════
+// Name: letters only (A-Z, Ñ), auto-UPPERCASE, at least First + Last.
+// ID: Senior = 10-12 digits (PhilSys/OSCA/UMID); PWD = optional PWD- prefix
+// + 7-12 digits (DOH PWD-YYYY-NNNNNNN or LGU numeric).
+// Middle name is NOT required — “First Middle Last” as printed is fine.
+function weposIsValidCustomerName(name) {
+    const value = String(name || '').trim();
+    if (!value) return false;
+    if (/[^A-Za-zÑñ .'-]/.test(value)) return false;      // letters only
+    const words = value.split(/\s+/).filter(w => w.length > 0);
+    return words.length >= 2 && value.length <= 100;       // First + Last minimum
+}
+
+function weposIdDigits(type, raw) {
+    const value = String(raw || '').trim().toUpperCase();
+    return value.replace(/[\s-]/g, '');
+}
+
+function weposIsValidIdNumber(type, raw) {
+    const value = String(raw || '').trim().toUpperCase();
+    if (!value) return false;
+    if (type === 'pwd') {
+        const m = value.match(/^(?:PWD[\s-]?)?(\d{7,12})$/);
+        return !!m;
+    }
+    // senior: 10-12 digits, optionally separated by hyphens/spaces
+    return /^[\d\s-]{4,20}$/.test(value) && /^\d{10,12}$/.test(weposIdDigits(type, value));
+}
+
+function weposIdFormatHint(type) {
+    return type === 'pwd'
+        ? 'PWD ID format: PWD-YYYY-NNNNNNN or 7–12 digits'
+        : 'Senior ID: 10–12 digits (PhilSys / OSCA / UMID)';
+}
+
+// Live guards: uppercase the name and strip digits; show format feedback
+// under the ID field while the cashier types.
+function weposSetupVerifyInputs() {
+    const nameInput = document.getElementById('verifyIdName');
+    const idInput = document.getElementById('verifyIdNumber');
+    if (nameInput) {
+        nameInput.addEventListener('input', function () {
+            const cleaned = this.value
+                .toUpperCase()
+                .replace(/[^A-ZÑ .\'-]/g, '');
+            if (this.value !== cleaned) this.value = cleaned;
+        });
+    }
+    if (idInput) {
+        idInput.addEventListener('input', function () {
+            const hint = document.getElementById('verifyIdFormatHint');
+            if (!hint) return;
+            const modal = document.getElementById('verifyIdModal');
+            const type = modal ? modal.getAttribute('data-type') : 'senior';
+            const value = this.value.trim();
+            if (value === '') {
+                hint.textContent = weposIdFormatHint(type);
+                hint.style.color = '#6b7280';
+                return;
+            }
+            if (weposIsValidIdNumber(type, value)) {
+                hint.innerHTML = '<i class="fas fa-circle-check"></i> Format looks correct';
+                hint.style.color = '#15803d';
+            } else {
+                hint.textContent = weposIdFormatHint(type);
+                hint.style.color = '#b91c1c';
+            }
+        });
+    }
+}
 
 // ═════ BARCODE SCANNER ═════
 function weposSetupScanner() {
@@ -1588,12 +1660,24 @@ function weposOnDiscountChange(selectEl) {
         document.querySelectorAll('.verifyIdCheck').forEach(cb => { cb.checked = false; });
         const acceptBtn = document.getElementById('verifyIdAcceptBtn');
         if (acceptBtn) acceptBtn.disabled = true;
-        // Optional external registry link (helper only — never required)
+        // Optional external registry link (helper only — never required).
+        // ISSUE #9 (3): opens the small 900×600 helper window, never a
+        // full-tab redirect.
         const extLink = document.getElementById('verifyIdExternalLink');
         if (extLink) {
-            extLink.href = isSenior
-                ? 'https://www.ncsc.gov.ph/registration-verification'
-                : 'https://pwd.doh.gov.ph/tbl_pwd_id_verificationlist.php';
+            extLink.href = '#';
+            extLink.removeAttribute('target');
+            extLink.onclick = function (e) {
+                e.preventDefault();
+                weposOpenVerificationSite();
+                return false;
+            };
+        }
+        // ISSUE #9 (2): reset the live format hint for the new session
+        const formatHint = document.getElementById('verifyIdFormatHint');
+        if (formatHint) {
+            formatHint.textContent = weposIdFormatHint(type);
+            formatHint.style.color = '#6b7280';
         }
         document.getElementById('verifyIdFootInitial').style.display = 'flex';
         document.getElementById('verifyIdFootManual').style.display = 'none';
@@ -1643,6 +1727,19 @@ async function weposSubmitVerifyId() {
 
     if (!name)      { errEl.textContent = 'Please enter the customer name.';  errEl.style.display = 'block'; return; }
     if (!id_number) { errEl.textContent = 'Please enter the ID number.'; errEl.style.display = 'block'; return; }
+
+    // ISSUE #9: format guards — gibberish names / wrong ID formats are
+    // rejected before anything is sent to the server.
+    if (!weposIsValidCustomerName(name)) {
+        errEl.textContent = 'Name must be letters only, as printed on the ID (at least first and last name). Numbers are not allowed.';
+        errEl.style.display = 'block';
+        return;
+    }
+    if (!weposIsValidIdNumber(type, id_number)) {
+        errEl.textContent = weposIdFormatHint(type) + ' — letters are not accepted.';
+        errEl.style.display = 'block';
+        return;
+    }
 
     btn.disabled = true;
     btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...';
@@ -1740,6 +1837,18 @@ async function weposApproveVerify() {
     const checks = document.querySelectorAll('.verifyIdCheck');
     if (!Array.from(checks).every(cb => cb.checked)) {
         errEl.textContent = 'Please complete the physical ID inspection checklist first.';
+        errEl.style.display = 'block';
+        return;
+    }
+
+    // ISSUE #9: re-validate the format on the final confirm step too
+    if (!weposIsValidCustomerName(name)) {
+        errEl.textContent = 'Name must be letters only, as printed on the ID (at least first and last name).';
+        errEl.style.display = 'block';
+        return;
+    }
+    if (!weposIsValidIdNumber(type, id_number)) {
+        errEl.textContent = weposIdFormatHint(type) + ' — letters are not accepted.';
         errEl.style.display = 'block';
         return;
     }

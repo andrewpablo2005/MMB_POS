@@ -784,13 +784,14 @@ if (!empty($_SESSION['user_id'])) {
             </p>
             
             <div style="margin-bottom: 0.75rem;">
-                <label style="font-size:0.85rem; font-weight:600; margin-bottom:0.25rem; display:block;">Full Name</label>
-                <input type="text" id="verifyIdName" placeholder="Juan Dela Cruz" style="width:100%; border-radius:4px; border:1px solid #8c8f94; padding:0.5rem; font-size:1rem;" autocomplete="off">
+                <label style="font-size:0.85rem; font-weight:600; margin-bottom:0.25rem; display:block;">Full Name <span style="font-weight:400; color:#6b7280;">(First Middle Last — as printed, letters only)</span></label>
+                <input type="text" id="verifyIdName" placeholder="JUAN DELA CRUZ" style="width:100%; border-radius:4px; border:1px solid #8c8f94; padding:0.5rem; font-size:1rem; text-transform:uppercase;" autocomplete="off">
             </div>
             
             <div style="margin-bottom:0.75rem;">
                 <label style="font-size:0.85rem; font-weight:600; margin-bottom:0.25rem; display:block;">ID Number</label>
                 <input type="text" id="verifyIdNumber" placeholder="XXXX-XXXX-XXXX" style="width:100%; border-radius:4px; border:1px solid #8c8f94; padding:0.5rem; font-size:1rem;" autocomplete="off">
+                <div id="verifyIdFormatHint" style="font-size:0.72rem; color:#6b7280; margin-top:0.3rem;">Senior ID: 10–12 digits (PhilSys / OSCA / UMID)</div>
                 <!-- Live lookup feedback: name auto-fills from the verified
                      registry as soon as the cashier finishes typing the ID -->
                 <div id="verifyIdLookupStatus" style="display:none; margin-top:0.4rem; font-size:0.8rem; padding:7px 10px; border-radius:4px; align-items:center; gap:6px;"></div>
@@ -817,7 +818,7 @@ if (!empty($_SESSION['user_id'])) {
                 </label>
                 <p style="font-size:0.72rem; color:#6b7280; margin:8px 0 0 0;">
                     Optional extra check:
-                    <a href="#" id="verifyIdExternalLink" target="_blank" rel="noopener noreferrer" style="color:#2563eb;">open the official NCSC / DOH registry <i class="fas fa-external-link-alt" style="font-size:0.65rem;"></i></a>
+                    <a href="#" id="verifyIdExternalLink" style="color:#2563eb;">open the official NCSC / DOH registry (small helper window) <i class="fas fa-external-link-alt" style="font-size:0.65rem;"></i></a>
                     — not required if the physical ID is genuine.
                 </p>
             </div>
@@ -836,4 +837,4 @@ if (!empty($_SESSION['user_id'])) {
 </div>
 
 <?php include __DIR__ . '/returnmodal.php'; ?>
-<script src="../js/pos_wepos.js?v=1.91"></script>
+<script src="../js/pos_wepos.js?v=1.92"></script>

@@ -52,6 +52,31 @@ if ($id_number === '' || mb_strlen($id_number) > 50) {
     exit;
 }
 
+// ── ISSUE #9: strict format validation (mirrors pos_wepos.js) ──
+// Name: letters only (A-Z, Ñ), spaces, apostrophes, hyphens, periods —
+// at least two words (First + Last). Middle name NOT required.
+$name = mb_strtoupper($name);
+if (preg_match('/[^A-Za-zÑñ .\'-]/u', $name) || count(preg_split('/\s+/', trim($name))) < 2) {
+    echo json_encode(['error' => 'Name must be letters only, as printed on the ID (at least first and last name). Numbers are not allowed.']);
+    exit;
+}
+
+// ID: Senior = 10-12 digits (hyphens/spaces allowed); PWD = optional
+// "PWD-" prefix + 7-12 digits (DOH PWD-YYYY-NNNNNNN or LGU numeric).
+$id_number = strtoupper(preg_replace('/\s+/', ' ', $id_number));
+if ($type === 'pwd') {
+    if (!preg_match('/^(?:PWD[- ]?)?\d{7,12}$/', $id_number)) {
+        echo json_encode(['error' => 'PWD ID format: PWD-YYYY-NNNNNNN or 7-12 digits. Letters are not accepted.']);
+        exit;
+    }
+} else {
+    $digitsOnly = preg_replace('/[\s-]/', '', $id_number);
+    if (!preg_match('/^\d{10,12}$/', $digitsOnly)) {
+        echo json_encode(['error' => 'Senior ID: 10-12 digits (PhilSys / OSCA / UMID). Letters are not accepted.']);
+        exit;
+    }
+}
+
 try {
     // Check if already exists in the verified registry (literal table names —
     // never interpolate identifiers)
