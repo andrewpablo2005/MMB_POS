@@ -95,33 +95,21 @@ $dosageForms = $product->getDosageForms();
                                 class="text-muted">(if applicable)</span></label>
                             <div class="input-group">
                                 <input type="number" id="strength" name="strength" class="form-control"
-                                    placeholder="e.g., 250">
+                                    placeholder="e.g., 250" min="0">
                             </div>
                             <div class="form-text text-muted">Use this for a measured serving or portion, such as 250 mg, 30 g, or 1 piece.
                             </div>
                         </div>
                         <div class="add-product-field">
-                            <label for="unit_measurement_search" class="form-label">Serving Unit</label>
-                            <div class="input-group">
-                                <input type="text" id="unit_measurement_search" class="form-control"
-                                    list="unit_measurement_list" placeholder="Select Unit" autocomplete="off">
-                                <button type="button" class="btn btn-danger btn-add-measurement"
-                                    data-bs-toggle="modal" data-bs-target="#addMeasurementModal"
-                                    data-measurement-target="unit_measurement_search"
-                                    data-measurement-hidden="unit_measurement"
-                                    title="Add a new measurement unit">
-                                    <i class="fas fa-plus"></i>
-                                </button>
-                            </div>
-                            <input type="hidden" id="unit_measurement" name="unit_measurement" value="">
-                            <datalist id="unit_measurement_list">
+                            <label for="unit_measurement" class="form-label">Serving Unit</label>
+                            <select id="unit_measurement" name="unit_measurement" class="form-select">
+                                <option value="">— none —</option>
                                 <?php foreach ($unitMeasurements as $unit): ?>
-                                    <option value="<?= htmlspecialchars($unit['name'] ?? '') ?>"
-                                        data-id="<?= (int) ($unit['id'] ?? 0) ?>">
-                                    <?php endforeach; ?>
-                            </datalist>
+                                    <option value="<?= (int) ($unit['id'] ?? 0) ?>"><?= htmlspecialchars($unit['name'] ?? '') ?></option>
+                                <?php endforeach; ?>
+                            </select>
                             <div class="form-text text-muted mt-1">
-                                Choose the unit for the serving amount, such as mg, g, ml, or pieces.
+                                Choose the unit for the serving amount, such as mg, g, mL, or pcs.
                             </div>
                         </div>
                     </div>
@@ -147,32 +135,22 @@ $dosageForms = $product->getDosageForms();
 
                     <div id="strengthQuantityFields" class="add-product-row">
                         <div class="add-product-field">
-                            <label for="strength_per_quantity" class="form-label">Total Volume / Quantity per Package</label>
-                            <input type="number" id="strength_per_quantity" name="strength_per_quantity" step="0.01"
-                                class="form-control" placeholder="e.g., 500">
-                            <div class="form-text text-muted">Total contents of one package, such as 100 ml, 50 g, or 10 tablets.
+                            <label for="strength_per_quantity" class="form-label">Package Size</label>
+                            <input type="number" id="strength_per_quantity" name="strength_per_quantity" step="1" min="1"
+                                inputmode="numeric" class="form-control" placeholder="e.g., 500">
+                            <div class="form-text text-muted">Total contents of one package — whole numbers only, e.g., 100, 50, or 10.
                             </div>
                         </div>
                         <div class="add-product-field">
-                            <label for="strength_per_quantity_unit" class="form-label">Volume / Quantity Unit</label>
-                            <div class="input-group">
-                                <input type="text" id="strength_per_quantity_unit" name="strength_per_quantity_unit"
-                                    class="form-control" list="strength_per_quantity_unit_list" placeholder="Select Unit"
-                                    autocomplete="off">
-                                <button type="button" class="btn btn-danger btn-add-measurement"
-                                    data-bs-toggle="modal" data-bs-target="#addMeasurementModal"
-                                    data-measurement-target="strength_per_quantity_unit"
-                                    title="Add a new measurement unit">
-                                    <i class="fas fa-plus"></i>
-                                </button>
-                            </div>
-                            <datalist id="strength_per_quantity_unit_list">
+                            <label for="strength_per_quantity_unit" class="form-label">Unit</label>
+                            <select id="strength_per_quantity_unit" name="strength_per_quantity_unit" class="form-select">
+                                <option value="">— none —</option>
                                 <?php foreach ($unitMeasurements as $unit): ?>
-                                    <option value="<?= htmlspecialchars($unit['name'] ?? '') ?>"></option>
+                                    <option value="<?= htmlspecialchars($unit['name'] ?? '') ?>"><?= htmlspecialchars($unit['name'] ?? '') ?></option>
                                 <?php endforeach; ?>
-                            </datalist>
+                            </select>
                             <div class="form-text text-muted mt-1">
-                                Choose the unit for the total package contents, such as ml, g, kg, or pieces.
+                                Choose the unit for the package contents, such as mL, g, kg, or pcs.
                             </div>
                         </div>
                     </div>
@@ -350,30 +328,6 @@ $dosageForms = $product->getDosageForms();
     </div>
 </div>
 
-<div class="modal fade" id="addMeasurementModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-sm modal-dialog-centered">
-        <div class="modal-content">
-            <form id="addMeasurementForm">
-                <div class="modal-header">
-                    <h5 class="modal-title">Add measurement unit</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="new_measurement_name" class="form-label">Measurement</label>
-                        <input type="text" id="new_measurement_name" name="measurement_name" class="form-control"
-                            placeholder="e.g., tbsp, can, pcs" required>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-danger">Save Unit</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
 <script src="../js/auto_generatebarcode.js?v=3"></script>
 
 <script>
@@ -470,12 +424,6 @@ $dosageForms = $product->getDosageForms();
             }
         });
 
-        bindSearchableList({
-            inputId: 'unit_measurement_search',
-            valueId: 'unit_measurement',
-            listId: 'unit_measurement_list'
-        });
-
         const dosageFormInput = document.getElementById('dosage_form_search');
         const dosageFormValue = document.getElementById('dosage_form');
         const dosageFormId = document.getElementById('dosage_form_id');
@@ -517,108 +465,20 @@ $dosageForms = $product->getDosageForms();
             listId: 'batch_supplier_list'
         });
 
-        const measurementModal = document.getElementById('addMeasurementModal');
-        const measurementButtonTargets = document.querySelectorAll('.btn-add-measurement');
-        let activeMeasurementTarget = null;
-
-        measurementButtonTargets.forEach((button) => {
-            button.addEventListener('click', function () {
-                activeMeasurementTarget = this.getAttribute('data-measurement-target') || null;
-                const input = activeMeasurementTarget ? document.getElementById(activeMeasurementTarget) : null;
-                if (input) {
-                    input.focus();
-                }
+        // ── ISSUE #6 (1): Package Size accepts whole numbers >= 1 only ──
+        // Type filters strip illegal characters as they are typed.
+        const spqInput = document.getElementById('strength_per_quantity');
+        if (spqInput) {
+            spqInput.addEventListener('input', function () {
+                const cleaned = this.value.replace(/[^0-9]/g, '');
+                if (this.value !== cleaned) this.value = cleaned;
             });
-        });
-
-        const measurementForm = document.getElementById('addMeasurementForm');
-        if (measurementForm) {
-            measurementForm.addEventListener('submit', function (event) {
-                event.preventDefault();
-
-                const nameInput = document.getElementById('new_measurement_name');
-                const measurementName = nameInput ? nameInput.value.trim() : '';
-
-                if (!measurementName) {
-                    mmbNotify({ type: 'warning', title: 'Measurement required', message: 'Please enter a unit name before saving.' });
-                    return;
-                }
-
-                const submitBtn = measurementForm.querySelector('button[type="submit"]');
-                if (submitBtn) {
-                    submitBtn.disabled = true;
-                    submitBtn.textContent = 'Saving...';
-                }
-
-                const formData = new FormData();
-                formData.append('measurement_name', measurementName);
-
-                fetch('../function/add_measurement_ajax.php', {
-                    method: 'POST',
-                    body: formData
-                })
-                .then((response) => response.json().then((data) => ({ status: response.status, data })))
-                .then(({ status, data }) => {
-                    if (submitBtn) {
-                        submitBtn.disabled = false;
-                        submitBtn.textContent = 'Save Unit';
-                    }
-
-                    if (status === 200 && data.success) {
-                        const unitListIds = ['unit_measurement_list', 'strength_per_quantity_unit_list'];
-                        unitListIds.forEach((listId) => {
-                            const list = document.getElementById(listId);
-                            if (!list) return;
-
-                            const exists = Array.from(list.options).some((option) => option.value.trim().toLowerCase() === measurementName.toLowerCase());
-                            if (!exists) {
-                                const option = document.createElement('option');
-                                option.value = data.name || measurementName;
-                                option.setAttribute('data-id', String(data.id || ''));
-                                list.appendChild(option);
-                            }
-                        });
-
-                        if (activeMeasurementTarget) {
-                            const targetInput = document.getElementById(activeMeasurementTarget);
-                            if (targetInput) {
-                                targetInput.value = data.name || measurementName;
-                                targetInput.dispatchEvent(new Event('input', { bubbles: true }));
-                                targetInput.dispatchEvent(new Event('change', { bubbles: true }));
-                            }
-                        }
-
-                        const addProductModalEl = document.getElementById('addProductModal');
-                        if (measurementModal) {
-                            const measurementModalInstance = bootstrap.Modal.getInstance(measurementModal);
-                            if (measurementModalInstance) {
-                                measurementModalInstance.hide();
-                            }
-                        }
-
-                        if (addProductModalEl) {
-                            const addProductModalInstance = bootstrap.Modal.getOrCreateInstance(addProductModalEl);
-                            setTimeout(() => {
-                                addProductModalInstance.show();
-                            }, 180);
-                        }
-
-                        measurementForm.reset();
-                        mmbNotify({ type: 'success', title: 'Measurement saved', message: 'The new unit has been added and is ready to use.' });
-                        return;
-                    }
-
-                    const message = data && data.message ? data.message : 'Unable to save the measurement unit.';
-                    mmbNotify({ type: 'warning', title: 'Could not save measurement', message: message });
-                })
-                .catch((error) => {
-                    if (submitBtn) {
-                        submitBtn.disabled = false;
-                        submitBtn.textContent = 'Save Unit';
-                    }
-                    console.error('Measurement save failed:', error);
-                    mmbNotify({ type: 'danger', title: 'Network error', message: 'Could not save the measurement unit.' });
-                });
+        }
+        const strengthInputEl = document.getElementById('strength');
+        if (strengthInputEl) {
+            strengthInputEl.addEventListener('input', function () {
+                const cleaned = this.value.replace(/-/g, '');
+                if (this.value !== cleaned) this.value = cleaned;
             });
         }
 
@@ -706,6 +566,18 @@ $dosageForms = $product->getDosageForms();
 
         if (!genericName.value.trim()) errors.push('Generic Name is required');
         if (!categoryValue.value) errors.push('Category is required - Please select a category');
+
+        // ISSUE #6 (1): Package Size — whole number >= 1, no negatives/decimals
+        const spqField = document.getElementById('strength_per_quantity');
+        if (spqField && spqField.value !== '') {
+            const spqNum = Number(spqField.value);
+            if (!Number.isFinite(spqNum) || !Number.isInteger(spqNum) || spqNum < 1) {
+                errors.push('Package Size must be a whole number of at least 1 (no decimals or negatives)');
+            }
+        }
+        if (strength && strength.value !== '' && Number(strength.value) < 0) {
+            errors.push('Amount per Serving cannot be negative');
+        }
 
         if (addBatchPrompt && addBatchPrompt.value === 'yes') {
             if (receivedQuantity && (!receivedQuantity.value || Number(receivedQuantity.value) <= 0)) {

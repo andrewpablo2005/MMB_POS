@@ -59,6 +59,7 @@ class Reports
         $stmt = $this->db->prepare("
                  SELECT p.id AS product_id,
                      CONCAT_WS(' ', NULLIF(p.branded_name, ''), NULLIF(p.generic_name, '')) AS product_name,
+                   p.imageproduct,
                    p.branded_name,
                    p.generic_name,
                    p.strength,
@@ -75,7 +76,7 @@ class Reports
             LEFT JOIN unit_measurement um ON um.unit_id = p.measurement_id
             LEFT JOIN dosage_forms df ON df.id = p.dosage_form_id
             LEFT JOIN product_categories pc ON pc.id = p.category_id
-            GROUP BY p.id, p.branded_name, p.generic_name, p.strength, um.different_measurement, p.strength_per_quantity, p.strength_per_quantity_unit, p.dosage_form, df.form_name, pc.category_name, p.barcode
+            GROUP BY p.id, p.imageproduct, p.branded_name, p.generic_name, p.strength, um.different_measurement, p.strength_per_quantity, p.strength_per_quantity_unit, p.dosage_form, df.form_name, pc.category_name, p.barcode
             ORDER BY total_sold DESC, p.id ASC
         ");
         $stmt->execute();
@@ -116,6 +117,7 @@ class Reports
 
         $stmt = $this->db->prepare("SELECT p.id AS product_id,
                    CONCAT_WS(' ', NULLIF(p.branded_name, ''), NULLIF(p.generic_name, '')) AS product_name,
+                   p.imageproduct,
                    p.branded_name, p.generic_name, p.strength,
                    um.different_measurement AS measurement_name,
                    p.strength_per_quantity, p.strength_per_quantity_unit,
@@ -130,7 +132,7 @@ class Reports
             LEFT JOIN dosage_forms df ON df.id = p.dosage_form_id
             LEFT JOIN product_categories pc ON pc.id = p.category_id
             WHERE {$where}
-            GROUP BY p.id, p.branded_name, p.generic_name, p.strength, um.different_measurement,
+            GROUP BY p.id, p.imageproduct, p.branded_name, p.generic_name, p.strength, um.different_measurement,
                      p.strength_per_quantity, p.strength_per_quantity_unit, p.dosage_form,
                      df.form_name, pc.category_name, p.barcode
             ORDER BY total_sold DESC, p.id ASC");

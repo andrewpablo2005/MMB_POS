@@ -555,13 +555,20 @@ foreach ($salesDetailRows as $detailRow) {
                         <table class="table table-striped table-hover myTableExport">
                             <thead class="table-dark">
                                 <tr>
-                                    <th>Rank</th><th>Item Name</th><th>Serving Size</th><th>Product Form</th><th>Package Quantity</th><th>Category</th><th>Product Code</th><th>Average Price</th><th data-priority="1">Quantity Purchased</th>
+                                    <th>Rank</th><th></th><th>Item Name</th><th>Serving</th><th>Product Form</th><th>Package Size</th><th>Category</th><th>Product Code</th><th>Average Price</th><th data-priority="1">Quantity Purchased</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php foreach ($sellingProducts as $rank => $row): ?>
-                                    <tr>
-                                        <td><strong><?= $rank + 1 ?></strong></td>
+                                    <tr<?= $rank === 0 ? ' class="mmb-top1-row"' : '' ?>>
+                                        <td><?php if ($rank < 3): ?><span class="mmb-rank-medal mmb-rank-medal--<?= $rank + 1 ?>"><i class="fas fa-medal"></i></span><?php else: ?><strong><?= $rank + 1 ?></strong><?php endif; ?></td>
+                                        <td>
+                                            <?php if (!empty(trim((string)($row['imageproduct'] ?? '')))): ?>
+                                                <span class="mmb-thumb mmb-thumb--md"><img src="../img/<?= report_text($row['imageproduct']) ?>" alt="<?= report_text(trim(($row['branded_name'] ?? '') . ' ' . ($row['generic_name'] ?? ''))) ?>" loading="lazy"></span>
+                                            <?php else: ?>
+                                                <span class="mmb-thumb mmb-thumb--md mmb-thumb--empty"><i class="fas fa-capsules"></i></span>
+                                            <?php endif; ?>
+                                        </td>
                                         <td><strong><?= report_text(trim(($row['branded_name'] ?? '') . ' ' . ($row['generic_name'] ?? ''))) ?></strong></td>
                                         <td><?= report_text(trim(($row['strength'] ?? '') . ' ' . ($row['measurement_name'] ?? ''))) ?></td>
                                         <td><?= report_text($row['dosage_form'] ?? '') ?></td>
@@ -597,14 +604,21 @@ foreach ($salesDetailRows as $detailRow) {
                     <div class="table-responsive">
                         <table class="table table-striped table-hover myTableExport">
                             <thead class="table-dark">
-                                <tr><th>Rank</th><th>Item Name</th><th>Serving Size</th><th>Product Form</th><th>Package Quantity</th><th>Category</th><th>Product Code</th><th>Average Price</th><th data-priority="1">Quantity Purchased</th></tr>
+                                <tr><th>Rank</th><th></th><th>Item Name</th><th>Serving</th><th>Product Form</th><th>Package Size</th><th>Category</th><th>Product Code</th><th>Average Price</th><th data-priority="1">Quantity Purchased</th></tr>
                             </thead>
                             <tbody>
                                 <?php 
                                     foreach ($sellingProducts as $i => $product):
                                 ?>
-                                    <tr>
-                                        <td><strong><?= $i + 1 ?></strong></td>
+                                    <tr<?= $i === 0 ? ' class="mmb-top1-row"' : '' ?>>
+                                        <td><?php if ($i < 3): ?><span class="mmb-rank-medal mmb-rank-medal--<?= $i + 1 ?>"><i class="fas fa-medal"></i></span><?php else: ?><strong><?= $i + 1 ?></strong><?php endif; ?></td>
+                                        <td>
+                                            <?php if (!empty(trim((string)($product['imageproduct'] ?? '')))): ?>
+                                                <span class="mmb-thumb mmb-thumb--md"><img src="../img/<?= report_text($product['imageproduct']) ?>" alt="<?= report_text(trim(($product['branded_name'] ?? '') . ' ' . ($product['generic_name'] ?? ''))) ?>" loading="lazy"></span>
+                                            <?php else: ?>
+                                                <span class="mmb-thumb mmb-thumb--md mmb-thumb--empty"><i class="fas fa-capsules"></i></span>
+                                            <?php endif; ?>
+                                        </td>
                                         <td><strong><?= report_text(trim(($product['branded_name'] ?? '') . ' ' . ($product['generic_name'] ?? ''))) ?></strong></td>
                                         <td><?= report_text(trim(($product['strength'] ?? '') . ' ' . ($product['measurement_name'] ?? ''))) ?></td>
                                         <td><?= report_text($product['dosage_form'] ?? '') ?></td>

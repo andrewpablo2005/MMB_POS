@@ -42,7 +42,10 @@ $(function () {
         if (!$.fn.DataTable.isDataTable(this)) {
             var tableOptions = {
                 responsive: true,
-                language: { emptyTable: $(this).attr('data-empty-message') || 'No records found.' }
+                language: {
+                    emptyTable: $(this).attr('data-empty-message') || 'No records found.',
+                    lengthMenu: '_MENU_ per page'
+                }
             };
 
             if (this.id === 'productManagementTable') {
@@ -93,7 +96,10 @@ function initDataTable(table) {
         scrollX: table.dataset.noResponsive === '1',
         dom: 'fBrtip',
         buttons: ['copy', 'excel', 'pdf', 'print'],
-        language: { emptyTable: $(table).attr('data-empty-message') || 'No records found.' }
+        language: {
+            emptyTable: $(table).attr('data-empty-message') || 'No records found.',
+            lengthMenu: '_MENU_ per page'
+        }
     });
 }
 

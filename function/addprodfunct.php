@@ -20,6 +20,7 @@ class ProductManagement
     public string $dosage_form;
     public int $dosage_form_id;
     public float $strength_per_quantity;
+    public ?float $strength_per_quantity_normalized = null;
     public string $strength_per_quantity_unit;
     // Batch/Inventory fields (no longer in products table)
     public string $expiry_date;
@@ -208,8 +209,28 @@ class ProductManagement
                 }
             }
 
-            $this->strength_per_quantity = (float) ($_POST['strength_per_quantity'] ?? 0);
+            // ISSUE #6 (1): Package Size — whole numbers >= 1 only.
+            // Anything negative, decimal, or non-numeric normalizes to NULL
+            // (the products column is nullable) so bad values can never be
+            // persisted server-side, no matter what the client sends.
+            $spqRaw = isset($_POST['strength_per_quantity']) && $_POST['strength_per_quantity'] !== '' ? $_POST['strength_per_quantity'] : null;
+            if (is_numeric($spqRaw)) {
+                $spqVal = (float) $spqRaw;
+                $this->strength_per_quantity = $spqVal;
+                $this->strength_per_quantity_normalized = ($spqVal >= 1.0 && floor($spqVal) === $spqVal) ? $spqVal : null;
+            } else {
+                $this->strength_per_quantity = 0.0;
+                $this->strength_per_quantity_normalized = null;
+            }
             $this->strength_per_quantity_unit = trim($_POST['strength_per_quantity_unit'] ?? '');
+            if ($this->strength_per_quantity_normalized === null) {
+                $this->strength_per_quantity_unit = '';
+            }
+            
+            // ISSUE #6 (1): serving amount can never be negative either
+            if (is_numeric($this->strength) && (float) $this->strength < 0) {
+                $this->strength = '0';
+            }
             
             // Batch/Inventory fields (for inventory table)
             $this->expiry_date = $_POST['expiry_date'] ?? '';
@@ -302,7 +323,7 @@ class ProductManagement
                 $this->units_per_package,
                 $this->package_type,
                 $this->dosage_form,
-                $this->strength_per_quantity,
+                $this->strength_per_quantity_normalized,
                 $this->strength_per_quantity_unit,
                 $imagePath,
                 $this->is_basic_necessities
@@ -740,7 +761,7 @@ class ProductManagement
                     $this->units_per_package,
                     $this->package_type,
                     $this->dosage_form,
-                    $this->strength_per_quantity,
+                    $this->strength_per_quantity_normalized,
                     $this->strength_per_quantity_unit,
                     $this->is_basic_necessities
                 ];

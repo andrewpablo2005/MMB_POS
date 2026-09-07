@@ -1037,6 +1037,23 @@ thead.table-dark th,
    Rounded image chip shown next to the product name in tables and
    lists. Falls back to a crimson capsule glyph when a product has
    no photo on file. */
+/* ── ISSUE #6 (4): Top-selling report medals + #1 highlight ── */
+.mmb-rank-medal {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    font-size: 0.8rem;
+    flex-shrink: 0;
+}
+.mmb-rank-medal--1 { background: #fef3c7; color: #b45309; box-shadow: inset 0 0 0 2px #fbbf24; }
+.mmb-rank-medal--2 { background: #f1f5f9; color: #475569; box-shadow: inset 0 0 0 2px #94a3b8; }
+.mmb-rank-medal--3 { background: #fdf0e3; color: #b45309; box-shadow: inset 0 0 0 2px #d97706; }
+tr.mmb-top1-row > td { background: rgba(251, 191, 36, 0.10) !important; }
+tr.mmb-top1-row:hover > td { background: rgba(251, 191, 36, 0.18) !important; }
+
 .mmb-thumb {
     width: 38px;
     height: 38px;
@@ -1316,6 +1333,7 @@ table.dataTable.dtr-column > tbody > tr > td.dtr-control {
 .mmb-toast-stack {
     position: fixed;
     top: calc(var(--mmb-topbar-h) + 12px);
+    z-index: 1095;
     right: 18px;
     z-index: 1085;
     display: flex;
@@ -1530,4 +1548,93 @@ table.dataTable.dtr-column > tbody > tr > td.dtr-control {
     border: 1px solid var(--mmb-line-soft);
     border-radius: 0.45rem;
     padding: 0.18rem 0.5rem;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   ISSUE #6 (3, 6, 7) — alert widget top-right, logout button,
+   DataTables length pill
+   ═══════════════════════════════════════════════════════════════ */
+
+/* (3) Global notifications popup — anchored under the bell instead of
+   covering the bottom-right of the screen */
+.mmb-alert-widget {
+    position: fixed;
+    top: calc(var(--mmb-topbar-h) + 10px);
+    right: 18px;
+    width: 360px;
+    max-width: calc(100vw - 24px);
+    z-index: 1085;
+}
+@media (max-width: 575.98px) {
+    .mmb-alert-widget { right: 12px; top: calc(var(--mmb-topbar-h) + 6px); }
+}
+
+/* (6) Topbar logout button — replaces the account dropdown */
+.topbar-logout-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    height: 38px;
+    padding: 0 16px;
+    border-radius: 999px;
+    border: 1px solid var(--mmb-line);
+    background: var(--mmb-surface);
+    color: var(--mmb-text);
+    font-size: 0.87rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.topbar-logout-btn i { font-size: 0.9rem; }
+.topbar-logout-btn:hover,
+.topbar-logout-btn:focus-visible {
+    background: var(--mmb-primary);
+    border-color: var(--mmb-primary);
+    color: #fff;
+    box-shadow: 0 4px 10px rgba(var(--mmb-primary-rgb), 0.25);
+}
+
+/* (7) DataTables length control — compact pill, never cropped */
+div.dt-container .dt-length,
+.dataTables_wrapper .dataTables_length {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+    flex-wrap: nowrap;
+}
+div.dt-container .dt-length label,
+.dataTables_wrapper .dataTables_length label {
+    margin: 0;
+    color: var(--mmb-muted);
+    font-size: 0.82rem;
+    white-space: nowrap;
+}
+div.dt-container .dt-length select.dt-input,
+.dataTables_wrapper .dataTables_length select {
+    min-width: 72px;
+    font-weight: 700;
+    color: var(--mmb-text);
+    padding: 0.35rem 0.7rem;
+    border-radius: 999px;
+    border: 1px solid var(--mmb-line);
+    background-color: var(--mmb-surface);
+    cursor: pointer;
+    -webkit-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath fill='%2364748b' d='M1 1l4 4 4-4'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.65rem center;
+    padding-right: 1.6rem;
+    flex-shrink: 0;
+}
+div.dt-container .dt-length select.dt-input:hover,
+.dataTables_wrapper .dataTables_length select:hover {
+    border-color: var(--mmb-primary-border);
+}
+div.dt-container .dt-length select.dt-input:focus,
+.dataTables_wrapper .dataTables_length select:focus {
+    border-color: var(--mmb-primary-border);
+    box-shadow: 0 0 0 0.2rem rgba(var(--mmb-primary-rgb), 0.15);
+    outline: none;
 }

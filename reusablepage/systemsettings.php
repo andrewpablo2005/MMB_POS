@@ -85,8 +85,8 @@ $currentUser = $usersmanagement->getUserById($userId);
 
     <div class="page-head">
         <div>
-            <h4>System Settings</h4>
-            <p class="page-sub">Update your account details, contact information, and security settings.</p>
+            <h4>Account Settings</h4>
+            <p class="page-sub">Update your own account details, contact information, and security settings.</p>
         </div>
     </div>
 

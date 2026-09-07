@@ -48,7 +48,7 @@ function dash_product_thumb(?string $image, string $sizeClass = 'mmb-thumb'): st
 
 <!-- Inter Font & Dashboard CSS -->
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../css/dashboard.css?v=10">
+<link rel="stylesheet" href="../css/dashboard.css?v=11">
 
 <!-- Pass PHP data to dashboard.js without mixing PHP into the JS file -->
 <script>
@@ -272,7 +272,7 @@ function dash_product_thumb(?string $image, string $sizeClass = 'mmb-thumb'): st
         </div>
         <div class="dash-card-body">
           <?php if (empty($lowStockItems)): ?>
-            <div class="empty-state"><i class="fas fa-circle-check" style="color:#dc2626;opacity:1"></i>All inventory looks good!</div>
+            <div class="empty-state"><i class="fas fa-circle-check" style="color:#16a34a;opacity:1"></i>All inventory looks good!</div>
           <?php else: ?>
             <table class="dash-table">
               <thead><tr><th></th><th>Product</th><th>Stock</th><th>Reorder At</th></tr></thead>
@@ -303,7 +303,7 @@ function dash_product_thumb(?string $image, string $sizeClass = 'mmb-thumb'): st
         </div>
         <div class="dash-card-body">
           <?php if (empty($expiringItems)): ?>
-            <div class="empty-state"><i class="fas fa-circle-check" style="color:#dc2626;opacity:1"></i>No immediate expiries.</div>
+            <div class="empty-state"><i class="fas fa-circle-check" style="color:#16a34a;opacity:1"></i>No immediate expiries.</div>
           <?php else: ?>
             <table class="dash-table">
               <thead><tr><th></th><th>Product</th><th>Expiry Date</th><th>Status</th></tr></thead>

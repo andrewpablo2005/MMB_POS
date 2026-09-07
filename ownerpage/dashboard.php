@@ -72,7 +72,7 @@ $activeTab = $_GET['tab'] ?? 'dashboard';
                         href="?tab=users"><i class="fas fa-users"></i>User Management</a>
 
                     <a class="nav-link <?= $activeTab === 'system' ? 'active' : '' ?>"
-                        href="?tab=system"><i class="fas fa-cog"></i>System Settings</a>
+                        href="?tab=system"><i class="fas fa-cog"></i>Account Settings</a>
                 </div>
             </div>
         </div>

@@ -63,30 +63,21 @@ $dosageForms = $product->getDosageForms(); ?>
                         <div class="add-product-row">
                             <div class="add-product-field">
                                 <label for="edit_strength_<?= $prod['id'] ?>" class="form-label">Amount per Serving <span class="text-muted">(if applicable)</span></label>
-                                <input type="number" id="edit_strength_<?= $prod['id'] ?>" name="strength" class="form-control"
+                                <input type="number" id="edit_strength_<?= $prod['id'] ?>" name="strength" class="form-control" min="0"
                                     placeholder="e.g., 250" value="<?= htmlspecialchars((string) ($prod['strength'] ?? '')) ?>">
                                 <div class="form-text text-muted mt-1">Use this for a measured serving or portion, such as 250 mg, 30 g, or 1 piece.</div>
                             </div>
                             <div class="add-product-field">
-                                <label for="edit_unit_measurement_search_<?= $prod['id'] ?>" class="form-label">Serving Unit</label>
-                                <div class="input-group">
-                                    <input type="text" id="edit_unit_measurement_search_<?= $prod['id'] ?>" class="form-control" list="edit_unit_measurement_list_<?= $prod['id'] ?>" placeholder="Select Unit" autocomplete="off"
-                                        value="<?= htmlspecialchars($prod['measurement_name'] ?? '') ?>">
-                                    <button type="button" class="btn btn-danger btn-add-measurement"
-                                        data-bs-toggle="modal" data-bs-target="#addMeasurementModal"
-                                        data-measurement-target="edit_unit_measurement_search_<?= $prod['id'] ?>"
-                                        data-measurement-hidden="edit_unit_measurement_<?= $prod['id'] ?>"
-                                        title="Add a new measurement unit">
-                                        <i class="fas fa-plus"></i>
-                                    </button>
-                                </div>
-                                <input type="hidden" id="edit_unit_measurement_<?= $prod['id'] ?>" name="unit_measurement" value="<?= (int) ($prod['measurement_id'] ?? 0) ?>">
-                                <datalist id="edit_unit_measurement_list_<?= $prod['id'] ?>">
+                                <label for="edit_unit_measurement_<?= $prod['id'] ?>" class="form-label">Serving Unit</label>
+                                <select id="edit_unit_measurement_<?= $prod['id'] ?>" name="unit_measurement" class="form-select">
+                                    <option value="">— none —</option>
                                     <?php foreach ($unitMeasurements as $unit): ?>
-                                        <option value="<?= htmlspecialchars($unit['name'] ?? '') ?>" data-id="<?= (int) ($unit['id'] ?? 0) ?>">
+                                        <option value="<?= (int) ($unit['id'] ?? 0) ?>" <?= (int) ($prod['measurement_id'] ?? 0) === (int) ($unit['id'] ?? 0) ? 'selected' : '' ?>>
+                                            <?= htmlspecialchars($unit['name'] ?? '') ?>
+                                        </option>
                                     <?php endforeach; ?>
-                                </datalist>
-                                <div class="form-text text-muted mt-1">Choose the unit for the serving amount, such as mg, g, ml, or pieces.</div>
+                                </select>
+                                <div class="form-text text-muted mt-1">Choose the unit for the serving amount, such as mg, g, mL, or pcs.</div>
                             </div>
                         </div>
 
@@ -108,24 +99,29 @@ $dosageForms = $product->getDosageForms(); ?>
 
                         <div id="edit_strengthQuantityFields_<?= $prod['id'] ?>" class="add-product-row">
                             <div class="add-product-field">
-                                <label for="edit_strength_per_quantity_<?= $prod['id'] ?>" class="form-label">Total Volume / Quantity per Package</label>
-                                <input type="number" id="edit_strength_per_quantity_<?= $prod['id'] ?>" name="strength_per_quantity" step="0.01" class="form-control"
+                                <label for="edit_strength_per_quantity_<?= $prod['id'] ?>" class="form-label">Package Size</label>
+                                <input type="number" id="edit_strength_per_quantity_<?= $prod['id'] ?>" name="strength_per_quantity" step="1" min="1" inputmode="numeric" class="form-control"
                                     value="<?= htmlspecialchars((string) ($prod['strength_per_quantity'] ?? '')) ?>" placeholder="e.g., 500">
-                                <div class="form-text text-muted mt-1">Total contents of one package, such as 100 ml, 50 g, or 10 tablets.</div>
+                                <div class="form-text text-muted mt-1">Total contents of one package — whole numbers only, e.g., 100, 50, or 10.</div>
                             </div>
                             <div class="add-product-field">
-                                <label for="edit_strength_per_unit_<?= $prod['id'] ?>" class="form-label">Volume / Quantity Unit</label>
-                                <div class="input-group">
-                                    <input type="text" id="edit_strength_per_unit_<?= $prod['id'] ?>" name="strength_per_quantity_unit" class="form-control"
-                                        value="<?= htmlspecialchars($prod['strength_per_quantity_unit'] ?? '') ?>" list="edit_unit_measurement_list_<?= $prod['id'] ?>" placeholder="Select Unit">
-                                    <button type="button" class="btn btn-danger btn-add-measurement"
-                                        data-bs-toggle="modal" data-bs-target="#addMeasurementModal"
-                                        data-measurement-target="edit_strength_per_unit_<?= $prod['id'] ?>"
-                                        title="Add a new measurement unit">
-                                        <i class="fas fa-plus"></i>
-                                    </button>
-                                </div>
-                                <div class="form-text text-muted mt-1">Choose the unit for the total package contents, such as ml, g, kg, or pieces.</div>
+                                <label for="edit_strength_per_unit_<?= $prod['id'] ?>" class="form-label">Unit</label>
+                                <?php
+                                    $spqUnit = trim((string) ($prod['strength_per_quantity_unit'] ?? ''));
+                                    $spqUnitKnown = $spqUnit !== '' && in_array($spqUnit, array_map(fn ($u) => (string) ($u['name'] ?? ''), $unitMeasurements), true);
+                                ?>
+                                <select id="edit_strength_per_unit_<?= $prod['id'] ?>" name="strength_per_quantity_unit" class="form-select">
+                                    <option value="">— none —</option>
+                                    <?php if ($spqUnit !== '' && !$spqUnitKnown): ?>
+                                        <option value="<?= htmlspecialchars($spqUnit) ?>" selected><?= htmlspecialchars($spqUnit) ?> (saved)</option>
+                                    <?php endif; ?>
+                                    <?php foreach ($unitMeasurements as $unit): ?>
+                                        <option value="<?= htmlspecialchars($unit['name'] ?? '') ?>" <?= $spqUnit !== '' && $spqUnitKnown && $spqUnit === (string) ($unit['name'] ?? '') ? 'selected' : '' ?>>
+                                            <?= htmlspecialchars($unit['name'] ?? '') ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+                                <div class="form-text text-muted mt-1">Choose the unit for the package contents, such as mL, g, kg, or pcs.</div>
                             </div>
                         </div>
 
@@ -264,103 +260,20 @@ $dosageForms = $product->getDosageForms(); ?>
     }
 
     document.addEventListener('DOMContentLoaded', function () {
-        const measurementModal = document.getElementById('addMeasurementModal');
-        const measurementButtons = document.querySelectorAll('.btn-add-measurement');
-        let activeMeasurementTarget = null;
-
-        measurementButtons.forEach(function (button) {
-            button.addEventListener('click', function () {
-                activeMeasurementTarget = this.getAttribute('data-measurement-target') || null;
-                const input = activeMeasurementTarget ? document.getElementById(activeMeasurementTarget) : null;
-                if (input) input.focus();
+        // ISSUE #6 (1): Package Size — whole numbers only, negatives blocked
+        document.querySelectorAll('input[id^="edit_strength_per_quantity_"]').forEach(function (input) {
+            input.addEventListener('input', function () {
+                const cleaned = this.value.replace(/[^0-9]/g, '');
+                if (this.value !== cleaned) this.value = cleaned;
+            });
+        });
+        document.querySelectorAll('input[id^="edit_strength_"]:not([id^="edit_strength_per_quantity"])').forEach(function (input) {
+            input.addEventListener('input', function () {
+                const cleaned = this.value.replace(/-/g, '');
+                if (this.value !== cleaned) this.value = cleaned;
             });
         });
 
-        const measurementForm = document.getElementById('addMeasurementForm');
-        if (measurementForm) {
-            measurementForm.addEventListener('submit', function (event) {
-                event.preventDefault();
-                const nameInput = document.getElementById('new_measurement_name');
-                const measurementName = nameInput ? nameInput.value.trim() : '';
-
-                if (!measurementName) {
-                    mmbNotify({ type: 'warning', title: 'Measurement required', message: 'Please enter a unit name before saving.' });
-                    return;
-                }
-
-                const submitBtn = measurementForm.querySelector('button[type="submit"]');
-                if (submitBtn) {
-                    submitBtn.disabled = true;
-                    submitBtn.textContent = 'Saving...';
-                }
-
-                const formData = new FormData();
-                formData.append('measurement_name', measurementName);
-
-                fetch('../function/add_measurement_ajax.php', {
-                    method: 'POST',
-                    body: formData
-                })
-                .then((response) => response.json().then((data) => ({ status: response.status, data })))
-                .then(({ status, data }) => {
-                    if (submitBtn) {
-                        submitBtn.disabled = false;
-                        submitBtn.textContent = 'Save Unit';
-                    }
-
-                    if (status === 200 && data.success) {
-                        document.querySelectorAll('datalist').forEach(function (list) {
-                            const listId = list.id || '';
-                            if (!listId.includes('measurement') && !listId.includes('unit')) return;
-                            const exists = Array.from(list.options).some((option) => option.value.trim().toLowerCase() === measurementName.toLowerCase());
-                            if (!exists) {
-                                const option = document.createElement('option');
-                                option.value = data.name || measurementName;
-                                option.setAttribute('data-id', String(data.id || ''));
-                                list.appendChild(option);
-                            }
-                        });
-
-                        if (activeMeasurementTarget) {
-                            const targetInput = document.getElementById(activeMeasurementTarget);
-                            if (targetInput) {
-                                targetInput.value = data.name || measurementName;
-                                targetInput.dispatchEvent(new Event('input', { bubbles: true }));
-                                targetInput.dispatchEvent(new Event('change', { bubbles: true }));
-                            }
-                        }
-
-                        if (measurementModal) {
-                            const modal = bootstrap.Modal.getInstance(measurementModal);
-                            if (modal) modal.hide();
-                        }
-
-                        const openEditModal = document.querySelector('.modal.show');
-                        if (openEditModal) {
-                            const editModalInstance = bootstrap.Modal.getOrCreateInstance(openEditModal);
-                            setTimeout(() => {
-                                editModalInstance.show();
-                            }, 180);
-                        }
-
-                        measurementForm.reset();
-                        mmbNotify({ type: 'success', title: 'Measurement saved', message: 'The new unit has been added and is ready to use.' });
-                        return;
-                    }
-
-                    const message = data && data.message ? data.message : 'Unable to save the measurement unit.';
-                    mmbNotify({ type: 'warning', title: 'Could not save measurement', message: message });
-                })
-                .catch((error) => {
-                    if (submitBtn) {
-                        submitBtn.disabled = false;
-                        submitBtn.textContent = 'Save Unit';
-                    }
-                    console.error('Measurement save failed:', error);
-                    mmbNotify({ type: 'danger', title: 'Network error', message: 'Could not save the measurement unit.' });
-                });
-            });
-        }
 
         document.querySelectorAll('[id^="edit_category_search_"]').forEach(function (categoryInput) {
             const productId = categoryInput.id.replace('edit_category_search_', '');

@@ -290,26 +290,27 @@
 .top-product-item .mmb-thumb { margin-right: 0; }
 .top-product-item .product-rank { margin-right: 10px; }
 
-/* ─── Alert Widgets ─── */
+/* ─── Alert Widgets (issue #6.9: no more heavy side stripes — soft tinted
+     surfaces with a hairline border carry the same signal) ─── */
 .alert-card-warn {
-  border-left: 4px solid #f59e0b !important;
-  background: #fff !important;
+  background: #fffbeb !important;
+  border: 1px solid #fde68a !important;
 }
 .alert-card-warn .dash-card-header {
-  background: #fff;
-  border-bottom: 1px solid #fef3c7;
+  background: transparent;
+  border-bottom: 1px solid #fde68a;
 }
-.alert-card-warn .dash-card-header h6 { color: #d97706; }
+.alert-card-warn .dash-card-header h6 { color: #b45309; }
 
 .alert-card-danger {
-  border-left: 4px solid #ef4444 !important;
-  background: #fff !important;
+  background: #fef2f2 !important;
+  border: 1px solid #fecaca !important;
 }
 .alert-card-danger .dash-card-header {
-  background: #fff;
-  border-bottom: 1px solid #fee2e2;
+  background: transparent;
+  border-bottom: 1px solid #fecaca;
 }
-.alert-card-danger .dash-card-header h6 { color: #dc2626; }
+.alert-card-danger .dash-card-header h6 { color: #b91c1c; }
 
 .badge-warn  { background: #fef3c7; color: #92400e; padding: 3px 10px; border-radius: 50px; font-size: .72rem; font-weight: 700; }
 .badge-danger{ background: #fee2e2; color: #991b1b; padding: 3px 10px; border-radius: 50px; font-size: .72rem; font-weight: 700; }

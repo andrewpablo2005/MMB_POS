@@ -43,8 +43,6 @@ foreach ($expiryItems as $item) {
     ];
 }
 
-$mmbPosition = htmlspecialchars($_SESSION['position'] ?? '');
-$mmbInitial = mb_strtoupper(mb_substr($mmbPosition, 0, 1));
 ?>
 
 <!-- ═══════════════════════════════════════════════════════════════
@@ -81,48 +79,19 @@ $mmbInitial = mb_strtoupper(mb_substr($mmbPosition, 0, 1));
 
         <span class="topbar-divider d-none d-sm-block"></span>
 
-        <!-- User Dropdown -->
-        <div class="dropdown">
-            <button type="button" class="btn user-chip" id="userDropdownBtn" onclick="toggleDropdown()">
-                <span class="user-avatar"><?= $mmbInitial ?></span>
-                <span class="user-chip-name d-none d-sm-inline"><?= $mmbPosition ?></span>
-                <i class="fas fa-chevron-down user-chip-chevron"></i>
-            </button>
-            <ul class="dropdown-menu dropdown-menu-end user-dropdown-menu shadow" id="userDropdownMenu" style="display: none;">
-                <li class="dropdown-header">
-                    Signed in as
-                    <div class="user-dropdown-role"><?= $mmbPosition ?></div>
-                </li>
-                <li><hr class="dropdown-divider"></li>
-                <li>
-                    <a class="dropdown-item text-danger d-flex align-items-center gap-2" href="../login_logout_page/logout.php">
-                        <i class="fas fa-sign-out-alt"></i> Logout
-                    </a>
-                </li>
-            </ul>
-        </div>
-
-        <script>
-            function toggleDropdown() {
-                const menu = document.getElementById('userDropdownMenu');
-                menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
-            }
-
-            // Close dropdown when clicking outside
-            document.addEventListener('click', function(event) {
-                const btn = document.getElementById('userDropdownBtn');
-                const menu = document.getElementById('userDropdownMenu');
-                if (!btn.contains(event.target) && !menu.contains(event.target)) {
-                    menu.style.display = 'none';
-                }
-            });
-        </script>
+        <!-- ISSUE #6 (6): the account dropdown was redundant — a clean
+             logout button replaces it (no more "O" avatar) -->
+        <a class="btn topbar-logout-btn" href="../login_logout_page/logout.php"
+           data-mmb-confirm="Log out of your account?" data-mmb-ok="Yes, log out">
+            <i class="fas fa-sign-out-alt"></i>
+            <span class="d-none d-sm-inline">Logout</span>
+        </a>
 
     </div>
 </nav>
 
 <?php if (!empty($globalAlertItems)): ?>
-<div id="globalAlertWidget" class="position-fixed bottom-0 end-0 p-3" style="z-index: 1060; width: 360px; max-width: calc(100vw - 24px);">
+<div id="globalAlertWidget" class="mmb-alert-widget" style="z-index: 1085;">
     <div class="bg-white border rounded-4 shadow-sm overflow-hidden position-relative" style="border-color: #ebebeb;">
         <button type="button" id="globalAlertClose" class="btn btn-link position-absolute top-0 end-0 p-2 text-muted" aria-label="Close notifications" style="z-index: 2; font-size: 0.9rem; line-height: 1;">
             <i class="fas fa-times"></i>

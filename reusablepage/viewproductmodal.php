@@ -49,7 +49,7 @@ require_once __DIR__ . '/guard.php'; guard_require_roles(['owner','admin']);
                             <span><?= !empty(trim($prod['dosage_form'] ?? '')) ? htmlspecialchars(trim($prod['dosage_form'])) : 'N/A' ?></span>
                         </div>
                         <div class="mmb-view-item">
-                            <strong>Total Volume / Quantity per Package</strong>
+                            <strong>Package Size</strong>
                             <?php
                                 $qty = $prod['strength_per_quantity'] ?? null;
                                 $unit = trim($prod['strength_per_quantity_unit'] ?? '');
