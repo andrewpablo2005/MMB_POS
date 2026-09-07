@@ -32,7 +32,7 @@ if (!empty($_SESSION['user_id'])) {
 ?>
 
 <!-- wePOS Inspired CSS -->
-<link rel="stylesheet" href="../css/pos_wepos.css?v=1.7">
+<link rel="stylesheet" href="../css/pos_wepos.css?v=1.9">
 
 <div class="wepos-wrapper" id="weposApp">
     
@@ -137,6 +137,11 @@ if (!empty($_SESSION['user_id'])) {
 
     <!-- ═══════════════ RIGHT PANEL: CART & CHECKOUT ═══════════════ -->
     <div class="wepos-right">
+
+        <!-- Cart width drag handle (issue #7.5) — drag to resize, persists per device -->
+        <div class="wepos-resizer" id="weposCartResizer" title="Drag to resize the cart panel" aria-label="Drag to resize the cart panel">
+            <i class="fas fa-grip-lines-vertical"></i>
+        </div>
         
         <!-- Cart Header -->
         <div class="wepos-cart-header">
@@ -174,9 +179,11 @@ if (!empty($_SESSION['user_id'])) {
 
         <!-- Calculations & Checkout -->
         <div class="wepos-checkout-area">
-            
-            <!-- Discount Selection -->
-            <div class="wepos-discount-row">
+
+            <!-- Discount Selection (hidden — issue #7.1: the customer type is now
+                 chosen inside the payment flow. The select stays in the DOM and
+                 keeps driving all pricing / statutory logic exactly as before.) -->
+            <div class="wepos-discount-row" style="display:none;">
                 <div class="wepos-discount-label"><i class="fas fa-tags text-primary"></i> Apply Discount</div>
                 <select id="weposDiscount" class="wepos-select" onchange="weposOnDiscountChange(this)">
                     <?php foreach ($discounts as $d): ?>
@@ -336,6 +343,17 @@ if (!empty($_SESSION['user_id'])) {
                 <div class="wepos-modal-amt">Amount Due: <strong class="text-primary" id="modalAmountDue">₱0.00</strong></div>
             </div>
 
+            <!-- Customer Type (issue #7.1) — asked AFTER Pay is clicked.
+                 Senior/PWD opens the ID verification flow on top of this modal. -->
+            <div class="wepos-ctype-row">
+                <div class="wepos-ctype-label"><i class="fas fa-user-tag"></i> Customer Type</div>
+                <div class="wepos-ctype-btns">
+                    <button type="button" class="wepos-ctype-btn active" data-ctype="regular" onclick="weposSetCustomerType('regular', this)"><i class="fas fa-user"></i> Regular</button>
+                    <button type="button" class="wepos-ctype-btn" data-ctype="senior" onclick="weposSetCustomerType('senior', this)"><i class="fas fa-id-card"></i> Senior</button>
+                    <button type="button" class="wepos-ctype-btn" data-ctype="pwd" onclick="weposSetCustomerType('pwd', this)"><i class="fas fa-wheelchair"></i> PWD</button>
+                </div>
+            </div>
+
             <!-- Checkout Items with Override -->
             <div id="weposCheckoutItems" style="max-height: 200px; overflow-y: auto; margin-bottom: 15px; border: 1px solid #e0e0e0; border-radius: 4px; display: none;"></div>
 
@@ -344,7 +362,9 @@ if (!empty($_SESSION['user_id'])) {
             <div class="wepos-tendered-box">
                 <label>Amount Tendered (₱)</label>
                 <input type="number" id="weposTendered" class="wepos-input-lg" placeholder="" oninput="weposCalcChange()" autofocus>
-                
+
+                <div class="wepos-enter-hint">Type the amount, then press <kbd>Enter</kbd> to confirm</div>
+
                 <div class="wepos-quick-cash" id="weposQuickCash"></div>
             </div>
 
@@ -364,7 +384,7 @@ if (!empty($_SESSION['user_id'])) {
         </div>
         <div class="wepos-modal-foot">
             <button class="wepos-btn wepos-btn-outline" onclick="weposClosePayModal()">Cancel</button>
-            <button class="wepos-btn wepos-btn-primary" id="modalConfirmBtn" onclick="weposOpenConfirmModal()" disabled>Confirm Payment</button>
+            <button class="wepos-btn wepos-btn-primary" id="modalConfirmBtn" onclick="weposOpenConfirmModal()" disabled>Confirm Payment <kbd>Enter</kbd></button>
         </div>
     </div>
 </div>
@@ -399,7 +419,7 @@ if (!empty($_SESSION['user_id'])) {
         </div>
         <div class="wepos-modal-foot">
             <button class="wepos-btn wepos-btn-outline" onclick="weposCloseConfirmModal()">Cancel</button>
-            <button class="wepos-btn wepos-btn-primary" id="confirmPayBtn" onclick="weposSubmitTransaction()">Pay Now</button>
+            <button class="wepos-btn wepos-btn-primary" id="confirmPayBtn" onclick="weposSubmitTransaction()">Pay Now <kbd>Enter</kbd></button>
         </div>
     </div>
 </div>
@@ -816,4 +836,4 @@ if (!empty($_SESSION['user_id'])) {
 </div>
 
 <?php include __DIR__ . '/returnmodal.php'; ?>
-<script src="../js/pos_wepos.js?v=1.8"></script>
+<script src="../js/pos_wepos.js?v=1.9"></script>
