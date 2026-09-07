@@ -38,11 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pharmacy Management System - Login</title>
     <?php require_once __DIR__ . "/../conn/connection_links.php"; ?>
-<<<<<<< HEAD
-    <link rel="stylesheet" href="<?= mmbpos_base_path() ?>/css/login.css?v=2">
-=======
     <link rel="stylesheet" href="<?= mmbpos_base_path() ?>/css/login.css?v=4">
->>>>>>> e8a6e690db37038ff803974010cb2ad942b8c18a
 </head>
 
 <body class="bg-light d-flex align-items-center justify-content-center" style="min-height: 100vh;">

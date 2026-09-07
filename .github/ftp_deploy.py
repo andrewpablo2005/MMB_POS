@@ -30,13 +30,9 @@ FULL_SYNC = (os.environ.get("FULL_SYNC") or "").strip().lower() in ("1", "true",
 ROOT_DIR = "htdocs"
 MARKER = ".deploy-sha"
 
-<<<<<<< HEAD
-EXCLUDE_TOP = {".git", ".github", "docs"}          # whole directories, never deployed
-=======
 EXCLUDE_TOP = {".git", ".github", "docs", "img"}      # never deployed: img/ is runtime
 # content (product photos uploaded by the app / manually via file manager) —
 # deploys must never PUT or DEL anything under img/
->>>>>>> e8a6e690db37038ff803974010cb2ad942b8c18a
 EXCLUDE_FILES = {".gitignore", ".gitattributes", ".gitmodules", "README.md", "mmbpos.sql"}
 
 
@@ -107,11 +103,6 @@ class Deployer:
                 pass  # already exists
 
     def upload(self, rel: str) -> bool:
-<<<<<<< HEAD
-        local = os.path.join(WS, rel)
-        size = os.path.getsize(local)
-        for i in range(4):
-=======
         """STOR once, then poll SIZE with backoff before re-uploading.
 
         Why: the hosting FTP backend can serve a STALE size for a freshly
@@ -125,19 +116,12 @@ class Deployer:
         local = os.path.join(WS, rel)
         size = os.path.getsize(local)
         for attempt in range(3):
->>>>>>> e8a6e690db37038ff803974010cb2ad942b8c18a
             try:
                 parent = "/".join(rel.split("/")[:-1])
                 if parent:
                     self.ensure_dir(parent)
                 with open(local, "rb") as fh:
                     self.ftp.storbinary(f"STOR {rel}", fh, blocksize=65536)
-<<<<<<< HEAD
-                if self.ftp.size(rel) == size:
-                    return True
-                print(f"    size mismatch on {rel}, retrying")
-=======
->>>>>>> e8a6e690db37038ff803974010cb2ad942b8c18a
             except Exception as e:
                 print(f"    transfer error on {rel} ({e.__class__.__name__}), reconnecting")
                 time.sleep(3)
@@ -146,10 +130,6 @@ class Deployer:
                 except Exception:
                     pass
                 self.connect()
-<<<<<<< HEAD
-        return False
-
-=======
                 continue
             for wait_s in (0, 1, 2, 4, 8):
                 if wait_s:
@@ -207,7 +187,6 @@ class Deployer:
                 bad.append(rel)
         return bad
 
->>>>>>> e8a6e690db37038ff803974010cb2ad942b8c18a
     def delete(self, rel: str) -> bool:
         try:
             self.ftp.delete(rel)
@@ -271,8 +250,6 @@ def main():
     dels = [p for a, p in plan if a == "DEL"]
     if not puts and not dels:
         print("Nothing to deploy (only excluded files changed or marker already current).")
-<<<<<<< HEAD
-=======
         # Keep the marker tracking HEAD so the next run's diff starts here.
         d = Deployer()
         d.connect()
@@ -284,7 +261,6 @@ def main():
             d.ftp.quit()
         except Exception:
             pass
->>>>>>> e8a6e690db37038ff803974010cb2ad942b8c18a
         return
 
     print(f"Files: {len(puts)} to upload, {len(dels)} to delete")
@@ -311,8 +287,6 @@ def main():
         print("::error::Failed after retries: " + ", ".join(failed[:20]))
         raise SystemExit(1)
 
-<<<<<<< HEAD
-=======
     # Final verification pass: the FTP backend can lag on fresh uploads, so
     # re-check every uploaded file's size once all transfers are done.
     if puts:
@@ -322,7 +296,6 @@ def main():
             print("::error::Size verification failed for: " + ", ".join(bad[:20]))
             raise SystemExit(1)
 
->>>>>>> e8a6e690db37038ff803974010cb2ad942b8c18a
     d.write_marker(head_sha)
     print(f"Deployed {len(puts)} file(s), deleted {len(dels)}, in {elapsed:.0f}s. Marker -> {head_sha[:10]}")
 
