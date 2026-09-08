@@ -552,8 +552,9 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
                                 }
                                 ?>
                             </select>
-                            <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addSupplierModal">
-                                </button>
+                            <button type="button" class="btn btn-danger btn-sm d-inline-flex align-items-center justify-content-center" data-bs-toggle="modal" data-bs-target="#addSupplierModal" aria-label="Add supplier" title="Add supplier">
+                                <i class="fas fa-plus" aria-hidden="true"></i>
+                            </button>
                         </div>
                     </div>
                     </div>
