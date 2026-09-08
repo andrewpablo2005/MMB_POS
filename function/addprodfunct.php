@@ -91,13 +91,13 @@ class ProductManagement
     public function getUnitMeasurements(): array
     {
         try {
-            $stmt = $this->con->prepare("SELECT unit_id, different_measurement FROM unit_measurement ORDER BY different_measurement ASC");
+            $stmt = $this->con->prepare("SELECT id, serving_unit_name FROM serving_unit ORDER BY serving_unit_name ASC");
             $stmt->execute();
 
             $units = [];
             while ($row = $stmt->fetch()) {
-                $id = (int) ($row['unit_id'] ?? 0);
-                $value = trim($row['different_measurement'] ?? '');
+                $id = (int) ($row['id'] ?? 0);
+                $value = trim($row['serving_unit_name'] ?? '');
 
                 if ($id > 0 && $value !== '') {
                     $units[] = [
@@ -107,6 +107,25 @@ class ProductManagement
                 }
             }
 
+            return $units;
+        } catch (\Exception $e) {
+            return [];
+        }
+    }
+
+    public function getPackageUnitMeasurements(): array
+    {
+        try {
+            $stmt = $this->con->prepare("SELECT unit_id, different_measurement FROM unit_measurement ORDER BY different_measurement ASC");
+            $stmt->execute();
+            $units = [];
+            while ($row = $stmt->fetch()) {
+                $id = (int) ($row['unit_id'] ?? 0);
+                $value = trim($row['different_measurement'] ?? '');
+                if ($id > 0 && $value !== '') {
+                    $units[] = ['id' => $id, 'name' => $value];
+                }
+            }
             return $units;
         } catch (\Exception $e) {
             return [];
@@ -535,7 +554,7 @@ class ProductManagement
                 p.imageproduct,
                 p.strength,
                 p.measurement_id,
-                COALESCE(um.different_measurement, '') AS measurement_name,
+                COALESCE(um.serving_unit_name, '') AS measurement_name,
                 p.category_id,
                 pc.category_name,
                 p.barcode,
@@ -551,7 +570,7 @@ class ProductManagement
             FROM inventory i
             LEFT JOIN products p ON p.id = i.product_id
             LEFT JOIN product_categories pc ON p.category_id = pc.id
-            LEFT JOIN unit_measurement um ON um.unit_id = p.measurement_id
+            LEFT JOIN serving_unit um ON um.id = p.measurement_id
             LEFT JOIN suppliers s ON i.supplier_id = s.id
             ORDER BY p.generic_name ASC, i.expiry_date ASC, i.id ASC
         ";
@@ -573,7 +592,7 @@ class ProductManagement
                 p.imageproduct,
                 p.strength,
                 p.measurement_id,
-                COALESCE(um.different_measurement, '') AS measurement_name,
+                COALESCE(um.serving_unit_name, '') AS measurement_name,
                 p.category_id,
                 pc.category_name,
                 p.barcode,
@@ -584,7 +603,7 @@ class ProductManagement
             FROM inventory_disposals d
             LEFT JOIN products p ON p.id = d.product_id
             LEFT JOIN product_categories pc ON p.category_id = pc.id
-            LEFT JOIN unit_measurement um ON um.unit_id = p.measurement_id
+            LEFT JOIN serving_unit um ON um.id = p.measurement_id
             ORDER BY d.disposed_at DESC, p.generic_name ASC, d.id ASC
         ";
 
@@ -613,12 +632,12 @@ class ProductManagement
                 p.imageproduct,
                 p.strength,
                 p.measurement_id,
-                COALESCE(um.different_measurement, '') AS measurement_name,
+                COALESCE(um.serving_unit_name, '') AS measurement_name,
                 p.barcode
             FROM return_items ri
             JOIN return_transactions rt ON ri.return_transaction_id = rt.id
             LEFT JOIN products p ON ri.product_id = p.id
-            LEFT JOIN unit_measurement um ON um.unit_id = p.measurement_id
+            LEFT JOIN serving_unit um ON um.id = p.measurement_id
             ORDER BY rt.created_at DESC, ri.id DESC
         ";
 

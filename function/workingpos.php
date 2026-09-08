@@ -13,7 +13,7 @@ class Product {
         $sql = "SELECT p.*, 
                     pc.category_name,
                     pc.has_vat, pc.senior_discount, pc.pwd_discount,
-                    um.different_measurement AS measurement_name,
+                    um.serving_unit_name AS measurement_name,
                     COALESCE(SUM(CASE
                         WHEN i.current_quantity > 0
                              AND (i.expiry_date IS NULL OR i.expiry_date >= CURDATE())
@@ -44,7 +44,7 @@ class Product {
                               LIMIT 1), 0) AS sale_price
                 FROM products p
                 LEFT JOIN product_categories pc ON p.category_id = pc.id
-                LEFT JOIN unit_measurement um ON p.measurement_id = um.unit_id
+                LEFT JOIN serving_unit um ON p.measurement_id = um.id
                 LEFT JOIN inventory i ON p.id = i.product_id
                 GROUP BY p.id
                 ORDER BY p.generic_name ASC";

@@ -63,7 +63,7 @@ class Reports
                    p.branded_name,
                    p.generic_name,
                    p.strength,
-                   um.different_measurement AS measurement_name,
+                   um.serving_unit_name AS measurement_name,
                    p.strength_per_quantity,
                    p.strength_per_quantity_unit,
                    COALESCE(p.dosage_form, df.form_name) AS dosage_form,
@@ -73,10 +73,10 @@ class Reports
                    AVG(ti.price) AS average_price
             FROM transaction_items ti
             JOIN products p ON ti.product_id = p.id
-            LEFT JOIN unit_measurement um ON um.unit_id = p.measurement_id
+            LEFT JOIN serving_unit um ON um.id = p.measurement_id
             LEFT JOIN dosage_forms df ON df.id = p.dosage_form_id
             LEFT JOIN product_categories pc ON pc.id = p.category_id
-            GROUP BY p.id, p.imageproduct, p.branded_name, p.generic_name, p.strength, um.different_measurement, p.strength_per_quantity, p.strength_per_quantity_unit, p.dosage_form, df.form_name, pc.category_name, p.barcode
+            GROUP BY p.id, p.imageproduct, p.branded_name, p.generic_name, p.strength, um.serving_unit_name, p.strength_per_quantity, p.strength_per_quantity_unit, p.dosage_form, df.form_name, pc.category_name, p.barcode
             ORDER BY total_sold DESC, p.id ASC
         ");
         $stmt->execute();
@@ -119,7 +119,7 @@ class Reports
                    CONCAT_WS(' ', NULLIF(p.branded_name, ''), NULLIF(p.generic_name, '')) AS product_name,
                    p.imageproduct,
                    p.branded_name, p.generic_name, p.strength,
-                   um.different_measurement AS measurement_name,
+                   um.serving_unit_name AS measurement_name,
                    p.strength_per_quantity, p.strength_per_quantity_unit,
                    COALESCE(p.dosage_form, df.form_name) AS dosage_form,
                    pc.category_name, p.barcode,
@@ -128,11 +128,11 @@ class Reports
             FROM transaction_items ti
             JOIN transactions t ON t.id = ti.transaction_id
             JOIN products p ON ti.product_id = p.id
-            LEFT JOIN unit_measurement um ON um.unit_id = p.measurement_id
+            LEFT JOIN serving_unit um ON um.id = p.measurement_id
             LEFT JOIN dosage_forms df ON df.id = p.dosage_form_id
             LEFT JOIN product_categories pc ON pc.id = p.category_id
             WHERE {$where}
-            GROUP BY p.id, p.imageproduct, p.branded_name, p.generic_name, p.strength, um.different_measurement,
+            GROUP BY p.id, p.imageproduct, p.branded_name, p.generic_name, p.strength, um.serving_unit_name,
                      p.strength_per_quantity, p.strength_per_quantity_unit, p.dosage_form,
                      df.form_name, pc.category_name, p.barcode
             ORDER BY total_sold DESC, p.id ASC");
@@ -156,7 +156,7 @@ class Reports
                    p.branded_name,
                    p.generic_name,
                    p.strength,
-                   um.different_measurement AS measurement_name,
+                   um.serving_unit_name AS measurement_name,
                    COALESCE(p.dosage_form, df.form_name) AS dosage_form,
                    pc.category_name,
                    p.barcode,
@@ -167,7 +167,7 @@ class Reports
                    i.expiry_date
             FROM inventory i
             JOIN products p ON i.product_id = p.id
-            LEFT JOIN unit_measurement um ON um.unit_id = p.measurement_id
+            LEFT JOIN serving_unit um ON um.id = p.measurement_id
             LEFT JOIN dosage_forms df ON df.id = p.dosage_form_id
             LEFT JOIN product_categories pc ON pc.id = p.category_id
             ORDER BY i.expiry_date ASC

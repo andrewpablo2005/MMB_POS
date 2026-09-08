@@ -10,7 +10,8 @@ $product = new ProductManagement($db);
 
 // USE CLASS FUNCTIONS
 $categories = $product->getCategories();
-$unitMeasurements = $product->getUnitMeasurements();
+$servingUnits = $product->getUnitMeasurements();
+$unitMeasurements = $product->getPackageUnitMeasurements();
 $dosageForms = $product->getDosageForms();
 
 ?>
@@ -24,7 +25,7 @@ $dosageForms = $product->getDosageForms();
                 <div class="modal-header">
                     <h5 class="modal-title"><span class="modal-head-icon"><i class="fas fa-pills"></i></span> Add New
                         Product</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close Add Product" title="Close Add Product"></button>
                 </div>
 
                 <div class="modal-body add-product-body">
@@ -50,7 +51,7 @@ $dosageForms = $product->getDosageForms();
                         </div>
                         
                         <div class="add-product-field">
-                            <label for="generic_name" class="form-label">Generic/Product Name</label>
+                            <label for="generic_name" class="form-label">Generic/Product Name <span class="text-danger">*</span></label>
                             <input type="text" id="generic_name" name="generic_name" class="form-control"
                                 placeholder="e.g., Paracetamol or Potato Chips" required>
                             <div class="form-text text-muted mt-1">
@@ -61,20 +62,17 @@ $dosageForms = $product->getDosageForms();
 
                     <div class="add-product-row add-product-row--single">
                         <div class="add-product-field">
-                            <label for="category_search" class="form-label">Category <span
+                            <label for="category_id" class="form-label">Category <span
                                     class="text-danger">*</span></label>
-                            <input type="text" id="category_search" class="form-control" list="category_list"
-                                placeholder="Select Category" autocomplete="off" required>
-                            <input type="hidden" id="category_id" name="category_id" value="">
-                            <datalist id="category_list">
+                            <select id="category_id" name="category_id" class="form-select" required>
+                                <option value="">— select category —</option>
                                 <?php foreach ($categories as $cat): ?>
-                                    <option value="<?= htmlspecialchars($cat['category_name'] ?? '') ?>"
-                                        data-id="<?= (int) ($cat['id'] ?? 0) ?>"
+                                    <option value="<?= (int) ($cat['id'] ?? 0) ?>"
                                         data-senior="<?= (int) ($cat['senior_discount'] ?? 0) ?>"
                                         data-pwd="<?= (int) ($cat['pwd_discount'] ?? 0) ?>"
-                                        data-vat="<?= (int) ($cat['has_vat'] ?? 0) ?>">
+                                        data-vat="<?= (int) ($cat['has_vat'] ?? 0) ?>"><?= htmlspecialchars($cat['category_name'] ?? '') ?></option>
                                     <?php endforeach; ?>
-                            </datalist>
+                            </select>
                             <div id="categoryRuleNote" class="form-text text-muted mt-1">
                                 Select a category to see whether senior/PWD discounts apply.
                             </div>
@@ -91,23 +89,32 @@ $dosageForms = $product->getDosageForms();
 
                     <div class="add-product-row">
                         <div class="add-product-field">
-                            <label for="strength" class="form-label">Amount per Serving <span
-                                class="text-muted">(if applicable)</span></label>
+                            <label for="strength" class="form-label">Amount per Serving <span class="text-danger">*</span></label>
                             <div class="input-group">
                                 <input type="number" id="strength" name="strength" class="form-control"
-                                    placeholder="e.g., 250" min="0">
+                                    placeholder="e.g., 250" min="0" required>
                             </div>
                             <div class="form-text text-muted">Use this for a measured serving or portion, such as 250 mg, 30 g, or 1 piece.
                             </div>
                         </div>
                         <div class="add-product-field">
-                            <label for="unit_measurement" class="form-label">Serving Unit</label>
-                            <select id="unit_measurement" name="unit_measurement" class="form-select">
-                                <option value="">— none —</option>
-                                <?php foreach ($unitMeasurements as $unit): ?>
-                                    <option value="<?= (int) ($unit['id'] ?? 0) ?>"><?= htmlspecialchars($unit['name'] ?? '') ?></option>
-                                <?php endforeach; ?>
-                            </select>
+                            <label for="unit_measurement" class="form-label">Serving Unit <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <select id="unit_measurement" name="unit_measurement" class="form-select" required>
+                                    <option value="">— none —</option>
+                                    <?php foreach ($servingUnits as $unit): ?>
+                                        <option value="<?= (int) ($unit['id'] ?? 0) ?>" data-measurement-id="<?= (int) ($unit['id'] ?? 0) ?>"><?= htmlspecialchars($unit['name'] ?? '') ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                                <button type="button" class="btn btn-primary" data-open-measurement-modal
+                                    data-measurement-target="unit_measurement" aria-label="Add serving unit" title="Add serving unit" data-bs-toggle="tooltip">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                                <button type="button" class="btn btn-danger" data-delete-measurement="unit_measurement"
+                                    aria-label="Delete serving unit" title="Delete selected serving unit" data-bs-toggle="tooltip">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
                             <div class="form-text text-muted mt-1">
                                 Choose the unit for the serving amount, such as mg, g, mL, or pcs.
                             </div>
@@ -116,17 +123,25 @@ $dosageForms = $product->getDosageForms();
 
                     <div id="dosageFormContainer" class="add-product-row add-product-row--single">
                         <div class="add-product-field">
-                            <label for="dosage_form_search" class="form-label">Product Form <span class="text-muted">(if applicable)</span></label>
-                            <input type="text" id="dosage_form_search" class="form-control" list="dosage_form_list"
-                                placeholder="Select product form" autocomplete="off">
+                            <label for="dosage_form_id" class="form-label">Product Form <span class="text-muted">(if applicable)</span></label>
                             <input type="hidden" id="dosage_form" name="dosage_form" value="">
-                            <input type="hidden" id="dosage_form_id" name="dosage_form_id" value="">
-                            <datalist id="dosage_form_list">
+                            <div class="input-group">
+                                <select id="dosage_form_id" name="dosage_form_id" class="form-select">
+                                <option value="">— none —</option>
                                 <?php foreach ($dosageForms as $form): ?>
-                                    <option value="<?= htmlspecialchars($form['name'] ?? '') ?>"
-                                        data-id="<?= (int) ($form['id'] ?? 0) ?>">
-                                    <?php endforeach; ?>
-                            </datalist>
+                                    <option value="<?= (int) ($form['id'] ?? 0) ?>"
+                                        data-name="<?= htmlspecialchars($form['name'] ?? '') ?>"><?= htmlspecialchars($form['name'] ?? '') ?></option>
+                                <?php endforeach; ?>
+                                </select>
+                                <button type="button" class="btn btn-primary" data-open-dosage-form-modal
+                                    aria-label="Add product form" title="Add product form" data-bs-toggle="tooltip">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                                <button type="button" class="btn btn-danger" data-delete-dosage-form
+                                    aria-label="Delete product form" title="Delete selected product form" data-bs-toggle="tooltip">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
                             <div class="form-text text-muted mt-1">
                                 Select a form such as tablet, syrup, bag, bottle, or box, or leave blank when it does not apply.
                             </div>
@@ -135,20 +150,32 @@ $dosageForms = $product->getDosageForms();
 
                     <div id="strengthQuantityFields" class="add-product-row">
                         <div class="add-product-field">
-                            <label for="strength_per_quantity" class="form-label">Package Size</label>
+                            <label for="strength_per_quantity" class="form-label">Package Size<span
+                                class="text-muted">(if applicable)</span></label>
                             <input type="number" id="strength_per_quantity" name="strength_per_quantity" step="1" min="1"
                                 inputmode="numeric" class="form-control" placeholder="e.g., 500">
                             <div class="form-text text-muted">Total contents of one package — whole numbers only, e.g., 100, 50, or 10.
                             </div>
                         </div>
                         <div class="add-product-field">
-                            <label for="strength_per_quantity_unit" class="form-label">Unit</label>
-                            <select id="strength_per_quantity_unit" name="strength_per_quantity_unit" class="form-select">
-                                <option value="">— none —</option>
-                                <?php foreach ($unitMeasurements as $unit): ?>
-                                    <option value="<?= htmlspecialchars($unit['name'] ?? '') ?>"><?= htmlspecialchars($unit['name'] ?? '') ?></option>
-                                <?php endforeach; ?>
-                            </select>
+                            <label for="strength_per_quantity_unit" class="form-label">Unit<span
+                                class="text-muted">(if applicable)</span></label>
+                            <div class="input-group">
+                                <select id="strength_per_quantity_unit" name="strength_per_quantity_unit" class="form-select">
+                                    <option value="">— none —</option>
+                                    <?php foreach ($unitMeasurements as $unit): ?>
+                                        <option value="<?= htmlspecialchars($unit['name'] ?? '') ?>" data-measurement-id="<?= (int) ($unit['id'] ?? 0) ?>"><?= htmlspecialchars($unit['name'] ?? '') ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                                <button type="button" class="btn btn-primary" data-open-measurement-modal
+                                    data-measurement-target="strength_per_quantity_unit" aria-label="Add package unit" title="Add package unit" data-bs-toggle="tooltip">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                                <button type="button" class="btn btn-danger" data-delete-measurement="strength_per_quantity_unit"
+                                    aria-label="Delete package unit" title="Delete selected package unit" data-bs-toggle="tooltip">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
                             <div class="form-text text-muted mt-1">
                                 Choose the unit for the package contents, such as mL, g, kg, or pcs.
                             </div>
@@ -169,7 +196,7 @@ $dosageForms = $product->getDosageForms();
                             <div class="input-group">
                                 <input type="text" id="barcode" name="barcode" class="form-control"
                                     placeholder="e.g., 123456789012">
-                                <button type="button" class="btn btn-outline-secondary" onclick="generateBarcode()">
+                                <button type="button" class="btn btn-outline-secondary" onclick="generateBarcode()" title="Generate barcode" aria-label="Generate barcode" data-bs-toggle="tooltip">
                                     <i class="fas fa-barcode"></i> Auto
                                 </button>
                             </div>
@@ -197,9 +224,9 @@ $dosageForms = $product->getDosageForms();
                             <label class="form-label">Do you want to add a batch and quantity now?</label>
                             <div class="btn-group w-100" role="group" aria-label="Add batch prompt">
                                 <button type="button" class="btn btn-outline-primary"
-                                    data-batch-option="yes">Yes</button>
+                                    data-batch-option="yes" title="Add a batch now" data-bs-toggle="tooltip">Yes</button>
                                 <button type="button" class="btn btn-secondary active"
-                                    data-batch-option="no">No</button>
+                                    data-batch-option="no" title="Skip adding a batch" data-bs-toggle="tooltip">No</button>
                             </div>
                             <input type="hidden" name="add_batch_prompt" id="add_batch_prompt" value="no">
                         </div>
@@ -317,13 +344,64 @@ $dosageForms = $product->getDosageForms();
                 </div>
 
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" name="addProduct" class="btn btn-primary">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" title="Cancel and close" data-bs-toggle="tooltip">Cancel</button>
+                    <button type="submit" name="addProduct" class="btn btn-primary" title="Save product" data-bs-toggle="tooltip">
                         <i class="fas fa-save"></i> Save Product
                     </button>
                 </div>
             </form>
 
+        </div>
+    </div>
+</div>
+
+<!-- ADD MEASUREMENT MODAL -->
+<div class="modal fade" id="addMeasurementModal" tabindex="-1" aria-labelledby="addMeasurementModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form id="addMeasurementForm">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addMeasurementModalLabel">Add Measurement Unit</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close Add Measurement" title="Close Add Measurement"></button>
+                </div>
+                <div class="modal-body">
+                    <label for="measurement_name" class="form-label">Measurement Name <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="measurement_name" name="measurement_name"
+                        placeholder="e.g., mg, mL, bottle" required autocomplete="off">
+                    <div class="form-text">Add a unit that can be used for serving amounts and package sizes.</div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" title="Cancel and close" data-bs-toggle="tooltip">Cancel</button>
+                    <button type="submit" class="btn btn-primary" title="Add measurement unit" data-bs-toggle="tooltip">
+                        <i class="fas fa-plus me-1"></i>Add Measurement
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- ADD PRODUCT FORM MODAL -->
+<div class="modal fade" id="addDosageFormModal" tabindex="-1" aria-labelledby="addDosageFormModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form id="addDosageFormForm">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addDosageFormModalLabel">Add Product Form</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close Add Product Form" title="Close Add Product Form"></button>
+                </div>
+                <div class="modal-body">
+                    <label for="dosage_form_name" class="form-label">Product Form <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="dosage_form_name" name="dosage_form_name"
+                        placeholder="e.g., tablet, syrup, bottle" required autocomplete="off">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" title="Cancel and close" data-bs-toggle="tooltip">Cancel</button>
+                    <button type="submit" class="btn btn-primary" title="Add product form" data-bs-toggle="tooltip">
+                        <i class="fas fa-plus me-1"></i>Add Product Form
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
@@ -410,21 +488,245 @@ $dosageForms = $product->getDosageForms();
     }
 
     document.addEventListener('DOMContentLoaded', function () {
-        bindSearchableList({
-            inputId: 'category_search',
-            valueId: 'category_id',
-            listId: 'category_list',
-            onSelect: (optionEl) => {
-                if (optionEl) {
+        document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach((element) => {
+            bootstrap.Tooltip.getOrCreateInstance(element);
+        });
+
+        const measurementModal = document.getElementById('addMeasurementModal');
+        const measurementForm = document.getElementById('addMeasurementForm');
+        const measurementInput = document.getElementById('measurement_name');
+        let measurementTargetId = '';
+        let returnToProductModal = false;
+
+        const closeMeasurementAndReturn = () => {
+            if (!measurementModal) return;
+            bootstrap.Modal.getOrCreateInstance(measurementModal).hide();
+        };
+
+        document.querySelectorAll('[data-open-measurement-modal]').forEach((button) => {
+            button.addEventListener('click', function () {
+                measurementTargetId = this.dataset.measurementTarget || '';
+                returnToProductModal = true;
+                const productModal = document.getElementById('addProductModal');
+                if (productModal) {
+                    bootstrap.Modal.getOrCreateInstance(productModal).hide();
+                }
+                if (measurementModal) {
+                    bootstrap.Modal.getOrCreateInstance(measurementModal).show();
+                }
+                window.setTimeout(() => measurementInput?.focus(), 250);
+            });
+        });
+
+        if (measurementForm && measurementModal) {
+            measurementForm.addEventListener('submit', function (event) {
+                event.preventDefault();
+                const name = measurementInput.value.trim();
+                const submitButton = measurementForm.querySelector('button[type="submit"]');
+                if (!name || !measurementTargetId) {
+                    mmbNotify({ type: 'warning', title: 'Measurement name required', message: 'Enter a measurement before saving.' });
+                    return;
+                }
+
+                submitButton.disabled = true;
+                submitButton.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Saving...';
+
+                const formData = new FormData();
+                formData.append('measurement_name', name);
+                const measurementEndpoint = measurementTargetId === 'unit_measurement'
+                    ? '../function/add_serving_unit_ajax.php'
+                    : '../function/add_measurement_ajax.php';
+                fetch(measurementEndpoint, { method: 'POST', body: formData })
+                    .then((response) => response.json().then((data) => ({ status: response.status, data })))
+                    .then(({ status, data }) => {
+                        if (status !== 200 || (!data.success && !data.existing_id)) {
+                            throw new Error(data.message || 'Unable to save measurement.');
+                        }
+
+                        const target = document.getElementById(measurementTargetId);
+                        const id = data.id || data.existing_id;
+                        const savedName = data.name || data.existing_name || name;
+                        if (target && !Array.from(target.options).some((option) => option.value === String(id) || option.value === savedName)) {
+                            const newOption = new Option(savedName, target.id === 'unit_measurement' ? id : savedName);
+                            newOption.dataset.measurementId = String(id);
+                            target.add(newOption);
+                        }
+                        if (target) {
+                            target.value = target.id === 'unit_measurement' ? String(id) : savedName;
+                            const selectedOption = target.options[target.selectedIndex];
+                            if (selectedOption) selectedOption.dataset.measurementId = String(id);
+                        }
+
+                        mmbNotify({
+                            type: data.success ? 'success' : 'warning',
+                            title: data.success ? 'Measurement added' : 'Measurement already exists',
+                            message: data.message || 'The measurement is ready to use.'
+                        });
+                        measurementForm.reset();
+                        closeMeasurementAndReturn();
+                    })
+                    .catch((error) => {
+                        mmbNotify({ type: 'danger', title: 'Could not add measurement', message: error.message });
+                    })
+                    .finally(() => {
+                        submitButton.disabled = false;
+                        submitButton.innerHTML = '<i class="fas fa-plus me-1"></i>Add Measurement';
+                    });
+            });
+
+            measurementModal.addEventListener('hidden.bs.modal', function () {
+                measurementForm.reset();
+                measurementTargetId = '';
+                if (returnToProductModal) {
+                    const productModal = document.getElementById('addProductModal');
+                    if (productModal) {
+                        bootstrap.Modal.getOrCreateInstance(productModal).show();
+                    }
+                    returnToProductModal = false;
+                }
+            });
+        }
+
+        const dosageFormModal = document.getElementById('addDosageFormModal');
+        const dosageFormForm = document.getElementById('addDosageFormForm');
+        const dosageFormInput = document.getElementById('dosage_form_name');
+        const dosageFormSelect = document.getElementById('dosage_form_id');
+        let returnToProductModalAfterDosageForm = false;
+
+        document.querySelectorAll('[data-open-dosage-form-modal]').forEach((button) => {
+            button.addEventListener('click', function () {
+                returnToProductModalAfterDosageForm = true;
+                const productModal = document.getElementById('addProductModal');
+                if (productModal) {
+                    bootstrap.Modal.getOrCreateInstance(productModal).hide();
+                }
+                bootstrap.Modal.getOrCreateInstance(dosageFormModal).show();
+                window.setTimeout(() => dosageFormInput?.focus(), 250);
+            });
+        });
+
+        if (dosageFormForm && dosageFormModal && dosageFormSelect) {
+            dosageFormForm.addEventListener('submit', function (event) {
+                event.preventDefault();
+                const name = dosageFormInput.value.trim();
+                const submitButton = dosageFormForm.querySelector('button[type="submit"]');
+                if (!name) {
+                    mmbNotify({ type: 'warning', title: 'Product form required', message: 'Enter a product form before saving.' });
+                    return;
+                }
+
+                submitButton.disabled = true;
+                submitButton.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Saving...';
+                const formData = new FormData();
+                formData.append('form_name', name);
+
+                fetch('../function/add_dosage_form_ajax.php', { method: 'POST', body: formData })
+                    .then((response) => response.json().then((data) => ({ status: response.status, data })))
+                    .then(({ status, data }) => {
+                        if (status !== 200 || (!data.success && !data.existing_id)) {
+                            throw new Error(data.message || 'Unable to save product form.');
+                        }
+
+                        const id = data.id || data.existing_id;
+                        const savedName = data.name || data.existing_name || name;
+                        let option = Array.from(dosageFormSelect.options).find((item) => item.value === String(id));
+                        if (!option) {
+                            option = new Option(savedName, id);
+                            dosageFormSelect.add(option);
+                        }
+                        option.textContent = savedName;
+                        option.setAttribute('data-name', savedName);
+                        dosageFormSelect.value = String(id);
+                        dosageFormValue.value = savedName;
+                        mmbNotify({
+                            type: data.success ? 'success' : 'warning',
+                            title: data.success ? 'Product form added' : 'Product form already exists',
+                            message: data.message || 'The product form is ready to use.'
+                        });
+                        dosageFormForm.reset();
+                        bootstrap.Modal.getOrCreateInstance(dosageFormModal).hide();
+                    })
+                    .catch((error) => {
+                        mmbNotify({ type: 'danger', title: 'Could not add product form', message: error.message });
+                    })
+                    .finally(() => {
+                        submitButton.disabled = false;
+                        submitButton.innerHTML = '<i class="fas fa-plus me-1"></i>Add Product Form';
+                    });
+            });
+
+            dosageFormModal.addEventListener('hidden.bs.modal', function () {
+                dosageFormForm.reset();
+                if (returnToProductModalAfterDosageForm) {
+                    bootstrap.Modal.getOrCreateInstance(document.getElementById('addProductModal')).show();
+                    returnToProductModalAfterDosageForm = false;
+                }
+            });
+        }
+
+        document.addEventListener('click', function (event) {
+            const measurementDeleteButton = event.target.closest('[data-delete-measurement]');
+            const dosageDeleteButton = event.target.closest('[data-delete-dosage-form]');
+            if (!measurementDeleteButton && !dosageDeleteButton) return;
+
+            const selectId = measurementDeleteButton
+                ? measurementDeleteButton.dataset.deleteMeasurement
+                : 'dosage_form_id';
+            const select = document.getElementById(selectId);
+            const option = select?.options[select.selectedIndex];
+            const id = measurementDeleteButton
+                ? option?.dataset.measurementId
+                : option?.value;
+            const name = option?.textContent.trim();
+            if (!select || !id || !name) {
+                mmbNotify({ type: 'warning', title: 'Select an item first' });
+                return;
+            }
+            if (!window.confirm(`Delete "${name}"? This cannot be undone.`)) return;
+
+            const formData = new FormData();
+            formData.append('id', id);
+            const endpoint = measurementDeleteButton
+                ? (selectId === 'unit_measurement'
+                    ? '../function/delete_serving_unit_ajax.php'
+                    : '../function/delete_measurement_ajax.php')
+                : '../function/delete_dosage_form_ajax.php';
+            const button = measurementDeleteButton || dosageDeleteButton;
+            button.disabled = true;
+            fetch(endpoint, { method: 'POST', body: formData })
+                .then((response) => response.json().then((data) => ({ status: response.status, data })))
+                .then(({ status, data }) => {
+                    if (status !== 200 || !data.success) {
+                        throw new Error(data.message || 'Unable to delete the selected item.');
+                    }
+                    option.remove();
+                    select.value = '';
+                    if (selectId === 'dosage_form_id') {
+                        dosageFormValue.value = '';
+                    }
+                    mmbNotify({ type: 'success', title: 'Deleted successfully', message: data.message });
+                })
+                .catch((error) => {
+                    mmbNotify({ type: 'danger', title: 'Could not delete item', message: error.message });
+                })
+                .finally(() => {
+                    button.disabled = false;
+                });
+        });
+
+        const categorySelect = document.getElementById('category_id');
+        if (categorySelect) {
+            categorySelect.addEventListener('change', function () {
+                const optionEl = this.options[this.selectedIndex];
+                if (this.value) {
                     updateCategoryRuleNote(optionEl);
-                    toggleDosageFormVisibility(optionEl.value || '');
+                    toggleDosageFormVisibility(optionEl.textContent || '');
                 } else {
                     toggleDosageFormVisibility('');
                 }
-            }
-        });
+            });
+        }
 
-        const dosageFormInput = document.getElementById('dosage_form_search');
         const dosageFormValue = document.getElementById('dosage_form');
         const dosageFormId = document.getElementById('dosage_form_id');
         const strengthQuantityFields = document.getElementById('strengthQuantityFields');
@@ -439,22 +741,17 @@ $dosageForms = $product->getDosageForms();
             }
         };
 
-        if (dosageFormInput && dosageFormValue && dosageFormId) {
-            const dosageOptions = Array.from(document.querySelectorAll('#dosage_form_list option'));
+        if (dosageFormValue && dosageFormId) {
             const syncDosageForm = function () {
-                const match = dosageOptions.find((option) => option.value.trim() === dosageFormInput.value.trim());
-                dosageFormValue.value = match ? match.value.trim() : '';
-                dosageFormId.value = match ? (match.getAttribute('data-id') || '') : '';
+                const selectedOption = dosageFormId.options[dosageFormId.selectedIndex];
+                dosageFormValue.value = this.value ? (selectedOption.getAttribute('data-name') || selectedOption.textContent.trim()) : '';
                 toggleDosageAndStrengthFields();
             };
-            dosageFormInput.addEventListener('input', syncDosageForm);
-            dosageFormInput.addEventListener('change', syncDosageForm);
+            dosageFormId.addEventListener('change', syncDosageForm);
         }
 
-        const categorySearchInput = document.getElementById('category_search');
-        if (categorySearchInput) {
-            categorySearchInput.addEventListener('input', toggleDosageAndStrengthFields);
-            categorySearchInput.addEventListener('change', toggleDosageAndStrengthFields);
+        if (categorySelect) {
+            categorySelect.addEventListener('change', toggleDosageAndStrengthFields);
         }
 
         toggleDosageAndStrengthFields();
@@ -566,6 +863,12 @@ $dosageForms = $product->getDosageForms();
 
         if (!genericName.value.trim()) errors.push('Generic Name is required');
         if (!categoryValue.value) errors.push('Category is required - Please select a category');
+        if (!strength || strength.value === '') errors.push('Amount per Serving is required');
+        if (strength && strength.value !== '' && Number(strength.value) < 0) {
+            errors.push('Amount per Serving cannot be negative');
+        }
+        const servingUnit = document.getElementById('unit_measurement');
+        if (!servingUnit || !servingUnit.value) errors.push('Serving Unit is required');
 
         // ISSUE #6 (1): Package Size — whole number >= 1, no negatives/decimals
         const spqField = document.getElementById('strength_per_quantity');
@@ -575,10 +878,6 @@ $dosageForms = $product->getDosageForms();
                 errors.push('Package Size must be a whole number of at least 1 (no decimals or negatives)');
             }
         }
-        if (strength && strength.value !== '' && Number(strength.value) < 0) {
-            errors.push('Amount per Serving cannot be negative');
-        }
-
         if (addBatchPrompt && addBatchPrompt.value === 'yes') {
             if (receivedQuantity && (!receivedQuantity.value || Number(receivedQuantity.value) <= 0)) {
                 errors.push('Quantity Received must be greater than zero when adding a batch');

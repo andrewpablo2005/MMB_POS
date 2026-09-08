@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 07, 2026 at 05:22 AM
+-- Generation Time: Sep 08, 2026 at 02:07 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -80,7 +80,8 @@ INSERT INTO `dosage_forms` (`id`, `form_name`, `is_active`, `created_at`) VALUES
 (17, 'Lozenge', 1, '2026-08-17 09:03:53'),
 (18, 'Suppository', 1, '2026-08-17 09:03:53'),
 (19, 'Oral Liquid', 1, '2026-08-17 09:03:53'),
-(20, 'Chewable Tablet', 1, '2026-08-17 09:03:53');
+(20, 'Chewable Tablet', 1, '2026-08-17 09:03:53'),
+(21, 'bottles', 1, '2026-09-07 23:05:19');
 
 -- --------------------------------------------------------
 
@@ -322,7 +323,7 @@ INSERT INTO `product_categories` (`id`, `category_name`, `has_vat`, `senior_disc
 (22, 'Diagnostics', 0, 1, 1),
 (23, 'Herbal Products', 0, 1, 1),
 (24, 'Health & Wellness', 0, 1, 1),
-(25, 'Personal Care', 1, 0, 0),
+(25, 'Personal Care', 1, 1, 1),
 (26, 'Baby Care', 1, 0, 0),
 (27, 'Beverage/Beverages', 1, 0, 0),
 (28, 'Snacks', 1, 0, 0),
@@ -427,6 +428,24 @@ CREATE TABLE `senior_customers` (
   `cashier_id` int(11) NOT NULL,
   `verified_at` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `serving_unit`
+--
+
+CREATE TABLE `serving_unit` (
+  `id` int(11) NOT NULL,
+  `serving_unit_name` varchar(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `serving_unit`
+--
+
+INSERT INTO `serving_unit` (`id`, `serving_unit_name`) VALUES
+(2, 'mg');
 
 -- --------------------------------------------------------
 
@@ -559,7 +578,8 @@ INSERT INTO `unit_measurement` (`unit_id`, `different_measurement`) VALUES
 (17, 'pcs'),
 (18, 'tbsp'),
 (19, 'tsp'),
-(20, 'box');
+(20, 'box'),
+(21, 'mgg');
 
 -- --------------------------------------------------------
 
@@ -773,6 +793,12 @@ ALTER TABLE `senior_customers`
   ADD UNIQUE KEY `unique_senior_id` (`id_number`);
 
 --
+-- Indexes for table `serving_unit`
+--
+ALTER TABLE `serving_unit`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `store_settings`
 --
 ALTER TABLE `store_settings`
@@ -851,7 +877,7 @@ ALTER TABLE `discounts`
 -- AUTO_INCREMENT for table `dosage_forms`
 --
 ALTER TABLE `dosage_forms`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- AUTO_INCREMENT for table `inventory`
@@ -875,7 +901,7 @@ ALTER TABLE `inventory_transactions`
 -- AUTO_INCREMENT for table `login_attempts`
 --
 ALTER TABLE `login_attempts`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `override_log`
@@ -905,7 +931,7 @@ ALTER TABLE `products`
 -- AUTO_INCREMENT for table `product_categories`
 --
 ALTER TABLE `product_categories`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
 
 --
 -- AUTO_INCREMENT for table `pwd_customers`
@@ -944,6 +970,12 @@ ALTER TABLE `senior_customers`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `serving_unit`
+--
+ALTER TABLE `serving_unit`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
 -- AUTO_INCREMENT for table `suppliers`
 --
 ALTER TABLE `suppliers`
@@ -977,7 +1009,7 @@ ALTER TABLE `transaction_item_batches`
 -- AUTO_INCREMENT for table `unit_measurement`
 --
 ALTER TABLE `unit_measurement`
-  MODIFY `unit_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `unit_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- AUTO_INCREMENT for table `users`

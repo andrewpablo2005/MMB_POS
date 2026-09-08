@@ -71,7 +71,7 @@ $dosageForms = $product->getDosageForms(); ?>
                                 <label for="edit_unit_measurement_<?= $prod['id'] ?>" class="form-label">Serving Unit</label>
                                 <select id="edit_unit_measurement_<?= $prod['id'] ?>" name="unit_measurement" class="form-select">
                                     <option value="">— none —</option>
-                                    <?php foreach ($unitMeasurements as $unit): ?>
+                                    <?php foreach ($servingUnits as $unit): ?>
                                         <option value="<?= (int) ($unit['id'] ?? 0) ?>" <?= (int) ($prod['measurement_id'] ?? 0) === (int) ($unit['id'] ?? 0) ? 'selected' : '' ?>>
                                             <?= htmlspecialchars($unit['name'] ?? '') ?>
                                         </option>
@@ -83,16 +83,17 @@ $dosageForms = $product->getDosageForms(); ?>
 
                         <div id="edit_dosageFormContainer_<?= $prod['id'] ?>" class="add-product-row add-product-row--single">
                             <div class="add-product-field add-product-field--full">
-                                <label for="edit_dosage_form_search_<?= $prod['id'] ?>" class="form-label">Product Form <span class="text-muted">(if applicable)</span></label>
-                                <input type="text" id="edit_dosage_form_search_<?= $prod['id'] ?>" class="form-control" list="edit_dosage_form_list_<?= $prod['id'] ?>" placeholder="Select dosage form" autocomplete="off"
-                                    value="<?= htmlspecialchars($prod['dosage_form'] ?? '') ?>">
+                                <label for="edit_dosage_form_id_<?= $prod['id'] ?>" class="form-label">Product Form <span class="text-muted">(if applicable)</span></label>
                                 <input type="hidden" id="edit_dosage_form_<?= $prod['id'] ?>" name="dosage_form" value="<?= htmlspecialchars($prod['dosage_form'] ?? '') ?>">
-                                <input type="hidden" id="edit_dosage_form_id_<?= $prod['id'] ?>" name="dosage_form_id" value="<?= (int) ($prod['dosage_form_id'] ?? 0) ?>">
-                                <datalist id="edit_dosage_form_list_<?= $prod['id'] ?>">
+                                <select id="edit_dosage_form_id_<?= $prod['id'] ?>" name="dosage_form_id" class="form-select">
+                                    <option value="">— none —</option>
                                     <?php foreach ($dosageForms as $form): ?>
-                                        <option value="<?= htmlspecialchars($form['name'] ?? '') ?>" data-id="<?= (int) ($form['id'] ?? 0) ?>">
+                                        <option value="<?= (int) ($form['id'] ?? 0) ?>" data-name="<?= htmlspecialchars($form['name'] ?? '') ?>"
+                                            <?= (int) ($prod['dosage_form_id'] ?? 0) === (int) ($form['id'] ?? 0) ? 'selected' : '' ?>>
+                                            <?= htmlspecialchars($form['name'] ?? '') ?>
+                                        </option>
                                     <?php endforeach; ?>
-                                </datalist>
+                                </select>
                                 <div class="form-text text-muted mt-1">Select a form such as tablet, syrup, bag, bottle, or box, or leave blank when it does not apply.</div>
                             </div>
                         </div>
@@ -302,24 +303,17 @@ $dosageForms = $product->getDosageForms(); ?>
             toggleEditDosageFormVisibility(productId);
         });
 
-        document.querySelectorAll('[id^="edit_dosage_form_search_"]').forEach(function (dosageInput) {
-            const productId = dosageInput.id.replace('edit_dosage_form_search_', '');
-            const listId = 'edit_dosage_form_list_' + productId;
+        document.querySelectorAll('[id^="edit_dosage_form_id_"]').forEach(function (dosageInput) {
+            const productId = dosageInput.id.replace('edit_dosage_form_id_', '');
             const valueId = 'edit_dosage_form_' + productId;
-            const idValueId = 'edit_dosage_form_id_' + productId;
 
             const syncDosage = () => {
-                const listEl = document.getElementById(listId);
                 const valueEl = document.getElementById(valueId);
-                const idValueEl = document.getElementById(idValueId);
-                const option = listEl ? Array.from(listEl.options).find((opt) => opt.value.trim() === dosageInput.value.trim()) : null;
-
-                if (valueEl) valueEl.value = option ? option.value.trim() : dosageInput.value.trim();
-                if (idValueEl) idValueEl.value = option ? (option.getAttribute('data-id') || '') : '';
+                const option = dosageInput.options[dosageInput.selectedIndex];
+                if (valueEl) valueEl.value = dosageInput.value ? (option?.dataset.name || option?.textContent.trim() || '') : '';
                 toggleEditDosageFormVisibility(productId);
             };
 
-            dosageInput.addEventListener('input', syncDosage);
             dosageInput.addEventListener('change', syncDosage);
             syncDosage();
         });

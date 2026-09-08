@@ -91,7 +91,7 @@ foreach ($expiryItems as $item) {
 </nav>
 
 <?php if (!empty($globalAlertItems)): ?>
-<div id="globalAlertWidget" class="mmb-alert-widget" style="z-index: 1085;">
+<div id="globalAlertWidget" class="mmb-alert-widget" data-alert-signature="<?= htmlspecialchars(hash('sha256', json_encode($globalAlertItems)), ENT_QUOTES, 'UTF-8') ?>" style="z-index: 1085;">
     <div class="bg-white border rounded-4 shadow-sm overflow-hidden position-relative" style="border-color: #ebebeb;">
         <button type="button" id="globalAlertClose" class="btn btn-link position-absolute top-0 end-0 p-2 text-muted" aria-label="Close notifications" style="z-index: 2; font-size: 0.9rem; line-height: 1;">
             <i class="fas fa-times"></i>
@@ -154,6 +154,8 @@ foreach ($expiryItems as $item) {
         const chevron = alertToggler ? alertToggler.querySelector('.toggle-chevron i') : null;
         const countText = document.getElementById('globalAlertCount');
         const headerBell = document.getElementById('headerAlertBell');
+        const alertStorageKey = 'mmbDismissedGlobalAlertSignature';
+        const alertSignature = alertWidget ? alertWidget.dataset.alertSignature : '';
 
         function updateAlertToggleUI() {
             if (!alertToggler || !alertList || !chevron) return;
@@ -204,6 +206,10 @@ foreach ($expiryItems as $item) {
         if (alertClose) {
             alertClose.addEventListener('click', function () {
                 if (alertWidget) {
+                    try {
+                        localStorage.setItem(alertStorageKey, alertSignature);
+                    } catch (error) {
+                    }
                     alertWidget.style.display = 'none';
                 }
             });
@@ -239,6 +245,13 @@ foreach ($expiryItems as $item) {
                 }
             });
         });
+
+        try {
+            if (alertWidget && localStorage.getItem(alertStorageKey) === alertSignature) {
+                alertWidget.style.display = 'none';
+            }
+        } catch (error) {
+        }
 
         updateAlertToggleUI();
     });
