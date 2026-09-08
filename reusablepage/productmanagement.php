@@ -62,10 +62,10 @@ if ($product->addProduct()) {
             </div>
             <div class="d-flex gap-2">
                 <button class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#categorySettingsModal">
-                    <i class="fas fa-sliders-h me-1"></i>Category Settings
+                    Category Settings
                 </button>
                 <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addProductModal">
-                    <i class="fas fa-plus me-1"></i>Add Item
+                    Add Item
                 </button>
             </div>
         </div>
@@ -154,14 +154,14 @@ if ($product->addProduct()) {
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="categorySettingsModalLabel">
-                    <i class="fas fa-sliders-h me-2 text-danger"></i>Category Settings
+                    Category Settings
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <p class="text-muted small">Edit category names and the discount/VAT rules used when selling products.</p>
                 <button type="button" class="btn btn-primary mb-3" data-open-add-category>
-                    <i class="fas fa-plus me-1"></i>Add Category
+                    Add Category
                 </button>
                 <div class="table-responsive">
                     <table class="table table-sm align-middle">
@@ -189,10 +189,10 @@ if ($product->addProduct()) {
                                     <?php endforeach; ?>
                                     <td class="text-end">
                                         <button type="button" class="btn btn-sm btn-primary" data-save-category>
-                                            <i class="fas fa-save me-1"></i>Save
+                                            Save
                                         </button>
                                         <button type="button" class="btn btn-sm btn-danger" data-delete-category>
-                                            <i class="fas fa-trash me-1"></i>Delete
+                                            Delete
                                         </button>
                                     </td>
                                 </tr>
@@ -232,7 +232,7 @@ if ($product->addProduct()) {
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                     <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-plus me-1"></i>Add Category
+                        Add Category
                     </button>
                 </div>
             </form>
@@ -246,7 +246,7 @@ if ($product->addProduct()) {
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="mmbBarcodeModalTitle"><i class="fas fa-barcode me-2 text-danger"></i>Product barcode</h5>
+                <h5 class="modal-title" id="mmbBarcodeModalTitle">Product barcode</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -261,10 +261,10 @@ if ($product->addProduct()) {
             <div class="modal-footer">
                 <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
                 <button type="button" class="btn btn-outline-primary" data-mmb-barcode-print>
-                    <i class="fas fa-print me-1"></i> Print
+                    Print
                 </button>
                 <button type="button" class="btn btn-primary" data-mmb-barcode-download>
-                    <i class="fas fa-download me-1"></i> Download PNG
+                    Download PNG
                 </button>
             </div>
             <div id="mmbBarcodePrintHolder" style="display:none;"></div>
@@ -335,8 +335,8 @@ if ($product->addProduct()) {
                         <td class="text-center"><input type="checkbox" class="form-check-input" data-category-field="senior_discount" aria-label="Senior"></td>
                         <td class="text-center"><input type="checkbox" class="form-check-input" data-category-field="pwd_discount" aria-label="PWD"></td>
                         <td class="text-end">
-                            <button type="button" class="btn btn-sm btn-primary" data-save-category><i class="fas fa-save me-1"></i>Save</button>
-                            <button type="button" class="btn btn-sm btn-danger" data-delete-category><i class="fas fa-trash me-1"></i>Delete</button>
+                            <button type="button" class="btn btn-sm btn-primary" data-save-category>Save</button>
+                            <button type="button" class="btn btn-sm btn-danger" data-delete-category>Delete</button>
                         </td>`;
                     newRow.querySelector('[data-category-name]').value = name;
                     newRow.querySelector('[data-category-field="has_vat"]').checked = formData.get('has_vat') === '1';
@@ -352,7 +352,7 @@ if ($product->addProduct()) {
                 })
                 .finally(() => {
                     submitButton.disabled = false;
-                    submitButton.innerHTML = '<i class="fas fa-plus me-1"></i>Add Category';
+                    submitButton.innerHTML = 'Add Category';
                 });
         });
 

@@ -101,7 +101,7 @@ foreach ($salesDetailRows as $detailRow) {
             <div class="row mb-4">
                 <div class="col-md-4">
                     <div class="card shadow-sm summary-card" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#topProductsModal">
-                        <div><i class="fas fa-crown"></i> Top Selling Product</div>
+                        <div>Top Selling Product</div>
                         <div class="summary-value">
                             <?= htmlspecialchars($topProducts[0]['product_name'] ?? 'N/A') ?>
                         </div>
@@ -111,7 +111,7 @@ foreach ($salesDetailRows as $detailRow) {
 
                 <div class="col-md-4">
                     <div class="card shadow-sm summary-card" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#salesDetailModal">
-                        <div><i class="fas fa-calendar-check"></i> Sales Detail Report</div>
+                        <div>Sales Detail Report</div>
                         <div class="summary-value">₱<?= number_format($detailRealRevenueTotal, 2) ?></div>
                         <small class="text-muted">Real profit for <?= htmlspecialchars($salesDetail['value']) ?></small>
                     </div>
@@ -125,7 +125,7 @@ foreach ($salesDetailRows as $detailRow) {
                         $expiredCount = count($expiredProducts);
                     ?>
                     <div class="card shadow-sm summary-card" style="cursor: pointer; <?= $expiredCount > 0 ? 'border-danger; background-color: #fef2f2;' : '' ?>" data-bs-toggle="modal" data-bs-target="#expiredProductsModal">
-                        <div><i class="fas fa-exclamation-triangle"></i> Expired Products</div>
+                        <div>Expired Products</div>
                         <div class="summary-value <?= $expiredCount > 0 ? 'text-danger' : '' ?>">
                             <?= $expiredCount ?>
                         </div>
@@ -135,7 +135,7 @@ foreach ($salesDetailRows as $detailRow) {
 
                 <div class="col-md-6 col-xl-4">
                     <div class="card shadow-sm summary-card" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#vatDiscountModal">
-                        <div><i class="fas fa-receipt"></i> VAT Exemption & Discount</div>
+                        <div>VAT Exemption & Discount</div>
                         <div class="summary-value">
                             ₱<?= number_format(($totalVatExemption ?? 0) + ($totalDiscounts ?? 0), 2) ?>
                         </div>
@@ -147,7 +147,7 @@ foreach ($salesDetailRows as $detailRow) {
 
                 <div class="col-md-6 col-xl-4">
                     <div class="card shadow-sm summary-card" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#registerClosingReportModal">
-                        <div><i class="fas fa-cash-register"></i> Register Opening &amp; Closing Report</div>
+                        <div>Register Opening &amp; Closing Report</div>
                         <div class="summary-value"><?= count($registerClosings) ?></div>
                         <small class="text-muted">Opening and closing drawer records</small>
                     </div>
@@ -155,7 +155,7 @@ foreach ($salesDetailRows as $detailRow) {
 
                 <div class="col-md-6 col-xl-4">
                     <div class="card shadow-sm summary-card" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#cashierModal">
-                        <div><i class="fas fa-users"></i> All Account Activity</div>
+                        <div>All Account Activity</div>
                         <div class="summary-value"><?= count($accountActivityRows) ?></div>
                         <small class="text-muted">Accounts and transactions processed</small>
                     </div>
@@ -168,7 +168,7 @@ foreach ($salesDetailRows as $detailRow) {
             <div class="modal-dialog modal-xl modal-fullscreen-lg-down">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="salesDetailModalLabel"><span class="modal-head-icon"><i class="fas fa-calendar-check"></i></span>Sales Detail Report</h5>
+                        <h5 class="modal-title" id="salesDetailModalLabel">Sales Detail Report</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
@@ -198,7 +198,7 @@ foreach ($salesDetailRows as $detailRow) {
                                 <input id="detail_value" name="detail_value" class="form-control" value="<?= htmlspecialchars($salesDetail['value']) ?>" required>
                             </div>
                             <div class="col-md-2">
-                                <button type="submit" class="btn btn-primary w-100"><i class="fas fa-filter me-1"></i>View Report</button>
+                                <button type="submit" class="btn btn-primary w-100">View Report</button>
                             </div>
                         </form>
                         <div class="table-responsive">
@@ -249,7 +249,7 @@ foreach ($salesDetailRows as $detailRow) {
             <div class="modal-dialog modal-xl modal-fullscreen-lg-down">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="registerClosingReportModalLabel"><span class="modal-head-icon"><i class="fas fa-cash-register"></i></span>Register Opening &amp; Closing Report</h5>
+                        <h5 class="modal-title" id="registerClosingReportModalLabel">Register Opening &amp; Closing Report</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
@@ -279,7 +279,7 @@ foreach ($salesDetailRows as $detailRow) {
                                 <input id="register_value" name="register_value" class="form-control" value="<?= htmlspecialchars($registerValue) ?>" required>
                             </div>
                             <div class="col-md-2">
-                                <button type="submit" class="btn btn-primary w-100"><i class="fas fa-filter me-1"></i>View Report</button>
+                                <button type="submit" class="btn btn-primary w-100">View Report</button>
                             </div>
                         </form>
                         <div class="table-responsive">
@@ -339,7 +339,6 @@ foreach ($salesDetailRows as $detailRow) {
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title" id="monthlySalesModalLabel">
-                                <span class="modal-head-icon"><i class="fas fa-chart-line"></i></span>
                                 Monthly Sales Trend & Performance
                             </h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
@@ -434,7 +433,7 @@ foreach ($salesDetailRows as $detailRow) {
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="transactionModalLabel">
-                        <span class="modal-head-icon"><i class="fas fa-receipt"></i></span>Transaction Details (Last 500)
+                        Transaction Details (Last 500)
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
@@ -517,7 +516,7 @@ foreach ($salesDetailRows as $detailRow) {
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="topProductsModalLabel">
-                        <span class="modal-head-icon"><i class="fas fa-star"></i></span>All Selling Products
+                        All Selling Products
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
@@ -548,7 +547,7 @@ foreach ($salesDetailRows as $detailRow) {
                             <input id="selling_value" name="selling_value" class="form-control" value="<?= htmlspecialchars($sellingReport['value']) ?>" required>
                         </div>
                         <div class="col-md-2">
-                            <button type="submit" class="btn btn-primary w-100"><i class="fas fa-filter me-1"></i>View Report</button>
+                            <button type="submit" class="btn btn-primary w-100">View Report</button>
                         </div>
                     </form>
                     <div class="table-responsive">
@@ -596,7 +595,7 @@ foreach ($salesDetailRows as $detailRow) {
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="top5ProductsModalLabel">
-                        <span class="modal-head-icon"><i class="fas fa-box"></i></span>All Selling Products
+                        All Selling Products
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
@@ -646,7 +645,7 @@ foreach ($salesDetailRows as $detailRow) {
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="cashierModalLabel">
-                        <span class="modal-head-icon"><i class="fas fa-user-tie"></i></span>All Account Activity Report
+                        All Account Activity Report
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
@@ -666,19 +665,19 @@ foreach ($salesDetailRows as $detailRow) {
                             <input id="account_value" name="account_value" class="form-control" value="<?= htmlspecialchars($accountReport['value']) ?>" required>
                         </div>
                         <div class="col-md-3">
-                            <button type="submit" class="btn btn-primary w-100"><i class="fas fa-filter me-1"></i>View Report</button>
+                            <button type="submit" class="btn btn-primary w-100">View Report</button>
                         </div>
                     </form>
                     <div class="table-responsive">
                         <table class="table table-striped table-hover myTableExport">
                             <thead class="table-dark">
                                 <tr>
-                                    <th data-priority="4"><i class="fas fa-user"></i> Account Name</th>
-                                    <th data-priority="5"><i class="fas fa-id-badge"></i> Username</th>
-                                    <th data-priority="6"><i class="fas fa-user-tag"></i> Position</th>
-                                    <th data-priority="1"><i class="fas fa-calendar-plus"></i> Account Created</th>
-                                    <th data-priority="3"><i class="fas fa-shopping-cart"></i> Transactions Processed</th>
-                                    <th data-priority="2"><i class="fas fa-peso-sign"></i> Total Sales</th>
+                                    <th data-priority="4">Account Name</th>
+                                    <th data-priority="5">Username</th>
+                                    <th data-priority="6">Position</th>
+                                    <th data-priority="1">Account Created</th>
+                                    <th data-priority="3">Transactions Processed</th>
+                                    <th data-priority="2">Total Sales</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -709,7 +708,7 @@ foreach ($salesDetailRows as $detailRow) {
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="expiredProductsModalLabel">
-                        <span class="modal-head-icon"><i class="fas fa-exclamation-triangle"></i></span>Expired Products (Action Required)
+                        Expired Products (Action Required)
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
@@ -764,7 +763,7 @@ foreach ($salesDetailRows as $detailRow) {
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="dailySalesModalLabel">
-                        <span class="modal-head-icon"><i class="fas fa-chart-line"></i></span>Daily Sales Summary (Last 30 Days)
+                        Daily Sales Summary (Last 30 Days)
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
@@ -816,7 +815,7 @@ foreach ($salesDetailRows as $detailRow) {
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="vatDiscountModalLabel">
-                        <span class="modal-head-icon"><i class="fas fa-receipt"></i></span>VAT Exemption & Discount Details
+                        VAT Exemption & Discount Details
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
@@ -847,7 +846,7 @@ foreach ($salesDetailRows as $detailRow) {
                             <input id="vat_value" name="vat_value" class="form-control" value="<?= htmlspecialchars($vatReport['value']) ?>" required>
                         </div>
                         <div class="col-md-2">
-                            <button type="submit" class="btn btn-primary w-100"><i class="fas fa-filter me-1"></i>View Report</button>
+                            <button type="submit" class="btn btn-primary w-100">View Report</button>
                         </div>
                     </form>
                     <div class="table-responsive">

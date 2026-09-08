@@ -177,7 +177,7 @@ $currentUser = $usersmanagement->getUserById($userId);
 
                 <!-- ACCOUNT -->
                 <div class="settings-section">
-                    <h6><i class="fas fa-user me-2"></i>Account</h6>
+                    <h6>Account</h6>
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label class="form-label">Username</label>
@@ -194,7 +194,7 @@ $currentUser = $usersmanagement->getUserById($userId);
 
                 <!-- PERSONAL -->
                 <div class="settings-section">
-                    <h6><i class="fas fa-id-card me-2"></i>Personal Information</h6>
+                    <h6>Personal Information</h6>
                     <div class="row g-3">
                         <div class="col-md-4">
                             <label class="form-label">First Name</label>
@@ -216,7 +216,7 @@ $currentUser = $usersmanagement->getUserById($userId);
 
                 <!-- CONTACT -->
                 <div class="settings-section">
-                    <h6><i class="fas fa-phone me-2"></i>Contact</h6>
+                    <h6>Contact</h6>
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label class="form-label">Contact Number</label>
@@ -228,7 +228,7 @@ $currentUser = $usersmanagement->getUserById($userId);
 
                 <!-- RECEIPT PRINTING (store-wide) -->
                 <div class="settings-section">
-                    <h6><i class="fas fa-receipt me-2"></i>Receipt Printing</h6>
+                    <h6>Receipt Printing</h6>
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label class="form-label">Printer Paper Size</label>
@@ -241,7 +241,6 @@ $currentUser = $usersmanagement->getUserById($userId);
                         <div class="col-md-6">
                             <div class="border rounded p-3 bg-light h-100 d-flex flex-column justify-content-center">
                                 <div class="d-flex align-items-center gap-2 mb-1">
-                                    <i class="fas fa-print text-muted"></i>
                                     <strong id="receiptPaperLabel"><?= $receiptPaper === '58' ? '58mm — compact roll' : '80mm — standard roll' ?></strong>
                                 </div>
                                 <small class="text-muted mb-2">Printed receipt width follows this choice.</small>
@@ -261,7 +260,7 @@ $currentUser = $usersmanagement->getUserById($userId);
 
                 <!-- SECURITY -->
                 <div class="settings-section">
-                    <h6><i class="fas fa-shield-halved me-2"></i>Security</h6>
+                    <h6>Security</h6>
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label class="form-label">Void PIN</label>
@@ -282,7 +281,7 @@ $currentUser = $usersmanagement->getUserById($userId);
 
                 <div class="d-flex justify-content-end">
                     <button type="submit" name="updateUserSystem" class="btn btn-primary px-4">
-                        <i class="fas fa-floppy-disk me-1"></i> Save Changes
+                        Save Changes
                     </button>
                 </div>
 
@@ -294,7 +293,6 @@ $currentUser = $usersmanagement->getUserById($userId);
     <div class="card border-danger mt-4">
         <div class="card-body p-4">
             <div class="d-flex align-items-start gap-3">
-                <div class="text-danger fs-4"><i class="fas fa-database"></i></div>
                 <div class="flex-grow-1">
                     <h5 class="mb-1">Clear database data</h5>
                     <p class="text-muted mb-3">Removes operational, transaction, inventory, customer, supplier, and product data. This cannot be undone.</p>
@@ -304,7 +302,7 @@ $currentUser = $usersmanagement->getUserById($userId);
                         <button type="submit" name="clear_database_data" class="btn btn-danger"
                                 data-mmb-confirm="This permanently deletes operational database data. Preserved reference and account tables will remain. Continue?"
                                 data-mmb-ok="Yes, clear database data">
-                            <i class="fas fa-eraser me-1"></i> Clear Data Tables
+                            Clear Data Tables
                         </button>
                     </form>
                 </div>

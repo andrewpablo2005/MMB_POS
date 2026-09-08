@@ -38,13 +38,11 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
     <div class="card-body">
         <?php if ($inventorySuccessMessage !== ''): ?>
             <div class="alert alert-success d-flex align-items-center mb-3" role="alert">
-                <i class="fas fa-check-circle me-2"></i>
                 <div><?= htmlspecialchars($inventorySuccessMessage) ?></div>
             </div>
         <?php endif; ?>
         <?php if ($inventoryErrorMessage !== ''): ?>
             <div class="alert alert-danger d-flex align-items-center mb-3" role="alert">
-                <i class="fas fa-exclamation-circle me-2"></i>
                 <div><?= htmlspecialchars($inventoryErrorMessage) ?></div>
             </div>
         <?php endif; ?>
@@ -55,10 +53,10 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
             </div>
             <div class="d-flex gap-2">
                 <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#disposeBatchModal">
-                    <i class="fas fa-trash me-1"></i> Dispose Batch
+                    Dispose Batch
                 </button>
                 <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addBatchModal">
-                    <i class="fas fa-plus me-1"></i> Add Batch
+                    Add Batch
                 </button>
             </div>
         </div>
@@ -66,17 +64,17 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
         <ul class="nav nav-tabs mb-4" id="inventoryTabs" role="tablist">
             <li class="nav-item" role="presentation">
                 <button class="nav-link active" id="current-inventory-tab" data-bs-toggle="tab" data-bs-target="#current-inventory-pane" type="button" role="tab" aria-controls="current-inventory-pane" aria-selected="true">
-                    <i class="fas fa-boxes-stacked me-1"></i> Current Inventory
+                    Current Inventory
                 </button>
             </li>
             <li class="nav-item" role="presentation">
                 <button class="nav-link" id="disposed-inventory-tab" data-bs-toggle="tab" data-bs-target="#disposed-inventory-pane" type="button" role="tab" aria-controls="disposed-inventory-pane" aria-selected="false">
-                    <i class="fas fa-trash me-1"></i> Disposed / Expired
+                    Disposed / Expired
                 </button>
             </li>
             <li class="nav-item" role="presentation">
                 <button class="nav-link" id="returned-products-tab" data-bs-toggle="tab" data-bs-target="#returned-products-pane" type="button" role="tab" aria-controls="returned-products-pane" aria-selected="false">
-                    <i class="fas fa-rotate-left me-1"></i> Returned Products
+                    Returned Products
                 </button>
             </li>
         </ul>
@@ -86,10 +84,10 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
             <div class="inventory-report-toolbar d-flex flex-wrap align-items-center gap-2 mb-2" data-table-target="currentInventoryTable">
                 <label class="mb-0" for="currentInventorySearch">Search:</label>
                 <input type="search" id="currentInventorySearch" class="form-control form-control-sm inventory-search" placeholder="Search current inventory..." style="max-width:260px;">
-                <button type="button" class="btn btn-sm btn-secondary inventory-copy"><i class="fas fa-copy me-1"></i>Copy</button>
-                <button type="button" class="btn btn-sm btn-outline-secondary inventory-excel"><i class="fas fa-file-excel me-1"></i>Excel</button>
-                <button type="button" class="btn btn-sm btn-danger inventory-pdf"><i class="fas fa-file-pdf me-1"></i>PDF</button>
-                <button type="button" class="btn btn-sm btn-outline-dark inventory-print"><i class="fas fa-print me-1"></i>Print</button>
+                <button type="button" class="btn btn-sm btn-secondary inventory-copy">Copy</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary inventory-excel">Excel</button>
+                <button type="button" class="btn btn-sm btn-danger inventory-pdf">PDF</button>
+                <button type="button" class="btn btn-sm btn-outline-dark inventory-print">Print</button>
             </div>
             <div class="table-responsive mb-4">
             <table id="currentInventoryTable" class="table table-striped table-hover align-middle w-100 mmb-stack">
@@ -152,10 +150,10 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
             <div class="inventory-report-toolbar d-flex flex-wrap align-items-center gap-2 mb-2" data-table-target="disposedInventoryTable">
                 <label class="mb-0" for="disposedInventorySearch">Search:</label>
                 <input type="search" id="disposedInventorySearch" class="form-control form-control-sm inventory-search" placeholder="Search disposed inventory..." style="max-width:260px;">
-                <button type="button" class="btn btn-sm btn-secondary inventory-copy"><i class="fas fa-copy me-1"></i>Copy</button>
-                <button type="button" class="btn btn-sm btn-outline-secondary inventory-excel"><i class="fas fa-file-excel me-1"></i>Excel</button>
-                <button type="button" class="btn btn-sm btn-danger inventory-pdf"><i class="fas fa-file-pdf me-1"></i>PDF</button>
-                <button type="button" class="btn btn-sm btn-outline-dark inventory-print"><i class="fas fa-print me-1"></i>Print</button>
+                <button type="button" class="btn btn-sm btn-secondary inventory-copy">Copy</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary inventory-excel">Excel</button>
+                <button type="button" class="btn btn-sm btn-danger inventory-pdf">PDF</button>
+                <button type="button" class="btn btn-sm btn-outline-dark inventory-print">Print</button>
             </div>
             <div class="table-responsive">
             <table id="disposedInventoryTable" class="table table-sm table-bordered align-middle w-100 mmb-stack">
@@ -238,10 +236,10 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
                     <?php endforeach; ?>
                 </select>
                 <input type="search" id="returnsSearch" class="form-control form-control-sm" placeholder="Search returns..." style="max-width:220px;">
-                <button type="button" class="btn btn-sm btn-secondary returns-copy"><i class="fas fa-copy me-1"></i>Copy</button>
-                <button type="button" class="btn btn-sm btn-outline-secondary returns-excel"><i class="fas fa-file-excel me-1"></i>Excel</button>
-                <button type="button" class="btn btn-sm btn-danger returns-pdf"><i class="fas fa-file-pdf me-1"></i>PDF</button>
-                <button type="button" class="btn btn-sm btn-outline-dark returns-print"><i class="fas fa-print me-1"></i>Print</button>
+                <button type="button" class="btn btn-sm btn-secondary returns-copy">Copy</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary returns-excel">Excel</button>
+                <button type="button" class="btn btn-sm btn-danger returns-pdf">PDF</button>
+                <button type="button" class="btn btn-sm btn-outline-dark returns-print">Print</button>
             </div>
 
             <div id="returnsAccordion" class="mb-4">
@@ -555,8 +553,7 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
                                 ?>
                             </select>
                             <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addSupplierModal">
-                                <i class="fas fa-plus"></i>
-                            </button>
+                                </button>
                         </div>
                     </div>
                     </div>
@@ -982,7 +979,7 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                     <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-plus"></i> Add Supplier
+                        Add Supplier
                     </button>
                 </div>
             </form>

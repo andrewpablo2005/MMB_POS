@@ -137,7 +137,7 @@ function dash_product_thumb(?string $image, string $sizeClass = 'mmb-thumb'): st
     <div class="col-12 col-xl-8">
       <div class="dash-card">
         <div class="dash-card-header">
-          <h6><i class="fas fa-chart-column me-2 text-primary"></i>Sales Performance</h6>
+          <h6>Sales Performance</h6>
           <div class="d-flex align-items-center gap-2">
             <span class="pill pill-gray" id="chartTotal">YTD ₱<?php echo number_format(array_sum($monthlySalesTrend), 2); ?></span>
             <select class="period-select period-select--sm" id="chartRange" aria-label="Chart range">
@@ -166,7 +166,7 @@ function dash_product_thumb(?string $image, string $sizeClass = 'mmb-thumb'): st
       </div>
       <div class="dash-card flex-grow-1">
         <div class="dash-card-header">
-          <h6><i class="fas fa-tags me-2 text-primary"></i>Discounts & VAT</h6>
+          <h6>Discounts & VAT</h6>
         </div>
         <div class="dash-card-body py-3">
           <div class="mini-stat-row">
@@ -196,7 +196,7 @@ function dash_product_thumb(?string $image, string $sizeClass = 'mmb-thumb'): st
     <div class="col-12 col-xl-7">
       <div class="dash-card">
         <div class="dash-card-header">
-          <h6><i class="fas fa-clock-rotate-left me-2"></i>Recent Transactions</h6>
+          <h6>Recent Transactions</h6>
           <a href="#" class="pill pill-gray text-decoration-none">View All</a>
         </div>
         <div class="dash-card-body">
@@ -234,7 +234,7 @@ function dash_product_thumb(?string $image, string $sizeClass = 'mmb-thumb'): st
     <div class="col-12 col-xl-5">
       <div class="dash-card">
         <div class="dash-card-header">
-          <h6><i class="fas fa-trophy me-2 text-primary"></i>Top Selling Products</h6>
+          <h6>Top Selling Products</h6>
         </div>
         <div class="dash-card-body">
           <?php if (empty($topProducts)): ?>
@@ -265,7 +265,7 @@ function dash_product_thumb(?string $image, string $sizeClass = 'mmb-thumb'): st
     <div class="col-12 col-xl-6">
       <div class="dash-card alert-card-warn">
         <div class="dash-card-header">
-          <h6><i class="fas fa-triangle-exclamation me-2"></i>Low Stock Alerts</h6>
+          <h6>Low Stock Alerts</h6>
           <?php if (!empty($lowStockItems)): ?>
             <span class="badge-warn"><?php echo count($lowStockItems); ?> items</span>
           <?php endif; ?>
@@ -296,7 +296,7 @@ function dash_product_thumb(?string $image, string $sizeClass = 'mmb-thumb'): st
     <div class="col-12 col-xl-6">
       <div class="dash-card alert-card-danger">
         <div class="dash-card-header">
-          <h6><i class="fas fa-calendar-xmark me-2"></i>Expiring Soon (30 Days)</h6>
+          <h6>Expiring Soon (30 Days)</h6>
           <?php if (!empty($expiringItems)): ?>
             <span class="badge-danger"><?php echo count($expiringItems); ?> items</span>
           <?php endif; ?>

@@ -407,7 +407,7 @@ function weposRequestVoidAuth(id, action) {
         `<strong>${weposEscapeHtml(item.name)}</strong> &times; ${item.qty} &mdash; &#8369;${(item.price * item.qty).toFixed(2)}`;
     const modalHead = document.querySelector('#voidAuthModal .wepos-modal-head h5');
     if (modalHead) {
-        modalHead.innerHTML = '<i class="fas fa-trash-alt"></i> Void Authorization';
+        modalHead.innerHTML = 'Void Authorization';
     }
     const instructions = document.querySelector('#voidAuthModal .wepos-modal-body p');
     if (instructions) {
@@ -418,7 +418,7 @@ function weposRequestVoidAuth(id, action) {
     const btn = document.getElementById('voidAuthBtn');
     if (btn) {
         btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-trash"></i> Confirm Remove';
+        btn.innerHTML = 'Confirm Remove';
     }
     document.getElementById('voidAuthModal').style.display = 'flex';
     setTimeout(() => document.getElementById('voidAuthPin')?.focus(), 100);
@@ -443,7 +443,7 @@ function weposRemoveItem(id) {
     const btn = document.getElementById('voidAuthBtn');
     if (btn) {
         btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-trash"></i> Confirm Remove';
+        btn.innerHTML = 'Confirm Remove';
     }
     document.getElementById('voidAuthModal').style.display = 'flex';
     setTimeout(() => document.getElementById('voidAuthPin')?.focus(), 100);
@@ -467,13 +467,13 @@ function weposClearCart() {
     const btn = document.getElementById('voidAuthBtn');
     if (btn) {
         btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-trash-alt"></i> Clear Cart';
+        btn.innerHTML = 'Clear Cart';
     }
     
     // Update modal title
     const modalHead = document.querySelector('#voidAuthModal .wepos-modal-head h5');
     if (modalHead) {
-        modalHead.innerHTML = '<i class="fas fa-trash-alt"></i> Clear Cart Authorization';
+        modalHead.innerHTML = 'Clear Cart Authorization';
     }
     
     // Update modal instructions
@@ -1887,7 +1887,7 @@ async function weposSubmitVoidAuth() {
     } finally {
         // Always reset button so it doesn't get stuck
         btn.disabled = false;
-        const buttonText = pendingClearCart ? '<i class="fas fa-trash-alt"></i> Clear Cart' : '<i class="fas fa-trash"></i> Confirm Remove';
+        const buttonText = pendingClearCart ? 'Clear Cart' : 'Confirm Remove';
         btn.innerHTML = buttonText;
     }
 }

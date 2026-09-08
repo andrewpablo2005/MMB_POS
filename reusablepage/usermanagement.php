@@ -66,7 +66,7 @@ $users = $usersmanagement->getAllUsers();
                 </div>
 
                 <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#adduser">
-                    <i class="fas fa-plus me-1"></i>Add User
+                    Add User
                 </button>
             </div>
 

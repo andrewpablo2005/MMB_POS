@@ -10,7 +10,7 @@ include("../conn/connection_links.php");
         
         <!-- HEADER. -->
         <div class="card-header">
-            <h4 class="mb-0"><i class="fas fa-user-plus me-2 text-primary"></i>Add User</h4>
+            <h4 class="mb-0">Add User</h4>
         </div>
 
         <div class="card-body">
@@ -111,7 +111,7 @@ include("../conn/connection_links.php");
                 <!-- ACTION BUTTONS -->
                 <div class="d-flex justify-content-between mt-4">
                     <button type="submit" name="pre_addUser" class="btn btn-primary px-4">
-                        <i class="fas fa-floppy-disk me-1"></i> Save User
+                        Save User
                     </button>
                 </div>
 

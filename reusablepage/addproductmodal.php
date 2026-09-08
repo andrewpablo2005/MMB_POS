@@ -23,7 +23,7 @@ $dosageForms = $product->getDosageForms();
 
             <form method="POST" enctype="multipart/form-data" onsubmit="return validateAddProductForm(event)">
                 <div class="modal-header">
-                    <h5 class="modal-title"><span class="modal-head-icon"><i class="fas fa-pills"></i></span> Add New
+                    <h5 class="modal-title">Add New
                         Product</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close Add Product" title="Close Add Product"></button>
                 </div>
@@ -373,7 +373,7 @@ $dosageForms = $product->getDosageForms();
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" title="Cancel and close" data-bs-toggle="tooltip">Cancel</button>
                     <button type="submit" class="btn btn-primary" title="Add measurement unit" data-bs-toggle="tooltip">
-                        <i class="fas fa-plus me-1"></i>Add Measurement
+                        Add Measurement
                     </button>
                 </div>
             </form>
@@ -398,7 +398,7 @@ $dosageForms = $product->getDosageForms();
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" title="Cancel and close" data-bs-toggle="tooltip">Cancel</button>
                     <button type="submit" class="btn btn-primary" title="Add product form" data-bs-toggle="tooltip">
-                        <i class="fas fa-plus me-1"></i>Add Product Form
+                        Add Product Form
                     </button>
                 </div>
             </form>
@@ -570,7 +570,7 @@ $dosageForms = $product->getDosageForms();
                     })
                     .finally(() => {
                         submitButton.disabled = false;
-                        submitButton.innerHTML = '<i class="fas fa-plus me-1"></i>Add Measurement';
+                        submitButton.innerHTML = 'Add Measurement';
                     });
             });
 
@@ -651,7 +651,7 @@ $dosageForms = $product->getDosageForms();
                     })
                     .finally(() => {
                         submitButton.disabled = false;
-                        submitButton.innerHTML = '<i class="fas fa-plus me-1"></i>Add Product Form';
+                        submitButton.innerHTML = 'Add Product Form';
                     });
             });
 

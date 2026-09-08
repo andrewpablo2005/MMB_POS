@@ -5,7 +5,7 @@
         <!-- Modal Header -->
         <div class="wepos-modal-head">
             <h5 style="margin:0; display:flex; align-items:center; gap:.65rem; font-weight:700; color:#1a2535;">
-                <span class="modal-head-icon"><i class="fas fa-undo-alt"></i></span> Process Product Return / Refund
+                Process Product Return / Refund
             </h5>
             <button type="button" onclick="closeReturnModal()" style="color:#64748b;"><i class="fas fa-times"></i></button>
         </div>

@@ -47,13 +47,13 @@ if (!empty($_SESSION['user_id'])) {
                 <kbd>F2</kbd>
             </div>
             <button type="button" class="wepos-btn wepos-btn-outline text-danger" style="border-color: #e74c3c; color: #c0392b;" onclick="openReturnModal()">
-                    <i class="fas fa-undo-alt me-1"></i> Process Return <kbd style="font-size: 10px; background: #fee2e2; color: #c0392b; border: none; margin-left: 2px;">F9</kbd>
+                    Process Return <kbd style="font-size: 10px; background: #fee2e2; color: #c0392b; border: none; margin-left: 2px;">F9</kbd>
                 </button>
             <button class="wepos-btn wepos-btn-outline" onclick="location.reload()">
-                <i class="fas fa-sync-alt"></i> Refresh <kbd style="font-size: 10px; background: #fee2e2; color: #c0392b; border: none; margin-left: 2px;">F5</kbd>
+                Refresh <kbd style="font-size: 10px; background: #fee2e2; color: #c0392b; border: none; margin-left: 2px;">F5</kbd>
             </button>
             <button class="wepos-btn wepos-btn-outline text-primary" onclick="weposOpenClosingModal()">
-                <i class="fas fa-cash-register"></i> Close Register <kbd style="font-size: 10px; background: #fee2e2; color: #c0392b; border: none; margin-left: 2px;">F10</kbd>
+                Close Register <kbd style="font-size: 10px; background: #fee2e2; color: #c0392b; border: none; margin-left: 2px;">F10</kbd>
             </button>
         </div>
 
@@ -153,10 +153,10 @@ if (!empty($_SESSION['user_id'])) {
         
         <!-- Cart Header -->
         <div class="wepos-cart-header">
-            <span style="font-size:13px; font-weight:600; color:#50575e;"><i class="fas fa-shopping-cart me-1"></i> Current Order</span>
+            <span style="font-size:13px; font-weight:600; color:#50575e;">Current Order</span>
             <div class="wepos-cart-actions">
                 <button class="wepos-btn wepos-btn-outline text-danger" style="border-color: #e74c3c; color: #c0392b;" onclick="weposClearCart()">
-                    <i class="fas fa-trash-alt me-1"></i> Clear <kbd style="font-size: 10px; background: #fee2e2; color: #c0392b; border: none; margin-left: 2px;">F8</kbd>
+                    Clear <kbd style="font-size: 10px; background: #fee2e2; color: #c0392b; border: none; margin-left: 2px;">F8</kbd>
                 </button>
             </div>
         </div>
@@ -192,7 +192,7 @@ if (!empty($_SESSION['user_id'])) {
                  chosen inside the payment flow. The select stays in the DOM and
                  keeps driving all pricing / statutory logic exactly as before.) -->
             <div class="wepos-discount-row" style="display:none;">
-                <div class="wepos-discount-label"><i class="fas fa-tags text-primary"></i> Apply Discount</div>
+                <div class="wepos-discount-label">Apply Discount</div>
                 <select id="weposDiscount" class="wepos-select" onchange="weposOnDiscountChange(this)">
                     <?php foreach ($discounts as $d): ?>
                         <?php
@@ -258,7 +258,7 @@ if (!empty($_SESSION['user_id'])) {
 <div class="wepos-modal-overlay" id="registerClosingModal" style="display:none;" onclick="weposCloseClosingModal(event)">
     <div class="wepos-modal" onclick="event.stopPropagation()" style="max-width:520px;">
         <div class="wepos-modal-head" style="background:#f8fafc; border-bottom:1px solid #e2e8f0;">
-            <h5 style="color:#1a2535;"><i class="fas fa-cash-register me-2"></i>Close Cashier Register</h5>
+            <h5 style="color:#1a2535;">Close Cashier Register</h5>
             <button type="button" onclick="weposCloseClosingModal()"><i class="fas fa-times"></i></button>
         </div>
         <div class="wepos-modal-body">
@@ -296,7 +296,7 @@ if (!empty($_SESSION['user_id'])) {
 <div class="wepos-modal-overlay" id="registerOpeningModal" style="display:none;" onclick="weposCloseOpeningModal(event)">
     <div class="wepos-modal" onclick="event.stopPropagation()" style="max-width:440px;">
         <div class="wepos-modal-head" style="background:#f0fdf4; border-bottom:1px solid #bbf7d0;">
-            <h5 style="color:#166534;"><i class="fas fa-hand-sparkles me-2"></i>Welcome to the POS</h5>
+            <h5 style="color:#166534;">Welcome to the POS</h5>
             <button type="button" onclick="weposCloseOpeningModal()"><i class="fas fa-times"></i></button>
         </div>
         <div class="wepos-modal-body">
@@ -318,7 +318,7 @@ if (!empty($_SESSION['user_id'])) {
 <div class="wepos-modal-overlay" id="registerClosingConfirmModal" style="display:none;" onclick="weposCloseClosingConfirmModal(event)">
     <div class="wepos-modal" onclick="event.stopPropagation()" style="max-width:440px;">
         <div class="wepos-modal-head" style="background:#fff7ed; border-bottom:1px solid #fed7aa;">
-            <h5 style="color:#9a3412;"><i class="fas fa-circle-question me-2"></i>Confirm Register Closing</h5>
+            <h5 style="color:#9a3412;">Confirm Register Closing</h5>
             <button type="button" onclick="weposCloseClosingConfirmModal()"><i class="fas fa-times"></i></button>
         </div>
         <div class="wepos-modal-body">
@@ -333,7 +333,7 @@ if (!empty($_SESSION['user_id'])) {
         </div>
         <div class="wepos-modal-foot">
             <button type="button" class="wepos-btn wepos-btn-outline" onclick="weposCloseClosingConfirmModal()">Go Back</button>
-            <button type="button" class="wepos-btn wepos-btn-primary" onclick="weposSubmitRegisterClosing()"><i class="fas fa-check me-1"></i>Close Register</button>
+            <button type="button" class="wepos-btn wepos-btn-primary" onclick="weposSubmitRegisterClosing()">Close Register</button>
         </div>
     </div>
 </div>
@@ -356,9 +356,9 @@ if (!empty($_SESSION['user_id'])) {
             <div class="wepos-ctype-row">
                 <div class="wepos-ctype-label"><i class="fas fa-user-tag"></i> Customer Type</div>
                 <div class="wepos-ctype-btns">
-                    <button type="button" class="wepos-ctype-btn active" data-ctype="regular" onclick="weposSetCustomerType('regular', this)"><i class="fas fa-user"></i> Regular</button>
-                    <button type="button" class="wepos-ctype-btn" data-ctype="senior" onclick="weposSetCustomerType('senior', this)"><i class="fas fa-id-card"></i> Senior</button>
-                    <button type="button" class="wepos-ctype-btn" data-ctype="pwd" onclick="weposSetCustomerType('pwd', this)"><i class="fas fa-wheelchair"></i> PWD</button>
+                    <button type="button" class="wepos-ctype-btn active" data-ctype="regular" onclick="weposSetCustomerType('regular', this)">Regular</button>
+                    <button type="button" class="wepos-ctype-btn" data-ctype="senior" onclick="weposSetCustomerType('senior', this)">Senior</button>
+                    <button type="button" class="wepos-ctype-btn" data-ctype="pwd" onclick="weposSetCustomerType('pwd', this)">PWD</button>
                 </div>
             </div>
 
@@ -442,7 +442,7 @@ if (!empty($_SESSION['user_id'])) {
 <div class="wepos-modal-overlay" id="voidAuthModal" style="display:none;" onclick="event.stopPropagation()">
     <div class="wepos-modal" onclick="event.stopPropagation()">
         <div class="wepos-modal-head" style="background: #fee2e2; border-bottom: 1px solid #fecaca;">
-            <h5 style="color: #991b1b;"><i class="fas fa-trash-alt"></i> Manager Void Required</h5>
+            <h5 style="color: #991b1b;">Manager Void Required</h5>
             <button onclick="weposCancelVoidAuth()"><i class="fas fa-times"></i></button>
         </div>
         <div class="wepos-modal-body">
@@ -466,7 +466,7 @@ if (!empty($_SESSION['user_id'])) {
 <div class="wepos-modal-overlay" id="weposReceiptModal" style="display:none;" onclick="event.stopPropagation()">
     <div class="wepos-modal" onclick="event.stopPropagation()" style="max-width:400px; border-radius:8px;">
         <div class="wepos-modal-head" style="background:#fef2f2; border-bottom:1px solid #fecaca;">
-            <h5 style="color:#b91c1c;"><i class="fas fa-receipt"></i> Payment Successful</h5>
+            <h5 style="color:#b91c1c;">Payment Successful</h5>
             <button onclick="weposCloseReceipt()"><i class="fas fa-times"></i></button>
         </div>
         <div class="wepos-modal-body" id="weposReceiptBody" style="padding:0;">
@@ -536,7 +536,7 @@ if (!empty($_SESSION['user_id'])) {
         </div>
         <div class="wepos-modal-foot" style="gap:10px;">
             <button class="wepos-btn wepos-btn-outline" onclick="weposPrintReceipt()">
-                <i class="fas fa-print"></i> Print Receipt
+                Print Receipt
             </button>
             <button class="wepos-btn wepos-btn-primary" onclick="weposCloseReceipt()">
                 Done <kbd>Enter</kbd>
@@ -751,7 +751,7 @@ if (!empty($_SESSION['user_id'])) {
 <div class="wepos-modal-overlay" id="verifyIdModal" style="display:none;" onclick="event.stopPropagation()">
     <div class="wepos-modal" onclick="event.stopPropagation()">
         <div class="wepos-modal-head" style="background: #eef2ff; border-bottom: 1px solid #c7d2fe;">
-            <h5 style="color: #3730a3;" id="verifyIdTitle"><i class="fas fa-id-card"></i> ID Verification</h5>
+            <h5 style="color: #3730a3;" id="verifyIdTitle">ID Verification</h5>
             <button onclick="weposCancelVerifyId()"><i class="fas fa-times"></i></button>
         </div>
         <div class="wepos-modal-body">
@@ -813,4 +813,4 @@ if (!empty($_SESSION['user_id'])) {
 </div>
 
 <?php include __DIR__ . '/returnmodal.php'; ?>
-<script src="../js/pos_wepos.js?v=1.94"></script>
+<script src="../js/pos_wepos.js?v=1.95"></script>
