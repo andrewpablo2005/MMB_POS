@@ -134,7 +134,7 @@ if ($product->addProduct()) {
                                 Edit
                             </button>
                             <!-- DELETE -->
-                            <a href="?deleteProduct=<?= htmlspecialchars((string)($prod['id']), ENT_QUOTES, 'UTF-8') ?>&t=<?= htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8') ?>" class="btn btn-sm btn-danger"
+                            <a href="?tab=product&amp;deleteProduct=<?= htmlspecialchars((string)($prod['id']), ENT_QUOTES, 'UTF-8') ?>&amp;t=<?= htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8') ?>" class="btn btn-sm btn-danger"
                                 data-mmb-confirm="Delete this product? This cannot be undone." data-mmb-ok="Yes, delete">
                                 Delete
                             </a>
