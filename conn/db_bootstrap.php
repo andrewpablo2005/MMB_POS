@@ -87,6 +87,11 @@ if (!function_exists('mmb_include_fragment')) {
      */
     function mmb_include_fragment(string $__fragmentFile): void
     {
+        // Fragments were written to run at global scope (they read $db,
+        // $activeTab, …). Import the global scope into this function so the
+        // behavior is identical to a plain include in the dashboard.
+        extract($GLOBALS, EXTR_SKIP);
+
         ob_start();
         try {
             include $__fragmentFile;
