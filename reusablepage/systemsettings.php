@@ -13,6 +13,66 @@ $usersmanagement = new UserManagement($db);
 
 $userId = $_SESSION['user_id'] ?? 0;
 $result = null;
+$clearDataResult = null;
+
+$clearDataTables = [
+    'inventory',
+    'inventory_backup',
+    'inventory_disposals',
+    'inventory_transactions',
+    'login_attempts',
+    'override_log',
+    'pre_approved_users',
+    'pre_approved_users_info',
+    'products',
+    'products_backup',
+    'pwd_customers',
+    'register_closings',
+    'register_openings',
+    'return_items',
+    'return_transactions',
+    'senior_customers',
+    'suppliers',
+    'transactions',
+    'transaction_batch_allocations',
+    'transaction_items',
+    'transaction_item_batches'
+];
+
+if (isset($_POST['clear_database_data'])) {
+    $csrfToken = (string)($_POST['csrf_token'] ?? '');
+    $position = strtolower(trim((string)($_SESSION['position'] ?? '')));
+
+    if (!hash_equals((string)($_SESSION['csrf_token'] ?? ''), $csrfToken)) {
+        $clearDataResult = ['success' => false, 'message' => 'Invalid or expired security token.'];
+    } elseif (!in_array($position, ['owner', 'admin'], true)) {
+        $clearDataResult = ['success' => false, 'message' => 'Only the owner or an admin can clear database data.'];
+    } else {
+        $foreignKeysDisabled = false;
+        try {
+            $db->exec('SET FOREIGN_KEY_CHECKS = 0');
+            $foreignKeysDisabled = true;
+            $clearedRows = 0;
+
+            foreach ($clearDataTables as $table) {
+                $statement = $db->exec('DELETE FROM `' . $table . '`');
+                $clearedRows += $statement === false ? 0 : $statement;
+                $db->exec('ALTER TABLE `' . $table . '` AUTO_INCREMENT = 1');
+            }
+
+            $clearDataResult = [
+                'success' => true,
+                'message' => 'Database data cleared successfully (' . $clearedRows . ' row(s) removed).'
+            ];
+        } catch (PDOException $exception) {
+            $clearDataResult = ['success' => false, 'message' => 'Could not clear database data: ' . $exception->getMessage()];
+        } finally {
+            if ($foreignKeysDisabled) {
+                $db->exec('SET FOREIGN_KEY_CHECKS = 1');
+            }
+        }
+    }
+}
 
 // ── Receipt paper setting (store-wide, shared by every POS terminal) ──
 // Reads from / persists to the `store_settings` key-value table (created
@@ -77,6 +137,17 @@ $currentUser = $usersmanagement->getUserById($userId);
             <?php if (!empty($result['success'])): ?>
                 setTimeout(function () { window.location.href = 'dashboard.php?tab=system'; }, 1800);
             <?php endif; ?>
+        });
+    </script>
+<?php endif; ?>
+<?php if ($clearDataResult): ?>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            mmbNotify({
+                type: <?= !empty($clearDataResult['success']) ? "'success'" : "'danger'" ?>,
+                title: <?= json_encode((string)($clearDataResult['message'] ?? '')) ?>,
+                duration: 7000
+            });
         });
     </script>
 <?php endif; ?>
@@ -210,6 +281,27 @@ $currentUser = $usersmanagement->getUserById($userId);
 
             </form>
 
+        </div>
+    </div>
+
+    <div class="card border-danger mt-4">
+        <div class="card-body p-4">
+            <div class="d-flex align-items-start gap-3">
+                <div class="text-danger fs-4"><i class="fas fa-database"></i></div>
+                <div class="flex-grow-1">
+                    <h5 class="mb-1">Clear database data</h5>
+                    <p class="text-muted mb-3">Removes operational, transaction, inventory, customer, supplier, and product data. This cannot be undone.</p>
+                    <p class="small mb-3"><strong>Preserved:</strong> discounts, dosage forms, product categories, serving units, store settings, users, and user information.</p>
+                    <form method="POST">
+                        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
+                        <button type="submit" name="clear_database_data" class="btn btn-danger"
+                                data-mmb-confirm="This permanently deletes operational database data. Preserved reference and account tables will remain. Continue?"
+                                data-mmb-ok="Yes, clear database data">
+                            <i class="fas fa-eraser me-1"></i> Clear Data Tables
+                        </button>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 </div>

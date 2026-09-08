@@ -29,7 +29,7 @@ $dosageForms = $product->getDosageForms(); ?>
                                 <div class="form-text text-muted mt-1">Enter the brand printed on the package, or leave blank if there is no brand.</div>
                             </div>
                             <div class="add-product-field">
-                                <label for="edit_generic_name_<?= $prod['id'] ?>" class="form-label">Product Name</label>
+                                <label for="edit_generic_name_<?= $prod['id'] ?>" class="form-label">Generic/Product Name</label>
                                 <input type="text" id="edit_generic_name_<?= $prod['id'] ?>" name="generic_name" class="form-control"
                                     value="<?= htmlspecialchars($prod['generic_name'] ?? '') ?>" placeholder="e.g., Paracetamol or Potato Chips" required>
                                 <div class="form-text text-muted mt-1">Enter the name customers will recognize.</div>
