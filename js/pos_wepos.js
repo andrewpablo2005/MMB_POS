@@ -2,7 +2,8 @@ let weposCart = {};
 let barcodeBuffer = '';
 let barcodeTimer = null;
 let currentPayMethod = 'Cash';
-let pendingOverride = null;
+// (issue #8.4: the per-item discount override feature was removed entirely —
+// statutory Senior/PWD discounts are the only price adjustments now.)
 let pendingVoid = null;           // stores cart item id pending void auth
 let pendingVoidAction = null;     // 'delete', 'decrement', or 'set'
 let pendingVoidTargetQty = null;  // target quantity for set actions
@@ -121,7 +122,7 @@ function weposSetupScanner() {
     document.addEventListener('keypress', function(e) {
         const active = document.activeElement;
         const isSearch = active && active.id === 'weposSearch';
-        const isModalInput = active && (active.id === 'weposTendered' || active.id === 'weposCustomer' || active.id === 'overrideReason' || active.id === 'overrideUsername' || active.id === 'overridePassword' || active.id === 'overridePercent' || active.id === 'verifyIdName' || active.id === 'verifyIdNumber' || active.id === 'voidAuthPin');
+        const isModalInput = active && (active.id === 'weposTendered' || active.id === 'weposCustomer' || active.id === 'verifyIdName' || active.id === 'verifyIdNumber' || active.id === 'voidAuthPin');
 
         if (isModalInput) return;
 
@@ -262,11 +263,7 @@ function weposAddToCart(cardEl) {
             hasVat: (('hasVat' in cardEl.dataset) ? cardEl.dataset.hasVat === '1' : true),
             senior: cardEl.dataset.senior === '1',
             pwd: cardEl.dataset.pwd === '1',
-            stock: stock,
-            // Override state (set during checkout)
-            override: false,
-            overrideRate: 0,
-            overrideApprover: null
+            stock: stock
         };
         
         // Debug: log when a product is marked non-VATable to assist troubleshooting
@@ -514,25 +511,6 @@ function weposCalcItem(item, dRate, isVatExempt, discountRule = 'regular') {
     // (This enforces VAT display for every product regardless of product-level flags)
     const isVatable = true;
 
-    // Manual override short-circuit
-    if (item.override && item.overrideRate > 0) {
-        let base = gross;
-        if (isVatable) {
-            const net = gross / 1.12;
-            vatExempt = net ? gross - net : 0;
-            base = net;
-        }
-        discount = base * item.overrideRate;
-        finalPrice = gross - vatExempt - discount;
-        return {
-            gross: round2(gross),
-            vatExempt: round2(vatExempt),
-            discount: round2(discount),
-            vatAmount: round2(vatAmount),
-            final: round2(finalPrice)
-        };
-    }
-
     // Compute VAT portion when price is VAT-inclusive
     if (isVatable) {
         const net = gross / 1.12;
@@ -645,9 +623,6 @@ function weposUpdateCart() {
         rawVat += c.vatAmount;
         totalFinalAmount += c.final;
 
-        const overrideBadge = item.override
-            ? ` <span style="font-size:10px; color:#b91c1c; font-weight:600;"><i class="fas fa-tag"></i> ${(item.overrideRate*100).toFixed(0)}% OFF</span>`
-            : '';
         const quantityPresets = [1, 6, 12]
             .filter(quantity => quantity <= item.stock)
             .concat(item.qty > 0 && ![1, 6, 12].includes(item.qty) ? [item.qty] : [])
@@ -659,7 +634,7 @@ function weposUpdateCart() {
         html += `
             <tr class="wepos-cart-row">
                 <td class="wepos-col-name">
-                    <div class="wepos-cart-item-name">${weposEscapeHtml(item.name)}${overrideBadge}</div>
+                    <div class="wepos-cart-item-name">${weposEscapeHtml(item.name)}</div>
                 </td>
                 <td class="wepos-col-price text-muted">₱${item.price.toFixed(2)}</td>
                 <td class="wepos-col-qty">
@@ -745,11 +720,46 @@ function weposSetTotals(sub, disc, dRate, vatExempt, vat, total) {
 }
 
 function weposSetupKeyboard() {
+    // ── Shortcut map (issue #8) ─────────────────────────────────────────────
+    //   F2  focus search            F5  refresh (reload)
+    //   F8  clear cart               F9  process return
+    //   F10 close register          F12  pay now (same as Pay button)
+    //   Enter  pay → confirm → pay → done (full keyboard sale)
+    //   Esc    close the open modal
+    // ─────────────────────────────────────────────────────────────────────────
+    const anyWeposModalOpen = function () {
+        return Array.from(document.querySelectorAll('.wepos-modal-overlay')).some(
+            m => m.style.display !== 'none'
+        ) || !!document.querySelector('.mmb-modal-backdrop'); // mmbConfirm dialog
+    };
+
     document.addEventListener('keydown', function(e) {
-        if (e.key === 'F2') {
+        // F5 — Refresh. Identical to the toolbar button (full reload), kept
+        // active even inside modals because the button itself is too.
+        if (e.key === 'F5') {
             e.preventDefault();
-            document.getElementById('weposSearch')?.focus();
+            location.reload();
+            return;
         }
+
+        // Toolbar shortcuts only make sense on the main POS screen — never
+        // steal them while a modal/dialog is open (issue #8.6 fix: F2 used to
+        // move focus behind the overlay).
+        if (!anyWeposModalOpen()) {
+            if (e.key === 'F2') {
+                e.preventDefault();
+                document.getElementById('weposSearch')?.focus();
+            }
+            if (e.key === 'F9') {
+                e.preventDefault(); // browser default is nothing, but be explicit
+                openReturnModal();
+            }
+            if (e.key === 'F10') {
+                e.preventDefault(); // stop the browser menu-bar focus
+                weposOpenClosingModal();
+            }
+        }
+
         if (e.key === 'F8') {
             e.preventDefault();
             weposClearCart();
@@ -760,14 +770,23 @@ function weposSetupKeyboard() {
         }
         if (e.key === 'Escape') {
             weposClosePayModal();
-            weposCancelOverride();
             weposCancelVerifyId();
             weposCancelVoidAuth();
         }
 
-        // Enter completes the payment flow (issue #7.3) — the POS must be
-        // fully usable without a mouse: tender amount -> Enter -> confirm -> Enter.
+        // Enter completes the WHOLE sale (issues #7.3 + #8.1 + #8.5) — the POS
+        // must be fully usable without a mouse:
+        //   cart screen → Enter (pay) → type amount → Enter (confirm)
+        //   → Enter (pay now) → receipt → Enter (done, next customer).
         if (e.key === 'Enter') {
+            // Third stage: the receipt is showing -> Enter = Done.
+            const receiptModal = document.getElementById('weposReceiptModal');
+            if (receiptModal && receiptModal.style.display !== 'none') {
+                e.preventDefault();
+                weposCloseReceipt();
+                return;
+            }
+
             // Second stage: the confirmation modal is open -> Enter pays.
             const confirmModal = document.getElementById('weposConfirmModal');
             if (confirmModal && confirmModal.style.display !== 'none') {
@@ -782,11 +801,26 @@ function weposSetupKeyboard() {
             // First stage: the payment modal is open -> Enter advances to the
             // confirmation step, but only when focus is in the tendered field
             // / quick-cash area / nowhere — never steal Enter from another
-            // open modal's inputs (verify-ID, override, void auth) or buttons.
+            // open modal's inputs (verify-ID, void auth) or buttons.
             const payModal = document.getElementById('weposPayModal');
-            if (!payModal || payModal.style.display === 'none') return;
+            if (!payModal || payModal.style.display === 'none') {
+                // Stage zero (issue #8.1): nothing is open and the cart has
+                // items — Enter opens the payment modal, exactly like the
+                // Pay Now button. Focus is inside the search box with text?
+                // Then Enter still means "add this product" (scanner flow).
+                const active = document.activeElement;
+                const searchHasText = active && active.id === 'weposSearch' && active.value.trim().length > 0;
+                if (!searchHasText && !anyWeposModalOpen()) {
+                    const payBtnMain = document.getElementById('weposPayBtn');
+                    if (payBtnMain && !payBtnMain.disabled) {
+                        e.preventDefault();
+                        weposOpenPayModal();
+                    }
+                }
+                return;
+            }
 
-            const stackedModalOpen = ['verifyIdModal', 'overridePinModal', 'voidAuthModal', 'weposReceiptModal'].some(id => {
+            const stackedModalOpen = ['verifyIdModal', 'voidAuthModal'].some(id => {
                 const m = document.getElementById(id);
                 return m && m.style.display !== 'none';
             });
@@ -838,7 +872,7 @@ function weposOpenPayModal() {
     if (balanceBoxReset) balanceBoxReset.style.display = 'none';
     document.getElementById('modalConfirmBtn').disabled = true;
 
-    // Render checkout items with override buttons
+    // Render checkout items list
     weposRenderCheckoutItems();
     weposSyncCustomerTypeUI();
 
@@ -934,7 +968,7 @@ function weposSyncCustomerTypeUI() {
 }
 
 // Keep an open payment modal in sync with cart/total changes (customer type
-// switch, verification success, override changes) — amounts, checkout items,
+// switch, verification success) — amounts, checkout items,
 // segmented buttons and the tendered-vs-total logic all refresh together.
 function weposSyncPayModal() {
     const payModal = document.getElementById('weposPayModal');
@@ -1037,134 +1071,16 @@ function weposRenderCheckoutItems() {
     let html = '';
     entries.forEach(item => {
         const c = weposCalcItem(item, dRate, isVatExempt, discountRule);
-        const overrideLabel = item.override
-            ? `<span style="color:#b91c1c; font-weight:600;"><i class="fas fa-tag"></i> ${(item.overrideRate*100).toFixed(0)}% OFF (by ${weposEscapeHtml(item.overrideApprover)})</span>`
-            : '';
-        
         html += `<div style="display:flex; justify-content:space-between; align-items:center; padding:8px 12px; border-bottom:1px solid #f0f0f1;">
             <div style="flex:1; min-width:0;">
                 <div style="font-weight:500; font-size:13px;">${item.name}</div>
-                <div style="font-size:12px; color:#50575e;">${item.qty} × ₱${item.price.toFixed(2)} = ₱${c.final.toFixed(2)} ${overrideLabel}</div>
+                <div style="font-size:12px; color:#50575e;">${item.qty} × ₱${item.price.toFixed(2)} = ₱${c.final.toFixed(2)}</div>
             </div>
-            <button onclick="weposRequestOverride('${item.id}')"
-                    class="wepos-override-btn${item.override ? ' active' : ''}"
-                    title="${item.override ? 'Remove override discount (' + (item.overrideRate * 100).toFixed(0) + '% off)' : 'Apply override discount'}"
-                    aria-label="${item.override ? 'Remove override discount' : 'Apply override discount'}">
-                <i class="fas fa-tag"></i>
-            </button>
         </div>`;
     });
 
     container.innerHTML = html;
     container.style.display = entries.length > 0 ? 'block' : 'none';
-}
-
-// ═════ OVERRIDE FLOW ═════
-function weposRequestOverride(cartId) {
-    const item = weposCart[cartId];
-    if (!item) return;
-
-    // If already overridden, remove it
-    if (item.override) {
-        mmbConfirm({
-            title: 'Remove override discount?',
-            message: 'Remove the override discount from "' + weposEscapeHtml(item.name) + '"?',
-            okLabel: 'Yes, remove it',
-            danger: true
-        }).then(function (yes) {
-            if (!yes) return;
-            item.override = false;
-            item.overrideRate = 0;
-            item.overrideApprover = null;
-            weposRenderCheckoutItems();
-            weposUpdateCart();
-            // Refresh modal amount
-            const totalText = document.getElementById('calcTotal').textContent.replace('₱', '');
-            document.getElementById('modalAmountDue').textContent = weposFormatCurrency(parseFloat(totalText));
-        });
-        return;
-    }
-
-    // Open the PIN modal
-    pendingOverride = { cartId };
-    document.getElementById('overrideItemPreview').innerHTML =
-        `<strong>${weposEscapeHtml(item.name)}</strong> — ₱${(item.price * item.qty).toFixed(2)} (${item.qty} × ₱${item.price.toFixed(2)})`;
-    document.getElementById('overrideReason').value = '';
-    document.getElementById('overrideUsername').value = '';
-    document.getElementById('overridePassword').value = '';
-    document.getElementById('overridePercent').value = 12;
-    document.getElementById('overridePinError').style.display = 'none';
-    document.getElementById('overridePinModal').style.display = 'flex';
-}
-
-function weposCancelOverride() {
-    pendingOverride = null;
-    const modal = document.getElementById('overridePinModal');
-    if (modal) modal.style.display = 'none';
-}
-
-async function weposSubmitOverride() {
-    const reason   = document.getElementById('overrideReason').value.trim();
-    const username = document.getElementById('overrideUsername').value.trim();
-    const password = document.getElementById('overridePassword').value.trim();
-    const pct      = parseFloat(document.getElementById('overridePercent').value) || 0;
-    const errEl    = document.getElementById('overridePinError');
-
-    errEl.style.display = 'none';
-
-    if (!reason)              { errEl.textContent = 'Please enter a reason.';               errEl.style.display = 'block'; return; }
-    if (!username || !password){ errEl.textContent = 'Enter manager username and password.'; errEl.style.display = 'block'; return; }
-    if (pct <= 0 || pct > 100){ errEl.textContent = 'Enter a valid discount % (1–100).';    errEl.style.display = 'block'; return; }
-
-    try {
-        const res = await fetch('../function/verify_override_pin.php', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username, password })
-        });
-        const result = await res.json();
-
-        if (!result.success) {
-            errEl.textContent = result.error || 'Invalid credentials';
-            errEl.style.display = 'block';
-            return;
-        }
-
-        const item = weposCart[pendingOverride.cartId];
-        if (!item) { weposCancelOverride(); return; }
-
-        item.override = true;
-        item.overrideRate = pct / 100;
-        item.overrideApprover = result.approver_name;
-
-        // Log the override
-        await fetch('../function/log_override.php', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                product_id: item.id,
-               generic_name: item.name,
-                original_price: item.price * item.qty,
-                discounted_price: (item.price * item.qty) * (1 - pct / 100),
-                discount_amount: (item.price * item.qty) * (pct / 100),
-                discount_percent: pct,
-                reason,
-                approver_id: result.approver_id,
-                approver_name: result.approver_name
-            })
-        });
-
-        weposCancelOverride();
-        weposRenderCheckoutItems();
-        weposUpdateCart();
-        // Refresh modal amount
-        const totalText = document.getElementById('calcTotal').textContent.replace('₱', '');
-        document.getElementById('modalAmountDue').textContent = weposFormatCurrency(parseFloat(totalText));
-
-    } catch (err) {
-        errEl.textContent = 'Network error. Try again.';
-        errEl.style.display = 'block';
-    }
 }
 
 // ═════ PAYMENT METHODS & CASH ═════

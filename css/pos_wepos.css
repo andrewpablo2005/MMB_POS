@@ -612,7 +612,7 @@
 }
 
 .wepos-modal-head {
-    padding: 16px 20px;
+    padding: 12px 20px;
     border-bottom: 1px solid var(--wp-border);
     display: flex;
     justify-content: space-between;
@@ -624,10 +624,11 @@
 .wepos-modal-head button { background: none; border: none; font-size: 18px; cursor: pointer; color: var(--wp-text-light); }
 .wepos-modal-head button:hover { color: var(--wp-danger); }
 
-/* issue #7.5 — only the modal body scrolls, contained so it never chains */
-.wepos-modal-body { padding: 20px; overflow-y: auto; overscroll-behavior: contain; min-height: 0; }
+/* issue #8.3 — compact body: 14px padding so the Complete Payment modal fits
+   a ~700px viewport without scrolling; only the item list scrolls internally. */
+.wepos-modal-body { padding: 14px 20px; overflow-y: auto; overscroll-behavior: contain; min-height: 0; }
 
-.wepos-modal-totals { text-align: center; margin-bottom: 20px; }
+.wepos-modal-totals { text-align: center; margin-bottom: 12px; }
 .wepos-modal-totals h2 { margin: 0; font-size: 28px; }
 
 .wepos-pay-methods { display: flex; gap: 10px; margin-bottom: 20px; }
@@ -645,16 +646,20 @@
 .wepos-quick-cash button { flex: 1; padding: 8px; background: #f6f7f7; border: 1px solid var(--wp-border); border-radius: 3px; cursor: pointer; }
 .wepos-quick-cash button:hover { background: #e0e0e1; }
 
-.wepos-change-box { text-align: center; margin-top: 20px; padding: 15px; background: #fef2f2; border-radius: 4px; }
+/* issue #8.3 — PINNED SUMMARY STRIP: sits between the scrolling body and the
+   footer. The Change / Balance boxes live here, so they can never be scrolled
+   out of view, no matter how tall the item list is. */
+.wepos-modal-summary { flex-shrink: 0; border-top: 1px solid var(--wp-border); background: #fff; padding: 0 20px; }
+.wepos-change-box { text-align: center; margin: 10px 0; padding: 10px; background: #fef2f2; border-radius: 4px; }
 .wepos-change-box strong { font-size: 24px; color: #b91c1c; display: block; }
 
 /* Balance Due — shown when the tendered cash does not yet cover the total.
    Amber (not crimson) so cashiers distinguish "owe more" from "change". */
-.wepos-balance-box { text-align: center; margin-top: 20px; padding: 15px; background: #fffbeb; border-radius: 4px; }
+.wepos-balance-box { text-align: center; margin: 10px 0; padding: 10px; background: #fffbeb; border-radius: 4px; }
 .wepos-balance-box strong { font-size: 24px; color: #b45309; display: block; }
 .wepos-balance-box small { display: block; margin-top: 4px; font-size: 12px; color: #92400e; }
 
-.wepos-modal-foot { padding: 16px 20px; border-top: 1px solid var(--wp-border); display: flex; justify-content: flex-end; gap: 10px; background: #fcfcfc; flex-shrink: 0; }
+.wepos-modal-foot { padding: 12px 20px; border-top: 1px solid var(--wp-border); display: flex; justify-content: flex-end; gap: 10px; background: #fcfcfc; flex-shrink: 0; }
 
 /* ═════ issue #7.1 — Customer Type segmented control (payment flow) ═════ */
 .wepos-ctype-row { margin-bottom: 16px; }
@@ -682,25 +687,6 @@
     box-shadow: 0 2px 8px rgba(220, 38, 38, 0.25);
 }
 
-/* ═════ issue #7.2 — compact icon-only override button ═════ */
-.wepos-override-btn {
-    flex-shrink: 0;
-    width: 28px;
-    height: 28px;
-    border-radius: 6px;
-    border: 1px solid var(--wp-border);
-    background: #f6f7f7;
-    color: #50575e;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.15s;
-}
-.wepos-override-btn i { font-size: 12px; }
-.wepos-override-btn:hover { border-color: var(--wp-primary); color: var(--wp-primary); background: #fef2f2; }
-.wepos-override-btn.active { background: var(--wp-primary); border-color: var(--wp-primary); color: #fff; }
-.wepos-override-btn.active:hover { background: var(--wp-primary-hover); }
 
 /* ═════ issue #7.3 — Enter key hints inside the payment modals ═════ */
 .wepos-btn-primary kbd {

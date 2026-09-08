@@ -32,7 +32,7 @@ if (!empty($_SESSION['user_id'])) {
 ?>
 
 <!-- wePOS Inspired CSS -->
-<link rel="stylesheet" href="../css/pos_wepos.css?v=1.9">
+<link rel="stylesheet" href="../css/pos_wepos.css?v=1.10">
 
 <div class="wepos-wrapper" id="weposApp">
     
@@ -50,10 +50,10 @@ if (!empty($_SESSION['user_id'])) {
                     <i class="fas fa-undo-alt me-1"></i> Process Return <kbd style="font-size: 10px; background: #fee2e2; color: #c0392b; border: none; margin-left: 2px;">F9</kbd>
                 </button>
             <button class="wepos-btn wepos-btn-outline" onclick="location.reload()">
-                <i class="fas fa-sync-alt"></i> Refresh
+                <i class="fas fa-sync-alt"></i> Refresh <kbd style="font-size: 10px; background: #fee2e2; color: #c0392b; border: none; margin-left: 2px;">F5</kbd>
             </button>
             <button class="wepos-btn wepos-btn-outline text-primary" onclick="weposOpenClosingModal()">
-                <i class="fas fa-cash-register"></i> Close Register
+                <i class="fas fa-cash-register"></i> Close Register <kbd style="font-size: 10px; background: #fee2e2; color: #c0392b; border: none; margin-left: 2px;">F10</kbd>
             </button>
         </div>
 
@@ -245,7 +245,7 @@ if (!empty($_SESSION['user_id'])) {
 
             <!-- Pay Button -->
             <button class="wepos-pay-btn" id="weposPayBtn" onclick="weposOpenPayModal()" disabled>
-                <span>Pay Now</span>
+                <span>Pay Now <kbd style="font-size: 10px; background: rgba(255,255,255,.25); color:#fff; border: none;">Enter</kbd></span>
                 <span class="wepos-pay-amount" id="btnTotalAmount">₱0.00</span>
             </button>
         </div>
@@ -362,8 +362,8 @@ if (!empty($_SESSION['user_id'])) {
                 </div>
             </div>
 
-            <!-- Checkout Items with Override -->
-            <div id="weposCheckoutItems" style="max-height: 200px; overflow-y: auto; margin-bottom: 15px; border: 1px solid #e0e0e0; border-radius: 4px; display: none;"></div>
+            <!-- Checkout Items (issue #8.3: capped at 120px so the modal stays short) -->
+            <div id="weposCheckoutItems" style="max-height: 120px; overflow-y: auto; margin-bottom: 12px; border: 1px solid #e0e0e0; border-radius: 4px; display: none;"></div>
 
 
 
@@ -376,6 +376,12 @@ if (!empty($_SESSION['user_id'])) {
                 <div class="wepos-quick-cash" id="weposQuickCash"></div>
             </div>
 
+        </div>
+
+        <!-- issue #8.3 — PINNED SUMMARY STRIP: Change / Balance Due live outside
+             the scrolling body, directly above the buttons, so they are always
+             visible without scrolling no matter how many items are in the cart. -->
+        <div class="wepos-modal-summary">
             <div class="wepos-change-box" id="weposChangeBox" style="display:none;">
                 <span>Change:</span>
                 <strong id="modalChange">₱0.00</strong>
@@ -388,8 +394,8 @@ if (!empty($_SESSION['user_id'])) {
                 <strong id="modalBalance">₱0.00</strong>
                 <small>Add <span id="modalBalanceMore">₱0.00</span> more to complete this payment.</small>
             </div>
-
         </div>
+
         <div class="wepos-modal-foot">
             <button class="wepos-btn wepos-btn-outline" onclick="weposClosePayModal()">Cancel</button>
             <button class="wepos-btn wepos-btn-primary" id="modalConfirmBtn" onclick="weposOpenConfirmModal()" disabled>Confirm Payment <kbd>Enter</kbd></button>
@@ -431,44 +437,6 @@ if (!empty($_SESSION['user_id'])) {
         </div>
     </div>
 </div>
-
-<!-- ═══════════════ OVERRIDE PIN MODAL ═══════════════ -->
-<div class="wepos-modal-overlay" id="overridePinModal" style="display:none;" onclick="event.stopPropagation()">
-    <div class="wepos-modal" onclick="event.stopPropagation()">
-        <div class="wepos-modal-head" style="background: #fff3cd;">
-            <h5 style="color: #856404;"><i class="fas fa-shield-alt"></i> Manager Approval Required</h5>
-            <button onclick="weposCancelOverride()"><i class="fas fa-times"></i></button>
-        </div>
-        <div class="wepos-modal-body">
-            <p class="text-muted" style="font-size:0.9rem; margin-bottom:1rem;">
-                Discount override requires manager authorization.<br>
-                A log of this action will be recorded.
-            </p>
-            <div id="overrideItemPreview" style="background:#f8f9fa; border:1px solid #dcdcde; padding:10px 14px; border-radius:4px; font-size:13px; margin-bottom:14px;"></div>
-            <div style="margin-bottom: 0.75rem;">
-                <label style="font-size:0.85rem; font-weight:600; margin-bottom:0.25rem; display:block;">Reason for Discount</label>
-                <textarea id="overrideReason" rows="2" placeholder="e.g. Regular customer, damaged packaging..." style="width:100%; border-radius:4px; border:1px solid #8c8f94; padding:0.5rem; font-size:0.9rem; resize:none;"></textarea>
-            </div>
-            <div style="margin-bottom:0.75rem;">
-                <label style="font-size:0.85rem; font-weight:600; margin-bottom:0.25rem; display:block;">Override Discount %</label>
-                <input type="number" id="overridePercent" min="1" max="100" value="12" step="1" style="width:100%; border-radius:4px; border:1px solid #8c8f94; padding:0.5rem; font-size:1rem;">
-            </div>
-            <hr>
-            <p style="font-size:0.85rem; font-weight:600; margin-bottom:0.5rem;">Manager Login</p>
-            <input type="text" id="overrideUsername" placeholder="Manager username" autocomplete="off" style="width:100%; border-radius:4px; border:1px solid #8c8f94; padding:0.5rem; font-size:0.9rem; margin-bottom:0.5rem;">
-            <input type="password" id="overridePassword" placeholder="Manager password" style="width:100%; border-radius:4px; border:1px solid #8c8f94; padding:0.5rem; font-size:0.9rem; margin-bottom:1rem;">
-            <div id="overridePinError" class="text-danger" style="font-size:0.85rem; display:none; margin-bottom:0.5rem;"></div>
-        </div>
-        <div class="wepos-modal-foot">
-            <button class="wepos-btn wepos-btn-outline" onclick="weposCancelOverride()">Cancel</button>
-            <button class="wepos-btn wepos-btn-primary" onclick="weposSubmitOverride()"><i class="fas fa-unlock"></i> Authorize Override</button>
-        </div>
-    </div>
-</div>
-
-
-
-
 
 <!-- ═══════════════ VOID AUTH MODAL ═══════════════ -->
 <div class="wepos-modal-overlay" id="voidAuthModal" style="display:none;" onclick="event.stopPropagation()">
@@ -571,7 +539,7 @@ if (!empty($_SESSION['user_id'])) {
                 <i class="fas fa-print"></i> Print Receipt
             </button>
             <button class="wepos-btn wepos-btn-primary" onclick="weposCloseReceipt()">
-                Done
+                Done <kbd>Enter</kbd>
             </button>
         </div>
     </div>
@@ -845,4 +813,4 @@ if (!empty($_SESSION['user_id'])) {
 </div>
 
 <?php include __DIR__ . '/returnmodal.php'; ?>
-<script src="../js/pos_wepos.js?v=1.93"></script>
+<script src="../js/pos_wepos.js?v=1.94"></script>
