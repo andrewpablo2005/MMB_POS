@@ -290,25 +290,7 @@ $currentUser = $usersmanagement->getUserById($userId);
         </div>
     </div>
 
-    <div class="card border-danger mt-4">
-        <div class="card-body p-4">
-            <div class="d-flex align-items-start gap-3">
-                <div class="flex-grow-1">
-                    <h5 class="mb-1">Clear database data</h5>
-                    <p class="text-muted mb-3">Removes operational, transaction, inventory, customer, supplier, and product data. This cannot be undone.</p>
-                    <p class="small mb-3"><strong>Preserved:</strong> discounts, dosage forms, product categories, serving units, store settings, users, and user information.</p>
-                    <form method="POST">
-                        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
-                        <button type="submit" name="clear_database_data" class="btn btn-danger"
-                                data-mmb-confirm="This permanently deletes operational database data. Preserved reference and account tables will remain. Continue?"
-                                data-mmb-ok="Yes, clear database data">
-                            Clear Data Tables
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
+    
 </div>
 
 <script>

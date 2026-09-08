@@ -810,7 +810,8 @@ function weposSetupKeyboard() {
                 // Then Enter still means "add this product" (scanner flow).
                 const active = document.activeElement;
                 const searchHasText = active && active.id === 'weposSearch' && active.value.trim().length > 0;
-                if (!searchHasText && !anyWeposModalOpen()) {
+                const scannerHasBufferedCode = barcodeBuffer.length > 2;
+                if (!searchHasText && !scannerHasBufferedCode && !anyWeposModalOpen()) {
                     const payBtnMain = document.getElementById('weposPayBtn');
                     if (payBtnMain && !payBtnMain.disabled) {
                         e.preventDefault();
