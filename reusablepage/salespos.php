@@ -70,6 +70,13 @@ if (!empty($_SESSION['user_id'])) {
         <!-- Products -->
         <div class="wepos-products-area">
             <div class="wepos-products-grid" id="weposGrid">
+                <?php if (empty($products)): ?>
+                    <div class="w-100 text-center text-muted py-5 px-3">
+                        <i class="fas fa-box-open d-block mb-3" style="font-size: 2.5rem; color: #cbd5e1;"></i>
+                        <h5 class="mb-2">No products available</h5>
+                        <p class="mb-0">Add a product and inventory batch before starting a sale.</p>
+                    </div>
+                <?php else: ?>
                 <?php foreach ($products as $row): ?>
                     <?php 
                         $stock = (int)($row['stock'] ?? 0);
@@ -130,6 +137,7 @@ if (!empty($_SESSION['user_id'])) {
                         </div>
                     </div>
                 <?php endforeach; ?>
+                <?php endif; ?>
             </div>
         </div>
 
