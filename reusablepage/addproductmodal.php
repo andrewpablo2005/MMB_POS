@@ -326,7 +326,7 @@ $dosageForms = $product->getDosageForms();
                     <div class="add-product-row add-product-row--single">
                         <div class="add-product-field add-product-field--full">
                             <label for="product_image_input" class="form-label">Upload Image</label>
-                            <input type="file" id="product_image_input" name="product_image" class="form-control"
+                            <input type="file" id="product_image_input" name="product_image" class="form-control required-file-input"
                                 accept="image/*" onchange="previewImage(event)">
                             <small class="text-muted d-block mt-2"><i class="fas fa-info-circle"></i> Recommended:
                                 500x500px, JPG/PNG, max 5MB</small>
@@ -924,6 +924,21 @@ $dosageForms = $product->getDosageForms();
         barcodeInput.addEventListener('input', function () {
             clearTimeout(previewTimer);
             previewTimer = setTimeout(renderPreview, 250);
+        });
+        barcodeInput.addEventListener('paste', function (event) {
+            const pastedCode = (event.clipboardData || window.clipboardData).getData('text');
+            if (!pastedCode) return;
+
+            event.preventDefault();
+            const start = barcodeInput.selectionStart ?? barcodeInput.value.length;
+            const end = barcodeInput.selectionEnd ?? barcodeInput.value.length;
+            const cleanCode = pastedCode.replace(/\s+/g, '');
+            barcodeInput.value = barcodeInput.value.slice(0, start) + cleanCode + barcodeInput.value.slice(end);
+            barcodeInput.setSelectionRange(start + cleanCode.length, start + cleanCode.length);
+            barcodeInput.dispatchEvent(new Event('input', { bubbles: true }));
+        });
+        barcodeInput.addEventListener('keydown', function (event) {
+            if (event.key === 'Enter') event.preventDefault();
         });
         renderPreview();
     });

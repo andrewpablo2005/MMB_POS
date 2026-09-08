@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 08, 2026 at 02:36 AM
+-- Generation Time: Sep 08, 2026 at 06:46 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -105,13 +105,6 @@ CREATE TABLE `inventory` (
   `current_quantity` int(11) DEFAULT 0 COMMENT 'Current available quantity after sales/adjustments',
   `expiry_date` date DEFAULT NULL COMMENT 'Expiry date (critical for FEFO)'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `inventory`
---
-
-INSERT INTO `inventory` (`id`, `product_id`, `supplier_id`, `batch_number`, `date_received`, `manufacture_date`, `purchase_cost`, `markup`, `sale_price`, `received_quantity`, `created_at`, `updated_at`, `current_quantity`, `expiry_date`) VALUES
-(1, 1, NULL, 'Batch-1', '2026-09-08', NULL, 110.00, 5.00, 115.50, 100, '2026-09-08 00:35:34', '2026-09-08 00:35:34', 100, '2032-02-02');
 
 -- --------------------------------------------------------
 
@@ -269,13 +262,6 @@ CREATE TABLE `products` (
   `strength_per_quantity_unit` varchar(50) DEFAULT NULL COMMENT 'Unit for strength_per_quantity (e.g., mL, g)',
   `is_hidden` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `products`
---
-
-INSERT INTO `products` (`id`, `branded_name`, `generic_name`, `strength`, `measurement_id`, `barcode`, `category_id`, `classification_id`, `units_per_package`, `imageproduct`, `is_basic_necessities`, `package_type`, `dosage_form`, `dosage_form_id`, `strength_per_quantity`, `strength_per_quantity_unit`, `is_hidden`) VALUES
-(1, 'Unilab', 'Zinc e-zin', 10.00, 2, '656469675911', 20, NULL, 0, '6a9f58565c942-1788827734E-zinc_60ml.jpeg', 0, '', 'Syrup', 3, 60.00, 'mL', 0);
 
 -- --------------------------------------------------------
 
@@ -459,7 +445,8 @@ CREATE TABLE `serving_unit` (
 --
 
 INSERT INTO `serving_unit` (`id`, `serving_unit_name`) VALUES
-(2, 'mg');
+(2, 'mg'),
+(3, 'grams');
 
 -- --------------------------------------------------------
 
@@ -891,13 +878,13 @@ ALTER TABLE `discounts`
 -- AUTO_INCREMENT for table `dosage_forms`
 --
 ALTER TABLE `dosage_forms`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- AUTO_INCREMENT for table `inventory`
 --
 ALTER TABLE `inventory`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `inventory_disposals`
@@ -939,7 +926,7 @@ ALTER TABLE `pre_approved_users_info`
 -- AUTO_INCREMENT for table `products`
 --
 ALTER TABLE `products`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `product_categories`
@@ -987,7 +974,7 @@ ALTER TABLE `senior_customers`
 -- AUTO_INCREMENT for table `serving_unit`
 --
 ALTER TABLE `serving_unit`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `suppliers`
@@ -1023,7 +1010,7 @@ ALTER TABLE `transaction_item_batches`
 -- AUTO_INCREMENT for table `unit_measurement`
 --
 ALTER TABLE `unit_measurement`
-  MODIFY `unit_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `unit_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- AUTO_INCREMENT for table `users`
