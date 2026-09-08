@@ -99,29 +99,29 @@ if (isset($_GET['added'])) {
         <div class="tab-content flex-grow-1 w-100" id="v-pills-tabContent" style="min-height: 100vh; overflow: hidden;">
 
             <div class="tab-pane fade px-3 px-lg-4 py-4 <?= $activeTab === 'dashboard' ? 'show active' : '' ?>" id="v-pills-dashboard">
-                <?php if ($activeTab === 'dashboard') include __DIR__ . "/../reusablepage/dashboard.php"; ?>
+                <?php if ($activeTab === 'dashboard') mmb_include_fragment(__DIR__ . "/../reusablepage/dashboard.php"); ?>
             </div>
             <div class="tab-pane fade px-3 px-lg-4 py-4 <?= $activeTab === 'product' ? 'show active' : '' ?>" id="v-pills-product">
-                <?php if ($activeTab === 'product') include __DIR__ . "/../reusablepage/productmanagement.php"; ?>
+                <?php if ($activeTab === 'product') mmb_include_fragment(__DIR__ . "/../reusablepage/productmanagement.php"); ?>
             </div>
             <div class="tab-pane fade px-3 px-lg-4 py-4 <?= $activeTab === 'inventory' ? 'show active' : '' ?>" id="v-pills-inventory">
-                <?php if ($activeTab === 'inventory') include __DIR__ . "/../reusablepage/inventorymanagement.php"; ?>
+                <?php if ($activeTab === 'inventory') mmb_include_fragment(__DIR__ . "/../reusablepage/inventorymanagement.php"); ?>
             </div>
             <div class="tab-pane fade <?= $activeTab === 'sales' ? 'show active' : '' ?>" id="v-pills-sales" style="padding: 0; height: 100%; overflow: hidden;">
-                <?php if ($activeTab === 'sales') include __DIR__ . "/../reusablepage/salespos.php"; ?>
+                <?php if ($activeTab === 'sales') mmb_include_fragment(__DIR__ . "/../reusablepage/salespos.php"); ?>
             </div>
             <div class="tab-pane fade px-3 px-lg-4 py-4 <?= $activeTab === 'reports' ? 'show active' : '' ?>" id="v-pills-reports">
-                <?php if ($activeTab === 'reports') include __DIR__ . "/../reusablepage/reports.php"; ?>
+                <?php if ($activeTab === 'reports') mmb_include_fragment(__DIR__ . "/../reusablepage/reports.php"); ?>
             </div>
             <div class="tab-pane fade px-3 px-lg-4 py-4 <?= $activeTab === 'pendingaccount' ? 'show active' : '' ?>"
                 id="v-pills-pendingaccount">
-                <?php if ($activeTab === 'pendingaccount') include __DIR__ . "/../reusablepage/pendingaccountadmin.php"; ?>
+                <?php if ($activeTab === 'pendingaccount') mmb_include_fragment(__DIR__ . "/../reusablepage/pendingaccountadmin.php"); ?>
             </div>
             <div class="tab-pane fade px-3 px-lg-4 py-4 <?= $activeTab === 'users' ? 'show active' : '' ?>" id="v-pills-users">
-                <?php if ($activeTab === 'users') include __DIR__ . "/../reusablepage/adminaddaccount.php"; ?>
+                <?php if ($activeTab === 'users') mmb_include_fragment(__DIR__ . "/../reusablepage/adminaddaccount.php"); ?>
             </div>
             <div class="tab-pane fade px-3 px-lg-4 py-4 <?= $activeTab === 'system' ? 'show active' : '' ?>" id="v-pills-system">
-                <?php if ($activeTab === 'system') include __DIR__ . "/../reusablepage/systemsettings.php"; ?>
+                <?php if ($activeTab === 'system') mmb_include_fragment(__DIR__ . "/../reusablepage/systemsettings.php"); ?>
             </div>
         </div>
     </div>

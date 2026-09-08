@@ -42,7 +42,7 @@ use Classes\UserRegistration;
 
     <!-- MAIN CONTENT -->
     <main class="flex-fill">
-        <?php include __DIR__ . "/../reusablepage/salespos.php"; ?>
+        <?php mmb_include_fragment(__DIR__ . "/../reusablepage/salespos.php"); ?>
     </main>
 
     <!-- FOOTER -->

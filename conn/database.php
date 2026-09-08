@@ -46,6 +46,10 @@ class Database
             // Set MySQL timezone (database-side)
             $this->pdo->exec("SET time_zone = '+08:00'");
 
+            // Task 35: self-heal core reference tables (guarded, never throws)
+            require_once __DIR__ . '/db_bootstrap.php';
+            db_ensure_core_schema($this->pdo);
+
         } catch (\PDOException $e) {
             $this->failSetup($e->getMessage());
         }
@@ -102,3 +106,7 @@ class Database
 
 $connect = new Database();
 $db = $connect->initConnection();
+
+// Task 35: keep the helper functions available to pages that include only
+// database.php (mmb_include_fragment is used by the dashboard tab switch).
+require_once __DIR__ . '/db_bootstrap.php';

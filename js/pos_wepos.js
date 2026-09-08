@@ -1029,9 +1029,10 @@ function weposRenderCheckoutItems() {
     const entries = Object.values(weposCart);
     const discountSelect = document.getElementById('weposDiscount');
     const selOpt = discountSelect.options[discountSelect.selectedIndex];
+    // Task 35: tolerate an empty discounts table (options[-1] === undefined)
     const discountRule = selOpt?.dataset?.rule || 'regular';
-    const dRate = weposNormalizeRate(selOpt.dataset.rate);
-    const isVatExempt = selOpt.dataset.exempt === '1';
+    const dRate = weposNormalizeRate(selOpt?.dataset?.rate);
+    const isVatExempt = selOpt?.dataset?.exempt === '1';
 
     let html = '';
     entries.forEach(item => {

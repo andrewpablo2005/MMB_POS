@@ -845,4 +845,4 @@ if (!empty($_SESSION['user_id'])) {
 </div>
 
 <?php include __DIR__ . '/returnmodal.php'; ?>
-<script src="../js/pos_wepos.js?v=1.92"></script>
+<script src="../js/pos_wepos.js?v=1.93"></script>
