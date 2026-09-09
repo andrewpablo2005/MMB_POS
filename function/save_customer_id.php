@@ -88,13 +88,16 @@ try {
         exit;
     }
 
-    // Audit columns (guarded one-time migration for databases created
-    // before these columns existed)
+    // Audit columns (guarded migration for databases created before these
+    // columns existed). Add each column separately because verified_at is
+    // already present in older schema dumps.
     foreach (['senior_customers', 'pwd_customers'] as $table) {
-        try {
-            $db->exec("ALTER TABLE `$table` ADD COLUMN verified_by INT NULL DEFAULT NULL, ADD COLUMN verified_at DATETIME NULL DEFAULT NULL");
-        } catch (PDOException $ignore) {
-            // columns already exist
+        $columns = $db->query("SHOW COLUMNS FROM `$table`")->fetchAll(PDO::FETCH_COLUMN);
+        if (!in_array('verified_by', $columns, true)) {
+            $db->exec("ALTER TABLE `$table` ADD COLUMN verified_by INT NULL DEFAULT NULL");
+        }
+        if (!in_array('verified_at', $columns, true)) {
+            $db->exec("ALTER TABLE `$table` ADD COLUMN verified_at DATETIME NULL DEFAULT NULL");
         }
     }
 
