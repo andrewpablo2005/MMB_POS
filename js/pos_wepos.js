@@ -724,7 +724,7 @@ function weposSetupKeyboard() {
     //   F2  focus search            F5  refresh (reload)
     //   F8  clear cart               F9  process return
     //   F10 close register          F12  pay now (same as Pay button)
-    //   Enter  pay → confirm → pay → done (full keyboard sale)
+    //   Shift  pay → confirm → pay → done (full keyboard sale)
     //   Esc    close the open modal
     // ─────────────────────────────────────────────────────────────────────────
     const anyWeposModalOpen = function () {
@@ -774,12 +774,12 @@ function weposSetupKeyboard() {
             weposCancelVoidAuth();
         }
 
-        // Enter completes the WHOLE sale (issues #7.3 + #8.1 + #8.5) — the POS
+        // Shift completes the WHOLE sale (issues #7.3 + #8.1 + #8.5) — the POS
         // must be fully usable without a mouse:
-        //   cart screen → Enter (pay) → type amount → Enter (confirm)
-        //   → Enter (pay now) → receipt → Enter (done, next customer).
-        if (e.key === 'Enter') {
-            // Third stage: the receipt is showing -> Enter = Done.
+        //   cart screen → Shift (pay) → type amount → Shift (confirm)
+        //   → Shift (pay now) → receipt → Shift (done, next customer).
+        if (e.key === 'Shift') {
+            // Third stage: the receipt is showing -> Shift = Done.
             const receiptModal = document.getElementById('weposReceiptModal');
             if (receiptModal && receiptModal.style.display !== 'none') {
                 e.preventDefault();
@@ -787,7 +787,7 @@ function weposSetupKeyboard() {
                 return;
             }
 
-            // Second stage: the confirmation modal is open -> Enter pays.
+            // Second stage: the confirmation modal is open -> Shift pays.
             const confirmModal = document.getElementById('weposConfirmModal');
             if (confirmModal && confirmModal.style.display !== 'none') {
                 const payBtn = document.getElementById('confirmPayBtn');
@@ -798,14 +798,14 @@ function weposSetupKeyboard() {
                 return;
             }
 
-            // First stage: the payment modal is open -> Enter advances to the
+            // First stage: the payment modal is open -> Shift advances to the
             // confirmation step, but only when focus is in the tendered field
             // / quick-cash area / nowhere — never steal Enter from another
             // open modal's inputs (verify-ID, void auth) or buttons.
             const payModal = document.getElementById('weposPayModal');
             if (!payModal || payModal.style.display === 'none') {
                 // Stage zero (issue #8.1): nothing is open and the cart has
-                // items — Enter opens the payment modal, exactly like the
+                // items — Shift opens the payment modal, exactly like the
                 // Pay Now button. Focus is inside the search box with text?
                 // Then Enter still means "add this product" (scanner flow).
                 const active = document.activeElement;
@@ -896,7 +896,7 @@ function weposOpenConfirmModal() {
 
     if (confirmBtn) {
         confirmBtn.disabled = false;
-        confirmBtn.innerHTML = 'Pay Now <kbd>Enter</kbd>';
+        confirmBtn.innerHTML = 'Pay Now <kbd>Shift</kbd>';
     }
 
     document.getElementById('confirmAmount').textContent = amountDue;
@@ -1254,12 +1254,12 @@ async function weposSubmitTransaction() {
         } else {
             mmbNotify({ type: 'danger', title: 'Payment failed', message: result.error || 'The transaction was not completed.' });
             btn.disabled = false;
-            btn.innerHTML = 'Pay Now <kbd>Enter</kbd>';
+            btn.innerHTML = 'Pay Now <kbd>Shift</kbd>';
         }
     } catch (err) {
         mmbNotify({ type: 'danger', title: 'Network error', message: 'Please check your connection and try again.' });
         btn.disabled = false;
-        btn.innerHTML = 'Pay Now <kbd>Enter</kbd>';
+        btn.innerHTML = 'Pay Now <kbd>Shift</kbd>';
     }
 }
 

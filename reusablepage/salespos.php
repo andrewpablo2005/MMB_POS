@@ -245,7 +245,7 @@ if (!empty($_SESSION['user_id'])) {
 
             <!-- Pay Button -->
             <button class="wepos-pay-btn" id="weposPayBtn" onclick="weposOpenPayModal()" disabled>
-                <span>Pay Now <kbd style="font-size: 10px; background: rgba(255,255,255,.25); color:#fff; border: none;">Enter</kbd></span>
+                <span>Pay Now <kbd style="font-size: 10px; background: rgba(255,255,255,.25); color:#fff; border: none;">Shift</kbd></span>
                 <span class="wepos-pay-amount" id="btnTotalAmount">₱0.00</span>
             </button>
         </div>
@@ -371,7 +371,7 @@ if (!empty($_SESSION['user_id'])) {
                 <label>Amount Tendered (₱)</label>
                 <input type="number" id="weposTendered" class="wepos-input-lg" placeholder="" oninput="weposCalcChange()" autofocus>
 
-                <div class="wepos-enter-hint">Type the amount, then press <kbd>Enter</kbd> to confirm</div>
+                <div class="wepos-enter-hint">Type the amount, then press <kbd>Shift</kbd> to confirm</div>
 
                 <div class="wepos-quick-cash" id="weposQuickCash"></div>
             </div>
@@ -398,7 +398,7 @@ if (!empty($_SESSION['user_id'])) {
 
         <div class="wepos-modal-foot">
             <button class="wepos-btn wepos-btn-outline" onclick="weposClosePayModal()">Cancel</button>
-            <button class="wepos-btn wepos-btn-primary" id="modalConfirmBtn" onclick="weposOpenConfirmModal()" disabled>Confirm Payment <kbd>Enter</kbd></button>
+            <button class="wepos-btn wepos-btn-primary" id="modalConfirmBtn" onclick="weposOpenConfirmModal()" disabled>Confirm Payment <kbd>Shift</kbd></button>
         </div>
     </div>
 </div>
@@ -433,7 +433,7 @@ if (!empty($_SESSION['user_id'])) {
         </div>
         <div class="wepos-modal-foot">
             <button class="wepos-btn wepos-btn-outline" onclick="weposCloseConfirmModal()">Cancel</button>
-            <button class="wepos-btn wepos-btn-primary" id="confirmPayBtn" onclick="weposSubmitTransaction()">Pay Now <kbd>Enter</kbd></button>
+            <button class="wepos-btn wepos-btn-primary" id="confirmPayBtn" onclick="weposSubmitTransaction()">Pay Now <kbd>Shift</kbd></button>
         </div>
     </div>
 </div>
@@ -813,4 +813,4 @@ if (!empty($_SESSION['user_id'])) {
 </div>
 
 <?php include __DIR__ . '/returnmodal.php'; ?>
-<script src="../js/pos_wepos.js?v=1.95"></script>
+<script src="../js/pos_wepos.js?v=1.97"></script>
