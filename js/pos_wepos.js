@@ -529,11 +529,12 @@ function weposCalcItem(item, dRate, isVatExempt, discountRule = 'regular') {
         if (isStatutory) {
             if (seniorEligible || pwdEligible) {
                 if (isVatable) {
-                    // Official law: remove VAT first, then compute 20% on VAT-exclusive price
+                    // Keep the 12% VAT in the payable amount. The statutory
+                    // discount is calculated from the VAT-exclusive base,
+                    // but VAT is not exempted or removed from the total.
                     const net = gross / 1.12;
-                    vatExempt = gross - net;           // amount of VAT removed
-                    discount = net * dRate;           // discount computed on VAT-exclusive price
-                    finalPrice = net - discount;      // amount payable after discount
+                    discount = net * dRate;
+                    finalPrice = gross - discount;
                 } else {
                     // If product is non-VATable, apply discount on gross (no VAT split)
                     discount = gross * dRate;
@@ -545,8 +546,11 @@ function weposCalcItem(item, dRate, isVatExempt, discountRule = 'regular') {
                 finalPrice = gross;
             }
         } else {
-            // Non-statutory discounts apply on gross
-            discount = gross * dRate;
+            // Keep VAT payable for regular discounts too. Calculate the
+            // discount from the VAT-exclusive base, then subtract it from
+            // the VAT-inclusive gross amount.
+            const net = isVatable ? gross / 1.12 : gross;
+            discount = net * dRate;
             finalPrice = gross - discount;
         }
     }
@@ -665,10 +669,8 @@ function weposUpdateCart() {
     tbody.innerHTML = html;
 
     // ═══ CORRECT TOTAL CALCULATION (VAT IS INCLUSIVE) ═══
-    // Products' prices already include VAT. Senior/PWD statutory discounts
-    // may remove the VAT portion (tracked in totalVatExemption). The VAT
-    // shown to the cashier should be the collectible VAT after exemptions:
-    // collectibleVat = rawVat - totalVatExemption. Do NOT add VAT to the payable total.
+    // All product prices are VAT-inclusive. VAT remains payable for Regular,
+    // Senior, and PWD customers, so no VAT exemption is subtracted.
     const collectibleVat = Math.max(0, rawVat - totalVatExemption);
     const finalTotal = totalFinalAmount; // use per-item final prices so VAT exemption is applied
     weposSetTotals(rawSubtotal, totalDiscount, dRate, totalVatExemption, collectibleVat, finalTotal);
@@ -707,7 +709,7 @@ function weposSetTotals(sub, disc, dRate, vatExempt, vat, total) {
 
     const rowVatEx = document.getElementById('rowVatExempt');
     if (rowVatEx) {
-        rowVatEx.style.display = 'flex';
+        rowVatEx.style.display = vatExempt > 0 ? 'flex' : 'none';
         const calcVatEx = document.getElementById('calcVatExempt');
         if (calcVatEx) calcVatEx.textContent = '-₱' + vatExempt.toFixed(2);
     }
@@ -1323,7 +1325,7 @@ function weposShowReceipt(data) {
 
     const vatExRow = document.getElementById('receiptVatExRow');
     if (vatExRow) {
-        vatExRow.style.display = 'flex';
+        vatExRow.style.display = data.totalVatExempt > 0 ? 'flex' : 'none';
         document.getElementById('receiptVatEx').textContent = '-\u20b1' + data.totalVatExempt.toFixed(2);
     }
 

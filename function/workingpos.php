@@ -101,7 +101,9 @@ class Product {
         $rate = ($discountRule === 'statutory') ? 0.20 : 0.05;
         $remainingDiscountCap = max(0.0, 125.0 - (float)$weekDiscountTotal);
         $remainingPurchaseCap = max(0.0, 2500.0 - (float)$weekEligibleSubtotal);
-        $discountableSubtotal = min($eligibleSubtotal, $remainingPurchaseCap);
+        // The discount applies to the VAT-exclusive base while the 12% VAT
+        // remains included in the amount payable.
+        $discountableSubtotal = min($eligibleSubtotal / 1.12, $remainingPurchaseCap);
         $discountTotal = round(min($discountableSubtotal * $rate, $remainingDiscountCap), 2);
 
         return [
@@ -302,7 +304,8 @@ class Product {
                     if (!$isStatutoryRow && $rate > 0) {
                         $regularDiscount = 0.0;
                         foreach ($cartItems as $item) {
-                            $regularDiscount += (float)$item['price'] * (int)$item['qty'] * $rate;
+                            $gross = (float)$item['price'] * (int)$item['qty'];
+                            $regularDiscount += ($gross / 1.12) * $rate;
                         }
                         $allowedDiscount = max($allowedDiscount, round($regularDiscount, 2));
                     }
@@ -323,20 +326,8 @@ class Product {
             // Clamp the claimed discount to the allowed maximum
             $appliedDiscount = round(min(max(0.0, $appliedDiscount), $allowedDiscount, $grossTransactionAmount), 2);
 
-            // Cap the VAT exemption claim: only statutory-eligible items and
-            // manager-overridden items qualify (12% VAT-inclusive pricing).
-            $allowedVatExemption = 0.0;
-            foreach ($cartItems as $item) {
-                $isStatutoryEligible = in_array($customerTypeNorm, ['senior', 'pwd'], true)
-                    && ($item['senior'] || $item['pwd']);
-                $hasOverride = !empty($overrideRates[$item['id']]);
-                if ($isStatutoryEligible || $hasOverride) {
-                    $gross = (float)$item['price'] * (int)$item['qty'];
-                    $allowedVatExemption += $gross - ($gross / 1.12);
-                }
-            }
-            $allowedVatExemption = round($allowedVatExemption, 2);
-            $totalVatExemption = round(min(max(0.0, (float)$totalVatExemption), $allowedVatExemption), 2);
+            // VAT is never discounted for Regular, Senior, or PWD sales.
+            $totalVatExemption = 0.0;
 
             $totalAmount = round(max(0.0, $grossTransactionAmount - $appliedDiscount - (float)$totalVatExemption), 2);
 
