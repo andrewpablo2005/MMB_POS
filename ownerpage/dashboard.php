@@ -15,6 +15,9 @@ if (strtolower(trim((string)($_SESSION['position'] ?? ''))) !== 'owner') {
 }
 
 $activeTab = $_GET['tab'] ?? 'dashboard';
+if ($activeTab === 'security') {
+    $activeTab = 'users';
+}
 
 ?>
 <!DOCTYPE html>
@@ -65,9 +68,6 @@ $activeTab = $_GET['tab'] ?? 'dashboard';
                     <a class="nav-link <?= $activeTab === 'reports' ? 'active' : '' ?>"
                         href="?tab=reports"><i class="fas fa-file-alt"></i>Reports</a>
 
-                    <a class="nav-link <?= $activeTab === 'security' ? 'active' : '' ?>"
-                        href="?tab=security"><i class="fas fa-shield-alt"></i>Security</a>
-
                     <a class="nav-link <?= $activeTab === 'users' ? 'active' : '' ?>"
                         href="?tab=users"><i class="fas fa-users"></i>User Management</a>
 
@@ -92,9 +92,6 @@ $activeTab = $_GET['tab'] ?? 'dashboard';
             </div>
             <div class="tab-pane fade px-3 px-lg-4 py-4 <?= $activeTab === 'reports' ? 'show active' : '' ?>" id="v-pills-reports">
                 <?php if ($activeTab === 'reports') mmb_include_fragment(__DIR__ . "/../reusablepage/reports.php"); ?>
-            </div>
-            <div class="tab-pane fade px-3 px-lg-4 py-4 <?= $activeTab === 'security' ? 'show active' : '' ?>" id="v-pills-security">
-                <?php if ($activeTab === 'security') mmb_include_fragment(__DIR__ . "/../reusablepage/userauthentication.php"); ?>
             </div>
             <div class="tab-pane fade px-3 px-lg-4 py-4 <?= $activeTab === 'users' ? 'show active' : '' ?>" id="v-pills-users">
                 <?php if ($activeTab === 'users') mmb_include_fragment(__DIR__ . "/../reusablepage/usermanagement.php"); ?>

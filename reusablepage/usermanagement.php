@@ -70,6 +70,21 @@ $users = $usersmanagement->getAllUsers();
                 </button>
             </div>
 
+            <ul class="nav nav-tabs mb-4" id="userManagementTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="user-accounts-tab" data-bs-toggle="tab" data-bs-target="#user-accounts-pane" type="button" role="tab" aria-controls="user-accounts-pane" aria-selected="true">
+                        User Accounts
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="user-security-tab" data-bs-toggle="tab" data-bs-target="#user-security-pane" type="button" role="tab" aria-controls="user-security-pane" aria-selected="false">
+                        Pending Approvals
+                    </button>
+                </li>
+            </ul>
+
+            <div class="tab-content" id="userManagementTabContent">
+                <div class="tab-pane fade show active" id="user-accounts-pane" role="tabpanel" aria-labelledby="user-accounts-tab" tabindex="0">
             <!-- TABLE -->
             <div class="table-responsive">
                 <table class="table table-striped table-hover align-middle w-100 myTable userstable">
@@ -158,6 +173,13 @@ $users = $usersmanagement->getAllUsers();
                     </tbody>
 
                 </table>
+            </div>
+
+                </div>
+
+                <div class="tab-pane fade" id="user-security-pane" role="tabpanel" aria-labelledby="user-security-tab" tabindex="0">
+                    <?php include 'userauthentication.php'; ?>
+                </div>
             </div>
 
         </div>
