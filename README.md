@@ -18,6 +18,7 @@ A web-based Point-of-Sale and inventory system for a small pharmacy, built with 
 | **Register closing (Z-report)** | End-of-shift system-vs-counted cash reconciliation with variance |
 | **Reports** | Daily / monthly / yearly sales, sales detail (filter by date/month/year + cashier), top products, expired products, real revenue (net of discounts/VAT exemption/refunds) |
 | **User management** | Owner/Admin/Staff roles, account approval workflow, per-account Void PIN, account enable/disable |
+| **Forgot password** | Single-use, time-limited password reset links sent through PHPMailer SMTP |
 | **Dashboard** | KPI cards + Chart.js sales charts |
 
 ---
@@ -62,6 +63,10 @@ MMBPOS_SMTP_FROM=your-address@gmail.com   # optional
 ```
 
 If not set, emails are silently skipped — everything else works.
+
+For local XAMPP testing, you can instead copy `conn/config.local.example.php` to
+`conn/config.local.php` and enter the Gmail address plus a newly generated App
+Password. Keep `config.local.php` private and never commit it.
 
 ---
 

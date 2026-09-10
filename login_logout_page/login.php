@@ -107,6 +107,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
                         </button>
                     </form>
 
+                    <div class="text-center mt-3">
+                        <a href="<?= mmbpos_base_path() ?>/login_logout_page/forgot_password.php">Forgot password?</a>
+                    </div>
+
                     <div class="text-center mt-4">
                         <div class="security-badge d-inline-flex">
                             <i class="fas fa-shield-alt"></i> 

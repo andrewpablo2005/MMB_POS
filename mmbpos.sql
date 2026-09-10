@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 08, 2026 at 06:46 AM
+-- Generation Time: Sep 10, 2026 at 06:39 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -106,6 +106,15 @@ CREATE TABLE `inventory` (
   `expiry_date` date DEFAULT NULL COMMENT 'Expiry date (critical for FEFO)'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `inventory`
+--
+
+INSERT INTO `inventory` (`id`, `product_id`, `supplier_id`, `batch_number`, `date_received`, `manufacture_date`, `purchase_cost`, `markup`, `sale_price`, `received_quantity`, `created_at`, `updated_at`, `current_quantity`, `expiry_date`) VALUES
+(1, 1, 1, 'Batch-1', '2026-09-08', NULL, 110.00, 5.00, 115.50, 100, '2026-09-08 06:18:40', '2026-09-09 00:37:00', 0, '2030-02-02'),
+(2, 1, 1, 'Batch-2', '2026-09-08', NULL, 50.00, 5.00, 52.50, 100, '2026-09-08 06:46:50', '2026-09-08 23:53:33', 0, '2027-05-08'),
+(3, 1, 1, 'Batch-3', '2026-09-09', NULL, 152.00, 5.00, 159.60, 1000, '2026-09-09 00:35:06', '2026-09-10 03:46:33', 894, '2030-02-02');
+
 -- --------------------------------------------------------
 
 --
@@ -203,6 +212,37 @@ CREATE TABLE `override_log` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `password_reset_tokens`
+--
+
+CREATE TABLE `password_reset_tokens` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `token_hash` char(64) NOT NULL,
+  `expires_at` datetime NOT NULL,
+  `used_at` datetime DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `password_reset_tokens`
+--
+
+INSERT INTO `password_reset_tokens` (`id`, `user_id`, `token_hash`, `expires_at`, `used_at`, `created_at`) VALUES
+(1, 1, '6fef0807307f8dcebc4f720e0ad5d614188cd689c0128b40debc3807e6528a0f', '2026-09-10 12:48:10', '2026-09-10 12:19:00', '2026-09-10 04:18:10'),
+(2, 1, 'ecf65bed90d968cd64411aa1e9cbb48e0fc7b6f7abb331d908091bf7e37095ab', '2026-09-10 12:49:00', '2026-09-10 12:21:08', '2026-09-10 04:19:00'),
+(3, 1, 'e25a7052841f85a93c65c6398a808e4225ae17c7553b3852f041af3cb33f1578', '2026-09-10 12:51:08', '2026-09-10 12:21:42', '2026-09-10 04:21:08'),
+(4, 1, '927b302f16beed8bdb2f08a1ba98ac027f2b125ea15e1cbad52c62b4cc8b6ad6', '2026-09-10 12:51:42', '2026-09-10 12:31:16', '2026-09-10 04:21:42'),
+(5, 1, '69ba9db977a7638633b6f053cd0b36e2e2bcb1078e168137efc673d7ca689c99', '2026-09-10 13:01:16', '2026-09-10 12:31:20', '2026-09-10 04:31:16'),
+(6, 1, 'f11f8a3a400f396c822c96cca0f70653a163fec86cc8779a23506bd34f513689', '2026-09-10 13:01:20', '2026-09-10 12:31:57', '2026-09-10 04:31:20'),
+(7, 1, '91a7e2d88c5c2fff27cb313dae9034da15121eb057d2fe166c019fb2e1ec6a22', '2026-09-10 13:01:57', '2026-09-10 12:32:02', '2026-09-10 04:31:57'),
+(8, 1, '309781ad046196afcd3ccd61788c11fd2ef3c846a16c49a4abe4f093a9140124', '2026-09-10 13:02:02', '2026-09-10 12:33:21', '2026-09-10 04:32:02'),
+(9, 1, '782724b487cf20d9f0f85bc77ee694c366ba534292b0e274e703d9b64228b848', '2026-09-10 13:03:45', '2026-09-10 12:37:01', '2026-09-10 04:33:45'),
+(10, 1, 'd445e5269b9598e3425dc379e3e2a848fa1b58c47962030c6eb0244fa931bcbf', '2026-09-10 13:08:03', NULL, '2026-09-10 04:38:03');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `pre_approved_users`
 --
 
@@ -263,6 +303,13 @@ CREATE TABLE `products` (
   `is_hidden` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `products`
+--
+
+INSERT INTO `products` (`id`, `branded_name`, `generic_name`, `strength`, `measurement_id`, `barcode`, `category_id`, `classification_id`, `units_per_package`, `imageproduct`, `is_basic_necessities`, `package_type`, `dosage_form`, `dosage_form_id`, `strength_per_quantity`, `strength_per_quantity_unit`, `is_hidden`) VALUES
+(1, 'Restime', 'Simeticone', 40.00, 2, '4807788523709', 18, NULL, 0, '6a9fa888056ce-1788848264IMG_4549.jpeg', 0, '', 'Drops', 7, 10.00, 'mL', 0);
+
 -- --------------------------------------------------------
 
 --
@@ -315,14 +362,14 @@ CREATE TABLE `product_categories` (
 --
 
 INSERT INTO `product_categories` (`id`, `category_name`, `has_vat`, `senior_discount`, `pwd_discount`) VALUES
-(17, 'Prescription Medicines', 0, 1, 1),
-(18, 'Over-the-Counter (OTC)', 0, 1, 1),
-(19, 'Medical Supplies', 0, 1, 1),
-(20, 'Vitamins & Supplements', 0, 1, 1),
-(21, 'First Aid', 0, 1, 1),
-(22, 'Diagnostics', 0, 1, 1),
-(23, 'Herbal Products', 0, 1, 1),
-(24, 'Health & Wellness', 0, 1, 1),
+(17, 'Prescription Medicines', 1, 1, 1),
+(18, 'Over-the-Counter (OTC)', 1, 1, 1),
+(19, 'Medical Supplies', 1, 1, 1),
+(20, 'Vitamins & Supplements', 1, 1, 1),
+(21, 'First Aid', 1, 1, 1),
+(22, 'Diagnostics', 1, 1, 1),
+(23, 'Herbal Products', 1, 1, 1),
+(24, 'Health & Wellness', 1, 1, 1),
 (25, 'Personal Care', 1, 1, 1),
 (26, 'Baby Care', 1, 0, 0),
 (27, 'Beverage/Beverages', 1, 0, 0),
@@ -342,8 +389,17 @@ CREATE TABLE `pwd_customers` (
   `customer_name` varchar(255) NOT NULL,
   `id_number` varchar(100) NOT NULL,
   `cashier_id` int(11) NOT NULL,
-  `verified_at` datetime NOT NULL DEFAULT current_timestamp()
+  `verified_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `verified_by` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `pwd_customers`
+--
+
+INSERT INTO `pwd_customers` (`id`, `customer_name`, `id_number`, `cashier_id`, `verified_at`, `verified_by`) VALUES
+(1, 'ANDREW PABLO', '12345678910', 1, '2026-09-08 14:53:55', NULL),
+(2, 'ANDREW PABLO', '123456789100', 1, '2026-09-09 08:04:53', 1);
 
 -- --------------------------------------------------------
 
@@ -362,6 +418,17 @@ CREATE TABLE `register_closings` (
   `closed_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `register_closings`
+--
+
+INSERT INTO `register_closings` (`id`, `user_id`, `business_date`, `system_cash`, `counted_cash`, `variance`, `notes`, `closed_at`) VALUES
+(1, 1, '2026-09-08', 1037.50, 1037.50, 0.00, NULL, '2026-09-10 03:29:36'),
+(2, 1, '2026-09-09', 28437.10, 28437.10, 0.00, NULL, '2026-09-10 03:37:18'),
+(3, 1, '2026-09-10', 1159.60, 1159.60, 0.00, NULL, '2026-09-10 03:38:36'),
+(4, 2, '2026-09-10', 1159.60, 1159.60, 0.00, NULL, '2026-09-10 03:45:57'),
+(5, 3, '2026-09-10', 1478.80, 1478.80, 0.00, NULL, '2026-09-10 03:47:00');
+
 -- --------------------------------------------------------
 
 --
@@ -376,6 +443,17 @@ CREATE TABLE `register_openings` (
   `notes` varchar(255) DEFAULT NULL,
   `opened_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `register_openings`
+--
+
+INSERT INTO `register_openings` (`id`, `user_id`, `business_date`, `opening_cash`, `notes`, `opened_at`) VALUES
+(1, 1, '2026-09-08', 1000.00, NULL, '2026-09-08 06:47:28'),
+(2, 1, '2026-09-09', 1000.00, NULL, '2026-09-08 23:45:34'),
+(3, 1, '2026-09-10', 1000.00, NULL, '2026-09-10 03:37:32'),
+(4, 2, '2026-09-10', 1000.00, NULL, '2026-09-10 03:45:37'),
+(5, 3, '2026-09-10', 1000.00, NULL, '2026-09-10 03:46:26');
 
 -- --------------------------------------------------------
 
@@ -426,8 +504,16 @@ CREATE TABLE `senior_customers` (
   `customer_name` varchar(255) NOT NULL,
   `id_number` varchar(100) NOT NULL,
   `cashier_id` int(11) NOT NULL,
-  `verified_at` datetime NOT NULL DEFAULT current_timestamp()
+  `verified_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `verified_by` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `senior_customers`
+--
+
+INSERT INTO `senior_customers` (`id`, `customer_name`, `id_number`, `cashier_id`, `verified_at`, `verified_by`) VALUES
+(1, 'ANDREW PABLO', '12345678910', 1, '2026-09-09 08:03:59', 1);
 
 -- --------------------------------------------------------
 
@@ -479,6 +565,13 @@ CREATE TABLE `suppliers` (
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `suppliers`
+--
+
+INSERT INTO `suppliers` (`id`, `supplier_name`, `contact_person`, `contact_number`, `email`, `address`, `supplier_type`, `is_active`, `created_at`, `updated_at`) VALUES
+(1, 'ABC PHARMA', NULL, '+639651800675', 'andrewpablo2005@gmail.com', 'Manila Philippines', NULL, 1, '2026-09-08 06:18:21', '2026-09-08 06:18:21');
+
 -- --------------------------------------------------------
 
 --
@@ -497,6 +590,30 @@ CREATE TABLE `transactions` (
   `discount_total` decimal(10,2) DEFAULT 0.00,
   `total_vat_exemption` decimal(10,2) DEFAULT 0.00
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `transactions`
+--
+
+INSERT INTO `transactions` (`id`, `user_id`, `discount_id`, `customer_name`, `customer_id`, `customer_type`, `total_amount`, `created_at`, `discount_total`, `total_vat_exemption`) VALUES
+(1, 1, 3, 'ANDREW PABLO', '1', 'pwd', 37.50, '2026-09-08 06:55:29', 9.37, 5.63),
+(2, 1, 1, 'Walk-in', NULL, '', 2992.50, '2026-09-08 23:51:26', 0.00, 0.00),
+(3, 1, 1, 'Walk-in', NULL, '', 682.50, '2026-09-08 23:51:36', 0.00, 0.00),
+(4, 1, 1, 'Walk-in', NULL, '', 2992.50, '2026-09-08 23:53:33', 0.00, 0.00),
+(5, 1, 1, 'Walk-in', NULL, '', 52.50, '2026-09-08 23:56:21', 0.00, 0.00),
+(6, 1, 3, 'ANDREW PABLO', '2', 'pwd', 37.50, '2026-09-09 00:05:15', 9.37, 5.63),
+(7, 1, 1, 'Walk-in', NULL, '', 210.00, '2026-09-09 00:11:35', 0.00, 0.00),
+(8, 1, 1, 'Walk-in', NULL, '', 472.50, '2026-09-09 00:16:23', 0.00, 0.00),
+(9, 1, 1, 'Walk-in', NULL, '', 1312.50, '2026-09-09 00:18:15', 0.00, 0.00),
+(10, 1, 1, 'Walk-in', NULL, '', 630.00, '2026-09-09 00:27:22', 0.00, 0.00),
+(11, 1, 1, 'Walk-in', NULL, '', 367.50, '2026-09-09 00:29:38', 0.00, 0.00),
+(12, 1, 1, 'Walk-in', NULL, '', 17556.00, '2026-09-09 00:37:00', 0.00, 0.00),
+(13, 1, 2, 'ANDREW PABLO', '1', 'senior', 131.10, '2026-09-09 00:46:34', 28.50, 0.00),
+(14, 1, 1, 'Walk-in', NULL, '', 159.60, '2026-09-10 03:38:09', 0.00, 0.00),
+(15, 1, 1, 'Walk-in', NULL, '', 319.20, '2026-09-10 03:39:01', 0.00, 0.00),
+(16, 1, 1, 'Walk-in', NULL, '', 159.60, '2026-09-10 03:43:54', 0.00, 0.00),
+(17, 2, 1, 'Walk-in', NULL, '', 159.60, '2026-09-10 03:45:44', 0.00, 0.00),
+(18, 3, 1, 'Walk-in', NULL, '', 478.80, '2026-09-10 03:46:33', 0.00, 0.00);
 
 -- --------------------------------------------------------
 
@@ -529,6 +646,30 @@ CREATE TABLE `transaction_items` (
   `subtotal` decimal(10,2) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `transaction_items`
+--
+
+INSERT INTO `transaction_items` (`id`, `transaction_id`, `product_id`, `batch_id`, `quantity`, `price`, `subtotal`) VALUES
+(1, 1, 1, 2, 1, 52.50, 37.50),
+(2, 2, 1, 2, 57, 52.50, 2992.50),
+(3, 3, 1, 2, 13, 52.50, 682.50),
+(4, 4, 1, NULL, 57, 52.50, 2992.50),
+(5, 5, 1, 1, 1, 52.50, 52.50),
+(6, 6, 1, 1, 1, 52.50, 37.50),
+(7, 7, 1, 1, 4, 52.50, 210.00),
+(8, 8, 1, 1, 9, 52.50, 472.50),
+(9, 9, 1, 1, 25, 52.50, 1312.50),
+(10, 10, 1, 1, 12, 52.50, 630.00),
+(11, 11, 1, 1, 7, 52.50, 367.50),
+(12, 12, 1, NULL, 110, 159.60, 17556.00),
+(13, 13, 1, 3, 1, 159.60, 131.10),
+(14, 14, 1, 3, 1, 159.60, 159.60),
+(15, 15, 1, 3, 2, 159.60, 319.20),
+(16, 16, 1, 3, 1, 159.60, 159.60),
+(17, 17, 1, 3, 1, 159.60, 159.60),
+(18, 18, 1, 3, 3, 159.60, 478.80);
+
 -- --------------------------------------------------------
 
 --
@@ -543,6 +684,32 @@ CREATE TABLE `transaction_item_batches` (
   `purchase_cost` decimal(10,2) NOT NULL DEFAULT 0.00,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `transaction_item_batches`
+--
+
+INSERT INTO `transaction_item_batches` (`id`, `transaction_item_id`, `inventory_id`, `quantity`, `purchase_cost`, `created_at`) VALUES
+(1, 1, 2, 1, 50.00, '2026-09-08 06:55:29'),
+(2, 2, 2, 57, 50.00, '2026-09-08 23:51:26'),
+(3, 3, 2, 13, 50.00, '2026-09-08 23:51:36'),
+(4, 4, 2, 29, 50.00, '2026-09-08 23:53:33'),
+(5, 4, 1, 28, 110.00, '2026-09-08 23:53:33'),
+(6, 5, 1, 1, 110.00, '2026-09-08 23:56:21'),
+(7, 6, 1, 1, 110.00, '2026-09-09 00:05:15'),
+(8, 7, 1, 4, 110.00, '2026-09-09 00:11:35'),
+(9, 8, 1, 9, 110.00, '2026-09-09 00:16:23'),
+(10, 9, 1, 25, 110.00, '2026-09-09 00:18:15'),
+(11, 10, 1, 12, 110.00, '2026-09-09 00:27:22'),
+(12, 11, 1, 7, 110.00, '2026-09-09 00:29:38'),
+(13, 12, 1, 13, 110.00, '2026-09-09 00:37:00'),
+(14, 12, 3, 97, 152.00, '2026-09-09 00:37:00'),
+(15, 13, 3, 1, 152.00, '2026-09-09 00:46:34'),
+(16, 14, 3, 1, 152.00, '2026-09-10 03:38:09'),
+(17, 15, 3, 2, 152.00, '2026-09-10 03:39:01'),
+(18, 16, 3, 1, 152.00, '2026-09-10 03:43:54'),
+(19, 17, 3, 1, 152.00, '2026-09-10 03:45:44'),
+(20, 18, 3, 3, 152.00, '2026-09-10 03:46:33');
 
 -- --------------------------------------------------------
 
@@ -605,13 +772,14 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `username`, `password`, `void_password`, `position`, `failed_attempts`, `last_attempt`, `status`, `created_at`) VALUES
-(1, 'andrew_owner', '$2y$10$U9nvr0YPYlqswVjqumcw1OTvtVJYVwdl5MFcCfvumt.nUzhqJTe9C', '1234567', 'Owner', 0, '2026-09-03 08:00:52', 'active', '2026-09-05 08:53:02'),
+(1, 'andrew_owner', '$2y$10$2Rqa4Se609iFKRTnJpX3SuAIE7v1vZwwCtGK2WHBvnBxQ2.w9RBAS', '1234567', 'Owner', 0, NULL, 'active', '2026-09-05 08:53:02'),
 (2, 'andrew_admin', '$2y$10$.pMY78gCNdiWGwCw8DAIse7SS./j5d9T8pQ87YhhLoOum4yKzJL.m', '1234567', 'Admin', 0, '2026-08-20 01:56:58', 'active', '2026-09-05 08:53:02'),
 (3, 'andrew_staff', '$2y$10$WESQ6f2mApseNhMhKMmW8e6gg.tp9AU8CsY/mQrU4g6GHEWmFCWGG', '1234567', 'Staff', 0, '2026-07-26 14:50:35', 'active', '2026-09-05 08:53:02'),
 (4, 'staff1', '$2y$10$U60z2JyVRKxJ.x36cqpJkuzZDPRFtOF5aZqUO7QCyBBN.P614oIoy', NULL, 'Staff', 0, NULL, 'active', '2026-09-05 08:53:02'),
 (5, 'sampleAccount', '$2y$10$G.IAWGX.MPWQ8E1bIvuykO7Ph//70zWAqxZdMdDVMFiZDu7qFtBLm', NULL, 'Staff', 0, NULL, 'active', '2026-09-05 08:53:02'),
 (6, 'ownerewew', '$2y$10$ksJeBpMxV9gjhPxayLmxSexH68mbQj4MK8ImAs8aCsGYldOCYOJgG', NULL, 'Staff', 0, NULL, 'active', '2026-09-05 08:53:02'),
-(8, 'nokkkkkk', '$2y$10$0X1yddbjSnlz62SzMZDrM.BXlBO7Jkj1eACodyDzl3ZOYB7Nn9D6q', '$2y$10$wZJHXgcm8XCPw62rB.AFqenueraiaxuy8q7/AR8ihhxs/.8tcQZ5K', 'Staff', 0, NULL, 'active', '2026-09-05 08:54:32');
+(8, 'nokkkkkk', '$2y$10$0X1yddbjSnlz62SzMZDrM.BXlBO7Jkj1eACodyDzl3ZOYB7Nn9D6q', '$2y$10$wZJHXgcm8XCPw62rB.AFqenueraiaxuy8q7/AR8ihhxs/.8tcQZ5K', 'Staff', 0, NULL, 'active', '2026-09-05 08:54:32'),
+(9, 'owner321', '$2y$10$2G0o0WOiEwKFdF9As1LcoOsCKMCTRx3Sjm8u8NDeVFeuUh.RfTnKa', '$2y$10$wYIYqlaZgkiYJkNvKmLD3uzjntTKzDZYocLXa3aILQXlXB41ObkTC', 'Owner', 0, NULL, 'active', '2026-09-10 04:04:08');
 
 -- --------------------------------------------------------
 
@@ -647,7 +815,8 @@ INSERT INTO `users_info` (`id`, `user_id`, `firstname`, `middlename`, `lastname`
 (5, 5, 'Sample', 'Gonzales', 'Pablo', 19, 'Purok', 'Niyugan', 'JAEN (NUEVA ECIJA)', 'Nueva Ecija', 'Philippines', 'andrewpablo2005@gmail.com', '09651800675'),
 (6, 6, 'Dut', 'Gonzales', 'Pablo', 27, 'df', 'Malapit', 'fd', 'df', 'Philippines', 'andrewpablo2005@gmail.com', '09651800675'),
 (7, 7, 'Sampleee12', 'Gonzales', 'Pablo', 18, 'Purok', 'Poblacion', 'JAEN (NUEVA ECIJA)', 'Nueva Ecija', 'Philippines', 'andrewpablo2005@gmail.com', '09651800675'),
-(8, 8, 'Andrewsfsef', 'Gonzales', 'Pablo', 23, 'Purok', 'Poblacion', 'JAEN (NUEVA ECIJA)', 'Nueva Ecija', 'Philippines', 'andrewpablo2005@gmail.com', '09651800675');
+(8, 8, 'Andrewsfsef', 'Gonzales', 'Pablo', 23, 'Purok', 'Poblacion', 'JAEN (NUEVA ECIJA)', 'Nueva Ecija', 'Philippines', 'andrewpablo2005@gmail.com', '09651800675'),
+(9, 9, 'Andrews', 'Gonzales', 'Pablos', 21, 'Purok 3', 'Niyugan', 'JAEN (NUEVA ECIJA)', 'Nueva Ecija', 'Philippines', 'andrewpablo2005@gmail.com', '09651800675');
 
 --
 -- Indexes for dumped tables
@@ -710,6 +879,15 @@ ALTER TABLE `login_attempts`
 --
 ALTER TABLE `override_log`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `password_reset_tokens`
+--
+ALTER TABLE `password_reset_tokens`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uq_password_reset_token_hash` (`token_hash`),
+  ADD KEY `idx_password_reset_user` (`user_id`),
+  ADD KEY `idx_password_reset_expires` (`expires_at`);
 
 --
 -- Indexes for table `pre_approved_users`
@@ -884,7 +1062,7 @@ ALTER TABLE `dosage_forms`
 -- AUTO_INCREMENT for table `inventory`
 --
 ALTER TABLE `inventory`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `inventory_disposals`
@@ -902,13 +1080,19 @@ ALTER TABLE `inventory_transactions`
 -- AUTO_INCREMENT for table `login_attempts`
 --
 ALTER TABLE `login_attempts`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `override_log`
 --
 ALTER TABLE `override_log`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `password_reset_tokens`
+--
+ALTER TABLE `password_reset_tokens`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `pre_approved_users`
@@ -926,7 +1110,7 @@ ALTER TABLE `pre_approved_users_info`
 -- AUTO_INCREMENT for table `products`
 --
 ALTER TABLE `products`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `product_categories`
@@ -938,19 +1122,19 @@ ALTER TABLE `product_categories`
 -- AUTO_INCREMENT for table `pwd_customers`
 --
 ALTER TABLE `pwd_customers`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `register_closings`
 --
 ALTER TABLE `register_closings`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `register_openings`
 --
 ALTER TABLE `register_openings`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `return_items`
@@ -968,7 +1152,7 @@ ALTER TABLE `return_transactions`
 -- AUTO_INCREMENT for table `senior_customers`
 --
 ALTER TABLE `senior_customers`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `serving_unit`
@@ -980,13 +1164,13 @@ ALTER TABLE `serving_unit`
 -- AUTO_INCREMENT for table `suppliers`
 --
 ALTER TABLE `suppliers`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `transactions`
 --
 ALTER TABLE `transactions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT for table `transaction_batch_allocations`
@@ -998,13 +1182,13 @@ ALTER TABLE `transaction_batch_allocations`
 -- AUTO_INCREMENT for table `transaction_items`
 --
 ALTER TABLE `transaction_items`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT for table `transaction_item_batches`
 --
 ALTER TABLE `transaction_item_batches`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT for table `unit_measurement`
@@ -1016,13 +1200,13 @@ ALTER TABLE `unit_measurement`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `users_info`
 --
 ALTER TABLE `users_info`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- Constraints for dumped tables
@@ -1043,6 +1227,12 @@ ALTER TABLE `inventory`
 ALTER TABLE `inventory_transactions`
   ADD CONSTRAINT `fk_inv_trans_inventory` FOREIGN KEY (`inventory_id`) REFERENCES `inventory` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_inv_trans_user` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+--
+-- Constraints for table `password_reset_tokens`
+--
+ALTER TABLE `password_reset_tokens`
+  ADD CONSTRAINT `fk_password_reset_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `pre_approved_users_info`
