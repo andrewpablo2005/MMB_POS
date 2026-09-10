@@ -12,6 +12,10 @@ on:
         description: "Upload every tracked file (ignore deploy marker)"
         type: boolean
         default: false
+      force_db:
+        description: "Apply tracked idempotent database migrations"
+        type: boolean
+        default: false
 
 # Never overlap two deploys; queue them instead
 concurrency:
@@ -39,4 +43,12 @@ jobs:
           IF_FTP_PASS: ${{ secrets.IF_FTP_PASS }}
           EVENT_BEFORE: ${{ github.event.before }}
           FULL_SYNC: ${{ github.event.inputs.full_sync }}
-        run: python3 .github/ftp_deploy.py
+          FORCE_DB: ${{ github.event.inputs.force_db }}
+          IF_DB_HOST: ${{ secrets.IF_DB_HOST }}
+          IF_DB_NAME: ${{ secrets.IF_DB_NAME }}
+          IF_DB_USER: ${{ secrets.IF_DB_USER }}
+          IF_DB_PASS: ${{ secrets.IF_DB_PASS }}
+          IF_DB_PORT: ${{ secrets.IF_DB_PORT }}
+        run: |
+          python3 -m pip install --disable-pip-version-check --quiet mysql-connector-python
+          python3 .github/ftp_deploy.py

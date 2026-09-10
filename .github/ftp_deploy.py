@@ -21,14 +21,26 @@ import subprocess
 import sys
 import time
 
+try:
+    import mysql.connector
+except ImportError:
+    mysql = None
+
 HOST = os.environ.get("IF_FTP_HOST", "").strip()
 USER = os.environ.get("IF_FTP_USER", "").strip()
 PASS = os.environ.get("IF_FTP_PASS", "")
 WS = os.environ.get("GITHUB_WORKSPACE", os.getcwd())
 EVENT_BEFORE = (os.environ.get("EVENT_BEFORE") or "").strip()
 FULL_SYNC = (os.environ.get("FULL_SYNC") or "").strip().lower() in ("1", "true", "yes")
+FORCE_DB = (os.environ.get("FORCE_DB") or "").strip().lower() in ("1", "true", "yes")
+DB_HOST = os.environ.get("IF_DB_HOST", "").strip()
+DB_NAME = os.environ.get("IF_DB_NAME", "").strip()
+DB_USER = os.environ.get("IF_DB_USER", "").strip()
+DB_PASS = os.environ.get("IF_DB_PASS", "")
+DB_PORT = int(os.environ.get("IF_DB_PORT", "3306"))
 ROOT_DIR = "htdocs"
 MARKER = ".deploy-sha"
+MIGRATIONS_DIR = os.path.join(WS, ".github", "migrations")
 
 EXCLUDE_TOP = {".git", ".github", "docs", "img"}      # never deployed: img/ is runtime
 # content (product photos uploaded by the app / manually via file manager) —
@@ -55,6 +67,48 @@ def commit_exists(sha: str) -> bool:
         return False
     return subprocess.run(["git", "-C", WS, "cat-file", "-e", sha + "^{commit}"],
                           capture_output=True).returncode == 0
+
+
+def apply_database_migrations():
+    """Apply tracked idempotent migrations directly to the production DB."""
+    if mysql is None:
+        raise RuntimeError("mysql-connector-python is required for database migrations")
+    if not all((DB_HOST, DB_NAME, DB_USER)):
+        raise RuntimeError("Database secrets are not configured (IF_DB_HOST, IF_DB_NAME, IF_DB_USER, IF_DB_PASS)")
+
+    files = sorted(
+        os.path.join(MIGRATIONS_DIR, name)
+        for name in os.listdir(MIGRATIONS_DIR)
+        if name.endswith(".sql") and os.path.isfile(os.path.join(MIGRATIONS_DIR, name))
+    ) if os.path.isdir(MIGRATIONS_DIR) else []
+    if not files:
+        print("No database migrations found.")
+        return
+
+    print(f"Connecting to database {DB_NAME} at {DB_HOST}:{DB_PORT}...")
+    connection = mysql.connector.connect(
+        host=DB_HOST,
+        port=DB_PORT,
+        database=DB_NAME,
+        user=DB_USER,
+        password=DB_PASS,
+        connection_timeout=30,
+    )
+    try:
+        cursor = connection.cursor()
+        for path in files:
+            name = os.path.basename(path)
+            print(f"Applying database migration: {name}")
+            with open(path, "r", encoding="utf-8") as fh:
+                sql = fh.read().strip()
+            if sql:
+                for statement in (part.strip() for part in sql.split(";")):
+                    if statement:
+                        cursor.execute(statement)
+            connection.commit()
+        cursor.close()
+    finally:
+        connection.close()
 
 
 class Deployer:
@@ -242,6 +296,10 @@ def main():
 
     head_sha = git("rev-parse", "HEAD")
     print(f"HEAD = {head_sha}")
+
+    if FORCE_DB:
+        apply_database_migrations()
+        print("Database migrations completed successfully.")
 
     mode, plan, base = build_plan(head_sha)
     print(f"Deploy mode: {mode}" + (f" (base {base})" if base else ""))
