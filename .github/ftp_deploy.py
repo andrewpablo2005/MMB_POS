@@ -37,7 +37,20 @@ DB_HOST = os.environ.get("IF_DB_HOST", "").strip()
 DB_NAME = os.environ.get("IF_DB_NAME", "").strip()
 DB_USER = os.environ.get("IF_DB_USER", "").strip()
 DB_PASS = os.environ.get("IF_DB_PASS", "")
-DB_PORT = int(os.environ.get("IF_DB_PORT", "3306"))
+
+
+def _env_port(name: str, default: int) -> int:
+    """Unset repo secrets arrive as EMPTY strings, not as the fallback default:
+    os.environ.get(name, "3306") returns "" -> int("") raised ValueError and
+    killed every deploy at import time (run #51). Treat blank/garbage as default."""
+    raw = (os.environ.get(name) or "").strip()
+    try:
+        return int(raw)
+    except ValueError:
+        return default
+
+
+DB_PORT = _env_port("IF_DB_PORT", 3306)
 ROOT_DIR = "htdocs"
 MARKER = ".deploy-sha"
 MIGRATIONS_DIR = os.path.join(WS, ".github", "migrations")
@@ -298,8 +311,15 @@ def main():
     print(f"HEAD = {head_sha}")
 
     if FORCE_DB:
-        apply_database_migrations()
-        print("Database migrations completed successfully.")
+        try:
+            apply_database_migrations()
+            print("Database migrations completed successfully.")
+        except SystemExit:
+            raise
+        except Exception as exc:
+            # Explicitly requested DB update failed: fail the run loudly but
+            # with a readable annotation instead of a raw traceback.
+            raise SystemExit(f"::error::Database migrations failed: {exc}")
 
     mode, plan, base = build_plan(head_sha)
     print(f"Deploy mode: {mode}" + (f" (base {base})" if base else ""))

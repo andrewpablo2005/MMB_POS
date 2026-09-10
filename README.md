@@ -68,6 +68,20 @@ For local XAMPP testing, you can instead copy `conn/config.local.example.php` to
 `conn/config.local.php` and enter the Gmail address plus a newly generated App
 Password. Keep `config.local.php` private and never commit it.
 
+**InfinityFree hosting caveats (live site):**
+
+- Outbound SMTP ports (25/465/587) are blocked on InfinityFree, so Gmail
+  PHPMailer cannot send password-reset mail from the live server. The request
+  form still works and shows the confirmation message, but the email never
+  arrives. To make reset emails work in production, use an HTTP email API
+  (e.g. Brevo, free tier) instead of SMTP.
+- The `force_db` deploy option cannot reach the live MySQL server either:
+  InfinityFree only accepts MySQL connections from its own hosting servers,
+  never from GitHub Actions runners. Schema changes reach the live DB through
+  the self-healing `CREATE TABLE IF NOT EXISTS` guards in the code
+  (`conn/db_bootstrap.php`, `conn/password_reset.php`,
+  `function/close_register.php`) or by importing SQL in phpMyAdmin.
+
 ---
 
 ## 4. Folder structure
