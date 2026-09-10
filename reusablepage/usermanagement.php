@@ -137,13 +137,15 @@ $users = $usersmanagement->getAllUsers();
 
 
                                     <!-- VIEW -->
-                                    <button class="btn btn-info btn-sm" data-bs-toggle="modal"
+                                    <button type="button" class="btn btn-info btn-sm"
+                                        onclick="mmbOpenUserModal(this)"
                                         data-bs-target="#view<?= htmlspecialchars((string)($u['id']), ENT_QUOTES, 'UTF-8') ?>">
                                         View
                                     </button>
 
                                     <!-- EDIT -->
-                                    <button class="btn btn-primary btn-sm" data-bs-toggle="modal"
+                                    <button type="button" class="btn btn-primary btn-sm"
+                                        onclick="mmbOpenUserModal(this)"
                                         data-bs-target="#edit<?= htmlspecialchars((string)($u['id']), ENT_QUOTES, 'UTF-8') ?>">
                                         Edit
                                     </button>
@@ -186,6 +188,55 @@ $users = $usersmanagement->getAllUsers();
     </div>
 
 </div>
-<?php include 'addaccount.php'; ?>
-<?php include 'viewaccount.php'; ?>
-<?php include 'editaccount.php'; ?>
+<?php include __DIR__ . '/addaccount.php'; ?>
+<?php include __DIR__ . '/viewaccount.php'; ?>
+<?php include __DIR__ . '/editaccount.php'; ?>
+
+<script>
+    window.mmbOpenUserModal = function (trigger) {
+        const selector = trigger?.getAttribute('data-bs-target');
+        const modal = selector ? document.querySelector(selector) : null;
+        if (!modal) {
+            if (typeof mmbNotify === 'function') {
+                mmbNotify({ type: 'danger', title: 'Unable to open user details', message: 'The selected user modal was not found.' });
+            }
+            return;
+        }
+
+        if (window.bootstrap?.Modal) {
+            bootstrap.Modal.getOrCreateInstance(modal).show();
+            return;
+        }
+
+        modal.style.display = 'block';
+        modal.classList.add('show');
+        modal.removeAttribute('aria-hidden');
+        modal.setAttribute('aria-modal', 'true');
+        document.body.classList.add('modal-open');
+        const backdrop = document.createElement('div');
+        backdrop.className = 'modal-backdrop fade show mmb-user-modal-backdrop';
+        backdrop.addEventListener('click', function () {
+            window.mmbCloseUserModal(modal);
+        });
+        document.body.appendChild(backdrop);
+    };
+
+    window.mmbCloseUserModal = function (modal) {
+        modal.style.display = 'none';
+        modal.classList.remove('show');
+        modal.setAttribute('aria-hidden', 'true');
+        modal.removeAttribute('aria-modal');
+        document.body.classList.remove('modal-open');
+        document.querySelectorAll('.mmb-user-modal-backdrop').forEach(function (backdrop) {
+            backdrop.remove();
+        });
+    };
+
+    document.addEventListener('click', function (event) {
+        const closeButton = event.target.closest('[data-bs-dismiss="modal"]');
+        if (closeButton && !window.bootstrap?.Modal) {
+            const modal = closeButton.closest('.modal');
+            if (modal) window.mmbCloseUserModal(modal);
+        }
+    });
+</script>

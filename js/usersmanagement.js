@@ -90,6 +90,24 @@ function addResponsiveControlHints(table) {
     });
 }
 
+function initUserModals() {
+    $(document).off('click.mmbUserModal', '[data-mmb-user-modal]')
+        .on('click.mmbUserModal', '[data-mmb-user-modal]', function (event) {
+            event.preventDefault();
+
+            var targetSelector = this.getAttribute('data-bs-target');
+            var modalElement = targetSelector ? document.querySelector(targetSelector) : null;
+            if (!modalElement || !window.bootstrap || !bootstrap.Modal) {
+                if (typeof mmbNotify === 'function') {
+                    mmbNotify({ type: 'danger', title: 'Unable to open user details', message: 'The user-management modal is unavailable. Please refresh the page.' });
+                }
+                return;
+            }
+
+            bootstrap.Modal.getOrCreateInstance(modalElement).show();
+        });
+}
+
 function initDataTable(table) {
     return $(table).DataTable({
         responsive: table.dataset.noResponsive !== '1',

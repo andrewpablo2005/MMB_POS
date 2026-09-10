@@ -60,6 +60,12 @@ try {
         echo json_encode(['success' => false, 'error' => 'Opening cash is required before processing a POS sale.']);
         exit;
     }
+    $closingCheck = $db->prepare("SELECT id FROM register_closings WHERE user_id = ? AND business_date = ? LIMIT 1");
+    $closingCheck->execute([(int)$_SESSION['user_id'], date('Y-m-d')]);
+    if ($closingCheck->fetchColumn()) {
+        echo json_encode(['success' => false, 'error' => 'The register is already closed for today. Open a new register before processing a sale.']);
+        exit;
+    }
 } catch (Throwable $e) {
     echo json_encode(['success' => false, 'error' => 'Unable to verify the POS register opening.']);
     exit;

@@ -1,6 +1,10 @@
 <?php
 require_once __DIR__ . '/guard.php'; guard_require_roles(['owner','admin']);
- foreach ($users as $u): ?>
+$modalUsers = $users ?? [];
+if (!$modalUsers && isset($usersmanagement)) {
+    $modalUsers = $usersmanagement->getAllUsers();
+}
+foreach ($modalUsers as $u): ?>
 
 <!-- Edit User Modal -->
 <div class="modal fade" id="edit<?= htmlspecialchars((string)($u['id']), ENT_QUOTES, 'UTF-8') ?>" tabindex="-1">

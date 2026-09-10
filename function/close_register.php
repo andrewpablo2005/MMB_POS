@@ -23,8 +23,8 @@ if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $businessDate)) {
     echo json_encode(['success' => false, 'error' => 'Invalid business date.']);
     exit;
 }
-if ($businessDate !== $today) {
-    echo json_encode(['success' => false, 'error' => 'Register closing is only allowed for the current date.']);
+if ($businessDate > $today) {
+    echo json_encode(['success' => false, 'error' => 'Register closing is not allowed for a future date.']);
     exit;
 }
 
@@ -46,6 +46,26 @@ try {
     $opening = $openingStmt->fetch(PDO::FETCH_ASSOC) ?: null;
 
     if ($action === 'open') {
+        $pendingStmt = $db->prepare("SELECT ro.business_date
+                                     FROM register_openings ro
+                                     LEFT JOIN register_closings rc
+                                       ON rc.user_id = ro.user_id AND rc.business_date = ro.business_date
+                                     WHERE ro.user_id = ?
+                                       AND ro.business_date < ?
+                                       AND rc.id IS NULL
+                                     ORDER BY ro.business_date ASC
+                                     LIMIT 1");
+        $pendingStmt->execute([$userId, $today]);
+        $pendingDate = $pendingStmt->fetchColumn();
+        if ($pendingDate) {
+            echo json_encode([
+                'success' => false,
+                'pending_register' => true,
+                'pending_business_date' => $pendingDate,
+                'error' => 'Close the previous register for ' . $pendingDate . ' before opening a new register.'
+            ]);
+            exit;
+        }
         if ($opening) {
             echo json_encode(['success' => false, 'error' => 'The register is already opened for this date.']);
             exit;
@@ -60,6 +80,18 @@ try {
         echo json_encode(['success' => true, 'opened' => true, 'opening_cash' => $openingCash]);
         exit;
     }
+
+        $pendingStmt = $db->prepare("SELECT ro.business_date
+                                                                 FROM register_openings ro
+                                                                 LEFT JOIN register_closings rc
+                                                                     ON rc.user_id = ro.user_id AND rc.business_date = ro.business_date
+                                                                 WHERE ro.user_id = ?
+                                                                     AND ro.business_date < ?
+                                                                     AND rc.id IS NULL
+                                                                 ORDER BY ro.business_date ASC
+                                                                 LIMIT 1");
+        $pendingStmt->execute([$userId, $today]);
+        $pendingDate = $pendingStmt->fetchColumn();
 
     $salesStmt = $db->prepare("SELECT COALESCE(SUM(total_amount), 0) AS sales_total,
                                       COUNT(*) AS transaction_count
@@ -99,6 +131,8 @@ try {
             'system_cash' => $systemCash,
             'transaction_count' => (int)($sales['transaction_count'] ?? 0),
             'already_closed' => (bool)$existing,
+            'pending_register' => (bool)$pendingDate,
+            'pending_business_date' => $pendingDate ?: null,
             'closing' => $existing ?: null,
         ]);
         exit;

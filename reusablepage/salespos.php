@@ -265,7 +265,7 @@ if (!empty($_SESSION['user_id'])) {
             <p class="text-muted" style="font-size:0.9rem;">Count the cash in your drawer and compare it with the system amount before closing.</p>
             <div style="margin-bottom:12px;">
                 <label for="closingBusinessDate" style="font-weight:600; display:block; margin-bottom:4px;">Business date</label>
-                <input type="date" id="closingBusinessDate" class="wepos-input-lg" style="font-size:1rem; padding:8px;" value="<?= date('Y-m-d') ?>" min="<?= date('Y-m-d') ?>" max="<?= date('Y-m-d') ?>" readonly>
+                <input type="date" id="closingBusinessDate" class="wepos-input-lg" style="font-size:1rem; padding:8px;" value="<?= date('Y-m-d') ?>" max="<?= date('Y-m-d') ?>" readonly>
             </div>
             <div id="closingSummary" style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:6px; padding:12px; margin-bottom:12px;">
                 <div style="display:flex; justify-content:space-between;"><span>Transactions</span><strong id="closingTransactions">—</strong></div>
@@ -552,6 +552,7 @@ if (!empty($_SESSION['user_id'])) {
 
     let weposClosingSystemCash = 0;
     let weposRegisterOpened = false;
+    let weposRegisterClosed = false;
 
     function weposFormatClosingCurrency(value) {
         return '₱' + Number(value || 0).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -605,7 +606,19 @@ if (!empty($_SESSION['user_id'])) {
                 })
             });
             const result = await response.json();
-            if (!result.success) throw new Error(result.error);
+            if (!result.success) {
+                if (result.pending_register && result.pending_business_date) {
+                    weposCloseOpeningModal();
+                    document.getElementById('closingBusinessDate').value = result.pending_business_date;
+                    return weposOpenClosingModal();
+                }
+                throw new Error(result.error);
+            }
+
+            if (result.pending_register && result.pending_business_date) {
+                document.getElementById('closingBusinessDate').value = result.pending_business_date;
+                return weposOpenClosingModal();
+            }
             weposCloseOpeningModal();
             weposRegisterOpened = true;
             if (typeof weposUpdateCart === 'function') weposUpdateCart();
@@ -719,8 +732,19 @@ if (!empty($_SESSION['user_id'])) {
             });
             const result = await response.json();
             if (!result.success) throw new Error(result.error);
-            mmbNotify({ type: 'success', title: 'Register closed', message: 'Variance: ' + weposFormatClosingCurrency(result.variance) + '. Logging out…', duration: 5000 });
-            setTimeout(function () { window.location.href = '../login_logout_page/logout.php'; }, 2600);
+            weposRegisterOpened = false;
+            weposRegisterClosed = true;
+            weposCart = {};
+            if (typeof weposUpdateCart === 'function') weposUpdateCart();
+            const closedBusinessDate = document.getElementById('closingBusinessDate').value;
+            const today = new Date().toISOString().slice(0, 10);
+            if (closedBusinessDate < today) {
+                mmbNotify({ type: 'success', title: 'Previous register closed', message: 'Variance: ' + weposFormatClosingCurrency(result.variance) + '. Refreshing POS…', duration: 2500 });
+                setTimeout(function () { window.location.reload(); }, 1600);
+            } else {
+                mmbNotify({ type: 'success', title: 'Register closed', message: 'Variance: ' + weposFormatClosingCurrency(result.variance) + '. Logging out…', duration: 5000 });
+                setTimeout(function () { window.location.href = '../login_logout_page/logout.php'; }, 2600);
+            }
         } catch (requestError) {
             error.textContent = requestError.message || 'Unable to close register.';
             error.style.display = 'block';
@@ -736,8 +760,14 @@ if (!empty($_SESSION['user_id'])) {
                 body: JSON.stringify({ action: 'preview', business_date: document.getElementById('closingBusinessDate').value })
             });
             const result = await response.json();
-            weposRegisterOpened = Boolean(result.success && result.opening_exists === true);
-            if (!weposRegisterOpened) weposOpenOpeningModal();
+            if (result.success && result.pending_register && result.pending_business_date) {
+                document.getElementById('closingBusinessDate').value = result.pending_business_date;
+                weposOpenClosingModal();
+                return;
+            }
+            weposRegisterClosed = Boolean(result.success && result.already_closed);
+            weposRegisterOpened = Boolean(result.success && result.opening_exists === true && !weposRegisterClosed);
+            if (!weposRegisterOpened && !weposRegisterClosed) weposOpenOpeningModal();
         } catch (requestError) {
             weposRegisterOpened = false;
             weposOpenOpeningModal();

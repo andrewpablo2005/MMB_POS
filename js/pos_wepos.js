@@ -198,6 +198,17 @@ function weposFilterCat(category) {
 // ═════ CART LOGIC ═════
 function weposAddToCart(cardEl) {
     console.log('weposAddToCart called with element:', cardEl?.dataset?.id);
+
+    if (typeof weposRegisterClosed !== 'undefined' && weposRegisterClosed) {
+        mmbNotify({ type: 'warning', title: 'Register already closed', message: 'Cannot add this product to the cart because the staff register is already closed.' });
+        return;
+    }
+
+    if (typeof weposRegisterOpened !== 'undefined' && !weposRegisterOpened) {
+        if (typeof weposOpenOpeningModal === 'function') weposOpenOpeningModal();
+        mmbNotify({ type: 'warning', title: 'POS locked', message: 'Open the register before adding products to the cart.' });
+        return;
+    }
     
     // Validate that cardEl is provided and is an element
     if (!cardEl || !cardEl.dataset) {
