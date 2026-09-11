@@ -70,12 +70,14 @@ Password. Keep `config.local.php` private and never commit it.
 
 **InfinityFree hosting caveats (live site):**
 
-- Outbound SMTP ports (25/465/587) are blocked on InfinityFree, so Gmail
-  PHPMailer cannot send password-reset mail from the live server. The request
-  form still works and shows the confirmation message, but the email never
-  arrives. To make reset emails work in production, use an HTTP email API
-  (e.g. Brevo, free tier) instead of SMTP.
-- The `force_db` deploy option cannot reach the live MySQL server either:
+- Outbound SMTP **does work** from InfinityFree (verified 2026-09-11: TCP +
+  STARTTLS to `smtp.gmail.com:587` succeed from the live server). What does
+  **not** work is a *revoked* Gmail App Password: Google automatically
+  disables app passwords that appear in public GitHub repos. The original
+  app password was pushed to this repo before being scrubbed, so Google
+  killed it — generate a **fresh** App Password and put it only in
+  `conn/config.local.php` on the server.
+- The `force_db` deploy option cannot reach the live MySQL server:
   InfinityFree only accepts MySQL connections from its own hosting servers,
   never from GitHub Actions runners. Schema changes reach the live DB through
   the self-healing `CREATE TABLE IF NOT EXISTS` guards in the code
