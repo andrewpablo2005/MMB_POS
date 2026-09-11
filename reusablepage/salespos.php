@@ -365,31 +365,6 @@ if (!empty($_SESSION['user_id'])) {
             <!-- Checkout Items (issue #8.3: capped at 120px so the modal stays short) -->
             <div id="weposCheckoutItems" style="max-height: 120px; overflow-y: auto; margin-bottom: 12px; border: 1px solid #e0e0e0; border-radius: 4px; display: none;"></div>
 
-            <div class="wepos-modal-overlay" id="overridePinModal" style="display:none;" onclick="event.stopPropagation()">
-                <div class="wepos-modal" onclick="event.stopPropagation()">
-                    <div class="wepos-modal-head" style="background:#fff7ed; border-bottom:1px solid #fed7aa;">
-                        <h5 style="color:#9a3412;"><i class="fas fa-shield-halved"></i> Manager Approval Required</h5>
-                        <button type="button" onclick="weposCancelOverride()"><i class="fas fa-times"></i></button>
-                    </div>
-                    <div class="wepos-modal-body">
-                        <div id="overrideItemPreview" style="background:#f8fafc;border:1px solid #e2e8f0;padding:10px;border-radius:4px;margin-bottom:12px;"></div>
-                        <label for="overrideReason">Reason for discount</label>
-                        <textarea id="overrideReason" rows="2" class="form-control mb-2" placeholder="Explain the discount"></textarea>
-                        <label for="overridePercent">Override discount %</label>
-                        <input type="number" id="overridePercent" class="form-control mb-2" min="1" max="100" value="12" step="1">
-                        <label for="overrideUsername">Manager username</label>
-                        <input type="text" id="overrideUsername" class="form-control mb-2" autocomplete="off">
-                        <label for="overridePassword">Manager password</label>
-                        <input type="password" id="overridePassword" class="form-control" autocomplete="current-password">
-                        <div id="overridePinError" class="text-danger" style="display:none;margin-top:8px;"></div>
-                    </div>
-                    <div class="wepos-modal-foot">
-                        <button type="button" class="wepos-btn wepos-btn-outline" onclick="weposCancelOverride()">Cancel</button>
-                        <button type="button" class="wepos-btn wepos-btn-primary" onclick="weposSubmitOverride()"><i class="fas fa-unlock"></i> Authorize Override</button>
-                    </div>
-                </div>
-            </div>
-
 
 
             <div class="wepos-tendered-box">
@@ -868,4 +843,4 @@ if (!empty($_SESSION['user_id'])) {
 </div>
 
 <?php include __DIR__ . '/returnmodal.php'; ?>
-<script src="../js/pos_wepos.js?v=1.97"></script>
+<script src="../js/pos_wepos.js?v=1.98"></script>

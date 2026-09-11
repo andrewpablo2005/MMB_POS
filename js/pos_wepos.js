@@ -2,7 +2,8 @@ let weposCart = {};
 let barcodeBuffer = '';
 let barcodeTimer = null;
 let currentPayMethod = 'Cash';
-let pendingOverride = null;
+// (issue #8.4: the per-item discount override feature was removed entirely —
+// statutory Senior/PWD discounts are the only price adjustments now.)
 let pendingVoid = null;           // stores cart item id pending void auth
 let pendingVoidAction = null;     // 'delete', 'decrement', or 'set'
 let pendingVoidTargetQty = null;  // target quantity for set actions
@@ -121,7 +122,7 @@ function weposSetupScanner() {
     document.addEventListener('keypress', function(e) {
         const active = document.activeElement;
         const isSearch = active && active.id === 'weposSearch';
-        const isModalInput = active && (active.id === 'weposTendered' || active.id === 'weposCustomer' || active.id === 'overrideReason' || active.id === 'overrideUsername' || active.id === 'overridePassword' || active.id === 'overridePercent' || active.id === 'verifyIdName' || active.id === 'verifyIdNumber' || active.id === 'voidAuthPin');
+        const isModalInput = active && (active.id === 'weposTendered' || active.id === 'weposCustomer' || active.id === 'verifyIdName' || active.id === 'verifyIdNumber' || active.id === 'voidAuthPin');
 
         if (isModalInput) return;
 
@@ -273,10 +274,7 @@ function weposAddToCart(cardEl) {
             hasVat: (('hasVat' in cardEl.dataset) ? cardEl.dataset.hasVat === '1' : true),
             senior: cardEl.dataset.senior === '1',
             pwd: cardEl.dataset.pwd === '1',
-            stock: stock,
-            override: false,
-            overrideRate: 0,
-            overrideApprover: null
+            stock: stock
         };
         
         // Debug: log when a product is marked non-VATable to assist troubleshooting
@@ -524,17 +522,6 @@ function weposCalcItem(item, dRate, isVatExempt, discountRule = 'regular') {
     // (This enforces VAT display for every product regardless of product-level flags)
     const isVatable = true;
 
-    if (item.override && item.overrideRate > 0) {
-        const overrideDiscount = gross * item.overrideRate;
-        return {
-            gross: round2(gross),
-            vatExempt: 0,
-            discount: round2(overrideDiscount),
-            vatAmount: round2(gross - (gross / 1.12)),
-            final: round2(gross - overrideDiscount)
-        };
-    }
-
     // Compute VAT portion when price is VAT-inclusive
     if (isVatable) {
         const net = gross / 1.12;
@@ -640,12 +627,10 @@ function weposUpdateCart() {
     let totalVatExemption = 0;
     let rawVat = 0;
     let totalFinalAmount = 0;
-    let overrideRate = 0;
 
     entries.forEach(item => {
         const lineTotal = item.price * item.qty;
         rawSubtotal += lineTotal;
-        overrideRate = Math.max(overrideRate, Number(item.overrideRate || 0));
 
         const c = weposCalcItem(item, dRate, isVatExempt, discountRule);
         totalDiscount += c.discount;
@@ -699,7 +684,7 @@ function weposUpdateCart() {
     // Senior, and PWD customers, so no VAT exemption is subtracted.
     const collectibleVat = Math.max(0, rawVat - totalVatExemption);
     const finalTotal = totalFinalAmount; // use per-item final prices so VAT exemption is applied
-    weposSetTotals(rawSubtotal, totalDiscount, dRate, totalVatExemption, collectibleVat, finalTotal, overrideRate);
+    weposSetTotals(rawSubtotal, totalDiscount, dRate, totalVatExemption, collectibleVat, finalTotal);
     document.getElementById('weposPayBtn').disabled = false;
 
     // If the payment modal is open (e.g. customer type just switched or a
@@ -707,7 +692,7 @@ function weposUpdateCart() {
     weposSyncPayModal();
 }
 
-function weposSetTotals(sub, disc, dRate, vatExempt, vat, total, overrideRate = 0) {
+function weposSetTotals(sub, disc, dRate, vatExempt, vat, total) {
     const calcSub = document.getElementById('calcSub');
     if (calcSub) calcSub.textContent = '₱' + sub.toFixed(2);
     else console.warn('Element calcSub not found');
@@ -718,7 +703,7 @@ function weposSetTotals(sub, disc, dRate, vatExempt, vat, total, overrideRate = 
             rowDisc.style.display = 'flex';
             const discLabel = document.getElementById('calcDiscountLabel');
             const calcDisc = document.getElementById('calcDiscount');
-            if (discLabel) discLabel.textContent = ((overrideRate > 0 ? overrideRate : dRate) * 100).toFixed(0) + '%';
+            if (discLabel) discLabel.textContent = (dRate * 100).toFixed(0) + '%';
             if (calcDisc) calcDisc.textContent = '-₱' + disc.toFixed(2);
         } else {
             rowDisc.style.display = 'none';
@@ -1100,87 +1085,16 @@ function weposRenderCheckoutItems() {
     let html = '';
     entries.forEach(item => {
         const c = weposCalcItem(item, dRate, isVatExempt, discountRule);
-        const overrideLabel = item.override ? `<span style="color:#b91c1c;font-weight:600;">${(item.overrideRate * 100).toFixed(0)}% OFF</span>` : '';
         html += `<div style="display:flex; justify-content:space-between; align-items:center; padding:8px 12px; border-bottom:1px solid #f0f0f1;">
             <div style="flex:1; min-width:0;">
                 <div style="font-weight:500; font-size:13px;">${item.name}</div>
-                <div style="font-size:12px; color:#50575e;">${item.qty} × ₱${item.price.toFixed(2)} = ₱${c.final.toFixed(2)} ${overrideLabel}</div>
+                <div style="font-size:12px; color:#50575e;">${item.qty} × ₱${item.price.toFixed(2)} = ₱${c.final.toFixed(2)}</div>
             </div>
-            <button type="button" class="wepos-btn-icon text-danger" onclick="weposRequestOverride('${item.id}')" title="${item.override ? 'Remove override discount' : 'Apply override discount'}"><i class="fas fa-tag"></i></button>
         </div>`;
     });
 
     container.innerHTML = html;
     container.style.display = entries.length > 0 ? 'block' : 'none';
-}
-
-function weposRequestOverride(cartId) {
-    const item = weposCart[cartId];
-    if (!item) return;
-    if (item.override) {
-        if (typeof mmbConfirm === 'function') {
-            mmbConfirm({ title: 'Remove override discount?', message: 'Remove the override discount from this item?', okLabel: 'Yes, remove it', danger: true }).then(yes => {
-                if (!yes) return;
-                item.override = false;
-                item.overrideRate = 0;
-                item.overrideApprover = null;
-                weposUpdateCart();
-                weposRenderCheckoutItems();
-            });
-        }
-        return;
-    }
-    pendingOverride = { cartId: String(cartId) };
-    document.getElementById('overrideItemPreview').textContent = item.name + ' - ₱' + (item.price * item.qty).toFixed(2);
-    document.getElementById('overrideReason').value = '';
-    document.getElementById('overrideUsername').value = '';
-    document.getElementById('overridePassword').value = '';
-    document.getElementById('overridePercent').value = '12';
-    document.getElementById('overridePinError').style.display = 'none';
-    document.getElementById('overridePinModal').style.display = 'flex';
-}
-
-function weposCancelOverride() {
-    pendingOverride = null;
-    document.getElementById('overridePinModal').style.display = 'none';
-}
-
-async function weposSubmitOverride() {
-    const error = document.getElementById('overridePinError');
-    const reason = document.getElementById('overrideReason').value.trim();
-    const username = document.getElementById('overrideUsername').value.trim();
-    const password = document.getElementById('overridePassword').value;
-    const percent = Number(document.getElementById('overridePercent').value);
-    if (!reason || !username || !password || !Number.isFinite(percent) || percent <= 0 || percent > 100) {
-        error.textContent = 'Enter a reason, valid discount percentage, and manager credentials.';
-        error.style.display = 'block';
-        return;
-    }
-    try {
-        const response = await fetch('../function/verify_override_pin.php', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ username, password }) });
-        const result = await response.json();
-        if (!result.success) throw new Error(result.error || 'Invalid manager authorization.');
-        const item = weposCart[pendingOverride?.cartId];
-        if (!item) return weposCancelOverride();
-        const logResponse = await fetch('../function/log_override.php', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({
-            product_id: item.id, generic_name: item.name, original_price: item.price * item.qty,
-            discounted_price: item.price * item.qty * (1 - percent / 100), discount_amount: item.price * item.qty * percent / 100,
-            discount_percent: percent, reason, approver_id: result.approver_id, approver_name: result.approver_name
-        }) });
-        const logResult = await logResponse.json();
-        if (!logResponse.ok || !logResult.success) {
-            throw new Error(logResult.error || 'The override could not be saved.');
-        }
-        item.override = true;
-        item.overrideRate = percent / 100;
-        item.overrideApprover = result.approver_name;
-        weposCancelOverride();
-        weposUpdateCart();
-        weposRenderCheckoutItems();
-    } catch (requestError) {
-        error.textContent = requestError.message || 'Unable to authorize override.';
-        error.style.display = 'block';
-    }
 }
 
 // ═════ PAYMENT METHODS & CASH ═════
@@ -1263,7 +1177,7 @@ async function weposSubmitTransaction() {
 
     const items = Object.entries(weposCart).map(([id, item]) => ({
         id: parseInt(id),
-        price: item.override ? item.price * (1 - item.overrideRate) : item.price,
+        price: item.price,
         qty: item.qty,
         unitsPerPackage: item.unitsPerPackage,
         eligible_for_discount: !!((item.senior === true) || (item.pwd === true))
@@ -1271,10 +1185,8 @@ async function weposSubmitTransaction() {
 
     // Calculate receipt totals before clearing cart
     let rawSubtotal = 0, totalDiscount = 0, totalVatExempt = 0, rawVat = 0, totalFinalAmount = 0;
-    let overrideRate = 0;
     Object.values(weposCart).forEach(item => {
         rawSubtotal += item.price * item.qty;
-        overrideRate = Math.max(overrideRate, Number(item.overrideRate || 0));
         const c = weposCalcItem(item, dRate, isVatExempt, discountRule);
         totalDiscount   += c.discount;
         totalVatExempt  += c.vatExempt;
@@ -1332,7 +1244,7 @@ async function weposSubmitTransaction() {
                 customerId: weposCustomerId || '—',
                 finalVat: collectibleVat,
                 finalTotal,
-                discountLabel: overrideRate > 0 ? (overrideRate * 100).toFixed(0) + '%' : selOpt.text,
+                discountLabel: selOpt.text,
                 method:       currentPayMethod,
                 tendered,
                 change
