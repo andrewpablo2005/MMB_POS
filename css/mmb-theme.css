@@ -742,6 +742,52 @@ div.dt-buttons .dt-button:focus {
     background: var(--mmb-page);
 }
 
+/* Management pages keep the dashboard shell fixed; only table wrappers scroll. */
+.dashboard-main-content {
+    min-height: 0;
+    overflow: hidden;
+}
+
+.mmb-management-pane {
+    height: calc(100vh - var(--mmb-topbar-h));
+    min-height: 0 !important;
+    overflow: hidden;
+}
+
+.mmb-management-pane > .card {
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.mmb-management-pane > .card > .card-body {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.mmb-management-pane .mmb-table-scroll {
+    flex: 1 1 auto;
+    min-height: 0;
+    max-height: none;
+}
+
+.mmb-management-pane .tab-content {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.mmb-management-pane .tab-pane.show.active {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    height: 100%;
+    overflow: hidden;
+}
+
 /* Smaller brand tile (mobile sidebar header) */
 .brand-mark-sm {
     width: 32px;
@@ -1330,6 +1376,23 @@ table.dataTable.dtr-column > tbody > tr > td.dtr-control {
 }
 
 /* ── 3a. Toasts (mmbNotify) ── */
+.mmb-table-scroll {
+    max-height: min(62vh, 680px);
+    overflow: auto;
+}
+
+.mmb-table-scroll thead th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}
+
+@media (max-width: 767.98px) {
+    .mmb-table-scroll {
+        max-height: 60vh;
+    }
+}
+
 .mmb-toast-stack {
     position: fixed;
     top: calc(var(--mmb-topbar-h) + 12px);

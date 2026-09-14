@@ -89,8 +89,8 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
                 <button type="button" class="btn btn-sm btn-danger inventory-pdf">PDF</button>
                 <button type="button" class="btn btn-sm btn-outline-dark inventory-print">Print</button>
             </div>
-            <div class="table-responsive mb-4">
-            <table id="currentInventoryTable" class="table table-striped table-hover align-middle w-100 mmb-stack">
+            <div class="table-responsive mmb-table-scroll mb-4">
+            <table id="currentInventoryTable" class="table table-striped table-hover align-middle w-100 mmb-stack inventory-data-table">
                 <thead class="table-dark">
                     <tr>
                         <th>Batch ID</th>
@@ -155,8 +155,8 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
                 <button type="button" class="btn btn-sm btn-danger inventory-pdf">PDF</button>
                 <button type="button" class="btn btn-sm btn-outline-dark inventory-print">Print</button>
             </div>
-            <div class="table-responsive">
-            <table id="disposedInventoryTable" class="table table-sm table-bordered align-middle w-100 mmb-stack">
+            <div class="table-responsive mmb-table-scroll">
+            <table id="disposedInventoryTable" class="table table-sm table-bordered align-middle w-100 mmb-stack inventory-data-table">
                 <thead class="table-secondary">
                     <tr>
                         <th>Dispose ID</th>
@@ -368,11 +368,33 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
             const search = toolbar.querySelector('.inventory-search');
             if (!table) return;
 
+            if (window.jQuery && $.fn.DataTable && !$.fn.DataTable.isDataTable(table)) {
+                if (typeof prepareDataTableEmptyState === 'function') {
+                    prepareDataTableEmptyState(table);
+                }
+                $(table).DataTable({
+                    responsive: true,
+                    pageLength: 10,
+                    lengthMenu: [10, 25, 50, 100],
+                    dom: 'ltip',
+                    ordering: false,
+                    language: {
+                        emptyTable: 'No inventory records found.',
+                        zeroRecords: 'No matching inventory records found.',
+                        lengthMenu: '_MENU_ per page'
+                    }
+                });
+            }
+
             search.addEventListener('input', function () {
                 const query = this.value.trim().toLowerCase();
-                table.querySelectorAll('tbody tr').forEach(function (row) {
-                    row.style.display = !query || row.innerText.toLowerCase().includes(query) ? '' : 'none';
-                });
+                if (window.jQuery && $.fn.DataTable.isDataTable(table)) {
+                    $(table).DataTable().search(query).draw();
+                } else {
+                    table.querySelectorAll('tbody tr').forEach(function (row) {
+                        row.style.display = !query || row.innerText.toLowerCase().includes(query) ? '' : 'none';
+                    });
+                }
             });
             toolbar.querySelector('.inventory-copy').addEventListener('click', function () {
                 navigator.clipboard.writeText(tableText(table));

@@ -70,7 +70,7 @@ if ($product->addProduct()) {
             </div>
         </div>
 
-        <div class="table-responsive"><table id="productManagementTable" class="table table-striped table-hover align-middle w-100 myTable">
+        <div class="table-responsive mmb-table-scroll"><table id="productManagementTable" class="table table-striped table-hover align-middle w-100 myTable">
             <thead class="table-dark">
                 <tr>
                     <th data-priority="6">ID</th>

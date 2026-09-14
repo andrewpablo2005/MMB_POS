@@ -51,7 +51,7 @@ if (isset($_GET['added'])) {
    <?php include __DIR__ . "/../reusablepage/header.php"; ?>
 
 
-    <div class="d-flex dashboard-main-content">
+    <div class="d-flex flex-grow-1 dashboard-main-content">
 
         <!-- SIDEBAR -->
         <div class="offcanvas-lg offcanvas-start" tabindex="-1" id="sidebar" style="--bs-offcanvas-width: min(85vw, 320px);">
@@ -96,15 +96,15 @@ if (isset($_GET['added'])) {
             </div>
         </div>
 
-        <div class="tab-content flex-grow-1 w-100" id="v-pills-tabContent" style="min-height: 100vh; overflow: hidden;">
+        <div class="tab-content flex-grow-1 w-100" id="v-pills-tabContent" style="min-height: 0; height: 100%; overflow: hidden;">
 
             <div class="tab-pane fade px-3 px-lg-4 py-4 <?= $activeTab === 'dashboard' ? 'show active' : '' ?>" id="v-pills-dashboard">
                 <?php if ($activeTab === 'dashboard') mmb_include_fragment(__DIR__ . "/../reusablepage/dashboard.php"); ?>
             </div>
-            <div class="tab-pane fade px-3 px-lg-4 py-4 <?= $activeTab === 'product' ? 'show active' : '' ?>" id="v-pills-product">
+            <div class="tab-pane fade mmb-management-pane px-3 px-lg-4 py-4 <?= $activeTab === 'product' ? 'show active' : '' ?>" id="v-pills-product">
                 <?php if ($activeTab === 'product') mmb_include_fragment(__DIR__ . "/../reusablepage/productmanagement.php"); ?>
             </div>
-            <div class="tab-pane fade px-3 px-lg-4 py-4 <?= $activeTab === 'inventory' ? 'show active' : '' ?>" id="v-pills-inventory">
+            <div class="tab-pane fade mmb-management-pane px-3 px-lg-4 py-4 <?= $activeTab === 'inventory' ? 'show active' : '' ?>" id="v-pills-inventory">
                 <?php if ($activeTab === 'inventory') mmb_include_fragment(__DIR__ . "/../reusablepage/inventorymanagement.php"); ?>
             </div>
             <div class="tab-pane fade <?= $activeTab === 'sales' ? 'show active' : '' ?>" id="v-pills-sales" style="padding: 0; height: 100%; overflow: hidden;">
