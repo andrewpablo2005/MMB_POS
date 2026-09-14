@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 10, 2026 at 06:39 AM
+-- Generation Time: Sep 10, 2026 at 08:14 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -113,7 +113,7 @@ CREATE TABLE `inventory` (
 INSERT INTO `inventory` (`id`, `product_id`, `supplier_id`, `batch_number`, `date_received`, `manufacture_date`, `purchase_cost`, `markup`, `sale_price`, `received_quantity`, `created_at`, `updated_at`, `current_quantity`, `expiry_date`) VALUES
 (1, 1, 1, 'Batch-1', '2026-09-08', NULL, 110.00, 5.00, 115.50, 100, '2026-09-08 06:18:40', '2026-09-09 00:37:00', 0, '2030-02-02'),
 (2, 1, 1, 'Batch-2', '2026-09-08', NULL, 50.00, 5.00, 52.50, 100, '2026-09-08 06:46:50', '2026-09-08 23:53:33', 0, '2027-05-08'),
-(3, 1, 1, 'Batch-3', '2026-09-09', NULL, 152.00, 5.00, 159.60, 1000, '2026-09-09 00:35:06', '2026-09-10 03:46:33', 894, '2030-02-02');
+(3, 1, 1, 'Batch-3', '2026-09-09', NULL, 152.00, 5.00, 159.60, 1000, '2026-09-09 00:35:06', '2026-09-10 05:27:35', 888, '2030-02-02');
 
 -- --------------------------------------------------------
 
@@ -209,6 +209,14 @@ CREATE TABLE `override_log` (
   `created_at` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `override_log`
+--
+
+INSERT INTO `override_log` (`id`, `transaction_id`, `product_id`, `product_name`, `cashier_id`, `cashier_name`, `approver_id`, `approver_name`, `original_price`, `discounted_price`, `discount_amount`, `discount_percent`, `reason`, `created_at`) VALUES
+(1, NULL, 1, 'Restime Simeticone 40.00 mg Drops (10.00 mL per unit)', 9, 'owner321', 1, 'Andrew Pablo', 159.60, 119.70, 39.90, 25.00, 'prind', '2026-09-10 13:25:58'),
+(2, NULL, 1, 'Restime Simeticone 40.00 mg Drops (10.00 mL per unit)', 9, 'owner321', 1, 'Andrew Pablo', 159.60, 156.41, 3.19, 2.00, 'prind', '2026-09-10 13:27:22');
+
 -- --------------------------------------------------------
 
 --
@@ -238,7 +246,9 @@ INSERT INTO `password_reset_tokens` (`id`, `user_id`, `token_hash`, `expires_at`
 (7, 1, '91a7e2d88c5c2fff27cb313dae9034da15121eb057d2fe166c019fb2e1ec6a22', '2026-09-10 13:01:57', '2026-09-10 12:32:02', '2026-09-10 04:31:57'),
 (8, 1, '309781ad046196afcd3ccd61788c11fd2ef3c846a16c49a4abe4f093a9140124', '2026-09-10 13:02:02', '2026-09-10 12:33:21', '2026-09-10 04:32:02'),
 (9, 1, '782724b487cf20d9f0f85bc77ee694c366ba534292b0e274e703d9b64228b848', '2026-09-10 13:03:45', '2026-09-10 12:37:01', '2026-09-10 04:33:45'),
-(10, 1, 'd445e5269b9598e3425dc379e3e2a848fa1b58c47962030c6eb0244fa931bcbf', '2026-09-10 13:08:03', NULL, '2026-09-10 04:38:03');
+(10, 1, 'd445e5269b9598e3425dc379e3e2a848fa1b58c47962030c6eb0244fa931bcbf', '2026-09-10 13:08:03', '2026-09-10 12:42:18', '2026-09-10 04:38:03'),
+(11, 1, 'fa15a4cf8c28b17185c2e028a3b3fc88b75b5e8af5ff6ffcbe90266b13d4b72d', '2026-09-10 13:12:18', '2026-09-10 12:43:06', '2026-09-10 04:42:18'),
+(12, 1, 'cf3718badcf11e78d7fbde8d9f21f477af34d5012e78005700b41b710be78821', '2026-09-10 13:13:06', NULL, '2026-09-10 04:43:06');
 
 -- --------------------------------------------------------
 
@@ -453,7 +463,8 @@ INSERT INTO `register_openings` (`id`, `user_id`, `business_date`, `opening_cash
 (2, 1, '2026-09-09', 1000.00, NULL, '2026-09-08 23:45:34'),
 (3, 1, '2026-09-10', 1000.00, NULL, '2026-09-10 03:37:32'),
 (4, 2, '2026-09-10', 1000.00, NULL, '2026-09-10 03:45:37'),
-(5, 3, '2026-09-10', 1000.00, NULL, '2026-09-10 03:46:26');
+(5, 3, '2026-09-10', 1000.00, NULL, '2026-09-10 03:46:26'),
+(6, 9, '2026-09-10', 1000.00, NULL, '2026-09-10 05:18:33');
 
 -- --------------------------------------------------------
 
@@ -613,7 +624,11 @@ INSERT INTO `transactions` (`id`, `user_id`, `discount_id`, `customer_name`, `cu
 (15, 1, 1, 'Walk-in', NULL, '', 319.20, '2026-09-10 03:39:01', 0.00, 0.00),
 (16, 1, 1, 'Walk-in', NULL, '', 159.60, '2026-09-10 03:43:54', 0.00, 0.00),
 (17, 2, 1, 'Walk-in', NULL, '', 159.60, '2026-09-10 03:45:44', 0.00, 0.00),
-(18, 3, 1, 'Walk-in', NULL, '', 478.80, '2026-09-10 03:46:33', 0.00, 0.00);
+(18, 3, 1, 'Walk-in', NULL, '', 478.80, '2026-09-10 03:46:33', 0.00, 0.00),
+(19, 9, 1, 'Walk-in', NULL, '', 159.60, '2026-09-10 05:19:46', 0.00, 0.00),
+(20, 9, 1, 'Walk-in', NULL, '', 478.80, '2026-09-10 05:23:17', 0.00, 0.00),
+(21, 9, 1, 'Walk-in', NULL, '', 92.98, '2026-09-10 05:26:15', 26.72, 0.00),
+(22, 9, 1, 'Walk-in', NULL, '', 153.22, '2026-09-10 05:27:35', 3.19, 0.00);
 
 -- --------------------------------------------------------
 
@@ -668,7 +683,11 @@ INSERT INTO `transaction_items` (`id`, `transaction_id`, `product_id`, `batch_id
 (15, 15, 1, 3, 2, 159.60, 319.20),
 (16, 16, 1, 3, 1, 159.60, 159.60),
 (17, 17, 1, 3, 1, 159.60, 159.60),
-(18, 18, 1, 3, 3, 159.60, 478.80);
+(18, 18, 1, 3, 3, 159.60, 478.80),
+(19, 19, 1, 3, 1, 159.60, 159.60),
+(20, 20, 1, 3, 3, 159.60, 478.80),
+(21, 21, 1, 3, 1, 119.70, 92.98),
+(22, 22, 1, 3, 1, 156.41, 153.22);
 
 -- --------------------------------------------------------
 
@@ -709,7 +728,11 @@ INSERT INTO `transaction_item_batches` (`id`, `transaction_item_id`, `inventory_
 (17, 15, 3, 2, 152.00, '2026-09-10 03:39:01'),
 (18, 16, 3, 1, 152.00, '2026-09-10 03:43:54'),
 (19, 17, 3, 1, 152.00, '2026-09-10 03:45:44'),
-(20, 18, 3, 3, 152.00, '2026-09-10 03:46:33');
+(20, 18, 3, 3, 152.00, '2026-09-10 03:46:33'),
+(21, 19, 3, 1, 152.00, '2026-09-10 05:19:46'),
+(22, 20, 3, 3, 152.00, '2026-09-10 05:23:17'),
+(23, 21, 3, 1, 152.00, '2026-09-10 05:26:15'),
+(24, 22, 3, 1, 152.00, '2026-09-10 05:27:35');
 
 -- --------------------------------------------------------
 
@@ -1086,13 +1109,13 @@ ALTER TABLE `login_attempts`
 -- AUTO_INCREMENT for table `override_log`
 --
 ALTER TABLE `override_log`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `password_reset_tokens`
 --
 ALTER TABLE `password_reset_tokens`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `pre_approved_users`
@@ -1134,7 +1157,7 @@ ALTER TABLE `register_closings`
 -- AUTO_INCREMENT for table `register_openings`
 --
 ALTER TABLE `register_openings`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `return_items`
@@ -1170,7 +1193,7 @@ ALTER TABLE `suppliers`
 -- AUTO_INCREMENT for table `transactions`
 --
 ALTER TABLE `transactions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- AUTO_INCREMENT for table `transaction_batch_allocations`
@@ -1182,13 +1205,13 @@ ALTER TABLE `transaction_batch_allocations`
 -- AUTO_INCREMENT for table `transaction_items`
 --
 ALTER TABLE `transaction_items`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- AUTO_INCREMENT for table `transaction_item_batches`
 --
 ALTER TABLE `transaction_item_batches`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- AUTO_INCREMENT for table `unit_measurement`

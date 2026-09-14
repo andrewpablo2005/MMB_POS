@@ -229,7 +229,7 @@ if (!empty($_SESSION['user_id'])) {
                     <span id="calcDiscount">-₱0.00</span>
                 </div>
                 <div class="wepos-calc-row text-muted" id="rowVat" style="display:none;">
-                    <span>VAT (12%)</span>
+                    <span>VAT (0%)</span>
                     <span id="calcVat">+₱0.00</span>
                 </div>
                 <div class="wepos-calc-row text-muted" id="rowVatExempt" style="display:none;">
@@ -501,7 +501,7 @@ if (!empty($_SESSION['user_id'])) {
                         <span style="color:#64748b;">Rule</span><strong id="receiptRule">Regular</strong>
                     </div>
                     <div style="display:flex; justify-content:space-between; margin-bottom:3px; color:#64748b;">
-                        <span>VAT (12%)</span><span id="receiptVat"></span>
+                        <span>VAT (0%)</span><span id="receiptVat"></span>
                     </div>
                     <div style="display:flex; justify-content:space-between; margin-bottom:3px;">
                         <span>Subtotal</span><span id="receiptSubtotal"></span>

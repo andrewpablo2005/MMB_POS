@@ -520,7 +520,7 @@ function weposCalcItem(item, dRate, isVatExempt, discountRule = 'regular') {
 
     // Category-level VAT: treat all categories as VAT-inclusive per configuration
     // (This enforces VAT display for every product regardless of product-level flags)
-    const isVatable = true;
+    const isVatable = false; //make this true if you want to enforce VAT for all products, or use item.hasVat if you want per-item control
 
     // Compute VAT portion when price is VAT-inclusive
     if (isVatable) {
@@ -1321,7 +1321,7 @@ function weposShowReceipt(data) {
 
     // Totals
     document.getElementById('receiptSubtotal').textContent  = '\u20b1' + data.rawSubtotal.toFixed(2);
-    document.getElementById('receiptVat').textContent       = '\u20b1' + (typeof data.rawVat !== 'undefined' ? data.rawVat : data.finalVat).toFixed(2);
+    document.getElementById('receiptVat').textContent       = '\u20b10.00'; // uncomment this if need that vat to show + (typeof data.rawVat !== 'undefined' ? data.rawVat : data.finalVat).toFixed(2);
     document.getElementById('receiptTotal').textContent     = '\u20b1' + data.finalTotal.toFixed(2);
     document.getElementById('receiptMethod').textContent    = data.method;
 
