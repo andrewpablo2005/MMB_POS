@@ -37,6 +37,7 @@ if (empty($_SESSION['user_id'])) {
 // Whitelist: key => ['default', [allowed values]]
 $storeSettings = [
     'receipt_paper' => ['default' => '80', 'allowed' => ['58', '80']],
+    'statutory_discount_cap' => ['default' => '125.00', 'min' => 0, 'max' => 100000],
 ];
 
 // Ensure storage exists (guarded one-time migration)
@@ -61,8 +62,12 @@ function storeSettingsRead(PDO $db, array $meta, string $key): ?string {
         $stmt->execute([$key]);
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         $value = $row['setting_value'] ?? null;
-        if (in_array($value, $meta['allowed'], true)) {
+        if (isset($meta['allowed']) && in_array($value, $meta['allowed'], true)) {
             return $value;
+        }
+        if (isset($meta['min'], $meta['max']) && is_numeric($value)
+            && (float)$value >= $meta['min'] && (float)$value <= $meta['max']) {
+            return number_format((float)$value, 2, '.', '');
         }
         return $meta['default'];
     } catch (PDOException $e) {
@@ -83,8 +88,16 @@ function storeSettingsWrite(PDO $db, array $storeSettings, string $key, string $
     if (!isset($storeSettings[$key])) {
         return ['error' => 'Unknown setting.'];
     }
-    if (!in_array($value, $storeSettings[$key]['allowed'], true)) {
+    $meta = $storeSettings[$key];
+    $validValue = isset($meta['allowed'])
+        ? in_array($value, $meta['allowed'], true)
+        : (isset($meta['min'], $meta['max']) && is_numeric($value)
+            && (float)$value >= $meta['min'] && (float)$value <= $meta['max']);
+    if (!$validValue) {
         return ['error' => 'Invalid value for this setting.'];
+    }
+    if (!isset($meta['allowed'])) {
+        $value = number_format((float)$value, 2, '.', '');
     }
     try {
         $stmt = $db->prepare(

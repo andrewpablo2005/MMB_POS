@@ -91,7 +91,10 @@ if (isset($_GET['added'])) {
                         href="?tab=users"><i class="fas fa-users"></i>User Management</a>
 
                     <a class="nav-link <?= $activeTab === 'system' ? 'active' : '' ?>"
-                        href="?tab=system"><i class="fas fa-cog"></i>Account Settings</a>
+                        href="?tab=system"><i class="fas fa-user-gear"></i>My Account</a>
+
+                    <a class="nav-link <?= $activeTab === 'store' ? 'active' : '' ?>"
+                        href="?tab=store"><i class="fas fa-sliders"></i>Store Settings</a>
                 </div>
             </div>
         </div>
@@ -122,6 +125,9 @@ if (isset($_GET['added'])) {
             </div>
             <div class="tab-pane fade px-3 px-lg-4 py-4 <?= $activeTab === 'system' ? 'show active' : '' ?>" id="v-pills-system">
                 <?php if ($activeTab === 'system') mmb_include_fragment(__DIR__ . "/../reusablepage/systemsettings.php"); ?>
+            </div>
+            <div class="tab-pane fade px-3 px-lg-4 py-4 <?= $activeTab === 'store' ? 'show active' : '' ?>" id="v-pills-store">
+                <?php if ($activeTab === 'store') mmb_include_fragment(__DIR__ . "/../reusablepage/storesettings.php"); ?>
             </div>
         </div>
     </div>

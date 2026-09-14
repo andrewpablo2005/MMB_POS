@@ -70,14 +70,14 @@ class Product {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public static function calculateSpecialDiscount(array $cartItems, ?string $customerType, string $discountRule = 'regular', ?string $customerId = null, float $weekDiscountTotal = 0.0, float $weekEligibleSubtotal = 0.0): array {
+    public static function calculateSpecialDiscount(array $cartItems, ?string $customerType, string $discountRule = 'regular', ?string $customerId = null, float $weekDiscountTotal = 0.0, float $weekEligibleSubtotal = 0.0, float $discountCap = 125.0): array {
         $customerType = strtolower(trim((string)($customerType ?? '')));
         if (!in_array($customerType, ['senior', 'pwd'], true)) {
             return [
                 'discount_total' => 0.0,
                 'eligible_subtotal' => 0.0,
                 'rate' => 0.0,
-                'remaining_discount_cap' => 125.0,
+                'remaining_discount_cap' => $discountCap,
                 'remaining_purchase_cap' => 2500.0,
                 'eligible_item_count' => 0,
             ];
@@ -99,7 +99,7 @@ class Product {
         }
 
         $rate = ($discountRule === 'statutory') ? 0.20 : 0.05;
-        $remainingDiscountCap = max(0.0, 125.0 - (float)$weekDiscountTotal);
+        $remainingDiscountCap = max(0.0, $discountCap - (float)$weekDiscountTotal);
         $remainingPurchaseCap = max(0.0, 2500.0 - (float)$weekEligibleSubtotal);
         // The discount applies to the VAT-exclusive base while the 12% VAT
         // remains included in the amount payable.
@@ -243,6 +243,18 @@ class Product {
                 $grossTransactionAmount += (float)$item['price'] * (int)$item['qty']; // qty here is 'packs'
             }
 
+            $statutoryDiscountCap = 125.0;
+            try {
+                $capStmt = $this->conn->prepare("SELECT setting_value FROM store_settings WHERE setting_key = 'statutory_discount_cap'");
+                $capStmt->execute();
+                $storedCap = $capStmt->fetchColumn();
+                if ($storedCap !== false && is_numeric($storedCap) && (float)$storedCap >= 0) {
+                    $statutoryDiscountCap = (float)$storedCap;
+                }
+            } catch (Throwable $ignore) {
+                // Keep the default cap when settings storage is unavailable.
+            }
+
             // =========================================================
             // DISCOUNT VALIDATION — the server caps whatever the client
             // claims at what it computes itself as the maximum allowed.
@@ -267,7 +279,7 @@ class Product {
                 $weekEligibleRow = $weekEligibleStmt->fetch(PDO::FETCH_ASSOC);
                 $weekEligibleSubtotal = (float)($weekEligibleRow['week_eligible_subtotal'] ?? 0);
 
-                $discountDetails = self::calculateSpecialDiscount($cartItems, $customerType, $discountRule, $customerId, $weekDiscountTotal, $weekEligibleSubtotal);
+                $discountDetails = self::calculateSpecialDiscount($cartItems, $customerType, $discountRule, $customerId, $weekDiscountTotal, $weekEligibleSubtotal, $statutoryDiscountCap);
                 $appliedDiscount = (float)$discountDetails['discount_total'];
             }
 
@@ -287,7 +299,7 @@ class Product {
                 );
                 $weekCapStmt->execute([$customerTypeNorm, $customerId]);
                 $weekCapRow = $weekCapStmt->fetch(PDO::FETCH_ASSOC);
-                $statutory = self::calculateSpecialDiscount($cartItems, $customerType, 'statutory', $customerId, (float)($weekCapRow['week_discount_total'] ?? 0), 0.0);
+                $statutory = self::calculateSpecialDiscount($cartItems, $customerType, 'statutory', $customerId, (float)($weekCapRow['week_discount_total'] ?? 0), 0.0, $statutoryDiscountCap);
                 $allowedDiscount = max($allowedDiscount, (float)$statutory['discount_total']);
             }
 
