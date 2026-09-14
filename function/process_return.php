@@ -60,6 +60,14 @@ if (!is_array($items) || empty($items)) {
 $currentUserId = (int)$_SESSION['user_id'];
 $currentPosition = strtolower(trim((string)($_SESSION['position'] ?? '')));
 
+// A closed cashier register cannot process additional refunds for the day.
+$closingCheck = $db->prepare("SELECT id FROM register_closings WHERE user_id = ? AND business_date = ? LIMIT 1");
+$closingCheck->execute([$currentUserId, date('Y-m-d')]);
+if ($closingCheck->fetchColumn()) {
+    echo json_encode(['success' => false, 'error' => 'The register is already closed for today. Returns cannot be processed.']);
+    exit;
+}
+
 if (!$voidPin) {
     echo json_encode(['success' => false, 'error' => 'Please enter Manager or Owner Void PIN.']);
     exit;

@@ -163,6 +163,11 @@
 let currentReturnTxData = null;
 
 function openReturnModal() {
+    if (typeof weposRegisterClosed !== 'undefined' && weposRegisterClosed) {
+        mmbNotify({ type: 'warning', title: 'Register already closed', message: 'Cannot process a return because the staff register is already closed.' });
+        return;
+    }
+
     document.getElementById('returnSearchTxId').value = '';
     document.getElementById('returnSearchError').style.display = 'none';
     document.getElementById('returnTxContainer').style.display = 'none';

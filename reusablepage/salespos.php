@@ -631,6 +631,11 @@ if (!empty($_SESSION['user_id'])) {
     }
 
     async function weposOpenClosingModal() {
+        if (weposRegisterClosed) {
+            mmbNotify({ type: 'warning', title: 'Register already closed', message: 'This staff register is already closed for today.' });
+            return;
+        }
+
         const modal = document.getElementById('registerClosingModal');
         const error = document.getElementById('closingError');
         const date = document.getElementById('closingBusinessDate').value;
