@@ -6,6 +6,7 @@ if (session_status() === PHP_SESSION_NONE) {
 require_once __DIR__ . '/../conn/database.php';
 require_once __DIR__ . '/../conn/basepath.php';
 require_once __DIR__ . '/../conn/password_reset.php';
+require_once __DIR__ . '/../conn/activity_log.php'; // audit trail (Task 42)
 
 global $db;
 $message = '';
@@ -42,6 +43,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $absoluteUrl = 'https://' . ($_SERVER['HTTP_HOST'] ?? 'localhost') . $resetUrl;
                 }
                 mmb_password_reset_send_email($email, (string)$user['display_name'], $absoluteUrl);
+
+                // AUDIT: reset link generated (delivery may still fail — that is
+                // tracked separately; the request itself is what we record) (Task 42)
+                mmb_log_activity($db, 'auth', 'password_reset_requested',
+                    "Requested a password reset link for '{$email}'",
+                    'user', (int)$user['id'],
+                    ['user_id' => (int)$user['id'], 'username' => (string)$user['display_name'], 'role' => '']);
             }
 
             $message = 'If an active account uses that email, a password reset link has been sent.';

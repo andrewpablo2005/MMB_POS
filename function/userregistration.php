@@ -3,6 +3,7 @@
 namespace Classes;
 // PDO DB
 require_once "../conn/database.php";
+require_once __DIR__ . "/../conn/activity_log.php"; // audit trail (Task 42)
 
 class UserRegistration
 {
@@ -120,6 +121,12 @@ public function pre_addUser()
         ]);
 
         if ($stmtInfo) {
+            // AUDIT (Task 42) — public signup, no session: actor override
+            mmb_log_activity($this->con, 'users', 'user_registration',
+                "New registration submitted for '" . $this->username . "' (pending approval)",
+                'pre_user', (int) $pre_user_id,
+                ['user_id' => null, 'username' => $this->username, 'role' => 'guest']);
+
             $this->response = "Success";
             return true;
         } else {
@@ -260,6 +267,11 @@ public function pre_addUser()
 
             $this->con->commit();
 
+            // AUDIT (Task 42)
+            mmb_log_activity($this->con, 'users', 'user_approved',
+                "Approved registration for '" . ($user['username'] ?? ('ID ' . $id)) . "'",
+                'user', (int) ($user['id'] ?? 0));
+
         } catch (\Exception $e) {
             $this->con->rollBack();
             error_log('approve() failed: ' . $e->getMessage());
@@ -294,6 +306,11 @@ public function pre_addUser()
                 "Hello {$user['firstname']}, your registration was rejected."
             );
         }
+
+        // AUDIT (Task 42)
+        mmb_log_activity($this->con, 'users', 'user_registration_rejected',
+            "Rejected registration ID {$id}" . ($user ? " (" . ($user['firstname'] ?? '') . ")" : ''),
+            'pre_user', (int) $id);
     }
 
     public function sendEmail($to, $subject, $body)

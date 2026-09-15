@@ -19,6 +19,7 @@ A web-based Point-of-Sale and inventory system for a small pharmacy, built with 
 | **Reports** | Daily / monthly / yearly sales, sales detail (filter by date/month/year + cashier), top products, expired products, real revenue (net of discounts/VAT exemption/refunds) |
 | **User management** | Owner/Admin/Staff roles, account approval workflow, per-account Void PIN, account enable/disable |
 | **Forgot password** | Single-use, time-limited password reset links sent through PHPMailer SMTP |
+| **Activity logs (audit trail)** | Every login/logout, add/edit/delete, sale, return, and settings change recorded with user, timestamp, and IP — viewable in the Reports tab (Owner/Admin) with filters and pagination |
 | **Dashboard** | KPI cards + Chart.js sales charts |
 
 ---

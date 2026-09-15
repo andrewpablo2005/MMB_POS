@@ -14,6 +14,7 @@ if (session_status() === PHP_SESSION_NONE) {
 header('Content-Type: application/json');
 
 require_once __DIR__ . '/../conn/database.php';
+require_once __DIR__ . '/../conn/activity_log.php'; // audit trail (Task 42)
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     echo json_encode(['success' => false, 'error' => 'Invalid request method']);
@@ -304,6 +305,15 @@ try {
     }
 
     $db->commit();
+
+    // AUDIT (Task 42) — processed return/refund
+    $returnQty = 0;
+    foreach (($body['items'] ?? []) as $rit) {
+        $returnQty += (int)($rit['qty'] ?? 0);
+    }
+    mmb_log_activity($db, 'sales', 'return_processed',
+        "Processed return #{$returnId} for sale #{$transactionId} — refund " . number_format($refundTotal, 2) . " PHP via {$refundMethod} ({$returnQty} items)",
+        'return', (int) $returnId);
 
     echo json_encode([
         'success' => true,

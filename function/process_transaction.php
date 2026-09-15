@@ -17,6 +17,7 @@ header('Content-Type: application/json');
 // Both files are siblings in the same function/ folder
 require_once __DIR__ . '/../conn/database.php';
 require_once __DIR__ . '/workingpos.php';
+require_once __DIR__ . '/../conn/activity_log.php'; // audit trail (Task 42)
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     echo json_encode(['success' => false, 'error' => 'Invalid request method']);
@@ -87,6 +88,19 @@ try {
         $customerType,
         $discountRule
     );
+
+    // AUDIT (Task 42) — completed sale with receipt number and total
+    if (!empty($result['success'])) {
+        $itemCount = 0;
+        foreach ($items as $it) {
+            $itemCount += (int)($it['qty'] ?? 0);
+        }
+        mmb_log_activity($db, 'sales', 'sale_completed',
+            "Completed sale #" . str_pad((string)($result['transaction_id'] ?? '?'), 6, '0', STR_PAD_LEFT)
+            . " — " . number_format((float)($result['total'] ?? 0), 2) . " PHP, {$itemCount} items, customer: " . ($customerName !== '' ? $customerName : 'Walk-in'),
+            'transaction', (int)($result['transaction_id'] ?? 0));
+    }
+
     echo json_encode($result);
 } catch (Throwable $e) {
     echo json_encode(['success' => false, 'error' => $e->getMessage()]);

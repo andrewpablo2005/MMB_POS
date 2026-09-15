@@ -698,4 +698,141 @@ class Reports
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
         return (float)($result['total'] ?? 0);
     }
+
+    /* =========================================================
+       ACTIVITY LOGS (Audit Trail) — Task 42
+       Every add / edit / delete / login / sale in the system.
+    ========================================================= */
+
+    /**
+     * Fetch activity log entries with filters + pagination.
+     *
+     * @param array $filters {
+     *   @type int    $user_id   exact user id
+     *   @type string $username  exact username
+     *   @type string $action    exact action name (product_add, login, ...)
+     *   @type string $module    exact module (auth, products, inventory, sales, users, settings)
+     *   @type string $date_from Y-m-d lower bound (inclusive)
+     *   @type string $date_to   Y-m-d upper bound (inclusive)
+     * }
+     * @param int $page    1-based page number
+     * @param int $perPage rows per page
+     */
+    public function getActivityLogs(array $filters = [], int $page = 1, int $perPage = 50): array
+    {
+        $perPage = max(1, min(200, $perPage));
+        $page = max(1, $page);
+
+        $where = [];
+        $params = [];
+
+        if (!empty($filters['user_id'])) {
+            $where[] = 'user_id = ?';
+            $params[] = (int) $filters['user_id'];
+        }
+        if (!empty($filters['username'])) {
+            $where[] = 'username = ?';
+            $params[] = (string) $filters['username'];
+        }
+        $allowedActions = [
+            'login', 'login_failed', 'login_blocked', 'logout',
+            'password_reset_requested', 'password_reset_completed',
+            'product_add', 'product_update', 'product_delete',
+            'stock_update', 'batch_add', 'batch_disposal',
+            'category_add', 'category_update', 'category_delete',
+            'supplier_add', 'dosage_form_add', 'dosage_form_delete',
+            'measurement_add', 'serving_unit_add', 'serving_unit_delete',
+            'sale_completed', 'return_processed',
+            'register_open', 'register_close',
+            'user_add', 'user_update', 'user_delete', 'user_status_change',
+            'user_registration', 'user_registration_rejected', 'user_approved',
+            'settings_update',
+        ];
+        if (!empty($filters['action'])) {
+            // Accept a comma-separated list too, so the UI can group actions
+            $requested = array_filter(array_map('trim', explode(',', (string) $filters['action'])));
+            $valid = array_values(array_intersect($requested, $allowedActions));
+            if ($valid) {
+                $where[] = 'action IN (' . implode(',', array_fill(0, count($valid), '?')) . ')';
+                array_push($params, ...$valid);
+            }
+        }
+        if (!empty($filters['module']) && in_array($filters['module'], ['auth', 'products', 'inventory', 'sales', 'users', 'settings', 'system'], true)) {
+            $where[] = 'module = ?';
+            $params[] = $filters['module'];
+        }
+        if (!empty($filters['date_from']) && preg_match('/^\d{4}-\d{2}-\d{2}$/', (string) $filters['date_from'])) {
+            $where[] = 'created_at >= ?';
+            $params[] = $filters['date_from'] . ' 00:00:00';
+        }
+        if (!empty($filters['date_to']) && preg_match('/^\d{4}-\d{2}-\d{2}$/', (string) $filters['date_to'])) {
+            $where[] = 'created_at <= ?';
+            $params[] = $filters['date_to'] . ' 23:59:59';
+        }
+
+        $whereSql = $where ? ('WHERE ' . implode(' AND ', $where)) : '';
+
+        try {
+            // Total row count for pagination
+            $countStmt = $this->db->prepare("SELECT COUNT(*) FROM activity_logs {$whereSql}");
+            $countStmt->execute($params);
+            $total = (int) $countStmt->fetchColumn();
+            $pages = max(1, (int) ceil($total / $perPage));
+            $page = min($page, $pages);
+            $offset = ($page - 1) * $perPage;
+
+            $stmt = $this->db->prepare("SELECT id, user_id, username, role, module, action, entity_type, entity_id,
+                                               description, ip_address, created_at
+                                        FROM activity_logs
+                                        {$whereSql}
+                                        ORDER BY created_at DESC, id DESC
+                                        LIMIT {$perPage} OFFSET {$offset}");
+            $stmt->execute($params);
+
+            return [
+                'rows' => $stmt->fetchAll(PDO::FETCH_ASSOC),
+                'total' => $total,
+                'page' => $page,
+                'pages' => $pages,
+                'per_page' => $perPage,
+            ];
+        } catch (\Throwable $e) {
+            // Table missing or query failed — show an empty report, never a crash
+            return ['rows' => [], 'total' => 0, 'page' => 1, 'pages' => 1, 'per_page' => $perPage];
+        }
+    }
+
+    /**
+     * Distinct usernames present in the activity log (for the filter dropdown).
+     */
+    public function getActivityLogUsers(): array
+    {
+        try {
+            $stmt = $this->db->query("SELECT DISTINCT username FROM activity_logs
+                                      WHERE username IS NOT NULL AND username <> ''
+                                      ORDER BY username ASC LIMIT 200");
+            return $stmt->fetchAll(PDO::FETCH_COLUMN);
+        } catch (\Throwable $e) {
+            return [];
+        }
+    }
+
+    /**
+     * Small summary for the report card: today's action count + last activity time.
+     */
+    public function getActivityLogSummary(): array
+    {
+        try {
+            $stmt = $this->db->query("SELECT
+                (SELECT COUNT(*) FROM activity_logs WHERE DATE(created_at) = CURDATE()) AS today_count,
+                (SELECT MAX(created_at) FROM activity_logs) AS last_activity");
+            $row = $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
+            return [
+                'today_count' => (int) ($row['today_count'] ?? 0),
+                'last_activity' => $row['last_activity'] ?? null,
+            ];
+        } catch (\Throwable $e) {
+            return ['today_count' => 0, 'last_activity' => null];
+        }
+    }
 }

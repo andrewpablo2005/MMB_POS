@@ -7,6 +7,7 @@ if (session_status() === PHP_SESSION_NONE) {
 
 header('Content-Type: application/json');
 require_once __DIR__ . '/../conn/database.php';
+require_once __DIR__ . '/../conn/activity_log.php'; // audit trail (Task 42)
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST' || empty($_SESSION['user_id'])) {
     echo json_encode(['success' => false, 'error' => 'You must be logged in to close the register.']);
@@ -77,6 +78,12 @@ try {
         }
         $insertOpening = $db->prepare("INSERT INTO register_openings (user_id, business_date, opening_cash, notes) VALUES (?, ?, ?, ?)");
         $insertOpening->execute([$userId, $businessDate, $openingCash, trim((string)($body['notes'] ?? '')) ?: null]);
+
+        // AUDIT (Task 42)
+        mmb_log_activity($db, 'sales', 'register_open',
+            "Opened register with " . number_format($openingCash, 2) . " PHP opening cash for {$businessDate}",
+            'register_opening', (int) $db->lastInsertId());
+
         echo json_encode(['success' => true, 'opened' => true, 'opening_cash' => $openingCash]);
         exit;
     }
@@ -153,6 +160,12 @@ try {
         (user_id, business_date, system_cash, counted_cash, variance, notes)
         VALUES (?, ?, ?, ?, ?, ?)");
     $insert->execute([$userId, $businessDate, $systemCash, $countedCash, $variance, trim((string)($body['notes'] ?? '')) ?: null]);
+
+    // AUDIT (Task 42)
+    mmb_log_activity($db, 'sales', 'register_close',
+        "Closed register for {$businessDate} — system " . number_format($systemCash, 2)
+        . " PHP, counted " . number_format($countedCash, 2) . " PHP, variance " . number_format($variance, 2) . " PHP",
+        'register_closing', (int) $db->lastInsertId());
 
     echo json_encode([
         'success' => true,

@@ -4,6 +4,7 @@ session_start();
 
 try {
     require_once __DIR__ . '/../conn/database.php';
+    require_once __DIR__ . '/../conn/activity_log.php'; // audit trail (Task 42)
     $db = Database::getConnection();
 
     if (empty($_SESSION['user_id']) || !in_array(strtolower((string) ($_SESSION['position'] ?? '')), ['owner', 'admin'], true)) {
@@ -44,6 +45,11 @@ try {
         echo json_encode(['success' => false, 'message' => 'Category not found.']);
         exit;
     }
+
+    // AUDIT (Task 42)
+    mmb_log_activity($db, 'products', 'category_delete',
+        "Deleted category #{$categoryId}",
+        'category', (int) $categoryId);
 
     echo json_encode(['success' => true, 'message' => 'Category deleted successfully.']);
 } catch (PDOException $e) {

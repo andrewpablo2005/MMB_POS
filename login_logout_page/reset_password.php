@@ -6,6 +6,7 @@ if (session_status() === PHP_SESSION_NONE) {
 require_once __DIR__ . '/../conn/database.php';
 require_once __DIR__ . '/../conn/basepath.php';
 require_once __DIR__ . '/../conn/password_reset.php';
+require_once __DIR__ . '/../conn/activity_log.php'; // audit trail (Task 42)
 
 global $db;
 $token = trim((string)($_GET['token'] ?? $_POST['token'] ?? ''));
@@ -16,7 +17,7 @@ $tokenRow = null;
 try {
     mmb_password_reset_ensure_table($db);
     if ($token !== '' && preg_match('/^[a-f0-9]{64}$/', $token)) {
-        $stmt = $db->prepare("SELECT prt.id, prt.user_id
+        $stmt = $db->prepare("SELECT prt.id, prt.user_id, u.username
                               FROM password_reset_tokens prt
                               INNER JOIN users u ON u.id = prt.user_id AND u.status = 'active'
                               WHERE prt.token_hash = ? AND prt.used_at IS NULL AND prt.expires_at > NOW()
@@ -36,13 +37,21 @@ try {
             $error = 'Passwords do not match.';
         } else {
             $db->beginTransaction();
+            $resetUserId = (int)$tokenRow['user_id'];
+            $resetUsername = (string)$tokenRow['username'];
             $db->prepare('UPDATE users SET password = ?, failed_attempts = 0, last_attempt = NULL WHERE id = ?')
-                ->execute([password_hash($password, PASSWORD_DEFAULT), (int)$tokenRow['user_id']]);
+                ->execute([password_hash($password, PASSWORD_DEFAULT), $resetUserId]);
             $db->prepare('UPDATE password_reset_tokens SET used_at = NOW() WHERE id = ? AND used_at IS NULL')
                 ->execute([(int)$tokenRow['id']]);
             $db->commit();
             $tokenRow = null;
             $success = 'Your password has been changed. You can now sign in.';
+
+            // AUDIT: password successfully changed via reset link (Task 42)
+            mmb_log_activity($db, 'auth', 'password_reset_completed',
+                'Changed password using a reset link',
+                'user', $resetUserId,
+                ['user_id' => $resetUserId, 'username' => $resetUsername, 'role' => '']);
         }
     }
 } catch (Throwable $e) {

@@ -4,6 +4,25 @@ namespace Classes;
 
 require_once __DIR__ . '/../conn/database.php';
 require_once __DIR__ . '/file_upload.php';
+require_once __DIR__ . "/../conn/activity_log.php"; // audit trail (Task 42)
+
+/**
+ * Audit helper: resolve a product's display name safely (never throws).
+ * Used by the activity-log hooks so descriptions stay human-readable.
+ */
+if (!function_exists('mmb_audit_product_name')) {
+    function mmb_audit_product_name(\PDO $con, int $productId): string
+    {
+        try {
+            $stmt = $con->prepare("SELECT COALESCE(NULLIF(branded_name, ''), generic_name, CONCAT('product #', ?)) AS name FROM products WHERE id = ?");
+            $stmt->execute([$productId, $productId]);
+            $name = $stmt->fetchColumn();
+            return $name !== false && $name !== null && $name !== '' ? (string) $name : ('product #' . $productId);
+        } catch (\Throwable $e) {
+            return 'product #' . $productId;
+        }
+    }
+}
 
 class ProductManagement
 {
@@ -412,6 +431,14 @@ class ProductManagement
             }
 
             $this->con->commit();
+
+            // AUDIT (Task 42)
+            $auditName = trim(($this->branded_name ?? '') !== '' ? $this->branded_name : ($this->generic_name ?? ''));
+            $auditDesc = "Added product '" . ($auditName !== '' ? $auditName : ('#' . $productId)) . "'";
+            if ($addBatch) {
+                $auditDesc .= " with initial batch '" . ($this->batch_number ?? '') . "' (" . (int) ($this->received_quantity ?? 0) . " packs)";
+            }
+            mmb_log_activity($this->con, 'products', 'product_add', $auditDesc, 'product', (int) $productId);
 
             $this->response = "Success";
             return true;
@@ -986,6 +1013,12 @@ class ProductManagement
                 $this->con->prepare("UPDATE products SET is_hidden = 1 WHERE id = ?")->execute([$productId]);
                 $this->con->prepare("UPDATE inventory SET current_quantity = 0 WHERE product_id = ? AND current_quantity > 0")->execute([$productId]);
                 $this->con->commit();
+
+                // AUDIT (Task 42) — soft delete (history preserved)
+                mmb_log_activity($this->con, 'products', 'product_delete',
+                    "Removed product " . mmb_audit_product_name($this->con, (int) $productId) . " from catalog (hidden, history preserved)",
+                    'product', (int) $productId);
+
                 $this->response = $hasHistory
                     ? "Product has sales history — hidden from catalog instead of deleted (history preserved)."
                     : "Product still has stock — quantities zeroed and hidden from catalog.";
@@ -993,6 +1026,9 @@ class ProductManagement
             }
 
             // No history and no stock -> safe to remove completely
+            // Capture the name BEFORE the row disappears (audit, Task 42)
+            $auditDeleteName = mmb_audit_product_name($this->con, (int) $productId);
+
             $stmt = $this->con->prepare("DELETE FROM inventory WHERE product_id = ?");
             $stmt->execute([$productId]);
 
@@ -1002,6 +1038,11 @@ class ProductManagement
             $this->con->commit();
 
             if ($result) {
+                // AUDIT (Task 42) — hard delete (no history)
+                mmb_log_activity($this->con, 'products', 'product_delete',
+                    "Permanently deleted product " . $auditDeleteName,
+                    'product', (int) $productId);
+
                 $this->response = "Success";
                 return true;
             }
@@ -1138,6 +1179,12 @@ class ProductManagement
 
                 $this->con->commit();
 
+                // AUDIT (Task 42)
+                $auditName = trim(($this->branded_name ?? '') !== '' ? $this->branded_name : ($this->generic_name ?? ''));
+                mmb_log_activity($this->con, 'products', 'product_update',
+                    "Updated product '" . ($auditName !== '' ? $auditName : ('#' . $this->id)) . "'",
+                    'product', (int) $this->id);
+
                 $this->response = "Updated successfully";
                 return true;
 
@@ -1203,6 +1250,10 @@ class ProductManagement
             ");
 
                 if ($stmt->execute([$quantity, $expiry, $id])) {
+                    // AUDIT (Task 42)
+                    mmb_log_activity($this->con, 'inventory', 'stock_update',
+                        "Updated stock of " . mmb_audit_product_name($this->con, (int) $id) . " to {$quantity} packs (expiry {$expiry})",
+                        'product', (int) $id);
                     $this->response = "success";
                     return true;
                 } else {
@@ -1277,6 +1328,12 @@ class ProductManagement
             ]);
 
             $this->con->commit();
+
+            // AUDIT (Task 42)
+            mmb_log_activity($this->con, 'inventory', 'batch_add',
+                "Added batch '{$batchNumber}' ({$quantity} packs) to " . mmb_audit_product_name($this->con, $productId),
+                'product', $productId);
+
             $this->response = "Stock batch added successfully";
             return true;
         } catch (\Exception $e) {
@@ -1347,6 +1404,13 @@ class ProductManagement
             ]);
 
             $this->con->commit();
+
+            // AUDIT (Task 42)
+            $disposalName = mmb_audit_product_name($this->con, (int) ($batch['product_id'] ?? 0));
+            mmb_log_activity($this->con, 'inventory', 'batch_disposal',
+                "Disposed {$quantity} packs from batch '" . ($batch['batch_number'] ?? '') . "' of {$disposalName} (reason: " . ($reason ?: 'Disposed') . ")",
+                'inventory', $inventoryId);
+
             $this->response = "Inventory batch disposed successfully";
             return true;
         } catch (\Exception $e) {

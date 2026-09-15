@@ -4,6 +4,7 @@ session_start();
 
 try {
     require_once __DIR__ . '/../conn/database.php';
+    require_once __DIR__ . '/../conn/activity_log.php'; // audit trail (Task 42)
     $db = Database::getConnection();
     if (empty($_SESSION['user_id']) || !in_array(strtolower((string) ($_SESSION['position'] ?? '')), ['owner', 'admin'], true)) {
         http_response_code(403);
@@ -34,6 +35,12 @@ try {
     }
     $deleteStmt = $db->prepare('DELETE FROM serving_unit WHERE id = ?');
     $deleteStmt->execute([$id]);
+
+    // AUDIT (Task 42)
+    mmb_log_activity($db, 'products', 'serving_unit_delete',
+        "Deleted serving unit '{$name}'",
+        'serving_unit', $id);
+
     echo json_encode(['success' => true, 'message' => 'Serving unit deleted successfully.']);
 } catch (PDOException $e) {
     http_response_code(500);

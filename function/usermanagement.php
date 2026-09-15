@@ -3,6 +3,7 @@
 namespace Classes;
 
 require_once "../conn/database.php";
+require_once __DIR__ . "/../conn/activity_log.php"; // audit trail (Task 42)
 
 class UserManagement
 {
@@ -116,6 +117,11 @@ class UserManagement
         ]);
 
         $this->con->commit();
+
+        // AUDIT (Task 42)
+        mmb_log_activity($this->con, 'users', 'user_add',
+            "Created user account '" . $d['username'] . "' (" . $d['position'] . ")",
+            'user', (int) $userId);
 
         return [
             'success' => true,
@@ -235,6 +241,11 @@ class UserManagement
 
         $this->con->commit();
 
+        // AUDIT (Task 42)
+        mmb_log_activity($this->con, 'users', 'user_update',
+            "Updated user account '" . $d['username'] . "' (ID {$userId})",
+            'user', (int) $userId);
+
         return ['success' => true, 'message' => 'User updated successfully'];
 
     } catch (\Throwable $e) {
@@ -310,6 +321,11 @@ class UserManagement
 
             $this->con->commit();
 
+            // AUDIT (Task 42) — self-service "My Account" update
+            mmb_log_activity($this->con, 'users', 'user_update',
+                "Updated own account details (ID {$userId})",
+                'user', $userId);
+
             return ['success' => true, 'message' => 'User updated successfully'];
 
         } catch (\Throwable $e) {
@@ -333,7 +349,7 @@ class UserManagement
             return ['success' => false, 'message' => 'You cannot delete your own account'];
         }
 
-        $stmt = $this->con->prepare("SELECT position FROM users WHERE id = ?");
+        $stmt = $this->con->prepare("SELECT username, position FROM users WHERE id = ?");
         $stmt->execute([$userId]);
         $target = $stmt->fetch(\PDO::FETCH_ASSOC);
         if ($target && strtolower((string)$target['position']) === 'owner') {
@@ -344,8 +360,16 @@ class UserManagement
             }
         }
 
+        // AUDIT (Task 42) — capture target username BEFORE the row is deleted
+        $targetUsername = $target['username'] ?? ('ID ' . $userId);
         $ok = $this->con->prepare("DELETE FROM users WHERE id = ?")
             ->execute([$userId]);
+
+        if ($ok) {
+            mmb_log_activity($this->con, 'users', 'user_delete',
+                "Deleted user account '{$targetUsername}' (ID {$userId})",
+                'user', $userId);
+        }
 
         return $ok
             ? ['success' => true, 'message' => 'Deleted successfully']
@@ -360,6 +384,13 @@ class UserManagement
 
         $stmt = $this->con->prepare("UPDATE users SET status = ? WHERE id = ?");
         $ok = $stmt->execute([$status, $userId]);
+
+        // AUDIT (Task 42)
+        if ($ok) {
+            mmb_log_activity($this->con, 'users', 'user_status_change',
+                ($status === 'active' ? 'Enabled' : 'Disabled') . " user account ID {$userId}",
+                'user', $userId);
+        }
 
         return $ok
             ? ['success' => true, 'message' => $status === 'active' ? 'Account enabled successfully' : 'Account disabled successfully']

@@ -4,6 +4,7 @@ session_start();
 
 try {
     require_once __DIR__ . '/../conn/database.php';
+    require_once __DIR__ . '/../conn/activity_log.php'; // audit trail (Task 42)
     
     $db = Database::getConnection();
 
@@ -78,7 +79,12 @@ try {
     }
     
     $supplier_id = $db->lastInsertId();
-    
+
+    // AUDIT (Task 42)
+    mmb_log_activity($db, 'products', 'supplier_add',
+        "Added supplier '{$supplier_name}'",
+        'supplier', (int) $supplier_id);
+
     http_response_code(200);
     echo json_encode([
         'success' => true,
