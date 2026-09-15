@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 10, 2026 at 08:14 AM
+-- Generation Time: Sep 15, 2026 at 11:19 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -112,8 +112,58 @@ CREATE TABLE `inventory` (
 
 INSERT INTO `inventory` (`id`, `product_id`, `supplier_id`, `batch_number`, `date_received`, `manufacture_date`, `purchase_cost`, `markup`, `sale_price`, `received_quantity`, `created_at`, `updated_at`, `current_quantity`, `expiry_date`) VALUES
 (1, 1, 1, 'Batch-1', '2026-09-08', NULL, 110.00, 5.00, 115.50, 100, '2026-09-08 06:18:40', '2026-09-09 00:37:00', 0, '2030-02-02'),
-(2, 1, 1, 'Batch-2', '2026-09-08', NULL, 50.00, 5.00, 52.50, 100, '2026-09-08 06:46:50', '2026-09-08 23:53:33', 0, '2027-05-08'),
-(3, 1, 1, 'Batch-3', '2026-09-09', NULL, 152.00, 5.00, 159.60, 1000, '2026-09-09 00:35:06', '2026-09-10 05:27:35', 888, '2030-02-02');
+(2, 1, 1, 'Batch-2', '2026-09-08', NULL, 50.00, 5.00, 52.50, 100, '2026-09-08 06:46:50', '2026-09-15 08:12:00', 1, '2027-05-08'),
+(3, 1, 1, 'Batch-3', '2026-09-09', NULL, 152.00, 5.00, 159.60, 1000, '2026-09-09 00:35:06', '2026-09-15 09:07:43', 770, '2030-02-02'),
+(4, 1, 1, 'Batch-4', '2026-09-14', NULL, 100.00, 5.00, 105.00, 100, '2026-09-14 07:28:12', '2026-09-15 08:59:06', 90, '2035-02-02'),
+(5, 1, 1, 'Batch-5', '2026-09-14', NULL, 200.00, 5.00, 210.00, 100, '2026-09-14 07:28:53', '2026-09-14 07:28:53', 100, '2033-02-02'),
+(6, 1, 1, 'Batch-6', '2026-09-14', NULL, 2000.00, 5.00, 2100.00, 200, '2026-09-14 07:31:21', '2026-09-14 08:27:44', 194, '2029-02-02'),
+(7, 1, 1, 'Batch-7', '2026-09-14', NULL, 1000.00, 5.00, 1050.00, 100, '2026-09-14 07:31:40', '2026-09-14 07:31:40', 100, '2029-02-02'),
+(8, 1, 1, 'Batch-8', '2026-09-14', NULL, 1000.00, 5.00, 1050.00, 200, '2026-09-14 07:31:58', '2026-09-14 07:31:58', 200, '2036-02-02'),
+(9, 1, NULL, 'Batch-9', '2026-09-14', NULL, 1000.00, 5.00, 1050.00, 1000, '2026-09-14 07:32:20', '2026-09-14 07:32:20', 1000, '2036-02-02'),
+(11, 1, 1, 'Batch-11', '2026-09-14', NULL, 1000.00, 5.00, 1050.00, 100, '2026-09-14 07:33:06', '2026-09-14 07:33:06', 100, '2029-02-10'),
+(12, 2, 1, 'Batch-1', '2026-09-14', NULL, 20.00, 5.00, 21.00, 1000, '2026-09-14 07:49:45', '2026-09-15 01:27:56', 0, '2029-02-02'),
+(17, 4, 1, 'Batch-1', '2026-09-15', NULL, 25.00, 5.00, 26.25, 1, '2026-09-15 04:29:23', '2026-09-15 04:29:50', 0, '2030-02-02'),
+(19, 5, 1, 'Batch-1', '2026-09-15', NULL, 200.00, 5.00, 210.00, 1, '2026-09-15 07:20:22', '2026-09-15 07:20:37', 0, '2030-02-02'),
+(20, 2, NULL, 'Batch-2', '2026-09-15', NULL, 50.00, 5.00, 52.50, 1, '2026-09-15 07:56:45', '2026-09-15 07:57:01', 0, '2029-02-02'),
+(21, 1, 1, 'Batch-TEST', '2026-09-15', NULL, 10.00, 5.00, 10.50, 10, '2026-09-15 08:47:38', '2026-09-15 08:47:38', 10, '2030-12-31'),
+(22, 1, 1, 'Batch-14', '2026-09-15', NULL, 10.00, 5.00, 10.50, 10, '2026-09-15 08:55:20', '2026-09-15 08:55:20', 10, '2030-12-31'),
+(23, 5, 1, 'Batch-2', '2026-09-15', NULL, 50.00, 5.00, 52.50, 1, '2026-09-15 08:55:31', '2026-09-15 08:55:46', 0, '2029-02-02'),
+(24, 5, 1, 'Batch-3', '2026-09-15', NULL, 50.00, 5.00, 52.50, 1, '2026-09-15 08:57:51', '2026-09-15 08:58:03', 0, '2030-02-02'),
+(25, 5, 1, 'Batch-4', '2026-09-15', NULL, 50.00, 5.00, 52.50, 1, '2026-09-15 09:02:14', '2026-09-15 09:02:33', 0, '2036-02-02'),
+(26, 5, 1, 'Batch-5', '2026-09-15', NULL, 50.00, 5.00, 52.50, 1, '2026-09-15 09:05:45', '2026-09-15 09:05:52', 0, '2036-02-02'),
+(27, 5, 1, 'Batch-6', '2026-09-15', NULL, 50.00, 5.00, 52.50, 1, '2026-09-15 09:09:56', '2026-09-15 09:10:05', 0, '2029-02-02'),
+(28, 5, 1, 'Batch-7', '2026-09-15', NULL, 50.00, 5.00, 52.50, 1, '2026-09-15 09:17:52', '2026-09-15 09:18:05', 0, '2030-02-02');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `inventory_alerts`
+--
+
+CREATE TABLE `inventory_alerts` (
+  `id` int(11) NOT NULL,
+  `product_id` int(11) NOT NULL,
+  `batch_id` int(11) DEFAULT NULL,
+  `alert_type` enum('low_stock','near_expiry','expired') NOT NULL,
+  `severity` enum('warning','critical') NOT NULL,
+  `message` varchar(255) NOT NULL,
+  `current_quantity` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `minimum_stock` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `expiry_date` date DEFAULT NULL,
+  `status` enum('open','resolved','dismissed') NOT NULL DEFAULT 'open',
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `updated_at` datetime DEFAULT NULL,
+  `resolved_at` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `inventory_alerts`
+--
+
+INSERT INTO `inventory_alerts` (`id`, `product_id`, `batch_id`, `alert_type`, `severity`, `message`, `current_quantity`, `minimum_stock`, `expiry_date`, `status`, `created_at`, `updated_at`, `resolved_at`) VALUES
+(388, 1, 13, 'expired', 'critical', 'Restime - Simeticone (40.00) (Batch-12) has expired and should be removed from sale.', 0.00, 0.00, '2020-02-02', 'open', '2026-09-15 09:12:08', '2026-09-15 09:12:08', NULL),
+(389, 3, 14, 'expired', 'critical', 'Amoxil - Paracetamol (500.00) (Batch-1) has expired and should be removed from sale.', 0.00, 0.00, '2026-02-02', 'open', '2026-09-15 09:12:08', '2026-09-15 09:12:08', NULL),
+(390, 3, 15, 'expired', 'critical', 'Amoxil - Paracetamol (500.00) (Batch-2) has expired and should be removed from sale.', 0.00, 0.00, '2026-08-01', 'open', '2026-09-15 09:12:08', '2026-09-15 09:12:08', NULL);
 
 -- --------------------------------------------------------
 
@@ -148,11 +198,75 @@ CREATE TABLE `inventory_disposals` (
   `id` int(11) NOT NULL,
   `product_id` int(11) NOT NULL,
   `batch_number` varchar(100) DEFAULT NULL,
-  `quantity` int(11) NOT NULL DEFAULT 0,
+  `quantity` int(11) DEFAULT 0,
   `expiry_date` date DEFAULT NULL,
   `reason` varchar(100) NOT NULL DEFAULT 'Expired',
   `disposed_at` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `inventory_disposals`
+--
+
+INSERT INTO `inventory_disposals` (`id`, `product_id`, `batch_number`, `quantity`, `expiry_date`, `reason`, `disposed_at`) VALUES
+(1, 3, 'Batch-1', 1, '2026-02-02', 'Expired', '2026-09-15 09:20:19'),
+(2, 1, 'Batch-1', 0, '2030-02-02', 'no stock', '2026-09-15 09:49:02'),
+(3, 1, 'Batch-1', 0, '2030-02-02', 'no stock', '2026-09-15 09:49:29'),
+(4, 3, 'Batch-2', 100, '2026-08-01', 'Expired', '2026-09-15 09:53:26'),
+(5, 1, 'Batch-3', 50, '2030-02-02', 'Damage', '2026-09-15 12:16:59'),
+(6, 1, 'Batch-10', 20, '2029-02-02', 'damage', '2026-09-15 12:25:20'),
+(7, 4, 'TEST-DISP-1789446972', 0, '2026-10-15', 'Expired', '2026-09-15 12:36:12'),
+(8, 1, 'Batch-3', 10, '2030-02-02', 'damaged', '2026-09-15 12:37:02'),
+(9, 1, 'Batch-8', 0, '2036-02-02', 'Expired', '2026-09-15 15:19:26'),
+(10, 1, 'Batch-3', 12, '2030-02-02', 'damages', '2026-09-15 15:35:29'),
+(11, 1, 'Batch-12', 222, '2020-02-02', 'Expired', '2026-09-15 15:50:02'),
+(12, 1, 'Batch-13', 1, '2020-02-02', 'Expired', '2026-09-15 15:50:02'),
+(13, 1, 'Batch-3', 10, '2030-02-02', 'damages', '2026-09-15 15:50:45'),
+(14, 1, 'Batch-3', 10, '2030-02-02', 'damages', '2026-09-15 16:34:35'),
+(15, 1, 'Batch-4', 10, '2035-02-02', 'damaged', '2026-09-15 16:59:06'),
+(16, 1, 'Batch-3', 10, '2030-02-02', 'dM', '2026-09-15 17:07:43');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `inventory_no_stock`
+--
+
+CREATE TABLE `inventory_no_stock` (
+  `id` int(11) NOT NULL,
+  `product_id` int(11) NOT NULL,
+  `batch_number` varchar(100) DEFAULT NULL,
+  `current_quantity` int(11) NOT NULL DEFAULT 0,
+  `received_quantity` int(11) NOT NULL DEFAULT 0,
+  `expiry_date` date DEFAULT NULL,
+  `reason` varchar(100) NOT NULL DEFAULT 'No stock',
+  `moved_at` datetime NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `inventory_no_stock`
+--
+
+INSERT INTO `inventory_no_stock` (`id`, `product_id`, `batch_number`, `current_quantity`, `received_quantity`, `expiry_date`, `reason`, `moved_at`) VALUES
+(1, 1, 'Batch-1', 0, 100, '2030-02-02', 'No stock', '2026-09-15 15:53:31'),
+(2, 1, 'Batch-1', 0, 100, '2030-02-02', 'No stock', '2026-09-15 15:54:03'),
+(3, 1, 'Batch-1', 0, 100, '2030-02-02', 'No stock', '2026-09-15 15:54:03'),
+(4, 1, 'Batch-1', 0, 100, '2030-02-02', 'No stock', '2026-09-15 15:54:04'),
+(5, 1, 'Batch-1', 0, 100, '2030-02-02', 'No stock', '2026-09-15 15:54:04'),
+(6, 1, 'Batch-1', 0, 100, '2030-02-02', 'No stock', '2026-09-15 15:54:17'),
+(7, 1, 'Batch-1', 0, 100, '2030-02-02', 'No stock', '2026-09-15 15:54:21'),
+(8, 1, 'Batch-1', 0, 100, '2030-02-02', 'No stock', '2026-09-15 15:54:24'),
+(9, 1, 'Batch-2', 0, 100, '2027-05-08', 'No stock', '2026-09-15 15:54:51'),
+(10, 2, 'Batch-1', 0, 1000, '2029-02-02', 'No stock', '2026-09-15 15:54:51'),
+(11, 4, 'Batch-1', 0, 1, '2030-02-02', 'No stock', '2026-09-15 15:54:51'),
+(12, 5, 'Batch-1', 0, 1, '2030-02-02', 'No stock', '2026-09-15 15:54:51'),
+(13, 2, 'Batch-2', 0, 1, '2029-02-02', 'No stock', '2026-09-15 15:57:05'),
+(14, 5, 'Batch-2', 0, 1, '2029-02-02', 'No stock', '2026-09-15 16:56:20'),
+(15, 5, 'Batch-3', 0, 1, '2030-02-02', 'No stock', '2026-09-15 16:58:26'),
+(16, 5, 'Batch-4', 0, 1, '2036-02-02', 'No stock', '2026-09-15 17:03:23'),
+(17, 5, 'Batch-5', 0, 1, '2036-02-02', 'No stock', '2026-09-15 17:06:04'),
+(18, 5, 'Batch-6', 0, 1, '2029-02-02', 'No stock', '2026-09-15 17:10:19'),
+(19, 5, 'Batch-7', 0, 1, '2030-02-02', 'No stock', '2026-09-15 17:18:24');
 
 -- --------------------------------------------------------
 
@@ -318,7 +432,11 @@ CREATE TABLE `products` (
 --
 
 INSERT INTO `products` (`id`, `branded_name`, `generic_name`, `strength`, `measurement_id`, `barcode`, `category_id`, `classification_id`, `units_per_package`, `imageproduct`, `is_basic_necessities`, `package_type`, `dosage_form`, `dosage_form_id`, `strength_per_quantity`, `strength_per_quantity_unit`, `is_hidden`) VALUES
-(1, 'Restime', 'Simeticone', 40.00, 2, '4807788523709', 18, NULL, 0, '6a9fa888056ce-1788848264IMG_4549.jpeg', 0, '', 'Drops', 7, 10.00, 'mL', 0);
+(1, 'Restime', 'Simeticone', 40.00, 2, '4807788523709', 18, NULL, 0, '6a9fa888056ce-1788848264IMG_4549.jpeg', 0, '', 'Drops', 7, 10.00, 'mL', 0),
+(2, '', 'chip ahoys', 65.00, 3, '427277220421', 17, NULL, 0, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, '', '', NULL, 1.00, 'pc', 0),
+(3, 'Amoxil', 'Paracetamol', 500.00, 2, '962694121724', 18, NULL, 0, '6aa7b367bb010-1789375335ChatGPT Image Sep 7, 2026, 05_27_12 PM.png', 0, '', 'Capsule', 2, 1.00, 'pcs', 0),
+(4, 'coke', 'DF', 750.00, 6, '569941321341', 27, NULL, 0, '6aa8c9a3ab9ef-178944656390cad0b147733b4e7eebebc091c701f1.jpg', 0, '', '', NULL, 1.00, 'pc', 0),
+(5, '', 'fe', 344.00, 2, '534635950872', 24, NULL, 0, '', 0, '', '', NULL, NULL, '', 0);
 
 -- --------------------------------------------------------
 
@@ -437,7 +555,9 @@ INSERT INTO `register_closings` (`id`, `user_id`, `business_date`, `system_cash`
 (2, 1, '2026-09-09', 28437.10, 28437.10, 0.00, NULL, '2026-09-10 03:37:18'),
 (3, 1, '2026-09-10', 1159.60, 1159.60, 0.00, NULL, '2026-09-10 03:38:36'),
 (4, 2, '2026-09-10', 1159.60, 1159.60, 0.00, NULL, '2026-09-10 03:45:57'),
-(5, 3, '2026-09-10', 1478.80, 1478.80, 0.00, NULL, '2026-09-10 03:47:00');
+(5, 3, '2026-09-10', 1478.80, 1478.80, 0.00, NULL, '2026-09-10 03:47:00'),
+(6, 1, '2026-09-14', 3525.10, 3525.10, 0.00, NULL, '2026-09-14 07:14:51'),
+(7, 2, '2026-09-14', 6289.25, 6289.25, 0.00, NULL, '2026-09-15 01:27:27');
 
 -- --------------------------------------------------------
 
@@ -464,7 +584,11 @@ INSERT INTO `register_openings` (`id`, `user_id`, `business_date`, `opening_cash
 (3, 1, '2026-09-10', 1000.00, NULL, '2026-09-10 03:37:32'),
 (4, 2, '2026-09-10', 1000.00, NULL, '2026-09-10 03:45:37'),
 (5, 3, '2026-09-10', 1000.00, NULL, '2026-09-10 03:46:26'),
-(6, 9, '2026-09-10', 1000.00, NULL, '2026-09-10 05:18:33');
+(6, 9, '2026-09-10', 1000.00, NULL, '2026-09-10 05:18:33'),
+(7, 1, '2026-09-14', 1000.00, NULL, '2026-09-14 06:51:24'),
+(8, 2, '2026-09-14', 1000.00, NULL, '2026-09-14 07:38:01'),
+(9, 3, '2026-09-14', 1000.00, NULL, '2026-09-14 08:27:32'),
+(10, 2, '2026-09-15', 1000.00, NULL, '2026-09-15 01:27:33');
 
 -- --------------------------------------------------------
 
@@ -485,6 +609,13 @@ CREATE TABLE `return_items` (
   `cost_of_goods` decimal(10,2) NOT NULL DEFAULT 0.00
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `return_items`
+--
+
+INSERT INTO `return_items` (`id`, `return_transaction_id`, `product_id`, `quantity`, `price`, `subtotal`, `item_type`, `restocked`, `restockable`, `cost_of_goods`) VALUES
+(1, 1, 1, 1, 37.50, 37.50, 'returned', 1, 0, 0.00);
+
 -- --------------------------------------------------------
 
 --
@@ -503,6 +634,13 @@ CREATE TABLE `return_transactions` (
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `approver_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `return_transactions`
+--
+
+INSERT INTO `return_transactions` (`id`, `original_transaction_id`, `user_id`, `refund_amount`, `replacement_product_id`, `replacement_quantity`, `reason`, `refund_method`, `created_at`, `approver_id`) VALUES
+(1, 1, 2, 37.50, NULL, 0, 'Customer Request / Change of Mind', 'Cash', '2026-09-15 16:12:00', 1);
 
 -- --------------------------------------------------------
 
@@ -543,7 +681,8 @@ CREATE TABLE `serving_unit` (
 
 INSERT INTO `serving_unit` (`id`, `serving_unit_name`) VALUES
 (2, 'mg'),
-(3, 'grams');
+(3, 'grams'),
+(6, 'ML');
 
 -- --------------------------------------------------------
 
@@ -556,6 +695,14 @@ CREATE TABLE `store_settings` (
   `setting_value` varchar(255) DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `store_settings`
+--
+
+INSERT INTO `store_settings` (`setting_key`, `setting_value`, `updated_at`) VALUES
+('receipt_paper', '80', '2026-09-14 16:19:58'),
+('statutory_discount_cap', '200.00', '2026-09-14 16:19:58');
 
 -- --------------------------------------------------------
 
@@ -628,7 +775,41 @@ INSERT INTO `transactions` (`id`, `user_id`, `discount_id`, `customer_name`, `cu
 (19, 9, 1, 'Walk-in', NULL, '', 159.60, '2026-09-10 05:19:46', 0.00, 0.00),
 (20, 9, 1, 'Walk-in', NULL, '', 478.80, '2026-09-10 05:23:17', 0.00, 0.00),
 (21, 9, 1, 'Walk-in', NULL, '', 92.98, '2026-09-10 05:26:15', 26.72, 0.00),
-(22, 9, 1, 'Walk-in', NULL, '', 153.22, '2026-09-10 05:27:35', 3.19, 0.00);
+(22, 9, 1, 'Walk-in', NULL, '', 153.22, '2026-09-10 05:27:35', 3.19, 0.00),
+(23, 1, 1, 'Walk-in', NULL, '', 159.60, '2026-09-14 06:53:59', 0.00, 0.00),
+(24, 1, 1, 'Walk-in', NULL, '', 159.60, '2026-09-14 06:54:33', 0.00, 0.00),
+(25, 1, 1, 'Walk-in', NULL, '', 319.20, '2026-09-14 06:54:44', 0.00, 0.00),
+(26, 1, 1, 'Walk-in', NULL, '', 159.60, '2026-09-14 06:54:56', 0.00, 0.00),
+(27, 1, 1, 'Walk-in', NULL, '', 159.60, '2026-09-14 06:57:43', 0.00, 0.00),
+(28, 1, 1, 'Walk-in', NULL, '', 159.60, '2026-09-14 06:57:59', 0.00, 0.00),
+(29, 1, 1, 'Walk-in', NULL, '', 159.60, '2026-09-14 06:59:24', 0.00, 0.00),
+(30, 1, 1, 'Walk-in', NULL, '', 159.60, '2026-09-14 07:00:09', 0.00, 0.00),
+(31, 1, 1, 'Walk-in', NULL, '', 159.60, '2026-09-14 07:02:49', 0.00, 0.00),
+(32, 1, 1, 'Walk-in', NULL, '', 798.00, '2026-09-14 07:08:00', 0.00, 0.00),
+(33, 1, 2, 'ANDREW PABLO', '1', 'senior', 131.10, '2026-09-14 07:09:42', 28.50, 0.00),
+(34, 2, 1, 'Walk-in', NULL, '', 1050.00, '2026-09-14 07:38:30', 0.00, 0.00),
+(35, 2, 1, 'Walk-in', NULL, '', 1050.00, '2026-09-14 07:39:14', 0.00, 0.00),
+(36, 2, 1, 'Walk-in', NULL, '', 1050.00, '2026-09-14 07:40:02', 0.00, 0.00),
+(37, 2, 2, 'ANDREW PABLO', '1', 'senior', 953.50, '2026-09-14 07:40:22', 96.50, 0.00),
+(38, 2, 2, 'ANDREW PABLO', '1', 'senior', 1050.00, '2026-09-14 07:44:00', 0.00, 0.00),
+(39, 2, 1, 'Walk-in', NULL, '', 21.00, '2026-09-14 07:50:35', 0.00, 0.00),
+(40, 2, 2, 'ANDREW PABLO', '1', 'senior', 21.00, '2026-09-14 07:51:13', 0.00, 0.00),
+(41, 2, 2, 'ANDREW PABLO', '1', 'senior', 21.00, '2026-09-14 07:52:38', 0.00, 0.00),
+(42, 2, 2, 'ANDREW PABLO', '1', 'senior', 21.00, '2026-09-14 08:03:15', 0.00, 0.00),
+(43, 2, 3, 'ANDREW PABLO', '1', 'pwd', 17.25, '2026-09-14 08:06:44', 3.75, 0.00),
+(44, 2, 3, 'ANDREW PABLO', '1', 'pwd', 17.25, '2026-09-14 08:07:22', 3.75, 0.00),
+(45, 2, 2, 'ANDREW PABLO', '1', 'senior', 17.25, '2026-09-14 08:20:26', 3.75, 0.00),
+(46, 3, 1, 'Walk-in', NULL, '', 1050.00, '2026-09-14 08:27:44', 0.00, 0.00),
+(47, 2, 1, 'Walk-in', NULL, '', 20853.00, '2026-09-15 01:27:56', 0.00, 0.00),
+(48, 2, 1, 'Walk-in', NULL, '', 26.25, '2026-09-15 04:29:50', 0.00, 0.00),
+(49, 2, 1, 'Walk-in', NULL, '', 210.00, '2026-09-15 07:20:37', 0.00, 0.00),
+(50, 2, 1, 'Walk-in', NULL, '', 52.50, '2026-09-15 07:57:01', 0.00, 0.00),
+(51, 2, 1, 'Walk-in', NULL, '', 52.50, '2026-09-15 08:55:46', 0.00, 0.00),
+(52, 2, 1, 'Walk-in', NULL, '', 52.50, '2026-09-15 08:58:03', 0.00, 0.00),
+(53, 2, 1, 'Walk-in', NULL, '', 52.50, '2026-09-15 09:02:33', 0.00, 0.00),
+(54, 2, 1, 'Walk-in', NULL, '', 52.50, '2026-09-15 09:05:52', 0.00, 0.00),
+(55, 2, 1, 'Walk-in', NULL, '', 52.50, '2026-09-15 09:10:05', 0.00, 0.00),
+(56, 2, 1, 'Walk-in', NULL, '', 52.50, '2026-09-15 09:18:05', 0.00, 0.00);
 
 -- --------------------------------------------------------
 
@@ -687,7 +868,41 @@ INSERT INTO `transaction_items` (`id`, `transaction_id`, `product_id`, `batch_id
 (19, 19, 1, 3, 1, 159.60, 159.60),
 (20, 20, 1, 3, 3, 159.60, 478.80),
 (21, 21, 1, 3, 1, 119.70, 92.98),
-(22, 22, 1, 3, 1, 156.41, 153.22);
+(22, 22, 1, 3, 1, 156.41, 153.22),
+(23, 23, 1, 3, 1, 159.60, 159.60),
+(24, 24, 1, 3, 1, 159.60, 159.60),
+(25, 25, 1, 3, 2, 159.60, 319.20),
+(26, 26, 1, 3, 1, 159.60, 159.60),
+(27, 27, 1, 3, 1, 159.60, 159.60),
+(28, 28, 1, 3, 1, 159.60, 159.60),
+(29, 29, 1, 3, 1, 159.60, 159.60),
+(30, 30, 1, 3, 1, 159.60, 159.60),
+(31, 31, 1, 3, 1, 159.60, 159.60),
+(32, 32, 1, 3, 5, 159.60, 798.00),
+(33, 33, 1, 3, 1, 159.60, 131.10),
+(34, 34, 1, 6, 1, 1050.00, 1050.00),
+(35, 35, 1, 6, 1, 1050.00, 1050.00),
+(36, 36, 1, 6, 1, 1050.00, 1050.00),
+(37, 37, 1, 6, 1, 1050.00, 953.50),
+(38, 38, 1, 6, 1, 1050.00, 1050.00),
+(39, 39, 2, 12, 1, 21.00, 21.00),
+(40, 40, 2, 12, 1, 21.00, 21.00),
+(41, 41, 2, 12, 1, 21.00, 21.00),
+(42, 42, 2, 12, 1, 21.00, 21.00),
+(43, 43, 2, 12, 1, 21.00, 17.25),
+(44, 44, 2, 12, 1, 21.00, 17.25),
+(45, 45, 2, 12, 1, 21.00, 17.25),
+(46, 46, 1, 6, 1, 1050.00, 1050.00),
+(47, 47, 2, 12, 993, 21.00, 20853.00),
+(48, 48, 4, 17, 1, 26.25, 26.25),
+(49, 49, 5, 19, 1, 210.00, 210.00),
+(50, 50, 2, 20, 1, 52.50, 52.50),
+(51, 51, 5, 23, 1, 52.50, 52.50),
+(52, 52, 5, 24, 1, 52.50, 52.50),
+(53, 53, 5, 25, 1, 52.50, 52.50),
+(54, 54, 5, 26, 1, 52.50, 52.50),
+(55, 55, 5, 27, 1, 52.50, 52.50),
+(56, 56, 5, 28, 1, 52.50, 52.50);
 
 -- --------------------------------------------------------
 
@@ -732,7 +947,41 @@ INSERT INTO `transaction_item_batches` (`id`, `transaction_item_id`, `inventory_
 (21, 19, 3, 1, 152.00, '2026-09-10 05:19:46'),
 (22, 20, 3, 3, 152.00, '2026-09-10 05:23:17'),
 (23, 21, 3, 1, 152.00, '2026-09-10 05:26:15'),
-(24, 22, 3, 1, 152.00, '2026-09-10 05:27:35');
+(24, 22, 3, 1, 152.00, '2026-09-10 05:27:35'),
+(25, 23, 3, 1, 152.00, '2026-09-14 06:53:59'),
+(26, 24, 3, 1, 152.00, '2026-09-14 06:54:33'),
+(27, 25, 3, 2, 152.00, '2026-09-14 06:54:44'),
+(28, 26, 3, 1, 152.00, '2026-09-14 06:54:56'),
+(29, 27, 3, 1, 152.00, '2026-09-14 06:57:43'),
+(30, 28, 3, 1, 152.00, '2026-09-14 06:57:59'),
+(31, 29, 3, 1, 152.00, '2026-09-14 06:59:24'),
+(32, 30, 3, 1, 152.00, '2026-09-14 07:00:09'),
+(33, 31, 3, 1, 152.00, '2026-09-14 07:02:49'),
+(34, 32, 3, 5, 152.00, '2026-09-14 07:08:00'),
+(35, 33, 3, 1, 152.00, '2026-09-14 07:09:42'),
+(36, 34, 6, 1, 2000.00, '2026-09-14 07:38:30'),
+(37, 35, 6, 1, 2000.00, '2026-09-14 07:39:14'),
+(38, 36, 6, 1, 2000.00, '2026-09-14 07:40:02'),
+(39, 37, 6, 1, 2000.00, '2026-09-14 07:40:22'),
+(40, 38, 6, 1, 2000.00, '2026-09-14 07:44:00'),
+(41, 39, 12, 1, 20.00, '2026-09-14 07:50:35'),
+(42, 40, 12, 1, 20.00, '2026-09-14 07:51:13'),
+(43, 41, 12, 1, 20.00, '2026-09-14 07:52:38'),
+(44, 42, 12, 1, 20.00, '2026-09-14 08:03:15'),
+(45, 43, 12, 1, 20.00, '2026-09-14 08:06:44'),
+(46, 44, 12, 1, 20.00, '2026-09-14 08:07:22'),
+(47, 45, 12, 1, 20.00, '2026-09-14 08:20:26'),
+(48, 46, 6, 1, 2000.00, '2026-09-14 08:27:44'),
+(49, 47, 12, 993, 20.00, '2026-09-15 01:27:56'),
+(50, 48, 17, 1, 25.00, '2026-09-15 04:29:50'),
+(51, 49, 19, 1, 200.00, '2026-09-15 07:20:37'),
+(52, 50, 20, 1, 50.00, '2026-09-15 07:57:01'),
+(53, 51, 23, 1, 50.00, '2026-09-15 08:55:46'),
+(54, 52, 24, 1, 50.00, '2026-09-15 08:58:03'),
+(55, 53, 25, 1, 50.00, '2026-09-15 09:02:33'),
+(56, 54, 26, 1, 50.00, '2026-09-15 09:05:52'),
+(57, 55, 27, 1, 50.00, '2026-09-15 09:10:05'),
+(58, 56, 28, 1, 50.00, '2026-09-15 09:18:05');
 
 -- --------------------------------------------------------
 
@@ -873,12 +1122,26 @@ ALTER TABLE `inventory`
   ADD KEY `idx_date_received` (`date_received`);
 
 --
+-- Indexes for table `inventory_alerts`
+--
+ALTER TABLE `inventory_alerts`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_inventory_alerts_status` (`status`,`alert_type`),
+  ADD KEY `idx_inventory_alerts_product_batch` (`product_id`,`batch_id`);
+
+--
 -- Indexes for table `inventory_disposals`
 --
 ALTER TABLE `inventory_disposals`
   ADD PRIMARY KEY (`id`),
   ADD KEY `idx_inventory_disposals_product` (`product_id`),
   ADD KEY `idx_inventory_disposals_expiry` (`expiry_date`);
+
+--
+-- Indexes for table `inventory_no_stock`
+--
+ALTER TABLE `inventory_no_stock`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `inventory_transactions`
@@ -1085,13 +1348,25 @@ ALTER TABLE `dosage_forms`
 -- AUTO_INCREMENT for table `inventory`
 --
 ALTER TABLE `inventory`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
+
+--
+-- AUTO_INCREMENT for table `inventory_alerts`
+--
+ALTER TABLE `inventory_alerts`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=391;
 
 --
 -- AUTO_INCREMENT for table `inventory_disposals`
 --
 ALTER TABLE `inventory_disposals`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+
+--
+-- AUTO_INCREMENT for table `inventory_no_stock`
+--
+ALTER TABLE `inventory_no_stock`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT for table `inventory_transactions`
@@ -1133,7 +1408,7 @@ ALTER TABLE `pre_approved_users_info`
 -- AUTO_INCREMENT for table `products`
 --
 ALTER TABLE `products`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `product_categories`
@@ -1151,25 +1426,25 @@ ALTER TABLE `pwd_customers`
 -- AUTO_INCREMENT for table `register_closings`
 --
 ALTER TABLE `register_closings`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `register_openings`
 --
 ALTER TABLE `register_openings`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `return_items`
 --
 ALTER TABLE `return_items`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `return_transactions`
 --
 ALTER TABLE `return_transactions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `senior_customers`
@@ -1181,7 +1456,7 @@ ALTER TABLE `senior_customers`
 -- AUTO_INCREMENT for table `serving_unit`
 --
 ALTER TABLE `serving_unit`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `suppliers`
@@ -1193,7 +1468,7 @@ ALTER TABLE `suppliers`
 -- AUTO_INCREMENT for table `transactions`
 --
 ALTER TABLE `transactions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=57;
 
 --
 -- AUTO_INCREMENT for table `transaction_batch_allocations`
@@ -1205,13 +1480,13 @@ ALTER TABLE `transaction_batch_allocations`
 -- AUTO_INCREMENT for table `transaction_items`
 --
 ALTER TABLE `transaction_items`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=57;
 
 --
 -- AUTO_INCREMENT for table `transaction_item_batches`
 --
 ALTER TABLE `transaction_item_batches`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=59;
 
 --
 -- AUTO_INCREMENT for table `unit_measurement`

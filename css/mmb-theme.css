@@ -1381,6 +1381,11 @@ table.dataTable.dtr-column > tbody > tr > td.dtr-control {
     overflow: auto;
 }
 
+.mmb-alert-row-focus > td {
+    background-color: #fef3c7 !important;
+    transition: background-color 0.25s ease;
+}
+
 .mmb-table-scroll thead th {
     position: sticky;
     top: 0;

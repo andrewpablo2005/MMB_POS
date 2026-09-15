@@ -6,9 +6,18 @@ use Classes\ProductManagement;
 
 $inventoryManager = new ProductManagement($db);
 $inventoryBatches = $inventoryManager->getAllInventoryBatches();
+$inventoryBatchSequence = $inventoryManager->getAllInventoryBatchNumbersForSequence();
 $disposedBatches = $inventoryManager->getDisposedBatches();
+$noStockBatches = $inventoryManager->getNoStockBatches();
 $returnedProducts = $inventoryManager->getReturnedProducts();
 $products = $inventoryManager->getAllProducts();
+
+if ($inventoryManager->moveNoStockBatch()) {
+    echo "<script>setTimeout(function(){ window.location.href = 'dashboard.php?tab=inventory&inventory_tab=no-stock&success=no-stock'; }, 10);</script>";
+    exit;
+} elseif (isset($_POST['moveNoStockBatch'])) {
+    $inventoryErrorMessage = $inventoryManager->getResponse() ?: 'Unable to move empty batch to no-stock history.';
+}
 
 usort($inventoryBatches, static function (array $first, array $second): int {
     return ((int) ($first['id'] ?? 0)) <=> ((int) ($second['id'] ?? 0));
@@ -23,7 +32,7 @@ if ($inventoryManager->addInventoryBatch()) {
 }
 
 if ($inventoryManager->disposeInventoryBatch()) {
-    echo "<script>setTimeout(function(){ window.location.href = 'dashboard.php?tab=inventory&success=disposed'; }, 10);</script>";
+    echo "<script>setTimeout(function(){ window.location.href = 'dashboard.php?tab=inventory&inventory_tab=disposed&success=disposed'; }, 10);</script>";
     exit;
 }
 
@@ -32,6 +41,8 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
     $inventorySuccessMessage = 'New batch added successfully.';
 } elseif (isset($_GET['success']) && $_GET['success'] === 'disposed') {
     $inventorySuccessMessage = 'Inventory batch disposed successfully.';
+} elseif (isset($_GET['success']) && $_GET['success'] === 'no-stock') {
+    $inventorySuccessMessage = 'Batch moved to the No Stock table successfully.';
 }
 ?>
 <div class="card shadow-sm">
@@ -51,7 +62,10 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
                 <h4>Inventory Management</h4>
                 <p class="page-sub">Manage current stock batches and review disposed or expired inventory.</p>
             </div>
-            <div class="d-flex gap-2">
+            <div class="d-flex gap-2 flex-wrap">
+                <button class="btn btn-outline-warning" data-bs-toggle="modal" data-bs-target="#moveNoStockModal">
+                    Move No Stock
+                </button>
                 <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#disposeBatchModal">
                     Dispose Batch
                 </button>
@@ -70,6 +84,11 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
             <li class="nav-item" role="presentation">
                 <button class="nav-link" id="disposed-inventory-tab" data-bs-toggle="tab" data-bs-target="#disposed-inventory-pane" type="button" role="tab" aria-controls="disposed-inventory-pane" aria-selected="false">
                     Disposed / Expired
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="no-stock-tab" data-bs-toggle="tab" data-bs-target="#no-stock-pane" type="button" role="tab" aria-controls="no-stock-pane" aria-selected="false">
+                    No Stock
                 </button>
             </li>
             <li class="nav-item" role="presentation">
@@ -93,7 +112,7 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
             <table id="currentInventoryTable" class="table table-striped table-hover align-middle w-100 mmb-stack inventory-data-table">
                 <thead class="table-dark">
                     <tr>
-                        <th>Batch ID</th>
+                        
                         <th>Batch No.</th>
                         <th>Product</th>
                         <th>Category</th>
@@ -111,13 +130,10 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
                         <?php foreach ($inventoryBatches as $batch): ?>
                             <?php
                                 $batchNumber = trim((string) ($batch['batch_number'] ?? ''));
-                                if ($batchNumber === '') {
-                                    continue;
-                                }
                             ?>
-                            <tr>
-                                <td data-label="Batch ID"><?= htmlspecialchars($batch['id']) ?></td>
-                                <td data-label="Batch No."><?= htmlspecialchars($batchNumber) ?></td>
+                            <tr data-product-id="<?= (int)($batch['product_id'] ?? 0) ?>" data-batch-id="<?= (int)($batch['id'] ?? 0) ?>">
+                                
+                                <td data-label="Batch No."><?= htmlspecialchars($batchNumber !== '' ? $batchNumber : 'N/A') ?></td>
                                 <td data-label="Product">
                                     <div class="d-flex align-items-center">
                                         <?php if (!empty(trim((string)($batch['imageproduct'] ?? '')))): ?>
@@ -159,7 +175,8 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
             <table id="disposedInventoryTable" class="table table-sm table-bordered align-middle w-100 mmb-stack inventory-data-table">
                 <thead class="table-secondary">
                     <tr>
-                        <th>Dispose ID</th>
+                        <th>ID</th>
+                        <th>Batch No.</th>
                         <th>Product</th>
                         <th>Quantity</th>
                         <th>Expiry</th>
@@ -170,12 +187,13 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
                 <tbody>
                     <?php if (empty($disposedBatches)): ?>
                         <tr>
-                            <td colspan="6" class="text-center text-muted py-4">No disposed or expired inventory found.</td>
+                            <td colspan="7" class="text-center text-muted py-4">No disposed or expired inventory found.</td>
                         </tr>
                     <?php else: ?>
                         <?php foreach ($disposedBatches as $disposed): ?>
                             <tr>
-                                <td data-label="Dispose ID"><?= htmlspecialchars($disposed['id']) ?></td>
+                                <td data-label="ID"><?= htmlspecialchars($disposed['id']) ?></td>
+                                <td data-label="Batch No."><?= htmlspecialchars($disposed['batch_number'] ?: 'N/A') ?></td>
                                 <td data-label="Product">
                                     <div class="d-flex align-items-center">
                                         <?php if (!empty(trim((string)($disposed['imageproduct'] ?? '')))): ?>
@@ -206,6 +224,65 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
             </table>
         </div>
 
+            </div>
+
+            <div class="tab-pane fade" id="no-stock-pane" role="tabpanel" aria-labelledby="no-stock-tab" tabindex="0">
+            <h5 class="mb-3">No Stock Batches</h5>
+            <div class="inventory-report-toolbar d-flex flex-wrap align-items-center gap-2 mb-2" data-table-target="noStockTable">
+                <label class="mb-0" for="noStockSearch">Search:</label>
+                <input type="search" id="noStockSearch" class="form-control form-control-sm inventory-search" placeholder="Search no-stock batches..." style="max-width:260px;">
+                <button type="button" class="btn btn-sm btn-secondary inventory-copy">Copy</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary inventory-excel">Excel</button>
+                <button type="button" class="btn btn-sm btn-danger inventory-pdf">PDF</button>
+                <button type="button" class="btn btn-sm btn-outline-dark inventory-print">Print</button>
+            </div>
+            <div class="table-responsive mmb-table-scroll">
+            <table id="noStockTable" class="table table-sm table-bordered align-middle w-100 mmb-stack inventory-data-table">
+                <thead class="table-warning">
+                    <tr>
+                        <th>ID</th>
+                        <th>Batch No.</th>
+                        <th>Product</th>
+                        <th>Current Qty</th>
+                        <th>Received Qty</th>
+                        <th>Expiry</th>
+                        <th>Reason</th>
+                        <th>Moved At</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if (empty($noStockBatches)): ?>
+                        <tr>
+                            <td colspan="8" class="text-center text-muted py-4">No zero-stock batches have been moved here yet.</td>
+                        </tr>
+                    <?php else: ?>
+                        <?php foreach ($noStockBatches as $batch): ?>
+                            <tr>
+                                <td data-label="ID"><?= htmlspecialchars($batch['id']) ?></td>
+                                <td data-label="Batch No."><?= htmlspecialchars($batch['batch_number'] ?: 'N/A') ?></td>
+                                <td data-label="Product">
+                                    <div class="d-flex align-items-center">
+                                        <?php if (!empty(trim((string)($batch['imageproduct'] ?? '')))): ?>
+                                            <span class="mmb-thumb mmb-thumb--md">
+                                                <img src="../img/<?= htmlspecialchars($batch['imageproduct'], ENT_QUOTES, 'UTF-8') ?>" alt="" loading="lazy">
+                                            </span>
+                                        <?php else: ?>
+                                            <span class="mmb-thumb mmb-thumb--md mmb-thumb--empty"><i class="fas fa-capsules"></i></span>
+                                        <?php endif; ?>
+                                        <span><?= htmlspecialchars(trim(($batch['branded_name'] ?? '') . ' ' . ($batch['generic_name'] ?? '') . ' ' . ($batch['strength'] ?? '') . ' ' . ($batch['measurement_name'] ?? ''))) ?></span>
+                                    </div>
+                                </td>
+                                <td data-label="Current Qty"><?= htmlspecialchars((string) ($batch['current_quantity'] ?? 0)) ?></td>
+                                <td data-label="Received Qty"><?= htmlspecialchars((string) ($batch['received_quantity'] ?? 0)) ?></td>
+                                <td data-label="Expiry"><?= htmlspecialchars($batch['expiry_date'] ?: 'N/A') ?></td>
+                                <td data-label="Reason"><?= htmlspecialchars($batch['reason'] ?? 'No stock') ?></td>
+                                <td data-label="Moved At"><?= htmlspecialchars($batch['moved_at'] ?? 'N/A') ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
             </div>
 
             <div class="tab-pane fade" id="returned-products-pane" role="tabpanel" aria-labelledby="returned-products-tab" tabindex="0">
@@ -277,6 +354,7 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
                                     <table class="table table-sm table-borderless align-middle mb-0 return-detail-table">
                                         <thead>
                                             <tr>
+                                                <th>ID</th>
                                                 <th>Return Tx</th>
                                                 <th>Original Tx</th>
                                                 <th>Qty</th>
@@ -290,6 +368,7 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
                                         <tbody>
                                             <?php foreach ($g['items'] as $return): ?>
                                                 <tr>
+                                                    <td>#<?= htmlspecialchars($return['id']) ?></td>
                                                     <td>#<?= htmlspecialchars($return['return_transaction_id']) ?></td>
                                                     <td>#<?= htmlspecialchars($return['original_transaction_id']) ?></td>
                                                     <td><?= htmlspecialchars(($return['quantity'] ?? 0)) ?></td>
@@ -409,6 +488,74 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
                 printInventoryTable(table, toolbar.dataset.tableTarget + ' Report');
             });
         });
+
+        const inventoryTabs = document.getElementById('inventoryTabs');
+        const inventoryTabTargets = {
+            current: 'current-inventory-tab',
+            disposed: 'disposed-inventory-tab',
+            'no-stock': 'no-stock-tab',
+            returned: 'returned-products-tab'
+        };
+        const inventoryTabParams = new URLSearchParams(window.location.search);
+        const requestedInventoryTab = inventoryTabParams.get('inventory_tab');
+
+        if (inventoryTabs && window.bootstrap) {
+            inventoryTabs.addEventListener('shown.bs.tab', function (event) {
+                const selectedTab = Object.keys(inventoryTabTargets).find(function (key) {
+                    return inventoryTabTargets[key] === event.target.id;
+                });
+                if (!selectedTab) return;
+
+                const url = new URL(window.location.href);
+                url.searchParams.set('inventory_tab', selectedTab);
+                window.history.replaceState(null, '', url.pathname + url.search + url.hash);
+            });
+
+            const requestedTabId = inventoryTabTargets[requestedInventoryTab];
+            const requestedTab = requestedTabId ? document.getElementById(requestedTabId) : null;
+            if (requestedTab) {
+                bootstrap.Tab.getOrCreateInstance(requestedTab).show();
+            }
+        }
+
+        const alertParams = new URLSearchParams(window.location.search);
+        const alertProductId = alertParams.get('alert_product_id');
+        const alertBatchId = alertParams.get('alert_batch_id');
+        if (alertProductId || alertBatchId) {
+            const currentTab = document.getElementById('current-inventory-tab');
+            if (currentTab && window.bootstrap) {
+                bootstrap.Tab.getOrCreateInstance(currentTab).show();
+            }
+
+            const currentTable = document.getElementById('currentInventoryTable');
+            if (currentTable && window.jQuery && $.fn.DataTable.isDataTable(currentTable)) {
+                const dataTable = $(currentTable).DataTable();
+                $(currentTable).on('draw.dt.alertFocus', function () {
+                    const selector = alertBatchId
+                        ? 'tbody tr[data-batch-id="' + CSS.escape(alertBatchId) + '"]'
+                        : 'tbody tr[data-product-id="' + CSS.escape(alertProductId) + '"]';
+                    const row = currentTable.querySelector(selector);
+                    if (!row) return;
+                    row.classList.add('mmb-alert-row-focus');
+                    row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    setTimeout(function () { row.classList.remove('mmb-alert-row-focus'); }, 3000);
+                    $(currentTable).off('draw.dt.alertFocus');
+                });
+                const matchingIndexes = [];
+                dataTable.rows().every(function () {
+                    const row = this.node();
+                    const matchesBatch = alertBatchId && row && row.dataset.batchId === alertBatchId;
+                    const matchesProduct = !alertBatchId && alertProductId && row && row.dataset.productId === alertProductId;
+                    if (matchesBatch || matchesProduct) {
+                        matchingIndexes.push(this.index());
+                    }
+                });
+                if (matchingIndexes.length) {
+                    const firstIndex = dataTable.rows().indexes().toArray().indexOf(matchingIndexes[0]);
+                    dataTable.page(Math.floor(firstIndex / dataTable.page.len())).draw(false);
+                }
+            }
+        }
     }());
 </script>
 
@@ -682,27 +829,27 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
                 const selectedOption = this.options[this.selectedIndex];
                 const availableQuantity = parseInt(selectedOption?.dataset.currentQuantity || '0', 10);
 
-                disposeQuantityInput.value = '';
+                disposeQuantityInput.value = String(availableQuantity <= 0 ? 0 : '');
                 disposeQuantityInput.max = String(Math.max(0, availableQuantity));
-                disposeQuantityInput.disabled = availableQuantity <= 0;
+                disposeQuantityInput.disabled = false;
                 disposeQuantityInput.setCustomValidity('');
 
                 if (disposeQuantityHelp) {
                     disposeQuantityHelp.textContent = availableQuantity > 0
                         ? `Maximum quantity to dispose: ${availableQuantity}`
-                        : 'This batch has no available stock.';
+                        : 'This batch has no available stock. You can still record a 0-unit disposal for this empty batch.';
                 }
             });
 
             disposeQuantityInput.addEventListener('input', function () {
                 const maximum = parseInt(this.max || '0', 10);
                 const enteredQuantity = parseInt(this.value || '0', 10);
-                this.setCustomValidity(enteredQuantity > maximum ? `Quantity cannot exceed ${maximum}.` : '');
+                const safeMax = Number.isFinite(maximum) ? maximum : 0;
+                this.setCustomValidity(enteredQuantity > safeMax ? `Quantity cannot exceed ${safeMax}.` : '');
             });
         }
 
-        // Dispose confirmation (issue #4 item 6) — branded dialog instead of
-        // a browser confirm(); applies to the Dispose Batch modal submit.
+        // Dispose confirmation — manual archive action for expired or unusable stock.
         const disposeForm = document.querySelector('#disposeBatchModal form');
         if (disposeForm) {
             disposeForm.addEventListener('submit', function (event) {
@@ -715,16 +862,42 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
                 const batchLabel = (select && select.selectedIndex > 0)
                     ? select.options[select.selectedIndex].text
                     : 'the selected batch';
+                const reasonInput = document.getElementById('dispose_reason');
+                const reason = reasonInput && reasonInput.value.trim() ? reasonInput.value.trim() : 'Disposed';
 
                 mmbConfirm({
-                    title: 'Dispose inventory?',
-                    message: 'You are about to dispose ' + qty + ' unit(s) of ' + batchLabel + '.\n\nDisposed stock is permanently removed and cannot be restored.',
-                    okLabel: 'Yes, dispose',
+                    title: 'Move expired or unusable batch to disposed history?',
+                    message: 'You are manually moving ' + batchLabel + ' into the Disposed / Expired archive.\n\nQuantity to record: ' + qty + ' unit(s).\nReason: ' + reason + '.\n\nThis batch will be archived and removed from active inventory. This action is permanent and should only be used for expired, damaged, or unusable stock.',
+                    okLabel: 'Yes, move to disposed',
                     danger: true
                 }).then(function (yes) {
                     if (!yes) return;
                     disposeForm.dataset.confirmed = '1';
                     disposeForm.submit();
+                });
+            });
+        }
+
+        const noStockForm = document.querySelector('#moveNoStockModal form');
+        if (noStockForm) {
+            noStockForm.addEventListener('submit', function (event) {
+                if (noStockForm.dataset.confirmed === '1') return;
+                event.preventDefault();
+
+                const select = document.getElementById('move_no_stock_inventory_id');
+                const batchLabel = (select && select.selectedIndex > 0)
+                    ? select.options[select.selectedIndex].text
+                    : 'the selected batch';
+
+                mmbConfirm({
+                    title: 'Move empty batch to No Stock history?',
+                    message: 'You are manually archiving ' + batchLabel + ' as a zero-stock batch.\n\nThis batch is empty and will be moved to No Stock history. It will no longer appear in active inventory and should only be used when the product has no remaining stock.',
+                    okLabel: 'Yes, move to No Stock',
+                    danger: false
+                }).then(function (yes) {
+                    if (!yes) return;
+                    noStockForm.dataset.confirmed = '1';
+                    noStockForm.submit();
                 });
             });
         }
@@ -760,6 +933,7 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
         const productIdInput = document.getElementById('batch_product_id');
         const batchNumberInput = document.getElementById('batch_number');
         const inventoryBatches = <?= json_encode($inventoryBatches, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT) ?>;
+        const inventoryBatchSequence = <?= json_encode($inventoryBatchSequence, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT) ?>;
 
         const showNextBatchNumber = (productId) => {
             if (!batchNumberInput) return;
@@ -772,7 +946,7 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
             }
 
             let highestBatchNumber = 0;
-            inventoryBatches.forEach((batch) => {
+            inventoryBatchSequence.forEach((batch) => {
                 if (Number(batch.product_id) !== selectedProductId) return;
 
                 const match = String(batch.batch_number || '').trim().match(/^batch-(\d+)$/i);
@@ -1010,6 +1184,42 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
     </div>
 </div>
 
+<div class="modal fade" id="moveNoStockModal" tabindex="-1" aria-labelledby="moveNoStockModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="POST">
+                <input type="hidden" name="moveNoStockBatch" value="1">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="moveNoStockModalLabel">Move Zero-Stock Batch</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="move_no_stock_inventory_id" class="form-label">Batch with no stock</label>
+                        <select id="move_no_stock_inventory_id" name="inventory_id" class="form-select" required>
+                            <option value="">Select batch</option>
+                            <?php foreach ($inventoryBatches as $batch): ?>
+                                <?php if ((int)($batch['current_quantity'] ?? 0) <= 0): ?>
+                                    <option value="<?= (int)($batch['id'] ?? 0) ?>">
+                                        <?= htmlspecialchars(trim(($batch['branded_name'] ?? '') . ' ' . ($batch['generic_name'] ?? ''))) ?> - Qty: 0 - Batch: <?= htmlspecialchars($batch['batch_number'] ?: 'N/A') ?>
+                                    </option>
+                                <?php endif; ?>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="alert alert-warning small mb-0">
+                        Manual archive action: this selected empty batch will be moved to the No Stock history and will no longer appear in active inventory.
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-warning">Move to No Stock</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <div class="modal fade" id="disposeBatchModal" tabindex="-1" aria-labelledby="disposeBatchModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -1033,12 +1243,15 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
                     </div>
                     <div class="mb-3">
                         <label for="dispose_quantity" class="form-label">Quantity to Dispose</label>
-                        <input type="number" id="dispose_quantity" name="quantity" class="form-control" min="1" required disabled>
+                        <input type="number" id="dispose_quantity" name="quantity" class="form-control" min="0" step="1" value="0" required>
                         <div id="dispose_quantity_help" class="form-text">Select a batch first.</div>
                     </div>
                     <div class="mb-3">
                         <label for="dispose_reason" class="form-label">Reason</label>
                         <input type="text" id="dispose_reason" name="reason" class="form-control" placeholder="e.g. Expired, Damaged" value="Expired">
+                    </div>
+                    <div class="alert alert-danger small mb-0">
+                        Manual archive action: this batch will be moved to Disposed / Expired history. Use this only for expired, damaged, or otherwise unusable stock.
                     </div>
                 </div>
                 <div class="modal-footer">

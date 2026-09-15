@@ -2,8 +2,8 @@
 
 namespace Classes;
 
-require_once "../conn/database.php";
-require_once "file_upload.php";
+require_once __DIR__ . '/../conn/database.php';
+require_once __DIR__ . '/file_upload.php';
 
 class ProductManagement
 {
@@ -48,21 +48,41 @@ class ProductManagement
         return (int)$stmt->fetchColumn() > 0;
     }
     
+    private function tableExists(string $tableName): bool
+    {
+        $stmt = $this->con->prepare("SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ?");
+        $stmt->execute([$tableName]);
+        return (int) $stmt->fetchColumn() > 0;
+    }
+
     private function generateBatchNumber(int $productId): string
     {
-        $stmt = $this->con->prepare("SELECT batch_number FROM inventory WHERE product_id = ? FOR UPDATE");
-        $stmt->execute([$productId]);
+        $tables = ['inventory'];
+        if ($this->tableExists('inventory_no_stock')) {
+            $tables[] = 'inventory_no_stock';
+        }
+        if ($this->tableExists('inventory_disposals')) {
+            $tables[] = 'inventory_disposals';
+        }
 
         $highestNumber = 0;
         $existingNames = [];
-        while ($row = $stmt->fetch()) {
-            $existingName = trim((string) ($row['batch_number'] ?? ''));
-            if ($existingName !== '') {
-                $existingNames[strtolower($existingName)] = true;
-            }
 
-            if (preg_match('/^batch-(\d+)$/i', $existingName, $matches)) {
-                $highestNumber = max($highestNumber, (int) $matches[1]);
+        foreach ($tables as $tableName) {
+            $stmt = $this->con->prepare("SELECT batch_number FROM " . $tableName . " WHERE product_id = ?");
+            $stmt->execute([$productId]);
+
+            while ($row = $stmt->fetch()) {
+                $existingName = trim((string) ($row['batch_number'] ?? ''));
+                if ($existingName === '') {
+                    continue;
+                }
+
+                $existingNames[strtolower($existingName)] = true;
+
+                if (preg_match('/^batch-(\d+)$/i', $existingName, $matches)) {
+                    $highestNumber = max($highestNumber, (int) $matches[1]);
+                }
             }
         }
 
@@ -542,7 +562,101 @@ class ProductManagement
         return $products;
     }
 
+    public function moveExpiredBatchesToDisposed(): int
+    {
+        $selectStmt = $this->con->prepare(
+            "SELECT id, product_id, batch_number, current_quantity, expiry_date FROM inventory WHERE expiry_date IS NOT NULL AND TRIM(expiry_date) <> '' AND expiry_date < CURDATE() FOR UPDATE"
+        );
+        $selectStmt->execute();
+        $expiredBatches = $selectStmt->fetchAll();
+
+        if (empty($expiredBatches)) {
+            return 0;
+        }
+
+        $insertStmt = $this->con->prepare(
+            "INSERT INTO inventory_disposals (product_id, batch_number, quantity, expiry_date, reason, disposed_at) VALUES (?, ?, ?, ?, ?, NOW())"
+        );
+        $updateStmt = $this->con->prepare("UPDATE inventory SET current_quantity = 0 WHERE id = ?");
+
+        $processed = 0;
+        foreach ($expiredBatches as $batch) {
+            $batchId = (int) ($batch['id'] ?? 0);
+            $productId = (int) ($batch['product_id'] ?? 0);
+            $quantity = max((int) ($batch['current_quantity'] ?? 0), 0);
+            $expiryDate = $batch['expiry_date'] ?? null;
+            $batchNumber = $batch['batch_number'] ?? null;
+
+            $insertStmt->execute([
+                $productId,
+                $batchNumber,
+                $quantity,
+                $expiryDate,
+                'Expired'
+            ]);
+
+            $updateStmt->execute([$batchId]);
+            $processed++;
+        }
+
+        return $processed;
+    }
+
     public function getAllInventoryBatches(): array
+    {
+        $this->ensureInventoryNoStockTable();
+
+        $sql = "
+            SELECT 
+                i.id,
+                i.batch_number,
+                i.product_id,
+                p.generic_name,
+                p.branded_name,
+                p.imageproduct,
+                p.strength,
+                p.measurement_id,
+                COALESCE(um.serving_unit_name, '') AS measurement_name,
+                p.category_id,
+                pc.category_name,
+                p.barcode,
+                i.supplier_id,
+                COALESCE(s.supplier_name, 'N/A') AS supplier_name,
+                i.purchase_cost,
+                i.markup,
+                i.sale_price,
+                i.current_quantity,
+                i.received_quantity,
+                i.date_received,
+                i.expiry_date
+            FROM inventory i
+            LEFT JOIN products p ON p.id = i.product_id
+            LEFT JOIN product_categories pc ON p.category_id = pc.id
+            LEFT JOIN serving_unit um ON um.id = p.measurement_id
+            LEFT JOIN suppliers s ON i.supplier_id = s.id
+                        WHERE NOT EXISTS (
+                                SELECT 1
+                                FROM inventory_no_stock n
+                                WHERE n.product_id = i.product_id
+                                    AND n.batch_number <=> i.batch_number
+                                    AND n.expiry_date <=> i.expiry_date
+                        )
+            ORDER BY p.generic_name ASC,
+                     CASE
+                         WHEN i.batch_number REGEXP '^Batch-[0-9]+$' THEN 0
+                         ELSE 1
+                     END ASC,
+                     CAST(SUBSTRING_INDEX(i.batch_number, '-', -1) AS UNSIGNED) ASC,
+                     i.expiry_date ASC,
+                     i.id ASC
+        ";
+
+        $stmt = $this->con->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+
+    public function getInventoryBatchesForArchiveSelection(): array
     {
         $sql = "
             SELECT 
@@ -572,12 +686,170 @@ class ProductManagement
             LEFT JOIN product_categories pc ON p.category_id = pc.id
             LEFT JOIN serving_unit um ON um.id = p.measurement_id
             LEFT JOIN suppliers s ON i.supplier_id = s.id
-            ORDER BY p.generic_name ASC, i.expiry_date ASC, i.id ASC
+            ORDER BY p.generic_name ASC,
+                     CASE
+                         WHEN i.batch_number REGEXP '^Batch-[0-9]+$' THEN 0
+                         ELSE 1
+                     END ASC,
+                     CAST(SUBSTRING_INDEX(i.batch_number, '-', -1) AS UNSIGNED) ASC,
+                     i.expiry_date ASC,
+                     i.id ASC
         ";
 
         $stmt = $this->con->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll();
+    }
+
+    public function getAllInventoryBatchNumbersForSequence(): array
+    {
+        $sql = "
+            SELECT id, product_id, batch_number
+            FROM inventory
+            WHERE batch_number IS NOT NULL
+              AND TRIM(batch_number) <> ''
+            ORDER BY id ASC
+        ";
+
+        $stmt = $this->con->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+
+    public function ensureInventoryNoStockTable(): void
+    {
+        $this->con->exec("
+            CREATE TABLE IF NOT EXISTS inventory_no_stock (
+                id INT NOT NULL AUTO_INCREMENT,
+                product_id INT NOT NULL,
+                batch_number VARCHAR(100) DEFAULT NULL,
+                current_quantity INT NOT NULL DEFAULT 0,
+                received_quantity INT NOT NULL DEFAULT 0,
+                expiry_date DATE DEFAULT NULL,
+                reason VARCHAR(100) NOT NULL DEFAULT 'No stock',
+                moved_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP(),
+                PRIMARY KEY (id)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
+        ");
+    }
+
+    public function moveZeroStockBatchesToNoStock(): int
+    {
+        $this->ensureInventoryNoStockTable();
+
+        $selectStmt = $this->con->prepare(
+            "SELECT id, product_id, batch_number, current_quantity, received_quantity, expiry_date FROM inventory WHERE current_quantity <= 0 FOR UPDATE"
+        );
+        $selectStmt->execute();
+        $zeroStockBatches = $selectStmt->fetchAll();
+
+        if (empty($zeroStockBatches)) {
+            return 0;
+        }
+
+        $checkStmt = $this->con->prepare(
+            "SELECT 1 FROM inventory_no_stock WHERE product_id = ? AND batch_number = ? AND expiry_date <=> ? LIMIT 1"
+        );
+        $insertStmt = $this->con->prepare(
+            "INSERT INTO inventory_no_stock (product_id, batch_number, current_quantity, received_quantity, expiry_date, reason, moved_at) VALUES (?, ?, ?, ?, ?, ?, NOW())"
+        );
+        $updateStmt = $this->con->prepare("UPDATE inventory SET current_quantity = 0 WHERE id = ?");
+
+        $processed = 0;
+        foreach ($zeroStockBatches as $batch) {
+            $batchId = (int) ($batch['id'] ?? 0);
+            $productId = (int) ($batch['product_id'] ?? 0);
+            $currentQuantity = max((int) ($batch['current_quantity'] ?? 0), 0);
+            $receivedQuantity = max((int) ($batch['received_quantity'] ?? 0), 0);
+            $expiryDate = $batch['expiry_date'] ?? null;
+            $batchNumber = $batch['batch_number'] ?? null;
+
+            $checkStmt->execute([$productId, $batchNumber, $expiryDate]);
+            if ($checkStmt->fetchColumn()) {
+                $updateStmt->execute([$batchId]);
+                continue;
+            }
+
+            $insertStmt->execute([
+                $productId,
+                $batchNumber,
+                $currentQuantity,
+                $receivedQuantity,
+                $expiryDate,
+                'No stock'
+            ]);
+
+            $updateStmt->execute([$batchId]);
+            $processed++;
+        }
+
+        return $processed;
+    }
+
+    public function moveNoStockBatch(): bool
+    {
+        if (!isset($_POST['moveNoStockBatch'])) {
+            return false;
+        }
+
+        $inventoryId = (int) ($_POST['inventory_id'] ?? 0);
+        if ($inventoryId <= 0) {
+            $this->response = "Invalid inventory batch";
+            return false;
+        }
+
+        try {
+            $this->con->beginTransaction();
+            $this->ensureInventoryNoStockTable();
+
+            $batchStmt = $this->con->prepare("SELECT id, product_id, batch_number, current_quantity, received_quantity, expiry_date FROM inventory WHERE id = ? FOR UPDATE");
+            $batchStmt->execute([$inventoryId]);
+            $batch = $batchStmt->fetch();
+
+            if (!$batch) {
+                $this->con->rollBack();
+                $this->response = "Inventory batch not found";
+                return false;
+            }
+
+            if ((int) ($batch['current_quantity'] ?? 0) > 0) {
+                $this->con->rollBack();
+                $this->response = "Only batches with zero stock can be moved to no-stock history.";
+                return false;
+            }
+
+            $checkStmt = $this->con->prepare(
+                "SELECT 1 FROM inventory_no_stock WHERE product_id = ? AND batch_number = ? AND expiry_date <=> ? LIMIT 1"
+            );
+            $checkStmt->execute([
+                (int) ($batch['product_id'] ?? 0),
+                $batch['batch_number'] ?? null,
+                $batch['expiry_date'] ?? null
+            ]);
+
+            if (!$checkStmt->fetchColumn()) {
+                $insertStmt = $this->con->prepare("INSERT INTO inventory_no_stock (product_id, batch_number, current_quantity, received_quantity, expiry_date, reason, moved_at) VALUES (?, ?, ?, ?, ?, ?, NOW())");
+                $insertStmt->execute([
+                    (int) ($batch['product_id'] ?? 0),
+                    $batch['batch_number'] ?? null,
+                    max((int) ($batch['current_quantity'] ?? 0), 0),
+                    max((int) ($batch['received_quantity'] ?? 0), 0),
+                    $batch['expiry_date'] ?? null,
+                    'No stock'
+                ]);
+            }
+
+            $this->con->prepare("UPDATE inventory SET current_quantity = 0 WHERE id = ?")->execute([$inventoryId]);
+            $this->con->commit();
+            $this->response = "Zero-stock batch moved to no-stock table successfully";
+            return true;
+        } catch (\Exception $e) {
+            if ($this->con->inTransaction()) {
+                $this->con->rollBack();
+            }
+            $this->response = "Failed to move zero-stock batch: " . $e->getMessage();
+            return false;
+        }
     }
 
     public function getDisposedBatches(): array
@@ -604,7 +876,42 @@ class ProductManagement
             LEFT JOIN products p ON p.id = d.product_id
             LEFT JOIN product_categories pc ON p.category_id = pc.id
             LEFT JOIN serving_unit um ON um.id = p.measurement_id
-            ORDER BY d.disposed_at DESC, p.generic_name ASC, d.id ASC
+            ORDER BY d.id ASC, p.generic_name ASC
+        ";
+
+        $stmt = $this->con->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+
+    public function getNoStockBatches(): array
+    {
+        $this->ensureInventoryNoStockTable();
+
+        $sql = "
+            SELECT 
+                n.id,
+                n.batch_number,
+                n.product_id,
+                p.generic_name,
+                p.branded_name,
+                p.imageproduct,
+                p.strength,
+                p.measurement_id,
+                COALESCE(um.serving_unit_name, '') AS measurement_name,
+                p.category_id,
+                pc.category_name,
+                p.barcode,
+                n.current_quantity,
+                n.received_quantity,
+                n.expiry_date,
+                n.reason,
+                n.moved_at
+            FROM inventory_no_stock n
+            LEFT JOIN products p ON p.id = n.product_id
+            LEFT JOIN product_categories pc ON p.category_id = pc.id
+            LEFT JOIN serving_unit um ON um.id = p.measurement_id
+            ORDER BY n.id ASC, p.generic_name ASC
         ";
 
         $stmt = $this->con->prepare($sql);
@@ -638,7 +945,7 @@ class ProductManagement
             JOIN return_transactions rt ON ri.return_transaction_id = rt.id
             LEFT JOIN products p ON ri.product_id = p.id
             LEFT JOIN serving_unit um ON um.id = p.measurement_id
-            ORDER BY rt.created_at DESC, ri.id DESC
+            ORDER BY ri.id ASC, rt.created_at DESC
         ";
 
         $stmt = $this->con->prepare($sql);
@@ -991,7 +1298,7 @@ class ProductManagement
         $quantity = (int) ($_POST['quantity'] ?? 0);
         $reason = trim($_POST['reason'] ?? 'Disposed');
 
-        if ($inventoryId <= 0 || $quantity <= 0) {
+        if ($inventoryId <= 0 || $quantity < 0) {
             $this->response = "Invalid inventory batch or quantity";
             return false;
         }
@@ -1010,15 +1317,23 @@ class ProductManagement
             }
 
             $availableQty = (int) ($batch['current_quantity'] ?? 0);
-            if ($quantity > $availableQty) {
+            if ($availableQty > 0 && $quantity > $availableQty) {
                 $this->con->rollBack();
                 $this->response = "Disposal quantity exceeds available stock";
                 return false;
             }
 
-            if ($quantity === $availableQty) {
-                $this->con->prepare("DELETE FROM inventory WHERE id = ?")->execute([$inventoryId]);
-            } else {
+            if ($availableQty <= 0 && $quantity > 0) {
+                $this->con->rollBack();
+                $this->response = "This batch has no current stock available to dispose. Use 0 quantity to record an empty-batch disposal.";
+                return false;
+            }
+
+            if ($availableQty <= 0) {
+                $this->con->prepare("UPDATE inventory SET current_quantity = 0 WHERE id = ?")->execute([$inventoryId]);
+            } elseif ($quantity === $availableQty) {
+                $this->con->prepare("UPDATE inventory SET current_quantity = 0 WHERE id = ?")->execute([$inventoryId]);
+            } elseif ($quantity > 0) {
                 $this->con->prepare("UPDATE inventory SET current_quantity = current_quantity - ? WHERE id = ?")->execute([$quantity, $inventoryId]);
             }
 
@@ -1203,6 +1518,8 @@ class ProductManagement
 
             if ($expDate <= $today) {
                 $items[] = [
+                    'product_id' => (int) ($batch['product_id'] ?? 0),
+                    'batch_id' => (int) ($batch['id'] ?? 0),
                     'name' => $displayName,
                     'status' => 'Expired',
                     'days_left' => 0,
@@ -1210,6 +1527,8 @@ class ProductManagement
                 ];
             } elseif ($daysLeft <= 60 && !$interval->invert) {
                 $items[] = [
+                    'product_id' => (int) ($batch['product_id'] ?? 0),
+                    'batch_id' => (int) ($batch['id'] ?? 0),
                     'name' => $displayName,
                     'status' => 'Near Expiry',
                     'days_left' => $daysLeft,

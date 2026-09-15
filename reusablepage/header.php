@@ -26,7 +26,8 @@ foreach ($lowStockItems as $item) {
         'title' => 'Low Stock',
         'message' => htmlspecialchars($item['product_name']) . ' has only ' . ($item['quantity'] ?? 0) . ' unit(s) left.',
         'icon' => 'fas fa-exclamation-triangle',
-        'bg' => '#f59e0b'
+        'bg' => '#f59e0b',
+        'href' => 'dashboard.php?tab=inventory&alert_product_id=' . (int)$item['id'] . '&alert_type=low-stock'
     ];
 }
 
@@ -39,7 +40,8 @@ foreach ($expiryItems as $item) {
         'title' => $item['status'] === 'Expired' ? 'Expired Item' : 'Near Expiry',
         'message' => $message,
         'icon' => $item['status'] === 'Expired' ? 'fas fa-times-circle' : 'fas fa-clock',
-        'bg' => $item['status'] === 'Expired' ? '#dc2626' : '#d97706'
+    'bg' => $item['status'] === 'Expired' ? '#dc2626' : '#d97706',
+    'href' => 'dashboard.php?tab=inventory&alert_product_id=' . (int)$item['product_id'] . '&alert_batch_id=' . (int)($item['batch_id'] ?? 0) . '&alert_type=expiry'
     ];
 }
 
@@ -123,7 +125,7 @@ foreach ($expiryItems as $item) {
         <div id="globalAlertList" class="collapse show">
             <div class="bg-light border-top notification-scroll">
                 <?php foreach ($globalAlertItems as $alert): ?>
-                    <div class="alert-item d-flex align-items-start gap-2 px-3 py-3 border-bottom bg-white">
+                    <a href="<?= htmlspecialchars($alert['href'], ENT_QUOTES, 'UTF-8') ?>" class="alert-item d-flex align-items-start gap-2 px-3 py-3 border-bottom bg-white text-decoration-none">
                         <span class="d-inline-flex align-items-center justify-content-center rounded-circle text-white"
                               style="width: 28px; height: 28px; background: <?= $alert['bg'] ?>; font-size: 0.72rem; flex-shrink: 0;">
                             <i class="<?= $alert['icon'] ?>"></i>
@@ -138,7 +140,7 @@ foreach ($expiryItems as $item) {
                             </div>
                         </div>
 
-                    </div>
+                    </a>
                 <?php endforeach; ?>
             </div>
         </div>
