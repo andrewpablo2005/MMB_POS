@@ -4,6 +4,7 @@ session_start();
 
 try {
     require_once __DIR__ . '/../conn/database.php';
+    require_once __DIR__ . '/../conn/activity_log.php'; // audit trail (Task 42)
     $db = Database::getConnection();
 
     if (empty($_SESSION['user_id']) || !in_array(strtolower((string) ($_SESSION['position'] ?? '')), ['owner', 'admin'], true)) {
@@ -41,10 +42,17 @@ try {
 
     $stmt = $db->prepare('INSERT INTO dosage_forms (form_name) VALUES (?)');
     $stmt->execute([$normalized]);
+    $newFormId = (int) $db->lastInsertId();
+
+    // AUDIT (Task 42)
+    mmb_log_activity($db, 'products', 'dosage_form_add',
+        "Added product form '{$normalized}'",
+        'dosage_form', $newFormId);
+
     echo json_encode([
         'success' => true,
         'message' => 'Product form saved successfully.',
-        'id' => (int) $db->lastInsertId(),
+        'id' => $newFormId,
         'name' => $normalized
     ]);
 } catch (PDOException $e) {

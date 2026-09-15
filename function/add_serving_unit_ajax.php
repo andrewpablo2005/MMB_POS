@@ -4,6 +4,7 @@ session_start();
 
 try {
     require_once __DIR__ . '/../conn/database.php';
+    require_once __DIR__ . '/../conn/activity_log.php'; // audit trail (Task 42)
     $db = Database::getConnection();
     if (empty($_SESSION['user_id']) || !in_array(strtolower((string) ($_SESSION['position'] ?? '')), ['owner', 'admin'], true)) {
         http_response_code(403);
@@ -31,7 +32,14 @@ try {
     }
     $stmt = $db->prepare('INSERT INTO serving_unit (serving_unit_name) VALUES (?)');
     $stmt->execute([$name]);
-    echo json_encode(['success' => true, 'message' => 'Serving unit saved successfully.', 'id' => (int) $db->lastInsertId(), 'name' => $name]);
+    $newUnitId = (int) $db->lastInsertId();
+
+    // AUDIT (Task 42)
+    mmb_log_activity($db, 'products', 'serving_unit_add',
+        "Added serving unit '{$name}'",
+        'serving_unit', $newUnitId);
+
+    echo json_encode(['success' => true, 'message' => 'Serving unit saved successfully.', 'id' => $newUnitId, 'name' => $name]);
 } catch (PDOException $e) {
     http_response_code(500);
     echo json_encode(['success' => false, 'message' => 'Database error: ' . $e->getMessage()]);

@@ -4,6 +4,7 @@ session_start();
 
 try {
     require_once __DIR__ . '/../conn/database.php';
+    require_once __DIR__ . '/../conn/activity_log.php'; // audit trail (Task 42)
     $db = Database::getConnection();
 
     if (empty($_SESSION['user_id']) || !in_array(strtolower((string) ($_SESSION['position'] ?? '')), ['owner', 'admin'], true)) {
@@ -41,10 +42,17 @@ try {
         !empty($_POST['pwd_discount']) ? 1 : 0
     ]);
 
+    $newCategoryId = (int) $db->lastInsertId();
+
+    // AUDIT (Task 42)
+    mmb_log_activity($db, 'products', 'category_add',
+        "Added category '{$name}'",
+        'category', $newCategoryId);
+
     echo json_encode([
         'success' => true,
         'message' => 'Category added successfully.',
-        'id' => (int) $db->lastInsertId()
+        'id' => $newCategoryId
     ]);
 } catch (PDOException $e) {
     http_response_code(500);

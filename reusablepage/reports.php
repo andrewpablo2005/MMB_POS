@@ -56,6 +56,49 @@ $accountValue = $_GET['account_value'] ?? date('Y-m-d');
 $accountReport = $report->getAccountActivityReport($accountPeriod, $accountValue, 0);
 $accountActivityRows = $accountReport['rows'];
 $registerClosings = $report->getRegisterClosings();
+
+// =========================================================
+// ACTIVITY LOGS (audit trail) — Task 42
+// =========================================================
+require_once __DIR__ . '/../conn/activity_log.php';
+mmb_activity_log_ensure_table($db);
+$activityLogFilters = [
+    'username'  => trim((string)($_GET['alog_user'] ?? '')),
+    'action'    => trim((string)($_GET['alog_action'] ?? '')),
+    'module'    => trim((string)($_GET['alog_module'] ?? '')),
+    'date_from' => trim((string)($_GET['alog_from'] ?? '')),
+    'date_to'   => trim((string)($_GET['alog_to'] ?? '')),
+];
+$activityLogPage = isset($_GET['alog_page']) ? max(1, (int)$_GET['alog_page']) : 1;
+$activityLogsData = $report->getActivityLogs($activityLogFilters, $activityLogPage, 50);
+$activityLogRows = $activityLogsData['rows'];
+$activityLogUsers = $report->getActivityLogUsers();
+$activityLogSummary = $report->getActivityLogSummary();
+
+/** Build a pagination link that preserves all active activity-log filters. */
+function alog_page_url(int $page): string
+{
+    $q = $_GET;
+    $q['tab'] = 'reports';
+    $q['alog_page'] = $page;
+    unset($q['detail_cashier'], $q['detail_period'], $q['detail_value']);
+    return '?' . http_build_query($q);
+}
+
+/** Bootstrap badge color for an activity action. */
+function alog_badge(string $action): string
+{
+    if (preg_match('/(_delete|_failed|_blocked|_rejected|disposal)/', $action)) {
+        return 'danger';
+    }
+    if (preg_match('/(_add|_open|_completed|_approved|^login$|^user_registration$)/', $action)) {
+        return 'success';
+    }
+    if (preg_match('/(_update|_close|_processed)/', $action)) {
+        return 'warning';
+    }
+    return 'secondary';
+}
 $detailGrossTotal = 0.0;
 $detailDiscountTotal = 0.0;
 $detailVatTotal = 0.0;
@@ -158,6 +201,20 @@ foreach ($salesDetailRows as $detailRow) {
                         <div>All Account Activity</div>
                         <div class="summary-value"><?= count($accountActivityRows) ?></div>
                         <small class="text-muted">Accounts and transactions processed</small>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-xl-4">
+                    <div class="card shadow-sm summary-card" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#activityLogsModal">
+                        <div>Activity Logs</div>
+                        <div class="summary-value"><?= (int) $activityLogSummary['today_count'] ?></div>
+                        <small class="text-muted">
+                            <?php if (!empty($activityLogSummary['last_activity'])): ?>
+                                Actions today &middot; last <?= date('M j, g:i A', strtotime((string)$activityLogSummary['last_activity'])) ?>
+                            <?php else: ?>
+                                Full audit trail &mdash; who did what, when
+                            <?php endif; ?>
+                        </small>
                     </div>
                 </div>
             </div>
@@ -928,6 +985,181 @@ foreach ($salesDetailRows as $detailRow) {
             </div>
         </div>
     </div>
+
+    <!-- ACTIVITY LOGS MODAL (audit trail) — Task 42 -->
+    <div class="modal fade" id="activityLogsModal" tabindex="-1" aria-labelledby="activityLogsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-fullscreen-lg-down">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="activityLogsModalLabel">Activity Log Report</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
+                    <p class="text-muted small mb-3">
+                        Full audit trail of the system &mdash; who logged in at which time, and every add, edit,
+                        delete, sale, return, and settings change recorded with user, timestamp, and IP address.
+                    </p>
+
+                    <form method="GET" id="activityLogFilterForm" class="row g-2 align-items-end mb-3">
+                        <input type="hidden" name="tab" value="reports">
+                        <div class="col-6 col-md-2">
+                            <label for="alog_user" class="form-label">User</label>
+                            <select id="alog_user" name="alog_user" class="form-select">
+                                <option value="">All users</option>
+                                <?php foreach ($activityLogUsers as $alogUser): ?>
+                                    <option value="<?= htmlspecialchars($alogUser, ENT_QUOTES, 'UTF-8') ?>"
+                                        <?= $activityLogFilters['username'] === $alogUser ? 'selected' : '' ?>>
+                                        <?= htmlspecialchars($alogUser, ENT_QUOTES, 'UTF-8') ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div class="col-6 col-md-2">
+                            <label for="alog_module" class="form-label">Module</label>
+                            <select id="alog_module" name="alog_module" class="form-select">
+                                <option value="">All modules</option>
+                                <?php foreach (['auth' => 'Authentication', 'products' => 'Products', 'inventory' => 'Inventory', 'sales' => 'Sales', 'users' => 'Users', 'settings' => 'Settings'] as $alogMod => $alogModLabel): ?>
+                                    <option value="<?= $alogMod ?>" <?= $activityLogFilters['module'] === $alogMod ? 'selected' : '' ?>><?= $alogModLabel ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div class="col-12 col-md-3">
+                            <label for="alog_action" class="form-label">Action</label>
+                            <select id="alog_action" name="alog_action" class="form-select">
+                                <option value="">All actions</option>
+                                <optgroup label="Authentication">
+                                    <option value="login" <?= $activityLogFilters['action'] === 'login' ? 'selected' : '' ?>>Sign-in</option>
+                                    <option value="login_failed" <?= $activityLogFilters['action'] === 'login_failed' ? 'selected' : '' ?>>Failed sign-in</option>
+                                    <option value="login_blocked" <?= $activityLogFilters['action'] === 'login_blocked' ? 'selected' : '' ?>>Blocked sign-in</option>
+                                    <option value="logout" <?= $activityLogFilters['action'] === 'logout' ? 'selected' : '' ?>>Sign-out</option>
+                                    <option value="password_reset_requested" <?= $activityLogFilters['action'] === 'password_reset_requested' ? 'selected' : '' ?>>Password reset requested</option>
+                                    <option value="password_reset_completed" <?= $activityLogFilters['action'] === 'password_reset_completed' ? 'selected' : '' ?>>Password reset completed</option>
+                                </optgroup>
+                                <optgroup label="Products">
+                                    <option value="product_add" <?= $activityLogFilters['action'] === 'product_add' ? 'selected' : '' ?>>Product added</option>
+                                    <option value="product_update" <?= $activityLogFilters['action'] === 'product_update' ? 'selected' : '' ?>>Product updated</option>
+                                    <option value="product_delete" <?= $activityLogFilters['action'] === 'product_delete' ? 'selected' : '' ?>>Product deleted</option>
+                                    <option value="category_add,category_update,category_delete" <?= $activityLogFilters['action'] === 'category_add,category_update,category_delete' ? 'selected' : '' ?>>Category changes</option>
+                                    <option value="supplier_add" <?= $activityLogFilters['action'] === 'supplier_add' ? 'selected' : '' ?>>Supplier added</option>
+                                    <option value="dosage_form_add,dosage_form_delete" <?= $activityLogFilters['action'] === 'dosage_form_add,dosage_form_delete' ? 'selected' : '' ?>>Product form changes</option>
+                                    <option value="measurement_add" <?= $activityLogFilters['action'] === 'measurement_add' ? 'selected' : '' ?>>Measurement added</option>
+                                    <option value="serving_unit_add,serving_unit_delete" <?= $activityLogFilters['action'] === 'serving_unit_add,serving_unit_delete' ? 'selected' : '' ?>>Serving unit changes</option>
+                                </optgroup>
+                                <optgroup label="Inventory">
+                                    <option value="stock_update" <?= $activityLogFilters['action'] === 'stock_update' ? 'selected' : '' ?>>Stock updated</option>
+                                    <option value="batch_add" <?= $activityLogFilters['action'] === 'batch_add' ? 'selected' : '' ?>>Batch added</option>
+                                    <option value="batch_disposal" <?= $activityLogFilters['action'] === 'batch_disposal' ? 'selected' : '' ?>>Batch disposed</option>
+                                </optgroup>
+                                <optgroup label="Sales">
+                                    <option value="sale_completed" <?= $activityLogFilters['action'] === 'sale_completed' ? 'selected' : '' ?>>Sale completed</option>
+                                    <option value="return_processed" <?= $activityLogFilters['action'] === 'return_processed' ? 'selected' : '' ?>>Return processed</option>
+                                    <option value="register_open" <?= $activityLogFilters['action'] === 'register_open' ? 'selected' : '' ?>>Register opened</option>
+                                    <option value="register_close" <?= $activityLogFilters['action'] === 'register_close' ? 'selected' : '' ?>>Register closed</option>
+                                </optgroup>
+                                <optgroup label="Users">
+                                    <option value="user_add" <?= $activityLogFilters['action'] === 'user_add' ? 'selected' : '' ?>>User created</option>
+                                    <option value="user_update" <?= $activityLogFilters['action'] === 'user_update' ? 'selected' : '' ?>>User updated</option>
+                                    <option value="user_delete" <?= $activityLogFilters['action'] === 'user_delete' ? 'selected' : '' ?>>User deleted</option>
+                                    <option value="user_status_change" <?= $activityLogFilters['action'] === 'user_status_change' ? 'selected' : '' ?>>User enabled/disabled</option>
+                                    <option value="user_registration" <?= $activityLogFilters['action'] === 'user_registration' ? 'selected' : '' ?>>Registration submitted</option>
+                                    <option value="user_registration_rejected" <?= $activityLogFilters['action'] === 'user_registration_rejected' ? 'selected' : '' ?>>Registration rejected</option>
+                                    <option value="user_approved" <?= $activityLogFilters['action'] === 'user_approved' ? 'selected' : '' ?>>Registration approved</option>
+                                </optgroup>
+                                <optgroup label="Settings">
+                                    <option value="settings_update" <?= $activityLogFilters['action'] === 'settings_update' ? 'selected' : '' ?>>Store settings changed</option>
+                                </optgroup>
+                            </select>
+                        </div>
+                        <div class="col-6 col-md-2">
+                            <label for="alog_from" class="form-label">From</label>
+                            <input type="date" id="alog_from" name="alog_from" class="form-control" value="<?= htmlspecialchars($activityLogFilters['date_from'], ENT_QUOTES, 'UTF-8') ?>">
+                        </div>
+                        <div class="col-6 col-md-2">
+                            <label for="alog_to" class="form-label">To</label>
+                            <input type="date" id="alog_to" name="alog_to" class="form-control" value="<?= htmlspecialchars($activityLogFilters['date_to'], ENT_QUOTES, 'UTF-8') ?>">
+                        </div>
+                        <div class="col-12 col-md-1 d-grid">
+                            <button type="submit" class="btn btn-primary">Filter</button>
+                        </div>
+                    </form>
+
+                    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2">
+                        <div class="text-muted small">
+                            <?= (int) $activityLogsData['total'] ?> total entries
+                            <?php if ($activityLogsData['pages'] > 1): ?>
+                                &middot; page <?= (int) $activityLogsData['page'] ?> of <?= (int) $activityLogsData['pages'] ?>
+                            <?php endif; ?>
+                        </div>
+                        <div class="btn-group btn-group-sm" role="group" aria-label="Activity log pagination">
+                            <?php if ($activityLogsData['page'] > 1): ?>
+                                <a class="btn btn-outline-secondary" href="<?= htmlspecialchars(alog_page_url($activityLogsData['page'] - 1), ENT_QUOTES, 'UTF-8') ?>#activityLogsModal">&laquo; Newer</a>
+                            <?php else: ?>
+                                <button class="btn btn-outline-secondary" disabled>&laquo; Newer</button>
+                            <?php endif; ?>
+                            <?php if ($activityLogsData['page'] < $activityLogsData['pages']): ?>
+                                <a class="btn btn-outline-secondary" href="<?= htmlspecialchars(alog_page_url($activityLogsData['page'] + 1), ENT_QUOTES, 'UTF-8') ?>#activityLogsModal">Older &raquo;</a>
+                            <?php else: ?>
+                                <button class="btn btn-outline-secondary" disabled>Older &raquo;</button>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover table-sm align-middle">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Timestamp</th>
+                                    <th>User</th>
+                                    <th>Role</th>
+                                    <th>Module</th>
+                                    <th>Action</th>
+                                    <th>Details</th>
+                                    <th>IP Address</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php if (empty($activityLogRows)): ?>
+                                    <tr>
+                                        <td colspan="7" class="text-center text-muted py-4">
+                                            No activity recorded yet for this filter. Perform actions in the system
+                                            (sign in, add products, make a sale) and they will appear here.
+                                        </td>
+                                    </tr>
+                                <?php else: ?>
+                                    <?php foreach ($activityLogRows as $alogRow): ?>
+                                        <tr>
+                                            <td style="white-space: nowrap;"><small><?= date('M j, Y g:i:s A', strtotime((string)($alogRow['created_at'] ?? ''))) ?></small></td>
+                                            <td>
+                                                <?php if (!empty($alogRow['username'])): ?>
+                                                    <strong><?= htmlspecialchars((string)$alogRow['username'], ENT_QUOTES, 'UTF-8') ?></strong>
+                                                <?php else: ?>
+                                                    <span class="text-muted">system / guest</span>
+                                                <?php endif; ?>
+                                            </td>
+                                            <td>
+                                                <?php if (!empty($alogRow['role'])): ?>
+                                                    <span class="badge bg-secondary"><?= htmlspecialchars(ucfirst((string)$alogRow['role']), ENT_QUOTES, 'UTF-8') ?></span>
+                                                <?php else: ?>
+                                                    &mdash;
+                                                <?php endif; ?>
+                                            </td>
+                                            <td><small><?= htmlspecialchars(ucfirst((string)($alogRow['module'] ?? '')), ENT_QUOTES, 'UTF-8') ?></small></td>
+                                            <td><span class="badge bg-<?= alog_badge((string)($alogRow['action'] ?? '')) ?>"><?= htmlspecialchars((string)($alogRow['action'] ?? ''), ENT_QUOTES, 'UTF-8') ?></span></td>
+                                            <td><small><?= htmlspecialchars((string)($alogRow['description'] ?? ''), ENT_QUOTES, 'UTF-8') ?></small></td>
+                                            <td><small class="text-muted"><?= htmlspecialchars((string)($alogRow['ip_address'] ?? ''), ENT_QUOTES, 'UTF-8') ?: '&mdash;' ?></small></td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer" style="background: #f8f9fa;">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
     </div><!-- End of .container -->
 
     <!-- Initialize DataTable Export on modals -->
@@ -1174,6 +1406,18 @@ foreach ($salesDetailRows as $detailRow) {
                 const accountActivityModal = document.getElementById('cashierModal');
                 if (accountActivityModal && window.bootstrap) {
                     bootstrap.Modal.getOrCreateInstance(accountActivityModal).show();
+                }
+            }
+            // Activity Logs (Task 42): re-open the modal after filter/pagination navigation
+            if (reportUrl.searchParams.has('alog_page')
+                || reportUrl.searchParams.has('alog_user')
+                || reportUrl.searchParams.has('alog_action')
+                || reportUrl.searchParams.has('alog_module')
+                || reportUrl.searchParams.has('alog_from')
+                || reportUrl.searchParams.has('alog_to')) {
+                const activityLogsModal = document.getElementById('activityLogsModal');
+                if (activityLogsModal && window.bootstrap) {
+                    bootstrap.Modal.getOrCreateInstance(activityLogsModal).show();
                 }
             }
 

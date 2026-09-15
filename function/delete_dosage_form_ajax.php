@@ -4,6 +4,7 @@ session_start();
 
 try {
     require_once __DIR__ . '/../conn/database.php';
+    require_once __DIR__ . '/../conn/activity_log.php'; // audit trail (Task 42)
     $db = Database::getConnection();
     if (empty($_SESSION['user_id']) || !in_array(strtolower((string) ($_SESSION['position'] ?? '')), ['owner', 'admin'], true)) {
         http_response_code(403);
@@ -42,6 +43,12 @@ try {
 
     $deleteStmt = $db->prepare('DELETE FROM dosage_forms WHERE id = ?');
     $deleteStmt->execute([$id]);
+
+    // AUDIT (Task 42)
+    mmb_log_activity($db, 'products', 'dosage_form_delete',
+        "Deleted product form '{$name}'",
+        'dosage_form', $id);
+
     echo json_encode(['success' => true, 'message' => 'Product form deleted successfully.']);
 } catch (PDOException $e) {
     http_response_code(500);

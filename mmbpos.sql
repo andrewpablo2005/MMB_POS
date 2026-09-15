@@ -24,6 +24,29 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `activity_logs`
+--
+-- Audit trail: who did what, when, from where (Task 42).
+-- Created automatically by conn/activity_log.php on first use.
+
+CREATE TABLE `activity_logs` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  `username` varchar(155) DEFAULT NULL,
+  `role` varchar(20) DEFAULT NULL,
+  `module` varchar(30) NOT NULL DEFAULT 'system',
+  `action` varchar(40) NOT NULL DEFAULT 'unknown',
+  `entity_type` varchar(30) DEFAULT NULL,
+  `entity_id` int(11) DEFAULT NULL,
+  `description` varchar(500) DEFAULT NULL,
+  `ip_address` varchar(45) DEFAULT NULL,
+  `user_agent` varchar(255) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `discounts`
 --
 
@@ -846,6 +869,16 @@ INSERT INTO `users_info` (`id`, `user_id`, `firstname`, `middlename`, `lastname`
 --
 
 --
+-- Indexes for table `activity_logs`
+--
+ALTER TABLE `activity_logs`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_activity_created` (`created_at`),
+  ADD KEY `idx_activity_user` (`user_id`),
+  ADD KEY `idx_activity_action` (`action`),
+  ADD KEY `idx_activity_module` (`module`);
+
+--
 -- Indexes for table `discounts`
 --
 ALTER TABLE `discounts`
@@ -1068,6 +1101,12 @@ ALTER TABLE `users_info`
 --
 -- AUTO_INCREMENT for dumped tables
 --
+
+--
+-- AUTO_INCREMENT for table `activity_logs`
+--
+ALTER TABLE `activity_logs`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `discounts`

@@ -2,6 +2,7 @@
 require_once __DIR__ . '/guard.php';
 guard_require_roles(['owner', 'admin']);
 require_once __DIR__ . '/../conn/database.php';
+require_once __DIR__ . '/../conn/activity_log.php'; // audit trail (Task 42)
 
 $storeSettingsMessage = null;
 $receiptPaper = '80';
@@ -46,6 +47,11 @@ try {
             $saveStmt->execute(['statutory_discount_cap', number_format($postedCap, 2, '.', '')]);
             $receiptPaper = $postedPaper;
             $statutoryDiscountCap = number_format($postedCap, 2, '.', '');
+
+            // AUDIT (Task 42)
+            mmb_log_activity($db, 'settings', 'settings_update',
+                "Updated store settings — receipt paper: {$postedPaper}mm, weekly discount limit: " . number_format($postedCap, 2) . " PHP");
+
             $storeSettingsMessage = ['type' => 'success', 'text' => 'Store settings saved successfully.'];
         }
     }

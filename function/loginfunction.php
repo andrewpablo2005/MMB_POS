@@ -5,6 +5,7 @@ namespace Classes;
 // PDO DB
 require_once __DIR__ . "/../conn/database.php"; //yours is Database.php
 require_once __DIR__ . "/../conn/basepath.php"; // URL base path (root or subfolder deploys)
+require_once __DIR__ . "/../conn/activity_log.php"; // audit trail (Task 42)
 
 global $db; // Make $db accessible
 
@@ -34,6 +35,9 @@ class Project
             $lastAttempt = strtotime($attemptData['last_attempt']);
 
             if ((time() - $lastAttempt) < 300) {
+                mmb_log_activity($this->con, 'auth', 'login_blocked',
+                    "Sign-in blocked (IP rate limit) for username '" . mb_substr($username, 0, 100) . "'",
+                    '', null, ['user_id' => null, 'username' => $username, 'role' => 'guest']);
                 return "Too many attempts. Try again later.";
             }
         }
@@ -53,6 +57,9 @@ class Project
                 $lastAttempt = strtotime($user['last_attempt']);
 
                 if ((time() - $lastAttempt) < 300) {
+                    mmb_log_activity($this->con, 'auth', 'login_blocked',
+                        "Sign-in blocked (account lock) for username '" . mb_substr($username, 0, 100) . "'",
+                        '', null, ['user_id' => (int)$user['id'], 'username' => $user['username'], 'role' => strtolower($user['position'])]);
                     return "Too many attempts. Try again later.";
                 }
             }
@@ -82,6 +89,12 @@ class Project
                 $_SESSION['user_id'] = $user['id'];
                 $_SESSION['username'] = $user['username'];
                 $_SESSION['position'] = $user['position'];
+
+                // AUDIT: successful sign-in — who logged in at which time (Task 42)
+                mmb_log_activity($this->con, 'auth', 'login',
+                    "Signed in successfully (" . $position . ")",
+                    'user', (int)$user['id'],
+                    ['user_id' => (int)$user['id'], 'username' => $user['username'], 'role' => $position]);
 
                 if ($position === 'owner') {
                     header('Location: ' . mmbpos_base_path() . '/ownerpage/dashboard.php');
@@ -117,6 +130,11 @@ class Project
                     $insertIP->execute([$ip]);
                 }
 
+                // AUDIT: wrong password for an existing account (Task 42)
+                mmb_log_activity($this->con, 'auth', 'login_failed',
+                    "Failed sign-in (wrong password) for username '" . mb_substr($username, 0, 100) . "'",
+                    '', null, ['user_id' => null, 'username' => $username, 'role' => 'guest']);
+
                 return "Invalid username or password";
             }
         }
@@ -137,6 +155,11 @@ class Project
                 $insertIP = $this->con->prepare("INSERT INTO login_attempts (ip_address, attempts, last_attempt) VALUES (?, 1, NOW())");
                 $insertIP->execute([$ip]);
             }
+
+            // AUDIT: unknown username attempted (Task 42)
+            mmb_log_activity($this->con, 'auth', 'login_failed',
+                "Failed sign-in (unknown username) for '" . mb_substr($username, 0, 100) . "'",
+                '', null, ['user_id' => null, 'username' => $username, 'role' => 'guest']);
 
             return "Invalid username or password";
         }
