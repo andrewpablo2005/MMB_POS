@@ -157,6 +157,14 @@ foreach ($expiryGroups as $group) {
         </button>
 
         <div id="globalAlertList" class="collapse show">
+            <div class="px-3 py-2 bg-white border-top">
+                <label for="globalAlertSearch" class="visually-hidden">Search notifications</label>
+                <div class="input-group input-group-sm">
+                    <span class="input-group-text bg-light border-end-0"><i class="fas fa-search text-muted" aria-hidden="true"></i></span>
+                    <input type="search" id="globalAlertSearch" class="form-control border-start-0 bg-light"
+                           placeholder="Search notifications..." autocomplete="off">
+                </div>
+            </div>
             <div class="bg-light border-top notification-scroll">
                 <?php foreach ($globalAlertItems as $alertIndex => $alert): ?>
                     <div class="alert-item border-bottom bg-white">
@@ -198,6 +206,9 @@ foreach ($expiryGroups as $group) {
                     <?php endif; ?>
                     </div>
                 <?php endforeach; ?>
+                <div id="globalAlertNoResults" class="text-center text-muted px-3 py-4" hidden>
+                    No matching notifications.
+                </div>
             </div>
         </div>
     </div>
@@ -212,8 +223,36 @@ foreach ($expiryGroups as $group) {
         const chevron = alertToggler ? alertToggler.querySelector('.toggle-chevron i') : null;
         const countText = document.getElementById('globalAlertCount');
         const headerBell = document.getElementById('headerAlertBell');
+        const alertSearch = document.getElementById('globalAlertSearch');
+        const alertNoResults = document.getElementById('globalAlertNoResults');
         const alertStorageKey = 'mmbDismissedGlobalAlertSignature';
         const alertSignature = alertWidget ? alertWidget.dataset.alertSignature : '';
+
+        function getTotalAlertCount() {
+            return document.querySelectorAll('#globalAlertList .alert-item').length;
+        }
+
+        function filterNotifications() {
+            if (!alertSearch) return;
+            const query = alertSearch.value.trim().toLowerCase();
+            let visibleCount = 0;
+
+            document.querySelectorAll('#globalAlertList .alert-item').forEach(function (item) {
+                const matches = query === '' || item.textContent.toLowerCase().includes(query);
+                item.hidden = !matches;
+                if (matches) visibleCount++;
+            });
+
+            if (alertNoResults) {
+                alertNoResults.hidden = visibleCount !== 0 || query === '';
+            }
+            if (countText) {
+                const totalAlertCount = getTotalAlertCount();
+                countText.textContent = query === ''
+                    ? totalAlertCount + ' item' + (totalAlertCount > 1 ? 's' : '')
+                    : visibleCount + ' of ' + totalAlertCount + ' matching';
+            }
+        }
 
         function updateAlertToggleUI() {
             if (!alertToggler || !alertList || !chevron) return;
@@ -258,6 +297,13 @@ foreach ($expiryGroups as $group) {
             alertToggler.addEventListener('click', function (event) {
                 event.preventDefault();
                 toggleAlertWidget();
+            });
+        }
+
+        if (alertSearch) {
+            alertSearch.addEventListener('input', filterNotifications);
+            alertSearch.addEventListener('click', function (event) {
+                event.stopPropagation();
             });
         }
 
@@ -313,6 +359,8 @@ foreach ($expiryGroups as $group) {
                     if (alertWidget) {
                         alertWidget.style.display = 'none';
                     }
+                } else {
+                    filterNotifications();
                 }
             });
         });
