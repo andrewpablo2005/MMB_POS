@@ -25,7 +25,8 @@ $dosageForms = $product->getDosageForms();
                 <div class="modal-header">
                     <h5 class="modal-title">Add New
                         Product</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close Add Product" title="Close Add Product"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close Add Product"
+                        title="Close Add Product"></button>
                 </div>
 
                 <div class="modal-body add-product-body">
@@ -45,17 +46,20 @@ $dosageForms = $product->getDosageForms();
                             <input type="text" id="branded_name" name="branded_name" class="form-control"
                                 placeholder="e.g., Tylenol">
 
-                                <div class="form-text text-muted mt-1">
-                                    Enter the brand printed on the package, such as Coca-Cola or Tylenol. Leave blank if there is no brand.
+                            <div class="form-text text-muted mt-1">
+                                Enter the brand printed on the package, such as Coca-Cola or Tylenol. Leave blank if
+                                there is no brand.
                             </div>
                         </div>
-                        
+
                         <div class="add-product-field">
-                            <label for="generic_name" class="form-label">Generic/Product Name <span class="text-danger">*</span></label>
+                            <label for="generic_name" class="form-label">Generic/Product Name <span
+                                    class="text-danger">*</span></label>
                             <input type="text" id="generic_name" name="generic_name" class="form-control"
                                 placeholder="e.g., Paracetamol or Potato Chips" required>
                             <div class="form-text text-muted mt-1">
-                                Enter the name customers will recognize, such as Paracetamol, Potato Chips, or Bottled Water.
+                                Enter the name customers will recognize, such as Paracetamol, Potato Chips, or Bottled
+                                Water.
                             </div>
                         </div>
                     </div>
@@ -70,8 +74,9 @@ $dosageForms = $product->getDosageForms();
                                     <option value="<?= (int) ($cat['id'] ?? 0) ?>"
                                         data-senior="<?= (int) ($cat['senior_discount'] ?? 0) ?>"
                                         data-pwd="<?= (int) ($cat['pwd_discount'] ?? 0) ?>"
-                                        data-vat="<?= (int) ($cat['has_vat'] ?? 0) ?>"><?= htmlspecialchars($cat['category_name'] ?? '') ?></option>
-                                    <?php endforeach; ?>
+                                        data-vat="<?= (int) ($cat['has_vat'] ?? 0) ?>">
+                                        <?= htmlspecialchars($cat['category_name'] ?? '') ?></option>
+                                <?php endforeach; ?>
                             </select>
                             <div id="categoryRuleNote" class="form-text text-muted mt-1">
                                 Select a category to see whether senior/PWD discounts apply.
@@ -89,29 +94,36 @@ $dosageForms = $product->getDosageForms();
 
                     <div class="add-product-row">
                         <div class="add-product-field">
-                            <label for="strength" class="form-label">Amount per Serving <span class="text-danger">*</span></label>
+                            <label for="strength" class="form-label">Amount per Serving <span
+                                    class="text-danger">*</span></label>
                             <div class="input-group">
                                 <input type="number" id="strength" name="strength" class="form-control"
                                     placeholder="e.g., 250" min="0" required>
                             </div>
-                            <div class="form-text text-muted">Use this for a measured serving or portion, such as 250 mg, 30 g, or 1 piece.
+                            <div class="form-text text-muted">Use this for a measured serving or portion, such as 250
+                                mg, 30 g, or 1 piece.
                             </div>
                         </div>
                         <div class="add-product-field">
-                            <label for="unit_measurement" class="form-label">Serving Unit <span class="text-danger">*</span></label>
+                            <label for="unit_measurement" class="form-label">Serving Unit <span
+                                    class="text-danger">*</span></label>
                             <div class="input-group">
                                 <select id="unit_measurement" name="unit_measurement" class="form-select" required>
                                     <option value="">— none —</option>
                                     <?php foreach ($servingUnits as $unit): ?>
-                                        <option value="<?= (int) ($unit['id'] ?? 0) ?>" data-measurement-id="<?= (int) ($unit['id'] ?? 0) ?>"><?= htmlspecialchars($unit['name'] ?? '') ?></option>
+                                        <option value="<?= (int) ($unit['id'] ?? 0) ?>"
+                                            data-measurement-id="<?= (int) ($unit['id'] ?? 0) ?>">
+                                            <?= htmlspecialchars($unit['name'] ?? '') ?></option>
                                     <?php endforeach; ?>
                                 </select>
                                 <button type="button" class="btn btn-primary" data-open-measurement-modal
-                                    data-measurement-target="unit_measurement" aria-label="Add serving unit" title="Add serving unit" data-bs-toggle="tooltip">
+                                    data-measurement-target="unit_measurement" aria-label="Add serving unit"
+                                    title="Add serving unit" data-bs-toggle="tooltip">
                                     <i class="fas fa-plus"></i>
                                 </button>
                                 <button type="button" class="btn btn-danger" data-delete-measurement="unit_measurement"
-                                    aria-label="Delete serving unit" title="Delete selected serving unit" data-bs-toggle="tooltip">
+                                    aria-label="Delete serving unit" title="Delete selected serving unit"
+                                    data-bs-toggle="tooltip">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </div>
@@ -123,27 +135,31 @@ $dosageForms = $product->getDosageForms();
 
                     <div id="dosageFormContainer" class="add-product-row add-product-row--single">
                         <div class="add-product-field">
-                            <label for="dosage_form_id" class="form-label">Product Form <span class="text-muted">(if applicable)</span></label>
+                            <label for="dosage_form_id" class="form-label">Product Form <span class="text-muted">(if
+                                    applicable)</span></label>
                             <input type="hidden" id="dosage_form" name="dosage_form" value="">
                             <div class="input-group">
                                 <select id="dosage_form_id" name="dosage_form_id" class="form-select">
-                                <option value="">— none —</option>
-                                <?php foreach ($dosageForms as $form): ?>
-                                    <option value="<?= (int) ($form['id'] ?? 0) ?>"
-                                        data-name="<?= htmlspecialchars($form['name'] ?? '') ?>"><?= htmlspecialchars($form['name'] ?? '') ?></option>
-                                <?php endforeach; ?>
+                                    <option value="">— none —</option>
+                                    <?php foreach ($dosageForms as $form): ?>
+                                        <option value="<?= (int) ($form['id'] ?? 0) ?>"
+                                            data-name="<?= htmlspecialchars($form['name'] ?? '') ?>">
+                                            <?= htmlspecialchars($form['name'] ?? '') ?></option>
+                                    <?php endforeach; ?>
                                 </select>
                                 <button type="button" class="btn btn-primary" data-open-dosage-form-modal
                                     aria-label="Add product form" title="Add product form" data-bs-toggle="tooltip">
                                     <i class="fas fa-plus"></i>
                                 </button>
                                 <button type="button" class="btn btn-danger" data-delete-dosage-form
-                                    aria-label="Delete product form" title="Delete selected product form" data-bs-toggle="tooltip">
+                                    aria-label="Delete product form" title="Delete selected product form"
+                                    data-bs-toggle="tooltip">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </div>
                             <div class="form-text text-muted mt-1">
-                                Select a form such as tablet, syrup, bag, bottle, or box, or leave blank when it does not apply.
+                                Select a form such as tablet, syrup, bag, bottle, or box, or leave blank when it does
+                                not apply.
                             </div>
                         </div>
                     </div>
@@ -151,28 +167,35 @@ $dosageForms = $product->getDosageForms();
                     <div id="strengthQuantityFields" class="add-product-row">
                         <div class="add-product-field">
                             <label for="strength_per_quantity" class="form-label">Package Size<span
-                                class="text-muted">(if applicable)</span></label>
-                            <input type="number" id="strength_per_quantity" name="strength_per_quantity" step="1" min="1"
-                                inputmode="numeric" class="form-control" placeholder="e.g., 500">
-                            <div class="form-text text-muted">Total contents of one package — whole numbers only, e.g., 100, 50, or 10.
+                                    class="text-muted">(if applicable)</span></label>
+                            <input type="number" id="strength_per_quantity" name="strength_per_quantity" step="1"
+                                min="1" inputmode="numeric" class="form-control" placeholder="e.g., 500">
+                            <div class="form-text text-muted">Total contents of one package — whole numbers only, e.g.,
+                                100, 50, or 10.
                             </div>
                         </div>
                         <div class="add-product-field">
-                            <label for="strength_per_quantity_unit" class="form-label">Unit<span
-                                class="text-muted">(if applicable)</span></label>
+                            <label for="strength_per_quantity_unit" class="form-label">Unit<span class="text-muted">(if
+                                    applicable)</span></label>
                             <div class="input-group">
-                                <select id="strength_per_quantity_unit" name="strength_per_quantity_unit" class="form-select">
+                                <select id="strength_per_quantity_unit" name="strength_per_quantity_unit"
+                                    class="form-select">
                                     <option value="">— none —</option>
                                     <?php foreach ($unitMeasurements as $unit): ?>
-                                        <option value="<?= htmlspecialchars($unit['name'] ?? '') ?>" data-measurement-id="<?= (int) ($unit['id'] ?? 0) ?>"><?= htmlspecialchars($unit['name'] ?? '') ?></option>
+                                        <option value="<?= htmlspecialchars($unit['name'] ?? '') ?>"
+                                            data-measurement-id="<?= (int) ($unit['id'] ?? 0) ?>">
+                                            <?= htmlspecialchars($unit['name'] ?? '') ?></option>
                                     <?php endforeach; ?>
                                 </select>
                                 <button type="button" class="btn btn-primary" data-open-measurement-modal
-                                    data-measurement-target="strength_per_quantity_unit" aria-label="Add package unit" title="Add package unit" data-bs-toggle="tooltip">
+                                    data-measurement-target="strength_per_quantity_unit" aria-label="Add package unit"
+                                    title="Add package unit" data-bs-toggle="tooltip">
                                     <i class="fas fa-plus"></i>
                                 </button>
-                                <button type="button" class="btn btn-danger" data-delete-measurement="strength_per_quantity_unit"
-                                    aria-label="Delete package unit" title="Delete selected package unit" data-bs-toggle="tooltip">
+                                <button type="button" class="btn btn-danger"
+                                    data-delete-measurement="strength_per_quantity_unit"
+                                    aria-label="Delete package unit" title="Delete selected package unit"
+                                    data-bs-toggle="tooltip">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </div>
@@ -196,7 +219,8 @@ $dosageForms = $product->getDosageForms();
                             <div class="input-group">
                                 <input type="text" id="barcode" name="barcode" class="form-control"
                                     placeholder="e.g., 123456789012">
-                                <button type="button" class="btn btn-outline-secondary" onclick="generateBarcode()" title="Generate barcode" aria-label="Generate barcode" data-bs-toggle="tooltip">
+                                <button type="button" class="btn btn-outline-secondary" onclick="generateBarcode()"
+                                    title="Generate barcode" aria-label="Generate barcode" data-bs-toggle="tooltip">
                                     <i class="fas fa-barcode"></i> Auto
                                 </button>
                             </div>
@@ -223,10 +247,10 @@ $dosageForms = $product->getDosageForms();
                         <div class="add-product-field add-product-field--full">
                             <label class="form-label">Do you want to add a batch and quantity now?</label>
                             <div class="btn-group w-100" role="group" aria-label="Add batch prompt">
-                                <button type="button" class="btn btn-outline-primary"
-                                    data-batch-option="yes" title="Add a batch now" data-bs-toggle="tooltip">Yes</button>
-                                <button type="button" class="btn btn-secondary active"
-                                    data-batch-option="no" title="Skip adding a batch" data-bs-toggle="tooltip">No</button>
+                                <button type="button" class="btn btn-outline-primary" data-batch-option="yes"
+                                    title="Add a batch now" data-bs-toggle="tooltip">Yes</button>
+                                <button type="button" class="btn btn-secondary active" data-batch-option="no"
+                                    title="Skip adding a batch" data-bs-toggle="tooltip">No</button>
                             </div>
                             <input type="hidden" name="add_batch_prompt" id="add_batch_prompt" value="no">
                         </div>
@@ -243,26 +267,30 @@ $dosageForms = $product->getDosageForms();
                                 </div>
                             </div>
                             <div class="add-product-field">
-                                <label for="batch_supplier_search" class="form-label">Supplier (optional)</label>
-                                <input type="text" id="batch_supplier_search" class="form-control"
-                                    list="batch_supplier_list" placeholder="Select supplier or leave blank"
-                                    autocomplete="off">
-                                <input type="hidden" id="batch_supplier_id" name="supplier_id" value="">
-                                <datalist id="batch_supplier_list">
+                                <label for="batch_supplier_id" class="form-label">Supplier (optional)</label>
+                                <div class="d-flex gap-2">
+                                    <select id="batch_supplier_id" name="supplier_id" class="form-select">
+                                        <option value="">Select supplier or leave blank</option>
                                     <?php
                                     try {
                                         $stmt = $db->prepare("SELECT id, supplier_name FROM suppliers ORDER BY supplier_name ASC");
                                         $stmt->execute();
                                         foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $supplier):
                                             ?>
-                                            <option value="<?= htmlspecialchars($supplier['supplier_name'] ?? '') ?>"
-                                                data-id="<?= (int) ($supplier['id'] ?? 0) ?>">
+                                            <option value="<?= (int) ($supplier['id'] ?? 0) ?>">
+                                                <?= htmlspecialchars($supplier['supplier_name'] ?? '') ?>
                                                 <?php
                                         endforeach;
                                     } catch (Exception $e) {
                                     }
                                     ?>
-                                </datalist>
+                                    </select>
+                                    <button type="button" class="btn btn-danger btn-sm d-inline-flex align-items-center justify-content-center"
+                                        data-bs-toggle="modal" data-bs-target="#addProductSupplierModal"
+                                        aria-label="Add supplier" title="Add supplier">
+                                        <i class="fas fa-plus" aria-hidden="true"></i>
+                                    </button>
+                                </div>
                                 <div class="form-text text-muted mt-1">
                                     Select the supplier for this inventory batch, if known.
                                 </div>
@@ -279,7 +307,7 @@ $dosageForms = $product->getDosageForms();
                                 </div>
                             </div>
                             <div class="add-product-field">
-                                <label for="batch_purchase_cost" class="form-label">Purchase Cost</label>
+                                <label for="batch_purchase_cost" class="form-label">Purchase Cost per Unit</label>
                                 <input type="number" id="batch_purchase_cost" name="purchase_cost" class="form-control"
                                     step="0.01" min="0" placeholder="e.g. 50.00">
                                 <div class="form-text text-muted mt-1">
@@ -287,22 +315,22 @@ $dosageForms = $product->getDosageForms();
                                 </div>
                             </div>
                             <div class="add-product-field">
-                                <label for="batch_sale_price" class="form-label">Sale Price</label>
-                                <input type="number" id="batch_sale_price" name="sale_price" class="form-control"
-                                    step="0.01" min="0" placeholder="e.g. 75.00">
+                                <label for="batch_markup" class="form-label">Markup %</label>
+                                <input type="number" id="batch_markup" name="markup" class="form-control" step="0.01"
+                                    min="0" value="5" placeholder="e.g. 20">
                                 <div class="form-text text-muted mt-1">
-                                    This price is calculated from purchase cost and markup.
+                                    Enter the percentage added to the purchase cost.
                                 </div>
                             </div>
                         </div>
 
                         <div class="add-product-row">
                             <div class="add-product-field">
-                                <label for="batch_markup" class="form-label">Markup %</label>
-                                <input type="number" id="batch_markup" name="markup" class="form-control" step="0.01"
-                                    min="0" value="5" placeholder="e.g. 20">
+                                 <label for="batch_sale_price" class="form-label">Sale Price per Unit</label>
+                                <input type="number" id="batch_sale_price" name="sale_price" class="form-control"
+                                    step="0.01" min="0" placeholder="e.g. 75.00">
                                 <div class="form-text text-muted mt-1">
-                                    Enter the percentage added to the purchase cost.
+                                    This price is calculated from purchase cost and markup.
                                 </div>
                             </div>
                             <div class="add-product-field">
@@ -326,8 +354,9 @@ $dosageForms = $product->getDosageForms();
                     <div class="add-product-row add-product-row--single">
                         <div class="add-product-field add-product-field--full">
                             <label for="product_image_input" class="form-label">Upload Image</label>
-                            <input type="file" id="product_image_input" name="product_image" class="form-control required-file-input"
-                                accept="image/*" onchange="previewImage(event)">
+                            <input type="file" id="product_image_input" name="product_image"
+                                class="form-control required-file-input" accept="image/*"
+                                onchange="previewImage(event)">
                             <small class="text-muted d-block mt-2"><i class="fas fa-info-circle"></i> Recommended:
                                 500x500px, JPG/PNG, max 5MB</small>
                         </div>
@@ -344,8 +373,10 @@ $dosageForms = $product->getDosageForms();
                 </div>
 
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" title="Cancel and close" data-bs-toggle="tooltip">Cancel</button>
-                    <button type="submit" name="addProduct" class="btn btn-primary" title="Save product" data-bs-toggle="tooltip">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" title="Cancel and close"
+                        data-bs-toggle="tooltip">Cancel</button>
+                    <button type="submit" name="addProduct" class="btn btn-primary" title="Save product"
+                        data-bs-toggle="tooltip">
                         <i class="fas fa-save"></i> Save Product
                     </button>
                 </div>
@@ -355,23 +386,65 @@ $dosageForms = $product->getDosageForms();
     </div>
 </div>
 
+<!-- ADD SUPPLIER MODAL FOR OPENING STOCK -->
+<div class="modal fade" id="addProductSupplierModal" tabindex="-1" aria-labelledby="addProductSupplierModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="addProductSupplierForm">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addProductSupplierModalLabel">Add New Supplier</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="add_product_supplier_name" class="form-label">Supplier Name <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="add_product_supplier_name" placeholder="e.g., ABC Pharma Ltd" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="add_product_supplier_contact" class="form-label">Contact Number</label>
+                        <input type="tel" class="form-control" id="add_product_supplier_contact" inputmode="numeric"
+                            pattern="\+?[0-9]{7,15}" placeholder="e.g., 09181234567" autocomplete="tel">
+                    </div>
+                    <div class="mb-3">
+                        <label for="add_product_supplier_email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="add_product_supplier_email" placeholder="e.g., contact@supplier.com">
+                    </div>
+                    <div class="mb-3">
+                        <label for="add_product_supplier_address" class="form-label">Address</label>
+                        <textarea class="form-control" id="add_product_supplier_address" rows="3" placeholder="Enter supplier address"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Add Supplier</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <!-- ADD MEASUREMENT MODAL -->
-<div class="modal fade" id="addMeasurementModal" tabindex="-1" aria-labelledby="addMeasurementModalLabel" aria-hidden="true">
+<div class="modal fade" id="addMeasurementModal" tabindex="-1" aria-labelledby="addMeasurementModalLabel"
+    aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <form id="addMeasurementForm">
                 <div class="modal-header">
                     <h5 class="modal-title" id="addMeasurementModalLabel">Add Measurement Unit</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close Add Measurement" title="Close Add Measurement"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close Add Measurement"
+                        title="Close Add Measurement"></button>
                 </div>
                 <div class="modal-body">
-                    <label for="measurement_name" class="form-label">Measurement Name <span class="text-danger">*</span></label>
+                    <label for="measurement_name" class="form-label">Measurement Name <span
+                            class="text-danger">*</span></label>
                     <input type="text" class="form-control" id="measurement_name" name="measurement_name"
                         placeholder="e.g., mg, mL, bottle" required autocomplete="off">
                     <div class="form-text">Add a unit that can be used for serving amounts and package sizes.</div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" title="Cancel and close" data-bs-toggle="tooltip">Cancel</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" title="Cancel and close"
+                        data-bs-toggle="tooltip">Cancel</button>
                     <button type="submit" class="btn btn-primary" title="Add measurement unit" data-bs-toggle="tooltip">
                         Add Measurement
                     </button>
@@ -382,21 +455,25 @@ $dosageForms = $product->getDosageForms();
 </div>
 
 <!-- ADD PRODUCT FORM MODAL -->
-<div class="modal fade" id="addDosageFormModal" tabindex="-1" aria-labelledby="addDosageFormModalLabel" aria-hidden="true">
+<div class="modal fade" id="addDosageFormModal" tabindex="-1" aria-labelledby="addDosageFormModalLabel"
+    aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <form id="addDosageFormForm">
                 <div class="modal-header">
                     <h5 class="modal-title" id="addDosageFormModalLabel">Add Product Form</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close Add Product Form" title="Close Add Product Form"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close Add Product Form"
+                        title="Close Add Product Form"></button>
                 </div>
                 <div class="modal-body">
-                    <label for="dosage_form_name" class="form-label">Product Form <span class="text-danger">*</span></label>
+                    <label for="dosage_form_name" class="form-label">Product Form <span
+                            class="text-danger">*</span></label>
                     <input type="text" class="form-control" id="dosage_form_name" name="dosage_form_name"
                         placeholder="e.g., tablet, syrup, bottle" required autocomplete="off">
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" title="Cancel and close" data-bs-toggle="tooltip">Cancel</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" title="Cancel and close"
+                        data-bs-toggle="tooltip">Cancel</button>
                     <button type="submit" class="btn btn-primary" title="Add product form" data-bs-toggle="tooltip">
                         Add Product Form
                     </button>
@@ -756,11 +833,89 @@ $dosageForms = $product->getDosageForms();
 
         toggleDosageAndStrengthFields();
 
-        bindSearchableList({
-            inputId: 'batch_supplier_search',
-            valueId: 'batch_supplier_id',
-            listId: 'batch_supplier_list'
-        });
+        const supplierForm = document.getElementById('addProductSupplierForm');
+        const supplierModal = document.getElementById('addProductSupplierModal');
+        const productModal = document.getElementById('addProductModal');
+        const supplierContactInput = document.getElementById('add_product_supplier_contact');
+
+        if (supplierModal && productModal) {
+            supplierModal.addEventListener('hidden.bs.modal', function () {
+                bootstrap.Modal.getOrCreateInstance(productModal).show();
+            });
+        }
+
+        if (supplierContactInput) {
+            supplierContactInput.addEventListener('input', function () {
+                const raw = this.value.replace(/[^0-9+]/g, '');
+                const digits = raw.replace(/\+/g, '');
+                this.value = (raw.charAt(0) === '+' ? '+' : '') + digits;
+            });
+        }
+
+        if (supplierForm) {
+            supplierForm.addEventListener('submit', function (event) {
+                event.preventDefault();
+
+                const supplierNameInput = document.getElementById('add_product_supplier_name');
+                const supplierEmailInput = document.getElementById('add_product_supplier_email');
+                const supplierAddressInput = document.getElementById('add_product_supplier_address');
+                const supplierName = supplierNameInput.value.trim();
+                const contactNumber = supplierContactInput ? supplierContactInput.value.trim() : '';
+                const submitButton = supplierForm.querySelector('button[type="submit"]');
+
+                if (!supplierName) {
+                    mmbNotify({ type: 'warning', title: 'Supplier name required', message: 'Please enter the supplier name before saving.' });
+                    supplierNameInput.focus();
+                    return;
+                }
+                if (contactNumber && !/^\+?[0-9]{7,15}$/.test(contactNumber)) {
+                    mmbNotify({ type: 'warning', title: 'Invalid contact number', message: 'Contact numbers accept digits only (7-15 digits, optional leading +).' });
+                    supplierContactInput.focus();
+                    return;
+                }
+
+                submitButton.disabled = true;
+                submitButton.textContent = 'Adding...';
+                const formData = new FormData();
+                formData.append('supplier_name', supplierName);
+                formData.append('contact_number', contactNumber);
+                formData.append('email', supplierEmailInput.value.trim());
+                formData.append('address', supplierAddressInput.value.trim());
+
+                fetch('../function/add_supplier_ajax.php', { method: 'POST', body: formData })
+                    .then((response) => response.json().then((data) => ({ status: response.status, data })))
+                    .then(({ status, data }) => {
+                        const supplierId = status === 409 ? data.existing_id : data.supplier_id;
+                        if ((status !== 200 && status !== 409) || !supplierId) {
+                            throw new Error(data.error || 'Failed to add supplier');
+                        }
+
+                        const supplierSelect = document.getElementById('batch_supplier_id');
+                        let option = Array.from(supplierSelect.options).find((item) => item.value === String(supplierId));
+                        if (!option) {
+                            option = document.createElement('option');
+                            option.value = supplierId;
+                            option.textContent = status === 409 ? supplierName : data.supplier_name;
+                            supplierSelect.appendChild(option);
+                        }
+                        supplierSelect.value = String(supplierId);
+                        supplierForm.reset();
+                        bootstrap.Modal.getOrCreateInstance(supplierModal).hide();
+                        mmbNotify({
+                            type: status === 409 ? 'warning' : 'success',
+                            title: status === 409 ? 'Supplier already exists' : 'Supplier added',
+                            message: status === 409 ? 'The existing supplier was selected.' : 'Supplier added and selected for this batch.'
+                        });
+                    })
+                    .catch((error) => {
+                        mmbNotify({ type: 'danger', title: 'Could not add supplier', message: error.message });
+                    })
+                    .finally(() => {
+                        submitButton.disabled = false;
+                        submitButton.textContent = 'Add Supplier';
+                    });
+            });
+        }
 
         // ── ISSUE #6 (1): Package Size accepts whole numbers >= 1 only ──
         // Type filters strip illegal characters as they are typed.
