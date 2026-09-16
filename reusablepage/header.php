@@ -24,8 +24,9 @@ $globalAlertItems = [];
 foreach ($lowStockItems as $item) {
     $lowStockBatches = [];
     foreach (($item['batches'] ?? []) as $batch) {
-        $batchLabel = !empty($batch['batch_number'])
-            ? 'Batch ' . $batch['batch_number']
+        $batchNumber = trim((string) ($batch['batch_number'] ?? ''));
+        $batchLabel = $batchNumber !== ''
+            ? (preg_match('/^batch(?:[\s-]|$)/i', $batchNumber) ? $batchNumber : 'Batch ' . $batchNumber)
             : 'Batch #' . (int) $batch['id'];
         $lowStockBatches[] = [
             'name' => $batchLabel,
