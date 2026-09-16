@@ -1477,7 +1477,7 @@ class ProductManagement
 
         $html = '<div id="lowStockAlert">';
         $html .= '<div class="d-flex justify-content-between align-items-center mb-3">';
-        $html .= '<h5 class="mb-0 text-warning"><i class="fas fa-exclamation-triangle me-2"></i>Low Stock</h5>';
+        $html .= '<h5 class="mb-0 text-danger"><i class="fas fa-exclamation-triangle me-2"></i>Low Stock</h5>';
         $html .= '<button type="button" class="btn-close btn-close-sm" onclick="this.parentElement.parentElement.remove()"></button>';
         $html .= '</div><div class="alert-items-container">';
 
@@ -1485,7 +1485,7 @@ class ProductManagement
             $displayName = $item['product_name'];
             $html .= '<div class="alert-item d-flex justify-content-between mb-2 pb-2 border-bottom">';
             $html .= '<span class="text-truncate pe-2">' . htmlspecialchars($displayName) . '</span>';
-            $html .= '<span class="badge bg-warning text-dark">' . $item['quantity'] . ' left</span>';
+            $html .= '<span class="badge bg-danger">' . $item['quantity'] . ' left</span>';
             $html .= '</div>';
         }
 
@@ -1626,7 +1626,7 @@ class ProductManagement
             } else {
                 $html .= '<div class="alert-item d-flex justify-content-between mb-2 pb-2 border-bottom">';
                 $html .= '<span class="text-truncate pe-2">' . htmlspecialchars($item['name']) . '</span>';
-                $html .= '<span class="badge bg-warning text-dark">Near Expiry</span></div>';
+                $html .= '<span class="badge bg-info text-dark">Near Expiry</span></div>';
             }
         }
 

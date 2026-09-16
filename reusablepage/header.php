@@ -26,7 +26,7 @@ foreach ($lowStockItems as $item) {
         'title' => 'Low Stock',
         'message' => htmlspecialchars($item['product_name']) . ' has only ' . ($item['quantity'] ?? 0) . ' unit(s) left.',
         'icon' => 'fas fa-exclamation-triangle',
-        'bg' => '#f59e0b',
+        'bg' => '#dc2626',
         'href' => 'dashboard.php?tab=inventory&alert_product_id=' . (int)$item['id'] . '&alert_type=low-stock'
     ];
 }
@@ -40,7 +40,7 @@ foreach ($expiryItems as $item) {
         'title' => $item['status'] === 'Expired' ? 'Expired Item' : 'Near Expiry',
         'message' => $message,
         'icon' => $item['status'] === 'Expired' ? 'fas fa-times-circle' : 'fas fa-clock',
-    'bg' => $item['status'] === 'Expired' ? '#dc2626' : '#d97706',
+    'bg' => $item['status'] === 'Expired' ? '#7f1d1d' : '#2563eb',
     'href' => 'dashboard.php?tab=inventory&alert_product_id=' . (int)$item['product_id'] . '&alert_batch_id=' . (int)($item['batch_id'] ?? 0) . '&alert_type=expiry'
     ];
 }

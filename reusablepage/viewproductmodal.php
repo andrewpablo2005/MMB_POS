@@ -136,7 +136,7 @@ require_once __DIR__ . '/guard.php'; guard_require_roles(['owner','admin']);
                                                 $batchStatus[] = '<span class="badge bg-dark">NO STOCK</span>';
                                                 $batchRowClass = 'table-secondary';
                                             } elseif ($batchCurrentQuantity <= 15) {
-                                                $batchStatus[] = '<span class="badge bg-warning text-dark">LOW STOCK</span>';
+                                                $batchStatus[] = '<span class="badge bg-danger">LOW STOCK</span>';
                                                 $batchRowClass = 'table-warning';
                                             }
 
@@ -147,7 +147,7 @@ require_once __DIR__ . '/guard.php'; guard_require_roles(['owner','admin']);
                                                         $batchStatus[] = '<span class="badge bg-danger">EXPIRED</span>';
                                                         $batchRowClass = 'table-danger';
                                                     } elseif ($batchExpiry <= $nearExpiryDate) {
-                                                        $batchStatus[] = '<span class="badge bg-warning text-dark">NEAR EXPIRED</span>';
+                                                        $batchStatus[] = '<span class="badge bg-info text-dark">NEAR EXPIRED</span>';
                                                         if ($batchRowClass === '') {
                                                             $batchRowClass = 'table-warning';
                                                         }
