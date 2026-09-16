@@ -11,51 +11,76 @@ $disposedBatches = $inventoryManager->getDisposedBatches();
 $noStockBatches = $inventoryManager->getNoStockBatches();
 $returnedProducts = $inventoryManager->getReturnedProducts();
 $products = $inventoryManager->getAllProducts();
-
-if ($inventoryManager->moveNoStockBatch()) {
-    echo "<script>setTimeout(function(){ window.location.href = 'dashboard.php?tab=inventory&inventory_tab=no-stock&success=no-stock'; }, 10);</script>";
-    exit;
-} elseif (isset($_POST['moveNoStockBatch'])) {
-    $inventoryErrorMessage = $inventoryManager->getResponse() ?: 'Unable to move empty batch to no-stock history.';
+$requestedInventoryTab = $_GET['inventory_tab'] ?? 'current';
+$validInventoryTabs = ['current', 'disposed', 'no-stock', 'returned'];
+if (!in_array($requestedInventoryTab, $validInventoryTabs, true)) {
+    $requestedInventoryTab = 'current';
 }
 
 usort($inventoryBatches, static function (array $first, array $second): int {
     return ((int) ($first['id'] ?? 0)) <=> ((int) ($second['id'] ?? 0));
 });
 
-$inventoryErrorMessage = '';
+$inventoryNotification = null;
 if ($inventoryManager->addInventoryBatch()) {
     echo "<script>setTimeout(function(){ window.location.href = 'dashboard.php?tab=inventory&success=1'; }, 10);</script>";
     exit;
 } elseif (isset($_POST['addInventoryBatch'])) {
-    $inventoryErrorMessage = $inventoryManager->getResponse() ?: 'Unable to add stock batch.';
+    $inventoryNotification = [
+        'type' => 'danger',
+        'title' => 'Add batch failed',
+        'message' => $inventoryManager->getResponse() ?: 'Unable to add stock batch.'
+    ];
 }
 
 if ($inventoryManager->disposeInventoryBatch()) {
     echo "<script>setTimeout(function(){ window.location.href = 'dashboard.php?tab=inventory&inventory_tab=disposed&success=disposed'; }, 10);</script>";
     exit;
+} elseif (isset($_POST['disposeInventoryBatch'])) {
+    $inventoryNotification = [
+        'type' => 'danger',
+        'title' => 'Dispose batch failed',
+        'message' => $inventoryManager->getResponse() ?: 'Unable to dispose inventory batch.'
+    ];
 }
 
-$inventorySuccessMessage = '';
+$inventoryErrorMessage = $_GET['inventory_error'] ?? '';
 if (isset($_GET['success']) && $_GET['success'] === '1') {
-    $inventorySuccessMessage = 'New batch added successfully.';
+    $inventoryNotification = [
+        'type' => 'success',
+        'title' => 'Batch added',
+        'message' => 'New inventory batch added successfully.'
+    ];
 } elseif (isset($_GET['success']) && $_GET['success'] === 'disposed') {
-    $inventorySuccessMessage = 'Inventory batch disposed successfully.';
+    $inventoryNotification = [
+        'type' => 'success',
+        'title' => 'Batch disposed',
+        'message' => 'Inventory batch disposed successfully.'
+    ];
 } elseif (isset($_GET['success']) && $_GET['success'] === 'no-stock') {
-    $inventorySuccessMessage = 'Batch moved to the No Stock table successfully.';
+    $inventoryNotification = [
+        'type' => 'success',
+        'title' => 'Moved to No Stock',
+        'message' => 'Batch moved to the No Stock table successfully.'
+    ];
+} elseif ($inventoryErrorMessage !== '') {
+    $inventoryNotification = [
+        'type' => 'danger',
+        'title' => 'Move to No Stock failed',
+        'message' => $inventoryErrorMessage
+    ];
 }
 ?>
 <div class="card shadow-sm">
     <div class="card-body">
-        <?php if ($inventorySuccessMessage !== ''): ?>
-            <div class="alert alert-success d-flex align-items-center mb-3" role="alert">
-                <div><?= htmlspecialchars($inventorySuccessMessage) ?></div>
-            </div>
-        <?php endif; ?>
-        <?php if ($inventoryErrorMessage !== ''): ?>
-            <div class="alert alert-danger d-flex align-items-center mb-3" role="alert">
-                <div><?= htmlspecialchars($inventoryErrorMessage) ?></div>
-            </div>
+        <?php if ($inventoryNotification !== null): ?>
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    if (typeof mmbNotify === 'function') {
+                        mmbNotify(<?= json_encode($inventoryNotification, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?>);
+                    }
+                });
+            </script>
         <?php endif; ?>
         <div class="page-head">
             <div>
@@ -77,29 +102,29 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
 
         <ul class="nav nav-tabs mb-4" id="inventoryTabs" role="tablist">
             <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="current-inventory-tab" data-bs-toggle="tab" data-bs-target="#current-inventory-pane" type="button" role="tab" aria-controls="current-inventory-pane" aria-selected="true">
+                <button class="nav-link <?= $requestedInventoryTab === 'current' ? 'active' : '' ?>" id="current-inventory-tab" data-bs-toggle="tab" data-bs-target="#current-inventory-pane" type="button" role="tab" aria-controls="current-inventory-pane" aria-selected="<?= $requestedInventoryTab === 'current' ? 'true' : 'false' ?>">
                     Current Inventory
                 </button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link" id="disposed-inventory-tab" data-bs-toggle="tab" data-bs-target="#disposed-inventory-pane" type="button" role="tab" aria-controls="disposed-inventory-pane" aria-selected="false">
+                <button class="nav-link <?= $requestedInventoryTab === 'disposed' ? 'active' : '' ?>" id="disposed-inventory-tab" data-bs-toggle="tab" data-bs-target="#disposed-inventory-pane" type="button" role="tab" aria-controls="disposed-inventory-pane" aria-selected="<?= $requestedInventoryTab === 'disposed' ? 'true' : 'false' ?>">
                     Disposed / Expired
                 </button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link" id="no-stock-tab" data-bs-toggle="tab" data-bs-target="#no-stock-pane" type="button" role="tab" aria-controls="no-stock-pane" aria-selected="false">
+                <button class="nav-link <?= $requestedInventoryTab === 'no-stock' ? 'active' : '' ?>" id="no-stock-tab" data-bs-toggle="tab" data-bs-target="#no-stock-pane" type="button" role="tab" aria-controls="no-stock-pane" aria-selected="<?= $requestedInventoryTab === 'no-stock' ? 'true' : 'false' ?>">
                     No Stock
                 </button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link" id="returned-products-tab" data-bs-toggle="tab" data-bs-target="#returned-products-pane" type="button" role="tab" aria-controls="returned-products-pane" aria-selected="false">
+                <button class="nav-link <?= $requestedInventoryTab === 'returned' ? 'active' : '' ?>" id="returned-products-tab" data-bs-toggle="tab" data-bs-target="#returned-products-pane" type="button" role="tab" aria-controls="returned-products-pane" aria-selected="<?= $requestedInventoryTab === 'returned' ? 'true' : 'false' ?>">
                     Returned Products
                 </button>
             </li>
         </ul>
 
         <div class="tab-content" id="inventoryTabContent">
-            <div class="tab-pane fade show active" id="current-inventory-pane" role="tabpanel" aria-labelledby="current-inventory-tab" tabindex="0">
+            <div class="tab-pane fade <?= $requestedInventoryTab === 'current' ? 'show active' : '' ?>" id="current-inventory-pane" role="tabpanel" aria-labelledby="current-inventory-tab" tabindex="0">
             <div class="inventory-report-toolbar d-flex flex-wrap align-items-center gap-2 mb-2" data-table-target="currentInventoryTable">
                 <label class="mb-0" for="currentInventorySearch">Search:</label>
                 <input type="search" id="currentInventorySearch" class="form-control form-control-sm inventory-search" placeholder="Search current inventory..." style="max-width:260px;">
@@ -161,7 +186,7 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
 
             </div>
 
-            <div class="tab-pane fade" id="disposed-inventory-pane" role="tabpanel" aria-labelledby="disposed-inventory-tab" tabindex="0">
+            <div class="tab-pane fade <?= $requestedInventoryTab === 'disposed' ? 'show active' : '' ?>" id="disposed-inventory-pane" role="tabpanel" aria-labelledby="disposed-inventory-tab" tabindex="0">
             <h5 class="mb-3">Disposed / Expired Inventory</h5>
             <div class="inventory-report-toolbar d-flex flex-wrap align-items-center gap-2 mb-2" data-table-target="disposedInventoryTable">
                 <label class="mb-0" for="disposedInventorySearch">Search:</label>
@@ -226,7 +251,7 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
 
             </div>
 
-            <div class="tab-pane fade" id="no-stock-pane" role="tabpanel" aria-labelledby="no-stock-tab" tabindex="0">
+            <div class="tab-pane fade <?= $requestedInventoryTab === 'no-stock' ? 'show active' : '' ?>" id="no-stock-pane" role="tabpanel" aria-labelledby="no-stock-tab" tabindex="0">
             <h5 class="mb-3">No Stock Batches</h5>
             <div class="inventory-report-toolbar d-flex flex-wrap align-items-center gap-2 mb-2" data-table-target="noStockTable">
                 <label class="mb-0" for="noStockSearch">Search:</label>
@@ -285,7 +310,7 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
         </div>
             </div>
 
-            <div class="tab-pane fade" id="returned-products-pane" role="tabpanel" aria-labelledby="returned-products-tab" tabindex="0">
+            <div class="tab-pane fade <?= $requestedInventoryTab === 'returned' ? 'show active' : '' ?>" id="returned-products-pane" role="tabpanel" aria-labelledby="returned-products-tab" tabindex="0">
             <h5 class="mb-3">Returned Products</h5>
             <p class="text-muted small mb-3">All returns grouped per product — pick a product from the dropdown or expand a group to see each return record.</p>
 
@@ -1187,7 +1212,7 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
 <div class="modal fade" id="moveNoStockModal" tabindex="-1" aria-labelledby="moveNoStockModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form method="POST">
+            <form method="POST" action="../function/move_no_stock.php">
                 <input type="hidden" name="moveNoStockBatch" value="1">
                 <div class="modal-header">
                     <h5 class="modal-title" id="moveNoStockModalLabel">Move Zero-Stock Batch</h5>

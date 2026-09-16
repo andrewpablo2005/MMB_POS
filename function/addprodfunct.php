@@ -826,8 +826,8 @@ class ProductManagement
         }
 
         try {
-            $this->con->beginTransaction();
             $this->ensureInventoryNoStockTable();
+            $this->con->beginTransaction();
 
             $batchStmt = $this->con->prepare("SELECT id, product_id, batch_number, current_quantity, received_quantity, expiry_date FROM inventory WHERE id = ? FOR UPDATE");
             $batchStmt->execute([$inventoryId]);
