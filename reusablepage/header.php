@@ -39,8 +39,8 @@ foreach ($expiryItems as $item) {
     $globalAlertItems[] = [
         'title' => $item['status'] === 'Expired' ? 'Expired Item' : 'Near Expiry',
         'message' => $message,
-        'icon' => $item['status'] === 'Expired' ? 'fas fa-times-circle' : 'fas fa-clock',
-    'bg' => $item['status'] === 'Expired' ? '#7f1d1d' : '#2563eb',
+        'icon' => $item['status'] === 'Expired' ? 'fas fa-exclamation-triangle' : 'fas fa-clock',
+    'bg' => $item['status'] === 'Expired' ? '#f59e0b' : '#2563eb',
     'href' => 'dashboard.php?tab=inventory&alert_product_id=' . (int)$item['product_id'] . '&alert_batch_id=' . (int)($item['batch_id'] ?? 0) . '&alert_type=expiry'
     ];
 }

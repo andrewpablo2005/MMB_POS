@@ -38,6 +38,8 @@ if (empty($_SESSION['user_id'])) {
 $storeSettings = [
     'receipt_paper' => ['default' => '80', 'allowed' => ['58', '80']],
     'statutory_discount_cap' => ['default' => '125.00', 'min' => 0, 'max' => 100000],
+    'low_stock_threshold' => ['default' => '15', 'min' => 1, 'max' => 100000],
+    'near_expiry_days' => ['default' => '60', 'min' => 1, 'max' => 3650],
 ];
 
 // Ensure storage exists (guarded one-time migration)

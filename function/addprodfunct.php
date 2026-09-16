@@ -1421,8 +1421,9 @@ class ProductManagement
     }
 
     // LOW STOCK ALERT (FULL HTML OUTPUT)
-    public function getLowStockAlertItems($limit = 50)
+    public function getLowStockAlertItems($limit = null)
     {
+        $lowStockThreshold = $this->getInventoryAlertSetting('low_stock_threshold', 15, 1, 100000);
         $hasGeneric = $this->hasColumn('products', 'generic_name');
         $hasBranded = $this->hasColumn('products', 'branded_name');
 
@@ -1447,7 +1448,7 @@ class ProductManagement
             HAVING quantity <= ? AND quantity > 0
         ");
 
-        $stmt->execute([$limit]);
+        $stmt->execute([$lowStockThreshold]);
         $rows = $stmt->fetchAll();
 
         foreach ($rows as &$row) {
@@ -1497,6 +1498,7 @@ class ProductManagement
 
     public function getExpiryAlertItems()
     {
+        $nearExpiryDays = $this->getInventoryAlertSetting('near_expiry_days', 60, 1, 3650);
         if (!$this->hasColumn('inventory', 'batch_number')) {
             $this->con->exec("ALTER TABLE inventory ADD COLUMN batch_number VARCHAR(100) DEFAULT NULL");
         }
@@ -1534,6 +1536,7 @@ class ProductManagement
             LEFT JOIN products p ON p.id = i.product_id
             WHERE i.expiry_date IS NOT NULL
               AND TRIM(i.expiry_date) <> ''
+                            AND i.current_quantity > 0
             ORDER BY i.expiry_date ASC, i.id ASC
         ";
 
@@ -1589,7 +1592,7 @@ class ProductManagement
                     'days_left' => 0,
                     'expiry_date' => $expiryDate
                 ];
-            } elseif ($daysLeft <= 60 && !$interval->invert) {
+            } elseif ($daysLeft <= $nearExpiryDays && !$interval->invert) {
                 $items[] = [
                     'product_id' => (int) ($batch['product_id'] ?? 0),
                     'batch_id' => (int) ($batch['id'] ?? 0),
@@ -1602,6 +1605,21 @@ class ProductManagement
         }
 
         return $items;
+    }
+
+    private function getInventoryAlertSetting(string $key, int $default, int $min, int $max): int
+    {
+        try {
+            $stmt = $this->con->prepare('SELECT setting_value FROM store_settings WHERE setting_key = ?');
+            $stmt->execute([$key]);
+            $value = $stmt->fetchColumn();
+            if (is_numeric($value) && (int) $value >= $min && (int) $value <= $max) {
+                return (int) $value;
+            }
+        } catch (\Throwable $e) {
+            // Use the default when settings storage is unavailable.
+        }
+        return $default;
     }
 
     public function renderExpiryAlert()

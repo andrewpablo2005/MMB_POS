@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 15, 2026 at 11:19 AM
+-- Generation Time: Sep 16, 2026 at 07:21 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -26,8 +26,6 @@ SET time_zone = "+00:00";
 --
 -- Table structure for table `activity_logs`
 --
--- Audit trail: who did what, when, from where (Task 42).
--- Created automatically by conn/activity_log.php on first use.
 
 CREATE TABLE `activity_logs` (
   `id` int(11) NOT NULL,
@@ -43,6 +41,58 @@ CREATE TABLE `activity_logs` (
   `user_agent` varchar(255) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `activity_logs`
+--
+
+INSERT INTO `activity_logs` (`id`, `user_id`, `username`, `role`, `module`, `action`, `entity_type`, `entity_id`, `description`, `ip_address`, `user_agent`, `created_at`) VALUES
+(1, 1, 'andrew_owner', 'owner', 'auth', 'login', 'user', 1, 'Signed in successfully (owner)', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-16 00:53:07'),
+(2, 1, 'andrew_owner', 'owner', 'inventory', 'batch_add', 'product', 5, 'Added batch \'Batch-8\' (1 packs) to fe', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-16 00:55:27'),
+(3, 1, 'andrew_owner', 'owner', 'sales', 'register_open', 'register_opening', 11, 'Opened register with 1,000.00 PHP opening cash for 2026-09-16', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-16 00:55:33'),
+(4, 1, 'andrew_owner', 'owner', 'sales', 'sale_completed', 'transaction', 57, 'Completed sale #000057 — 52.50 PHP, 1 items, customer: Walk-in', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-16 00:55:39'),
+(5, 1, 'andrew_owner', 'owner', 'inventory', 'batch_add', 'product', 2, 'Added batch \'Batch-3\' (1 packs) to chip ahoys', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-16 00:57:25'),
+(6, 1, 'andrew_owner', 'owner', 'sales', 'sale_completed', 'transaction', 58, 'Completed sale #000058 — 52.50 PHP, 1 items, customer: Walk-in', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-16 00:57:35'),
+(7, 1, 'andrew_owner', 'owner', 'inventory', 'batch_disposal', 'inventory', 3, 'Disposed 10 packs from batch \'Batch-3\' of Restime (reason: DAMAGES)', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-16 01:00:15'),
+(8, 1, 'andrew_owner', 'owner', 'inventory', 'batch_add', 'product', 4, 'Added batch \'Batch-2\' (1 packs) to coke', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-16 01:02:03'),
+(9, 1, 'andrew_owner', 'owner', 'sales', 'sale_completed', 'transaction', 59, 'Completed sale #000059 — 52.50 PHP, 1 items, customer: Walk-in', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-16 01:02:28'),
+(10, 1, 'andrew_owner', 'owner', 'inventory', 'batch_add', 'product', 1, 'Added batch \'Batch-15\' (1 packs) to Restime', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-16 01:07:33'),
+(11, 1, 'andrew_owner', 'owner', 'sales', 'sale_completed', 'transaction', 60, 'Completed sale #000060 — 269,430.00 PHP, 2566 items, customer: Walk-in', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-16 01:08:22'),
+(12, 1, 'andrew_owner', 'owner', 'sales', 'register_close', 'register_closing', 8, 'Closed register for 2026-09-16 — system 270,587.50 PHP, counted 270,587.50 PHP, variance 0.00 PHP', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-16 01:10:50'),
+(13, 1, 'andrew_owner', 'owner', 'auth', 'logout', NULL, NULL, 'Signed out', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-16 01:10:53'),
+(14, NULL, 'andrew_owner', 'guest', 'auth', 'login_failed', NULL, NULL, 'Failed sign-in (wrong password) for username \'andrew_owner\'', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-16 01:10:58'),
+(15, NULL, 'andrew_owner', 'guest', 'auth', 'login_failed', NULL, NULL, 'Failed sign-in (wrong password) for username \'andrew_owner\'', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-16 01:11:04'),
+(16, 1, 'andrew_owner', 'owner', 'auth', 'login', 'user', 1, 'Signed in successfully (owner)', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-16 01:11:23'),
+(17, 1, 'andrew_owner', 'owner', 'inventory', 'batch_disposal', 'inventory', 7, 'Disposed 0 packs from batch \'Batch-7\' of Restime (reason: Expired)', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-16 01:15:52'),
+(18, 1, 'andrew_owner', 'owner', 'inventory', 'batch_add', 'product', 2, 'Added batch \'Batch-4\' (1 packs) to chip ahoys', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-16 01:16:13'),
+(19, 1, 'andrew_owner', 'owner', 'inventory', 'batch_add', 'product', 2, 'Added batch \'Batch-5\' (1000 packs) to chip ahoys', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-16 04:28:31'),
+(20, 1, 'andrew_owner', 'owner', 'settings', 'settings_update', NULL, NULL, 'Updated store settings — receipt paper: 80mm, weekly discount limit: 200.00 PHP, low stock: 15, near expiry: 60 days', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-16 04:57:47'),
+(21, 1, 'andrew_owner', 'owner', 'settings', 'settings_update', NULL, NULL, 'Updated store settings — receipt paper: 80mm, weekly discount limit: 200.00 PHP, low stock: 15, near expiry: 60 days', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-16 04:58:14'),
+(22, 1, 'andrew_owner', 'owner', 'inventory', 'batch_add', 'product', 2, 'Added batch \'Batch-6\' (16 packs) to chip ahoys', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-16 04:58:49'),
+(23, 1, 'andrew_owner', 'owner', 'inventory', 'batch_add', 'product', 4, 'Added batch \'Batch-3\' (16 packs) to coke', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-16 04:59:24'),
+(24, 1, 'andrew_owner', 'owner', 'auth', 'logout', NULL, NULL, 'Signed out', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-16 04:59:34'),
+(25, 2, 'andrew_admin', 'admin', 'auth', 'login', 'user', 2, 'Signed in successfully (admin)', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-16 04:59:40'),
+(26, 2, 'andrew_admin', 'admin', 'sales', 'register_close', 'register_closing', 9, 'Closed register for 2026-09-15 — system 22,456.75 PHP, counted 22,456.75 PHP, variance 0.00 PHP', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-16 04:59:54'),
+(27, 2, 'andrew_admin', 'admin', 'sales', 'register_open', 'register_opening', 12, 'Opened register with 100.00 PHP opening cash for 2026-09-16', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-16 05:00:04'),
+(28, 2, 'andrew_admin', 'admin', 'sales', 'sale_completed', 'transaction', 61, 'Completed sale #000061 — 267.75 PHP, 1 items, customer: Walk-in', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-16 05:00:10'),
+(29, 2, 'andrew_admin', 'admin', 'settings', 'settings_update', NULL, NULL, 'Updated store settings — receipt paper: 80mm, weekly discount limit: 200.00 PHP, low stock: 14, near expiry: 60 days', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-16 05:00:23'),
+(30, 2, 'andrew_admin', 'admin', 'settings', 'settings_update', NULL, NULL, 'Updated store settings — receipt paper: 80mm, weekly discount limit: 200.00 PHP, low stock: 14, near expiry: 60 days', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-16 05:00:28'),
+(31, 2, 'andrew_admin', 'admin', 'settings', 'settings_update', NULL, NULL, 'Updated store settings — receipt paper: 80mm, weekly discount limit: 200.00 PHP, low stock: 15, near expiry: 60 days', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-16 05:00:35'),
+(32, 2, 'andrew_admin', 'admin', 'settings', 'settings_update', NULL, NULL, 'Updated store settings — receipt paper: 80mm, weekly discount limit: 200.00 PHP, low stock: 15, near expiry: 60 days', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-16 05:00:37'),
+(33, 2, 'andrew_admin', 'admin', 'inventory', 'batch_add', 'product', 2, 'Added batch \'Batch-7\' (15 packs) to chip ahoys', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-16 05:05:30'),
+(34, 2, 'andrew_admin', 'admin', 'inventory', 'batch_add', 'product', 2, 'Added batch \'Batch-8\' (100 packs) to chip ahoys', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-16 05:07:00'),
+(35, 2, 'andrew_admin', 'admin', 'settings', 'settings_update', NULL, NULL, 'Updated store settings — receipt paper: 80mm, weekly discount limit: 200.00 PHP, low stock: 15, near expiry: 50 days', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-16 05:07:31'),
+(36, 2, 'andrew_admin', 'admin', 'settings', 'settings_update', NULL, NULL, 'Updated store settings — receipt paper: 80mm, weekly discount limit: 200.00 PHP, low stock: 15, near expiry: 50 days', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-16 05:07:35'),
+(37, 2, 'andrew_admin', 'admin', 'settings', 'settings_update', NULL, NULL, 'Updated store settings — receipt paper: 80mm, weekly discount limit: 200.00 PHP, low stock: 15, near expiry: 50 days', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-16 05:07:39'),
+(38, 2, 'andrew_admin', 'admin', 'settings', 'settings_update', NULL, NULL, 'Updated store settings — receipt paper: 80mm, weekly discount limit: 200.00 PHP, low stock: 15, near expiry: 70 days', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-16 05:08:00'),
+(39, 2, 'andrew_admin', 'admin', 'settings', 'settings_update', NULL, NULL, 'Updated store settings — receipt paper: 80mm, weekly discount limit: 200.00 PHP, low stock: 15, near expiry: 70 days', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-16 05:08:03'),
+(40, 2, 'andrew_admin', 'admin', 'inventory', 'batch_add', 'product', 4, 'Added batch \'Batch-4\' (100 packs) to coke', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-16 05:08:38'),
+(41, 2, 'andrew_admin', 'admin', 'settings', 'settings_update', NULL, NULL, 'Updated store settings — receipt paper: 80mm, weekly discount limit: 200.00 PHP, low stock: 15, near expiry: 2 days', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-16 05:08:55'),
+(42, 2, 'andrew_admin', 'admin', 'settings', 'settings_update', NULL, NULL, 'Updated store settings — receipt paper: 80mm, weekly discount limit: 200.00 PHP, low stock: 15, near expiry: 2 days', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-16 05:08:58'),
+(43, 2, 'andrew_admin', 'admin', 'settings', 'settings_update', NULL, NULL, 'Updated store settings — receipt paper: 80mm, weekly discount limit: 200.00 PHP, low stock: 15, near expiry: 3 days', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-16 05:09:05'),
+(44, 2, 'andrew_admin', 'admin', 'settings', 'settings_update', NULL, NULL, 'Updated store settings — receipt paper: 80mm, weekly discount limit: 200.00 PHP, low stock: 15, near expiry: 3 days', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-16 05:09:07'),
+(45, 2, 'andrew_admin', 'admin', 'settings', 'settings_update', NULL, NULL, 'Updated store settings — receipt paper: 80mm, weekly discount limit: 200.00 PHP, low stock: 15, near expiry: 60 days', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-16 05:09:17'),
+(46, 2, 'andrew_admin', 'admin', 'settings', 'settings_update', NULL, NULL, 'Updated store settings — receipt paper: 80mm, weekly discount limit: 200.00 PHP, low stock: 15, near expiry: 60 days', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-16 05:10:32');
 
 -- --------------------------------------------------------
 
@@ -135,27 +185,38 @@ CREATE TABLE `inventory` (
 
 INSERT INTO `inventory` (`id`, `product_id`, `supplier_id`, `batch_number`, `date_received`, `manufacture_date`, `purchase_cost`, `markup`, `sale_price`, `received_quantity`, `created_at`, `updated_at`, `current_quantity`, `expiry_date`) VALUES
 (1, 1, 1, 'Batch-1', '2026-09-08', NULL, 110.00, 5.00, 115.50, 100, '2026-09-08 06:18:40', '2026-09-09 00:37:00', 0, '2030-02-02'),
-(2, 1, 1, 'Batch-2', '2026-09-08', NULL, 50.00, 5.00, 52.50, 100, '2026-09-08 06:46:50', '2026-09-15 08:12:00', 1, '2027-05-08'),
-(3, 1, 1, 'Batch-3', '2026-09-09', NULL, 152.00, 5.00, 159.60, 1000, '2026-09-09 00:35:06', '2026-09-15 09:07:43', 770, '2030-02-02'),
-(4, 1, 1, 'Batch-4', '2026-09-14', NULL, 100.00, 5.00, 105.00, 100, '2026-09-14 07:28:12', '2026-09-15 08:59:06', 90, '2035-02-02'),
-(5, 1, 1, 'Batch-5', '2026-09-14', NULL, 200.00, 5.00, 210.00, 100, '2026-09-14 07:28:53', '2026-09-14 07:28:53', 100, '2033-02-02'),
-(6, 1, 1, 'Batch-6', '2026-09-14', NULL, 2000.00, 5.00, 2100.00, 200, '2026-09-14 07:31:21', '2026-09-14 08:27:44', 194, '2029-02-02'),
-(7, 1, 1, 'Batch-7', '2026-09-14', NULL, 1000.00, 5.00, 1050.00, 100, '2026-09-14 07:31:40', '2026-09-14 07:31:40', 100, '2029-02-02'),
-(8, 1, 1, 'Batch-8', '2026-09-14', NULL, 1000.00, 5.00, 1050.00, 200, '2026-09-14 07:31:58', '2026-09-14 07:31:58', 200, '2036-02-02'),
-(9, 1, NULL, 'Batch-9', '2026-09-14', NULL, 1000.00, 5.00, 1050.00, 1000, '2026-09-14 07:32:20', '2026-09-14 07:32:20', 1000, '2036-02-02'),
-(11, 1, 1, 'Batch-11', '2026-09-14', NULL, 1000.00, 5.00, 1050.00, 100, '2026-09-14 07:33:06', '2026-09-14 07:33:06', 100, '2029-02-10'),
+(2, 1, 1, 'Batch-2', '2026-09-08', NULL, 50.00, 5.00, 52.50, 100, '2026-09-08 06:46:50', '2026-09-16 01:08:22', 0, '2027-05-08'),
+(3, 1, 1, 'Batch-3', '2026-09-09', NULL, 152.00, 5.00, 159.60, 1000, '2026-09-09 00:35:06', '2026-09-16 01:08:22', 0, '2030-02-02'),
+(4, 1, 1, 'Batch-4', '2026-09-14', NULL, 100.00, 5.00, 105.00, 100, '2026-09-14 07:28:12', '2026-09-16 01:08:22', 0, '2035-02-02'),
+(5, 1, 1, 'Batch-5', '2026-09-14', NULL, 200.00, 5.00, 210.00, 100, '2026-09-14 07:28:53', '2026-09-16 01:08:22', 0, '2033-02-02'),
+(6, 1, 1, 'Batch-6', '2026-09-14', NULL, 2000.00, 5.00, 2100.00, 200, '2026-09-14 07:31:21', '2026-09-16 01:08:22', 0, '2029-02-02'),
+(7, 1, 1, 'Batch-7', '2026-09-14', NULL, 1000.00, 5.00, 1050.00, 100, '2026-09-14 07:31:40', '2026-09-16 01:08:22', 0, '2029-02-02'),
+(8, 1, 1, 'Batch-8', '2026-09-14', NULL, 1000.00, 5.00, 1050.00, 200, '2026-09-14 07:31:58', '2026-09-16 01:08:22', 0, '2036-02-02'),
+(9, 1, NULL, 'Batch-9', '2026-09-14', NULL, 1000.00, 5.00, 1050.00, 1000, '2026-09-14 07:32:20', '2026-09-16 01:08:22', 0, '2036-02-02'),
+(11, 1, 1, 'Batch-11', '2026-09-14', NULL, 1000.00, 5.00, 1050.00, 100, '2026-09-14 07:33:06', '2026-09-16 01:08:22', 0, '2029-02-10'),
 (12, 2, 1, 'Batch-1', '2026-09-14', NULL, 20.00, 5.00, 21.00, 1000, '2026-09-14 07:49:45', '2026-09-15 01:27:56', 0, '2029-02-02'),
 (17, 4, 1, 'Batch-1', '2026-09-15', NULL, 25.00, 5.00, 26.25, 1, '2026-09-15 04:29:23', '2026-09-15 04:29:50', 0, '2030-02-02'),
 (19, 5, 1, 'Batch-1', '2026-09-15', NULL, 200.00, 5.00, 210.00, 1, '2026-09-15 07:20:22', '2026-09-15 07:20:37', 0, '2030-02-02'),
 (20, 2, NULL, 'Batch-2', '2026-09-15', NULL, 50.00, 5.00, 52.50, 1, '2026-09-15 07:56:45', '2026-09-15 07:57:01', 0, '2029-02-02'),
-(21, 1, 1, 'Batch-TEST', '2026-09-15', NULL, 10.00, 5.00, 10.50, 10, '2026-09-15 08:47:38', '2026-09-15 08:47:38', 10, '2030-12-31'),
-(22, 1, 1, 'Batch-14', '2026-09-15', NULL, 10.00, 5.00, 10.50, 10, '2026-09-15 08:55:20', '2026-09-15 08:55:20', 10, '2030-12-31'),
+(21, 1, 1, 'Batch-TEST', '2026-09-15', NULL, 10.00, 5.00, 10.50, 10, '2026-09-15 08:47:38', '2026-09-16 01:08:22', 0, '2030-12-31'),
+(22, 1, 1, 'Batch-14', '2026-09-15', NULL, 10.00, 5.00, 10.50, 10, '2026-09-15 08:55:20', '2026-09-16 01:08:22', 0, '2030-12-31'),
 (23, 5, 1, 'Batch-2', '2026-09-15', NULL, 50.00, 5.00, 52.50, 1, '2026-09-15 08:55:31', '2026-09-15 08:55:46', 0, '2029-02-02'),
 (24, 5, 1, 'Batch-3', '2026-09-15', NULL, 50.00, 5.00, 52.50, 1, '2026-09-15 08:57:51', '2026-09-15 08:58:03', 0, '2030-02-02'),
 (25, 5, 1, 'Batch-4', '2026-09-15', NULL, 50.00, 5.00, 52.50, 1, '2026-09-15 09:02:14', '2026-09-15 09:02:33', 0, '2036-02-02'),
 (26, 5, 1, 'Batch-5', '2026-09-15', NULL, 50.00, 5.00, 52.50, 1, '2026-09-15 09:05:45', '2026-09-15 09:05:52', 0, '2036-02-02'),
 (27, 5, 1, 'Batch-6', '2026-09-15', NULL, 50.00, 5.00, 52.50, 1, '2026-09-15 09:09:56', '2026-09-15 09:10:05', 0, '2029-02-02'),
-(28, 5, 1, 'Batch-7', '2026-09-15', NULL, 50.00, 5.00, 52.50, 1, '2026-09-15 09:17:52', '2026-09-15 09:18:05', 0, '2030-02-02');
+(28, 5, 1, 'Batch-7', '2026-09-15', NULL, 50.00, 5.00, 52.50, 1, '2026-09-15 09:17:52', '2026-09-15 09:18:05', 0, '2030-02-02'),
+(29, 5, 1, 'Batch-8', '2026-09-16', NULL, 50.00, 5.00, 52.50, 1, '2026-09-16 00:55:27', '2026-09-16 00:55:39', 0, '2039-02-02'),
+(30, 2, 1, 'Batch-3', '2026-09-16', NULL, 50.00, 5.00, 52.50, 1, '2026-09-16 00:57:25', '2026-09-16 00:57:35', 0, '2030-02-02'),
+(31, 4, 1, 'Batch-2', '2026-09-16', NULL, 50.00, 5.00, 52.50, 1, '2026-09-16 01:02:03', '2026-09-16 01:02:28', 0, '2029-02-02'),
+(32, 1, 1, 'Batch-15', '2026-09-16', NULL, 100.00, 5.00, 105.00, 1, '2026-09-16 01:07:33', '2026-09-16 01:08:22', 0, '2030-02-02'),
+(33, 2, 1, 'Batch-4', '2026-09-16', NULL, 50.00, 5.00, 52.50, 1, '2026-09-16 01:16:13', '2026-09-16 01:16:13', 1, '2029-02-02'),
+(34, 2, 1, 'Batch-5', '2026-09-16', NULL, 50.00, 5.00, 52.50, 1000, '2026-09-16 04:28:31', '2026-09-16 04:28:31', 1000, '2030-02-02'),
+(35, 2, 1, 'Batch-6', '2026-09-16', NULL, 49.93, 5.00, 52.43, 16, '2026-09-16 04:58:49', '2026-09-16 04:58:49', 16, '2029-02-02'),
+(36, 4, 1, 'Batch-3', '2026-09-16', NULL, 255.00, 5.00, 267.75, 16, '2026-09-16 04:59:24', '2026-09-16 05:00:10', 15, '2030-02-02'),
+(37, 2, 1, 'Batch-7', '2026-09-16', NULL, 50.00, 5.00, 52.50, 15, '2026-09-16 05:05:30', '2026-09-16 05:05:30', 15, '2026-07-22'),
+(38, 2, 1, 'Batch-8', '2026-09-16', NULL, 550.00, 5.00, 577.50, 100, '2026-09-16 05:07:00', '2026-09-16 05:07:00', 100, '2026-11-11'),
+(39, 4, 1, 'Batch-4', '2026-09-16', NULL, 200.00, 5.00, 210.00, 100, '2026-09-16 05:08:38', '2026-09-16 05:08:38', 100, '2026-09-19');
 
 -- --------------------------------------------------------
 
@@ -247,7 +308,9 @@ INSERT INTO `inventory_disposals` (`id`, `product_id`, `batch_number`, `quantity
 (13, 1, 'Batch-3', 10, '2030-02-02', 'damages', '2026-09-15 15:50:45'),
 (14, 1, 'Batch-3', 10, '2030-02-02', 'damages', '2026-09-15 16:34:35'),
 (15, 1, 'Batch-4', 10, '2035-02-02', 'damaged', '2026-09-15 16:59:06'),
-(16, 1, 'Batch-3', 10, '2030-02-02', 'dM', '2026-09-15 17:07:43');
+(16, 1, 'Batch-3', 10, '2030-02-02', 'dM', '2026-09-15 17:07:43'),
+(17, 1, 'Batch-3', 10, '2030-02-02', 'DAMAGES', '2026-09-16 09:00:15'),
+(18, 1, 'Batch-7', 0, '2029-02-02', 'Expired', '2026-09-16 09:15:52');
 
 -- --------------------------------------------------------
 
@@ -289,7 +352,15 @@ INSERT INTO `inventory_no_stock` (`id`, `product_id`, `batch_number`, `current_q
 (16, 5, 'Batch-4', 0, 1, '2036-02-02', 'No stock', '2026-09-15 17:03:23'),
 (17, 5, 'Batch-5', 0, 1, '2036-02-02', 'No stock', '2026-09-15 17:06:04'),
 (18, 5, 'Batch-6', 0, 1, '2029-02-02', 'No stock', '2026-09-15 17:10:19'),
-(19, 5, 'Batch-7', 0, 1, '2030-02-02', 'No stock', '2026-09-15 17:18:24');
+(19, 5, 'Batch-7', 0, 1, '2030-02-02', 'No stock', '2026-09-15 17:18:24'),
+(20, 5, 'Batch-8', 0, 1, '2039-02-02', 'No stock', '2026-09-16 08:56:04'),
+(21, 2, 'Batch-3', 0, 1, '2030-02-02', 'No stock', '2026-09-16 08:58:24'),
+(22, 4, 'Batch-2', 0, 1, '2029-02-02', 'No stock', '2026-09-16 09:02:42'),
+(23, 1, 'Batch-3', 0, 1000, '2030-02-02', 'No stock', '2026-09-16 09:08:40'),
+(24, 1, 'Batch-4', 0, 100, '2035-02-02', 'No stock', '2026-09-16 09:09:13'),
+(25, 1, 'Batch-5', 0, 100, '2033-02-02', 'No stock', '2026-09-16 09:09:29'),
+(26, 1, 'Batch-6', 0, 200, '2029-02-02', 'No stock', '2026-09-16 09:15:31'),
+(27, 1, 'Batch-7', 0, 100, '2029-02-02', 'No stock', '2026-09-16 12:30:07');
 
 -- --------------------------------------------------------
 
@@ -580,7 +651,9 @@ INSERT INTO `register_closings` (`id`, `user_id`, `business_date`, `system_cash`
 (4, 2, '2026-09-10', 1159.60, 1159.60, 0.00, NULL, '2026-09-10 03:45:57'),
 (5, 3, '2026-09-10', 1478.80, 1478.80, 0.00, NULL, '2026-09-10 03:47:00'),
 (6, 1, '2026-09-14', 3525.10, 3525.10, 0.00, NULL, '2026-09-14 07:14:51'),
-(7, 2, '2026-09-14', 6289.25, 6289.25, 0.00, NULL, '2026-09-15 01:27:27');
+(7, 2, '2026-09-14', 6289.25, 6289.25, 0.00, NULL, '2026-09-15 01:27:27'),
+(8, 1, '2026-09-16', 270587.50, 270587.50, 0.00, NULL, '2026-09-16 01:10:50'),
+(9, 2, '2026-09-15', 22456.75, 22456.75, 0.00, NULL, '2026-09-16 04:59:54');
 
 -- --------------------------------------------------------
 
@@ -611,7 +684,9 @@ INSERT INTO `register_openings` (`id`, `user_id`, `business_date`, `opening_cash
 (7, 1, '2026-09-14', 1000.00, NULL, '2026-09-14 06:51:24'),
 (8, 2, '2026-09-14', 1000.00, NULL, '2026-09-14 07:38:01'),
 (9, 3, '2026-09-14', 1000.00, NULL, '2026-09-14 08:27:32'),
-(10, 2, '2026-09-15', 1000.00, NULL, '2026-09-15 01:27:33');
+(10, 2, '2026-09-15', 1000.00, NULL, '2026-09-15 01:27:33'),
+(11, 1, '2026-09-16', 1000.00, NULL, '2026-09-16 00:55:33'),
+(12, 2, '2026-09-16', 100.00, NULL, '2026-09-16 05:00:04');
 
 -- --------------------------------------------------------
 
@@ -724,8 +799,10 @@ CREATE TABLE `store_settings` (
 --
 
 INSERT INTO `store_settings` (`setting_key`, `setting_value`, `updated_at`) VALUES
-('receipt_paper', '80', '2026-09-14 16:19:58'),
-('statutory_discount_cap', '200.00', '2026-09-14 16:19:58');
+('low_stock_threshold', '15', '2026-09-16 13:10:32'),
+('near_expiry_days', '60', '2026-09-16 13:10:32'),
+('receipt_paper', '80', '2026-09-16 13:10:32'),
+('statutory_discount_cap', '200.00', '2026-09-16 13:10:32');
 
 -- --------------------------------------------------------
 
@@ -832,7 +909,12 @@ INSERT INTO `transactions` (`id`, `user_id`, `discount_id`, `customer_name`, `cu
 (53, 2, 1, 'Walk-in', NULL, '', 52.50, '2026-09-15 09:02:33', 0.00, 0.00),
 (54, 2, 1, 'Walk-in', NULL, '', 52.50, '2026-09-15 09:05:52', 0.00, 0.00),
 (55, 2, 1, 'Walk-in', NULL, '', 52.50, '2026-09-15 09:10:05', 0.00, 0.00),
-(56, 2, 1, 'Walk-in', NULL, '', 52.50, '2026-09-15 09:18:05', 0.00, 0.00);
+(56, 2, 1, 'Walk-in', NULL, '', 52.50, '2026-09-15 09:18:05', 0.00, 0.00),
+(57, 1, 1, 'Walk-in', NULL, '', 52.50, '2026-09-16 00:55:39', 0.00, 0.00),
+(58, 1, 1, 'Walk-in', NULL, '', 52.50, '2026-09-16 00:57:35', 0.00, 0.00),
+(59, 1, 1, 'Walk-in', NULL, '', 52.50, '2026-09-16 01:02:28', 0.00, 0.00),
+(60, 1, 1, 'Walk-in', NULL, '', 269430.00, '2026-09-16 01:08:22', 0.00, 0.00),
+(61, 2, 1, 'Walk-in', NULL, '', 267.75, '2026-09-16 05:00:10', 0.00, 0.00);
 
 -- --------------------------------------------------------
 
@@ -925,7 +1007,12 @@ INSERT INTO `transaction_items` (`id`, `transaction_id`, `product_id`, `batch_id
 (53, 53, 5, 25, 1, 52.50, 52.50),
 (54, 54, 5, 26, 1, 52.50, 52.50),
 (55, 55, 5, 27, 1, 52.50, 52.50),
-(56, 56, 5, 28, 1, 52.50, 52.50);
+(56, 56, 5, 28, 1, 52.50, 52.50),
+(57, 57, 5, 29, 1, 52.50, 52.50),
+(58, 58, 2, 30, 1, 52.50, 52.50),
+(59, 59, 4, 31, 1, 52.50, 52.50),
+(60, 60, 1, NULL, 2566, 105.00, 269430.00),
+(61, 61, 4, 36, 1, 267.75, 267.75);
 
 -- --------------------------------------------------------
 
@@ -1004,7 +1091,23 @@ INSERT INTO `transaction_item_batches` (`id`, `transaction_item_id`, `inventory_
 (55, 53, 25, 1, 50.00, '2026-09-15 09:02:33'),
 (56, 54, 26, 1, 50.00, '2026-09-15 09:05:52'),
 (57, 55, 27, 1, 50.00, '2026-09-15 09:10:05'),
-(58, 56, 28, 1, 50.00, '2026-09-15 09:18:05');
+(58, 56, 28, 1, 50.00, '2026-09-15 09:18:05'),
+(59, 57, 29, 1, 50.00, '2026-09-16 00:55:39'),
+(60, 58, 30, 1, 50.00, '2026-09-16 00:57:35'),
+(61, 59, 31, 1, 50.00, '2026-09-16 01:02:28'),
+(62, 60, 2, 1, 50.00, '2026-09-16 01:08:22'),
+(63, 60, 6, 194, 2000.00, '2026-09-16 01:08:22'),
+(64, 60, 7, 100, 1000.00, '2026-09-16 01:08:22'),
+(65, 60, 11, 100, 1000.00, '2026-09-16 01:08:22'),
+(66, 60, 3, 760, 152.00, '2026-09-16 01:08:22'),
+(67, 60, 32, 1, 100.00, '2026-09-16 01:08:22'),
+(68, 60, 21, 10, 10.00, '2026-09-16 01:08:22'),
+(69, 60, 22, 10, 10.00, '2026-09-16 01:08:22'),
+(70, 60, 5, 100, 200.00, '2026-09-16 01:08:22'),
+(71, 60, 4, 90, 100.00, '2026-09-16 01:08:22'),
+(72, 60, 8, 200, 1000.00, '2026-09-16 01:08:22'),
+(73, 60, 9, 1000, 1000.00, '2026-09-16 01:08:22'),
+(74, 61, 36, 1, 255.00, '2026-09-16 05:00:10');
 
 -- --------------------------------------------------------
 
@@ -1067,7 +1170,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `username`, `password`, `void_password`, `position`, `failed_attempts`, `last_attempt`, `status`, `created_at`) VALUES
-(1, 'andrew_owner', '$2y$10$2Rqa4Se609iFKRTnJpX3SuAIE7v1vZwwCtGK2WHBvnBxQ2.w9RBAS', '1234567', 'Owner', 0, NULL, 'active', '2026-09-05 08:53:02'),
+(1, 'andrew_owner', '$2y$10$2Rqa4Se609iFKRTnJpX3SuAIE7v1vZwwCtGK2WHBvnBxQ2.w9RBAS', '1234567', 'Owner', 0, '2026-09-16 01:11:04', 'active', '2026-09-05 08:53:02'),
 (2, 'andrew_admin', '$2y$10$.pMY78gCNdiWGwCw8DAIse7SS./j5d9T8pQ87YhhLoOum4yKzJL.m', '1234567', 'Admin', 0, '2026-08-20 01:56:58', 'active', '2026-09-05 08:53:02'),
 (3, 'andrew_staff', '$2y$10$WESQ6f2mApseNhMhKMmW8e6gg.tp9AU8CsY/mQrU4g6GHEWmFCWGG', '1234567', 'Staff', 0, '2026-07-26 14:50:35', 'active', '2026-09-05 08:53:02'),
 (4, 'staff1', '$2y$10$U60z2JyVRKxJ.x36cqpJkuzZDPRFtOF5aZqUO7QCyBBN.P614oIoy', NULL, 'Staff', 0, NULL, 'active', '2026-09-05 08:53:02'),
@@ -1369,7 +1472,7 @@ ALTER TABLE `users_info`
 -- AUTO_INCREMENT for table `activity_logs`
 --
 ALTER TABLE `activity_logs`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47;
 
 --
 -- AUTO_INCREMENT for table `discounts`
@@ -1387,7 +1490,7 @@ ALTER TABLE `dosage_forms`
 -- AUTO_INCREMENT for table `inventory`
 --
 ALTER TABLE `inventory`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
 
 --
 -- AUTO_INCREMENT for table `inventory_alerts`
@@ -1399,13 +1502,13 @@ ALTER TABLE `inventory_alerts`
 -- AUTO_INCREMENT for table `inventory_disposals`
 --
 ALTER TABLE `inventory_disposals`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT for table `inventory_no_stock`
 --
 ALTER TABLE `inventory_no_stock`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
 
 --
 -- AUTO_INCREMENT for table `inventory_transactions`
@@ -1417,7 +1520,7 @@ ALTER TABLE `inventory_transactions`
 -- AUTO_INCREMENT for table `login_attempts`
 --
 ALTER TABLE `login_attempts`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `override_log`
@@ -1465,13 +1568,13 @@ ALTER TABLE `pwd_customers`
 -- AUTO_INCREMENT for table `register_closings`
 --
 ALTER TABLE `register_closings`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `register_openings`
 --
 ALTER TABLE `register_openings`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `return_items`
@@ -1507,7 +1610,7 @@ ALTER TABLE `suppliers`
 -- AUTO_INCREMENT for table `transactions`
 --
 ALTER TABLE `transactions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=57;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=62;
 
 --
 -- AUTO_INCREMENT for table `transaction_batch_allocations`
@@ -1519,13 +1622,13 @@ ALTER TABLE `transaction_batch_allocations`
 -- AUTO_INCREMENT for table `transaction_items`
 --
 ALTER TABLE `transaction_items`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=57;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=62;
 
 --
 -- AUTO_INCREMENT for table `transaction_item_batches`
 --
 ALTER TABLE `transaction_item_batches`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=59;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=75;
 
 --
 -- AUTO_INCREMENT for table `unit_measurement`

@@ -7,6 +7,8 @@ require_once __DIR__ . '/../conn/activity_log.php'; // audit trail (Task 42)
 $storeSettingsMessage = null;
 $receiptPaper = '80';
 $statutoryDiscountCap = '125.00';
+$lowStockThreshold = '15';
+$nearExpiryDays = '60';
 
 try {
     $db->exec("CREATE TABLE IF NOT EXISTS store_settings (
@@ -15,7 +17,7 @@ try {
         updated_at DATETIME NULL DEFAULT NULL
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 
-    $settingsStmt = $db->query("SELECT setting_key, setting_value FROM store_settings WHERE setting_key IN ('receipt_paper', 'statutory_discount_cap')");
+    $settingsStmt = $db->query("SELECT setting_key, setting_value FROM store_settings WHERE setting_key IN ('receipt_paper', 'statutory_discount_cap', 'low_stock_threshold', 'near_expiry_days')");
     foreach ($settingsStmt->fetchAll(PDO::FETCH_ASSOC) as $setting) {
         if ($setting['setting_key'] === 'receipt_paper' && in_array($setting['setting_value'], ['58', '80'], true)) {
             $receiptPaper = $setting['setting_value'];
@@ -24,12 +26,22 @@ try {
             && is_numeric($setting['setting_value']) && (float)$setting['setting_value'] >= 0) {
             $statutoryDiscountCap = number_format((float)$setting['setting_value'], 2, '.', '');
         }
+        if ($setting['setting_key'] === 'low_stock_threshold'
+            && ctype_digit((string) $setting['setting_value']) && (int) $setting['setting_value'] >= 1 && (int) $setting['setting_value'] <= 100000) {
+            $lowStockThreshold = (string) (int) $setting['setting_value'];
+        }
+        if ($setting['setting_key'] === 'near_expiry_days'
+            && ctype_digit((string) $setting['setting_value']) && (int) $setting['setting_value'] >= 1 && (int) $setting['setting_value'] <= 3650) {
+            $nearExpiryDays = (string) (int) $setting['setting_value'];
+        }
     }
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['saveStoreSettings'])) {
         $csrfToken = (string)($_POST['csrf_token'] ?? '');
         $postedPaper = (string)($_POST['receipt_paper'] ?? '');
         $postedCap = (float)($_POST['statutory_discount_cap'] ?? -1);
+        $postedLowStock = filter_var($_POST['low_stock_threshold'] ?? null, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1, 'max_range' => 100000]]);
+        $postedNearExpiry = filter_var($_POST['near_expiry_days'] ?? null, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1, 'max_range' => 3650]]);
 
         if (!hash_equals((string)($_SESSION['csrf_token'] ?? ''), $csrfToken)) {
             $storeSettingsMessage = ['type' => 'danger', 'text' => 'Invalid or expired security token.'];
@@ -37,6 +49,10 @@ try {
             $storeSettingsMessage = ['type' => 'danger', 'text' => 'Choose a valid receipt paper size.'];
         } elseif ($postedCap < 0 || $postedCap > 100000) {
             $storeSettingsMessage = ['type' => 'danger', 'text' => 'Enter a weekly discount limit from 0 to 100,000.'];
+        } elseif ($postedLowStock === false) {
+            $storeSettingsMessage = ['type' => 'danger', 'text' => 'Enter a low-stock threshold from 1 to 100,000 units.'];
+        } elseif ($postedNearExpiry === false) {
+            $storeSettingsMessage = ['type' => 'danger', 'text' => 'Enter a near-expiry warning period from 1 to 3,650 days.'];
         } else {
             $saveStmt = $db->prepare(
                 'INSERT INTO store_settings (setting_key, setting_value, updated_at)
@@ -45,12 +61,16 @@ try {
             );
             $saveStmt->execute(['receipt_paper', $postedPaper]);
             $saveStmt->execute(['statutory_discount_cap', number_format($postedCap, 2, '.', '')]);
+            $saveStmt->execute(['low_stock_threshold', (string) $postedLowStock]);
+            $saveStmt->execute(['near_expiry_days', (string) $postedNearExpiry]);
             $receiptPaper = $postedPaper;
             $statutoryDiscountCap = number_format($postedCap, 2, '.', '');
+            $lowStockThreshold = (string) $postedLowStock;
+            $nearExpiryDays = (string) $postedNearExpiry;
 
             // AUDIT (Task 42)
             mmb_log_activity($db, 'settings', 'settings_update',
-                "Updated store settings — receipt paper: {$postedPaper}mm, weekly discount limit: " . number_format($postedCap, 2) . " PHP");
+                "Updated store settings — receipt paper: {$postedPaper}mm, weekly discount limit: " . number_format($postedCap, 2) . " PHP, low stock: {$postedLowStock}, near expiry: {$postedNearExpiry} days");
 
             $storeSettingsMessage = ['type' => 'success', 'text' => 'Store settings saved successfully.'];
         }
@@ -72,6 +92,11 @@ try {
         <div class="alert alert-<?= htmlspecialchars($storeSettingsMessage['type'], ENT_QUOTES, 'UTF-8') ?>" role="alert">
             <?= htmlspecialchars($storeSettingsMessage['text'], ENT_QUOTES, 'UTF-8') ?>
         </div>
+        <?php if ($storeSettingsMessage['type'] === 'success'): ?>
+            <script>
+                window.location.replace(window.location.href);
+            </script>
+        <?php endif; ?>
     <?php endif; ?>
 
     <div class="card">
@@ -104,6 +129,27 @@ try {
                                 <option value="58" <?= $receiptPaper === '58' ? 'selected' : '' ?>>58mm thermal roll (compact)</option>
                             </select>
                             <small class="text-muted">Applies to every POS terminal.</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <h6>Inventory Alerts</h6>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label" for="lowStockThreshold">Minimum Stock Alert</label>
+                            <input type="number" class="form-control" id="lowStockThreshold" name="low_stock_threshold"
+                                min="1" max="100000" step="1" value="<?= htmlspecialchars($lowStockThreshold, ENT_QUOTES, 'UTF-8') ?>" required>
+                            <small class="text-muted">Show a low-stock notification when total active inventory is at or below this quantity.</small>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="nearExpiryDays">Near-Expiry Warning Period</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" id="nearExpiryDays" name="near_expiry_days"
+                                    min="1" max="3650" step="1" value="<?= htmlspecialchars($nearExpiryDays, ENT_QUOTES, 'UTF-8') ?>" required>
+                                <span class="input-group-text">days</span>
+                            </div>
+                            <small class="text-muted">Warn for active inventory expiring within this many days.</small>
                         </div>
                     </div>
                 </div>
