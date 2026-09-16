@@ -22,26 +22,60 @@ if ($showGlobalAlerts) {
 $globalAlertItems = [];
 
 foreach ($lowStockItems as $item) {
+    $lowStockBatches = [];
+    foreach (($item['batches'] ?? []) as $batch) {
+        $batchLabel = !empty($batch['batch_number'])
+            ? 'Batch ' . $batch['batch_number']
+            : 'Batch #' . (int) $batch['id'];
+        $lowStockBatches[] = [
+            'name' => $batchLabel,
+            'quantity' => (int) $batch['current_quantity'],
+            'href' => 'dashboard.php?tab=inventory&alert_product_id=' . (int) $item['id'] . '&alert_batch_id=' . (int) $batch['id'] . '&alert_type=low-stock'
+        ];
+    }
+
     $globalAlertItems[] = [
+        'type' => count($lowStockBatches) > 1 ? 'batch-group' : 'single',
         'title' => 'Low Stock',
         'message' => htmlspecialchars($item['product_name']) . ' has only ' . ($item['quantity'] ?? 0) . ' unit(s) left.',
         'icon' => 'fas fa-exclamation-triangle',
         'bg' => '#dc2626',
-        'href' => 'dashboard.php?tab=inventory&alert_product_id=' . (int)$item['id'] . '&alert_type=low-stock'
+        'href' => 'dashboard.php?tab=inventory&alert_product_id=' . (int)$item['id'] . '&alert_type=low-stock',
+        'batches' => $lowStockBatches
     ];
 }
 
+$expiryGroups = [];
 foreach ($expiryItems as $item) {
-    $message = $item['status'] === 'Expired'
-        ? htmlspecialchars($item['name']) . ' has expired. Remove it from sale immediately.'
-        : htmlspecialchars($item['name']) . ' will expire in ' . $item['days_left'] . ' day(s).';
+    $groupKey = (int) $item['product_id'] . ':' . $item['status'];
+    if (!isset($expiryGroups[$groupKey])) {
+        $expiryGroups[$groupKey] = [
+            'type' => 'batch-group',
+            'title' => $item['status'] === 'Expired' ? 'Expired Item' : 'Near Expiry',
+            'product_name' => $item['product_name'] ?? $item['name'],
+            'status' => $item['status'],
+            'icon' => $item['status'] === 'Expired' ? 'fas fa-exclamation-triangle' : 'fas fa-clock',
+            'bg' => $item['status'] === 'Expired' ? '#f59e0b' : '#2563eb',
+            'batches' => []
+        ];
+    }
+
+    $expiryGroups[$groupKey]['batches'][] = $item;
+}
+
+foreach ($expiryGroups as $group) {
+    $firstBatch = $group['batches'][0];
+    $batchCount = count($group['batches']);
+    $message = htmlspecialchars($group['product_name']) . ' has ' . $batchCount . ' warning batch' . ($batchCount === 1 ? '' : 'es') . '.';
 
     $globalAlertItems[] = [
-        'title' => $item['status'] === 'Expired' ? 'Expired Item' : 'Near Expiry',
+        'type' => 'batch-group',
+        'title' => $group['title'],
         'message' => $message,
-        'icon' => $item['status'] === 'Expired' ? 'fas fa-exclamation-triangle' : 'fas fa-clock',
-    'bg' => $item['status'] === 'Expired' ? '#f59e0b' : '#2563eb',
-    'href' => 'dashboard.php?tab=inventory&alert_product_id=' . (int)$item['product_id'] . '&alert_batch_id=' . (int)($item['batch_id'] ?? 0) . '&alert_type=expiry'
+        'icon' => $group['icon'],
+        'bg' => $group['bg'],
+        'href' => 'dashboard.php?tab=inventory&alert_product_id=' . (int)$firstBatch['product_id'] . '&alert_batch_id=' . (int)($firstBatch['batch_id'] ?? 0) . '&alert_type=expiry',
+        'batches' => $group['batches']
     ];
 }
 
@@ -124,8 +158,9 @@ foreach ($expiryItems as $item) {
 
         <div id="globalAlertList" class="collapse show">
             <div class="bg-light border-top notification-scroll">
-                <?php foreach ($globalAlertItems as $alert): ?>
-                    <a href="<?= htmlspecialchars($alert['href'], ENT_QUOTES, 'UTF-8') ?>" class="alert-item d-flex align-items-start gap-2 px-3 py-3 border-bottom bg-white text-decoration-none">
+                <?php foreach ($globalAlertItems as $alertIndex => $alert): ?>
+                    <div class="alert-item border-bottom bg-white">
+                    <a href="<?= htmlspecialchars($alert['href'], ENT_QUOTES, 'UTF-8') ?>" class="d-flex align-items-start gap-2 px-3 py-3 text-decoration-none">
                         <span class="d-inline-flex align-items-center justify-content-center rounded-circle text-white"
                               style="width: 28px; height: 28px; background: <?= $alert['bg'] ?>; font-size: 0.72rem; flex-shrink: 0;">
                             <i class="<?= $alert['icon'] ?>"></i>
@@ -139,8 +174,29 @@ foreach ($expiryItems as $item) {
                                 <?= $alert['message'] ?>
                             </div>
                         </div>
-
                     </a>
+                    <?php if (($alert['type'] ?? '') === 'batch-group' && count($alert['batches']) > 1): ?>
+                        <button type="button" class="alert-group-toggle btn btn-link text-decoration-none px-3 pb-2 pt-0"
+                                data-alert-group="alert-group-<?= $alertIndex ?>" aria-expanded="false">
+                            +<?= count($alert['batches']) - 1 ?> more batch<?= count($alert['batches']) - 1 === 1 ? '' : 'es' ?>
+                        </button>
+                        <div id="alert-group-<?= $alertIndex ?>" class="alert-group-details px-3 pb-2" hidden>
+                            <?php foreach ($alert['batches'] as $batch): ?>
+                                <a href="<?= htmlspecialchars($batch['href'] ?? ('dashboard.php?tab=inventory&alert_product_id=' . (int)$batch['product_id'] . '&alert_batch_id=' . (int)($batch['batch_id'] ?? 0) . '&alert_type=expiry'), ENT_QUOTES, 'UTF-8') ?>"
+                                   class="d-block text-muted text-decoration-none py-1" style="font-size: 0.7rem;">
+                                    <?= htmlspecialchars($batch['name']) ?>
+                                    <?php if (isset($batch['quantity'])): ?>
+                                        (<?= (int)$batch['quantity'] ?> unit<?= (int)$batch['quantity'] === 1 ? '' : 's' ?> left)
+                                    <?php elseif ($batch['status'] === 'Expired'): ?>
+                                        (expired)
+                                    <?php else: ?>
+                                        (<?= (int)$batch['days_left'] ?> day<?= (int)$batch['days_left'] === 1 ? '' : 's' ?> left)
+                                    <?php endif; ?>
+                                </a>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php endif; ?>
+                    </div>
                 <?php endforeach; ?>
             </div>
         </div>
@@ -204,6 +260,19 @@ foreach ($expiryItems as $item) {
                 toggleAlertWidget();
             });
         }
+
+        document.querySelectorAll('.alert-group-toggle').forEach(function (button) {
+            button.addEventListener('click', function () {
+                const details = document.getElementById(button.dataset.alertGroup);
+                if (!details) return;
+                const isExpanded = button.getAttribute('aria-expanded') === 'true';
+                button.setAttribute('aria-expanded', String(!isExpanded));
+                details.hidden = isExpanded;
+                button.textContent = isExpanded
+                    ? button.textContent.replace('−', '+')
+                    : button.textContent.replace('+', '−');
+            });
+        });
 
         if (alertClose) {
             alertClose.addEventListener('click', function () {

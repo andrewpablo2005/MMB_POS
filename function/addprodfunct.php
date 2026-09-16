@@ -1451,6 +1451,12 @@ class ProductManagement
         $stmt->execute([$lowStockThreshold]);
         $rows = $stmt->fetchAll();
 
+        $batchNumberSelect = $this->hasColumn('inventory', 'batch_number') ? ', i.batch_number' : '';
+        $batchStmt = $this->con->prepare("SELECT i.id, i.current_quantity{$batchNumberSelect}
+            FROM inventory i
+            WHERE i.product_id = ? AND i.current_quantity > 0
+            ORDER BY i.id ASC");
+
         foreach ($rows as &$row) {
             $branded = trim($row['branded_name'] ?? '');
             $generic = trim($row['generic_name'] ?? '');
@@ -1463,6 +1469,9 @@ class ProductManagement
             } else {
                 $row['product_name'] = 'Product #' . $row['id'];
             }
+
+            $batchStmt->execute([(int) $row['id']]);
+            $row['batches'] = $batchStmt->fetchAll();
         }
 
         return $rows;
@@ -1579,6 +1588,7 @@ class ProductManagement
                 $displayName = 'Unnamed Product';
             }
 
+            $productName = $displayName;
             if ($batchNumber !== '') {
                 $displayName .= ' (' . $batchNumber . ')';
             }
@@ -1587,6 +1597,7 @@ class ProductManagement
                 $items[] = [
                     'product_id' => (int) ($batch['product_id'] ?? 0),
                     'batch_id' => (int) ($batch['id'] ?? 0),
+                    'product_name' => $productName,
                     'name' => $displayName,
                     'status' => 'Expired',
                     'days_left' => 0,
@@ -1596,6 +1607,7 @@ class ProductManagement
                 $items[] = [
                     'product_id' => (int) ($batch['product_id'] ?? 0),
                     'batch_id' => (int) ($batch['id'] ?? 0),
+                    'product_name' => $productName,
                     'name' => $displayName,
                     'status' => 'Near Expiry',
                     'days_left' => $daysLeft,
