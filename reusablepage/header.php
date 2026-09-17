@@ -36,12 +36,16 @@ foreach ($lowStockItems as $item) {
         ];
     }
 
+    $hasNoStockBatch = !empty($item['has_no_stock_batch']);
+    $noStockBatchNames = $item['no_stock_batch_names'] ?? [];
+    $noStockBatchLabel = implode(', ', array_map('htmlspecialchars', $noStockBatchNames));
+
     $globalAlertItems[] = [
         'type' => count($lowStockBatches) > 1 ? 'batch-group' : 'single',
-        'category' => (int) ($item['quantity'] ?? 0) <= 0 ? 'no-stock' : 'low-stock',
-        'title' => (int) ($item['quantity'] ?? 0) <= 0 ? 'No Stock' : 'Low Stock',
-        'message' => (int) ($item['quantity'] ?? 0) <= 0
-            ? htmlspecialchars($item['product_name']) . ' is out of stock.'
+        'category' => $hasNoStockBatch ? 'no-stock' : 'low-stock',
+        'title' => $hasNoStockBatch ? 'No Stock' : 'Low Stock',
+        'message' => $hasNoStockBatch
+            ? htmlspecialchars($item['product_name']) . ' has no stock in ' . $noStockBatchLabel . '.'
             : htmlspecialchars($item['product_name']) . ' has only ' . ($item['quantity'] ?? 0) . ' unit(s) left.',
         'icon' => 'fas fa-exclamation-triangle',
         'bg' => '#dc2626',

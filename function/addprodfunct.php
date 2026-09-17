@@ -1445,7 +1445,7 @@ class ProductManagement
             FROM products p
             INNER JOIN inventory i ON p.id = i.product_id
             GROUP BY p.id
-            HAVING quantity <= ?
+            HAVING quantity <= ? OR SUM(CASE WHEN i.current_quantity <= 0 THEN 1 ELSE 0 END) > 0
         ");
 
         $stmt->execute([$lowStockThreshold]);
@@ -1471,7 +1471,18 @@ class ProductManagement
             }
 
             $batchStmt->execute([(int) $row['id']]);
-            $row['batches'] = $batchStmt->fetchAll();
+            $allBatches = $batchStmt->fetchAll();
+            $zeroStockBatches = array_values(array_filter($allBatches, static function (array $batch): bool {
+                return (int) ($batch['current_quantity'] ?? 0) <= 0;
+            }));
+            $row['has_no_stock_batch'] = !empty($zeroStockBatches);
+            $row['no_stock_batch_names'] = array_values(array_filter(array_map(static function (array $batch): string {
+                $batchNumber = trim((string) ($batch['batch_number'] ?? ''));
+                return $batchNumber !== '' ? $batchNumber : 'Batch #' . (int) $batch['id'];
+            }, $zeroStockBatches)));
+            $row['batches'] = $row['has_no_stock_batch']
+                ? $zeroStockBatches
+                : $allBatches;
         }
 
         return $rows;
