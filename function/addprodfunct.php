@@ -524,11 +524,11 @@ class ProductManagement
 
         $measurementNames = [];
         try {
-            $measurementStmt = $this->con->prepare("SELECT unit_id, different_measurement FROM unit_measurement");
+            $measurementStmt = $this->con->prepare("SELECT id, serving_unit_name FROM serving_unit");
             $measurementStmt->execute();
 
             while ($row = $measurementStmt->fetch()) {
-                $measurementNames[(int) ($row['unit_id'] ?? 0)] = trim($row['different_measurement'] ?? '');
+                $measurementNames[(int) ($row['id'] ?? 0)] = trim($row['serving_unit_name'] ?? '');
             }
         } catch (\Exception $e) {
             $measurementNames = [];

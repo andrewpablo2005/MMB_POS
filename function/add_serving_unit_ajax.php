@@ -17,7 +17,13 @@ try {
         exit;
     }
 
-    $name = preg_replace('/\s+/', ' ', trim((string) ($_POST['measurement_name'] ?? '')));
+    $enteredName = preg_replace('/\s+/', ' ', trim((string) ($_POST['measurement_name'] ?? '')));
+    $servingAmount = null;
+    $name = $enteredName;
+    if (preg_match('/^([0-9]+(?:\.[0-9]+)?)\s+(.+)$/', $enteredName, $matches)) {
+        $servingAmount = $matches[1];
+        $name = trim($matches[2]);
+    }
     if ($name === '') {
         http_response_code(400);
         echo json_encode(['success' => false, 'message' => 'Serving unit name is required.']);
@@ -27,7 +33,13 @@ try {
     $duplicateStmt->execute([$name]);
     $existing = $duplicateStmt->fetch(PDO::FETCH_ASSOC);
     if ($existing) {
-        echo json_encode(['success' => false, 'message' => 'This serving unit already exists.', 'existing_id' => (int) $existing['id'], 'existing_name' => trim((string) $existing['serving_unit_name'])]);
+        echo json_encode([
+            'success' => false,
+            'message' => 'This serving unit already exists.',
+            'existing_id' => (int) $existing['id'],
+            'existing_name' => trim((string) $existing['serving_unit_name']),
+            'serving_amount' => $servingAmount
+        ]);
         exit;
     }
     $stmt = $db->prepare('INSERT INTO serving_unit (serving_unit_name) VALUES (?)');
@@ -39,7 +51,13 @@ try {
         "Added serving unit '{$name}'",
         'serving_unit', $newUnitId);
 
-    echo json_encode(['success' => true, 'message' => 'Serving unit saved successfully.', 'id' => $newUnitId, 'name' => $name]);
+    echo json_encode([
+        'success' => true,
+        'message' => 'Serving unit saved successfully.',
+        'id' => $newUnitId,
+        'name' => $name,
+        'serving_amount' => $servingAmount
+    ]);
 } catch (PDOException $e) {
     http_response_code(500);
     echo json_encode(['success' => false, 'message' => 'Database error: ' . $e->getMessage()]);

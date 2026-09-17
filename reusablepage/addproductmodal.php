@@ -439,8 +439,8 @@ $dosageForms = $product->getDosageForms();
                     <label for="measurement_name" class="form-label">Measurement Name <span
                             class="text-danger">*</span></label>
                     <input type="text" class="form-control" id="measurement_name" name="measurement_name"
-                        placeholder="e.g., mg, mL, bottle" required autocomplete="off">
-                    <div class="form-text">Add a unit that can be used for serving amounts and package sizes.</div>
+                        placeholder="e.g., mg, mL, pc or 1 pc" required autocomplete="off">
+                    <div class="form-text">Enter a unit such as pc, mg, or mL. You may also enter a serving like 1 pc; the amount will be placed in Amount per Serving.</div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" title="Cancel and close"
@@ -623,6 +623,14 @@ $dosageForms = $product->getDosageForms();
                         const target = document.getElementById(measurementTargetId);
                         const id = data.id || data.existing_id;
                         const savedName = data.name || data.existing_name || name;
+                        if (data.serving_amount !== null && data.serving_amount !== undefined) {
+                            const strengthInput = document.getElementById('strength');
+                            if (strengthInput) {
+                                strengthInput.value = data.serving_amount;
+                                strengthInput.dispatchEvent(new Event('input', { bubbles: true }));
+                                strengthInput.dispatchEvent(new Event('change', { bubbles: true }));
+                            }
+                        }
                         if (target && !Array.from(target.options).some((option) => option.value === String(id) || option.value === savedName)) {
                             const newOption = new Option(savedName, target.id === 'unit_measurement' ? id : savedName);
                             newOption.dataset.measurementId = String(id);
