@@ -3,6 +3,10 @@ require_once __DIR__ . '/guard.php';
 guard_require_roles(['owner', 'admin']);
 require_once __DIR__ . '/../conn/database.php';
 require_once __DIR__ . '/../conn/activity_log.php'; // audit trail (Task 42)
+require_once __DIR__ . '/../function/addprodfunct.php';
+
+$categoryManager = new \Classes\ProductManagement($db);
+$categories = $categoryManager->getCategories();
 
 $storeSettingsMessage = null;
 $receiptPaper = '80';
@@ -114,6 +118,9 @@ try {
             <h4>Store Settings</h4>
             <p class="page-sub">Manage settings shared by every POS terminal.</p>
         </div>
+        <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#categorySettingsModal">
+            Category Settings
+        </button>
     </div>
 
     <?php if ($storeSettingsMessage): ?>
@@ -220,3 +227,5 @@ try {
         </div>
     </div>
 </div>
+
+<?php include __DIR__ . '/categorysettings.php'; ?>
