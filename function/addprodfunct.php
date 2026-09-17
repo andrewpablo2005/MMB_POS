@@ -1443,9 +1443,9 @@ class ProductManagement
                 {$nameSelect}
                 COALESCE(SUM(i.current_quantity), 0) AS quantity
             FROM products p
-            LEFT JOIN inventory i ON p.id = i.product_id
+            INNER JOIN inventory i ON p.id = i.product_id
             GROUP BY p.id
-            HAVING quantity <= ? AND quantity > 0
+            HAVING quantity <= ?
         ");
 
         $stmt->execute([$lowStockThreshold]);
@@ -1454,7 +1454,7 @@ class ProductManagement
         $batchNumberSelect = $this->hasColumn('inventory', 'batch_number') ? ', i.batch_number' : '';
         $batchStmt = $this->con->prepare("SELECT i.id, i.current_quantity{$batchNumberSelect}
             FROM inventory i
-            WHERE i.product_id = ? AND i.current_quantity > 0
+            WHERE i.product_id = ? AND i.current_quantity >= 0
             ORDER BY i.id ASC");
 
         foreach ($rows as &$row) {

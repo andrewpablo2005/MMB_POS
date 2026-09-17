@@ -38,8 +38,11 @@ foreach ($lowStockItems as $item) {
 
     $globalAlertItems[] = [
         'type' => count($lowStockBatches) > 1 ? 'batch-group' : 'single',
-        'title' => 'Low Stock',
-        'message' => htmlspecialchars($item['product_name']) . ' has only ' . ($item['quantity'] ?? 0) . ' unit(s) left.',
+        'category' => (int) ($item['quantity'] ?? 0) <= 0 ? 'no-stock' : 'low-stock',
+        'title' => (int) ($item['quantity'] ?? 0) <= 0 ? 'No Stock' : 'Low Stock',
+        'message' => (int) ($item['quantity'] ?? 0) <= 0
+            ? htmlspecialchars($item['product_name']) . ' is out of stock.'
+            : htmlspecialchars($item['product_name']) . ' has only ' . ($item['quantity'] ?? 0) . ' unit(s) left.',
         'icon' => 'fas fa-exclamation-triangle',
         'bg' => '#dc2626',
         'href' => 'dashboard.php?tab=inventory&alert_product_id=' . (int)$item['id'] . '&alert_type=low-stock',
@@ -53,6 +56,7 @@ foreach ($expiryItems as $item) {
     if (!isset($expiryGroups[$groupKey])) {
         $expiryGroups[$groupKey] = [
             'type' => 'batch-group',
+            'category' => $item['status'] === 'Expired' ? 'expired' : 'near-expiry',
             'title' => $item['status'] === 'Expired' ? 'Expired Item' : 'Near Expiry',
             'product_name' => $item['product_name'] ?? $item['name'],
             'status' => $item['status'],
@@ -72,6 +76,7 @@ foreach ($expiryGroups as $group) {
 
     $globalAlertItems[] = [
         'type' => 'batch-group',
+        'category' => $group['category'],
         'title' => $group['title'],
         'message' => $message,
         'icon' => $group['icon'],
@@ -164,6 +169,14 @@ if ($showAlertsAfterLogin && !empty($globalAlertItems)) {
 
         <div id="globalAlertList" class="collapse show">
             <div class="px-3 py-2 bg-white border-top">
+                <label for="globalAlertTypeFilter" class="visually-hidden">Filter notifications by type</label>
+                <select id="globalAlertTypeFilter" class="form-select form-select-sm mb-2" aria-label="Filter notifications by type">
+                    <option value="all">All notification types</option>
+                    <option value="no-stock">No stock</option>
+                    <option value="low-stock">Low stock</option>
+                    <option value="near-expiry">Near expiry</option>
+                    <option value="expired">Expired</option>
+                </select>
                 <label for="globalAlertSearch" class="visually-hidden">Search notifications</label>
                 <div class="notification-search input-group input-group-sm">
                     <span class="notification-search__icon input-group-text"><i class="fas fa-search" aria-hidden="true"></i></span>
@@ -173,7 +186,7 @@ if ($showAlertsAfterLogin && !empty($globalAlertItems)) {
             </div>
             <div class="bg-light border-top notification-scroll">
                 <?php foreach ($globalAlertItems as $alertIndex => $alert): ?>
-                    <div class="alert-item border-bottom bg-white">
+                    <div class="alert-item border-bottom bg-white" data-alert-category="<?= htmlspecialchars($alert['category'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
                     <a href="<?= htmlspecialchars($alert['href'], ENT_QUOTES, 'UTF-8') ?>" class="d-flex align-items-start gap-2 px-3 py-3 text-decoration-none">
                         <span class="d-inline-flex align-items-center justify-content-center rounded-circle text-white"
                               style="width: 28px; height: 28px; background: <?= $alert['bg'] ?>; font-size: 0.72rem; flex-shrink: 0;">
@@ -230,6 +243,7 @@ if ($showAlertsAfterLogin && !empty($globalAlertItems)) {
         const chevron = alertToggler ? alertToggler.querySelector('.toggle-chevron i') : null;
         const countText = document.getElementById('globalAlertCount');
         const headerBell = document.getElementById('headerAlertBell');
+        const alertTypeFilter = document.getElementById('globalAlertTypeFilter');
         const alertSearch = document.getElementById('globalAlertSearch');
         const alertNoResults = document.getElementById('globalAlertNoResults');
         const alertStorageKey = 'mmbDismissedGlobalAlertSignature';
@@ -241,22 +255,25 @@ if ($showAlertsAfterLogin && !empty($globalAlertItems)) {
         }
 
         function filterNotifications() {
-            if (!alertSearch) return;
-            const query = alertSearch.value.trim().toLowerCase();
+            const query = alertSearch ? alertSearch.value.trim().toLowerCase() : '';
+            const selectedType = alertTypeFilter ? alertTypeFilter.value : 'all';
             let visibleCount = 0;
 
             document.querySelectorAll('#globalAlertList .alert-item').forEach(function (item) {
-                const matches = query === '' || item.textContent.toLowerCase().includes(query);
+                const matchesType = selectedType === 'all' || item.dataset.alertCategory === selectedType;
+                const matchesSearch = query === '' || item.textContent.toLowerCase().includes(query);
+                const matches = matchesType && matchesSearch;
                 item.hidden = !matches;
                 if (matches) visibleCount++;
             });
 
             if (alertNoResults) {
-                alertNoResults.hidden = visibleCount !== 0 || query === '';
+                alertNoResults.hidden = visibleCount !== 0;
             }
             if (countText) {
                 const totalAlertCount = getTotalAlertCount();
-                countText.textContent = query === ''
+                const filtering = query !== '' || selectedType !== 'all';
+                countText.textContent = !filtering
                     ? totalAlertCount + ' item' + (totalAlertCount > 1 ? 's' : '')
                     : visibleCount + ' of ' + totalAlertCount + ' matching';
             }
@@ -313,6 +330,10 @@ if ($showAlertsAfterLogin && !empty($globalAlertItems)) {
             alertSearch.addEventListener('click', function (event) {
                 event.stopPropagation();
             });
+        }
+
+        if (alertTypeFilter) {
+            alertTypeFilter.addEventListener('change', filterNotifications);
         }
 
         document.querySelectorAll('.alert-group-toggle').forEach(function (button) {
