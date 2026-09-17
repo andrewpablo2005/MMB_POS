@@ -103,9 +103,9 @@ class Product {
             : 0.05;
         $remainingDiscountCap = max(0.0, $discountCap - (float)$weekDiscountTotal);
         $remainingPurchaseCap = max(0.0, 2500.0 - (float)$weekEligibleSubtotal);
-        // The discount applies to the VAT-exclusive base while the 12% VAT
-        // remains included in the amount payable.
-        $discountableSubtotal = min($eligibleSubtotal / 1.12, $remainingPurchaseCap);
+        // POS prices are currently treated as non-VATable, so statutory
+        // discounts use the same gross-price base as the cart calculation.
+        $discountableSubtotal = min($eligibleSubtotal, $remainingPurchaseCap);
         $discountTotal = round(min($discountableSubtotal * $rate, $remainingDiscountCap), 2);
 
         return [
@@ -333,20 +333,19 @@ class Product {
                         $regularDiscount = 0.0;
                         foreach ($cartItems as $item) {
                             $gross = (float)$item['price'] * (int)$item['qty'];
-                            $regularDiscount += ($gross / 1.12) * $rate;
+                            $regularDiscount += $gross * $rate;
                         }
                         $allowedDiscount = max($allowedDiscount, round($regularDiscount, 2));
                     }
                 }
             }
 
-            // (c) manager override portion (VAT-exclusive base, mirroring the POS UI)
+            // (c) manager override portion, mirroring the POS UI
             $overrideAllowed = 0.0;
             foreach ($cartItems as $item) {
                 foreach ($overrideRates[$item['id']] ?? [] as $rate) {
                     $gross = (float)$item['price'] * (int)$item['qty'];
-                    $net = $gross / 1.12;
-                    $overrideAllowed += $net * $rate;
+                    $overrideAllowed += $gross * $rate;
                 }
             }
             $allowedDiscount = round(max($allowedDiscount, $overrideAllowed), 2);
