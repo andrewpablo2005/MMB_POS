@@ -6,6 +6,8 @@ require_once __DIR__ . '/../conn/activity_log.php'; // audit trail (Task 42)
 
 $storeSettingsMessage = null;
 $receiptPaper = '80';
+$seniorDiscountRate = '20.00';
+$pwdDiscountRate = '20.00';
 $statutoryDiscountCap = '125.00';
 $lowStockThreshold = '15';
 $nearExpiryDays = '60';
@@ -17,10 +19,18 @@ try {
         updated_at DATETIME NULL DEFAULT NULL
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 
-    $settingsStmt = $db->query("SELECT setting_key, setting_value FROM store_settings WHERE setting_key IN ('receipt_paper', 'statutory_discount_cap', 'low_stock_threshold', 'near_expiry_days')");
+    $settingsStmt = $db->query("SELECT setting_key, setting_value FROM store_settings WHERE setting_key IN ('receipt_paper', 'senior_discount_rate', 'pwd_discount_rate', 'statutory_discount_cap', 'low_stock_threshold', 'near_expiry_days')");
     foreach ($settingsStmt->fetchAll(PDO::FETCH_ASSOC) as $setting) {
         if ($setting['setting_key'] === 'receipt_paper' && in_array($setting['setting_value'], ['58', '80'], true)) {
             $receiptPaper = $setting['setting_value'];
+        }
+        if (in_array($setting['setting_key'], ['senior_discount_rate', 'pwd_discount_rate'], true)
+            && is_numeric($setting['setting_value']) && (float)$setting['setting_value'] >= 0 && (float)$setting['setting_value'] <= 100) {
+            if ($setting['setting_key'] === 'senior_discount_rate') {
+                $seniorDiscountRate = number_format((float)$setting['setting_value'], 2, '.', '');
+            } else {
+                $pwdDiscountRate = number_format((float)$setting['setting_value'], 2, '.', '');
+            }
         }
         if ($setting['setting_key'] === 'statutory_discount_cap'
             && is_numeric($setting['setting_value']) && (float)$setting['setting_value'] >= 0) {
@@ -39,6 +49,8 @@ try {
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['saveStoreSettings'])) {
         $csrfToken = (string)($_POST['csrf_token'] ?? '');
         $postedPaper = (string)($_POST['receipt_paper'] ?? '');
+        $postedSeniorRate = (float)($_POST['senior_discount_rate'] ?? -1);
+        $postedPwdRate = (float)($_POST['pwd_discount_rate'] ?? -1);
         $postedCap = (float)($_POST['statutory_discount_cap'] ?? -1);
         $postedLowStock = filter_var($_POST['low_stock_threshold'] ?? null, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1, 'max_range' => 100000]]);
         $postedNearExpiry = filter_var($_POST['near_expiry_days'] ?? null, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1, 'max_range' => 3650]]);
@@ -47,6 +59,8 @@ try {
             $storeSettingsMessage = ['type' => 'danger', 'text' => 'Invalid or expired security token.'];
         } elseif (!in_array($postedPaper, ['58', '80'], true)) {
             $storeSettingsMessage = ['type' => 'danger', 'text' => 'Choose a valid receipt paper size.'];
+        } elseif ($postedSeniorRate < 0 || $postedSeniorRate > 100 || $postedPwdRate < 0 || $postedPwdRate > 100) {
+            $storeSettingsMessage = ['type' => 'danger', 'text' => 'Enter Senior and PWD discount rates from 0 to 100%.'];
         } elseif ($postedCap < 0 || $postedCap > 100000) {
             $storeSettingsMessage = ['type' => 'danger', 'text' => 'Enter a weekly discount limit from 0 to 100,000.'];
         } elseif ($postedLowStock === false) {
@@ -60,17 +74,21 @@ try {
                  ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value), updated_at = NOW()'
             );
             $saveStmt->execute(['receipt_paper', $postedPaper]);
+            $saveStmt->execute(['senior_discount_rate', number_format($postedSeniorRate, 2, '.', '')]);
+            $saveStmt->execute(['pwd_discount_rate', number_format($postedPwdRate, 2, '.', '')]);
             $saveStmt->execute(['statutory_discount_cap', number_format($postedCap, 2, '.', '')]);
             $saveStmt->execute(['low_stock_threshold', (string) $postedLowStock]);
             $saveStmt->execute(['near_expiry_days', (string) $postedNearExpiry]);
             $receiptPaper = $postedPaper;
+            $seniorDiscountRate = number_format($postedSeniorRate, 2, '.', '');
+            $pwdDiscountRate = number_format($postedPwdRate, 2, '.', '');
             $statutoryDiscountCap = number_format($postedCap, 2, '.', '');
             $lowStockThreshold = (string) $postedLowStock;
             $nearExpiryDays = (string) $postedNearExpiry;
 
             // AUDIT (Task 42)
             mmb_log_activity($db, 'settings', 'settings_update',
-                "Updated store settings — receipt paper: {$postedPaper}mm, weekly discount limit: " . number_format($postedCap, 2) . " PHP, low stock: {$postedLowStock}, near expiry: {$postedNearExpiry} days");
+                "Updated store settings — Senior discount: {$seniorDiscountRate}%, PWD discount: {$pwdDiscountRate}%, receipt paper: {$postedPaper}mm, weekly discount limit: " . number_format($postedCap, 2) . " PHP, low stock: {$postedLowStock}, near expiry: {$postedNearExpiry} days");
 
             $storeSettingsMessage = ['type' => 'success', 'text' => 'Store settings saved successfully.'];
         }
@@ -107,6 +125,22 @@ try {
                 <div class="settings-section">
                     <h6>Statutory Discount</h6>
                     <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label" for="seniorDiscountRate">Senior Discount</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" id="seniorDiscountRate" name="senior_discount_rate"
+                                    min="0" max="100" step="0.01" value="<?= htmlspecialchars($seniorDiscountRate, ENT_QUOTES, 'UTF-8') ?>" required>
+                                <span class="input-group-text">%</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="pwdDiscountRate">PWD Discount</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" id="pwdDiscountRate" name="pwd_discount_rate"
+                                    min="0" max="100" step="0.01" value="<?= htmlspecialchars($pwdDiscountRate, ENT_QUOTES, 'UTF-8') ?>" required>
+                                <span class="input-group-text">%</span>
+                            </div>
+                        </div>
                         <div class="col-md-6">
                             <label class="form-label" for="statutoryDiscountCap">Weekly Discount Limit</label>
                             <div class="input-group">

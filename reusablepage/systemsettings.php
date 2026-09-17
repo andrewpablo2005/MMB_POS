@@ -220,6 +220,26 @@ $currentUser = $usersmanagement->getUserById($userId);
         </div>
     </div>
 
+    <?php if (in_array(strtolower(trim((string) ($_SESSION['position'] ?? ''))), ['owner', 'admin'], true)): ?>
+        <div class="card mt-4 border-danger">
+            <div class="card-body p-4">
+                <div class="settings-section mb-0">
+                    <h6 class="text-danger">Reset Database Data</h6>
+                    <p class="text-muted mb-3">
+                        This removes products, inventory, suppliers, sales, customers, and related operational records.
+                        User accounts and account details will remain.
+                    </p>
+                    <form method="POST" onsubmit="return confirm('Reset all operational database data? User accounts will remain, but this action cannot be undone.');">
+                        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
+                        <button type="submit" name="clear_database_data" value="1" class="btn btn-outline-danger">
+                            <i class="fas fa-database me-1" aria-hidden="true"></i> Reset Database Data
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    <?php endif; ?>
+
     
 </div>
 

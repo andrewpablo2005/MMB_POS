@@ -12,6 +12,30 @@ $products = $product->getProducts();
 $categories = $product->getCategories();
 $discounts = $product->getDiscounts();
 
+$seniorDiscountRate = 0.20;
+$pwdDiscountRate = 0.20;
+try {
+    $db->exec("CREATE TABLE IF NOT EXISTS store_settings (
+        setting_key VARCHAR(50) NOT NULL PRIMARY KEY,
+        setting_value VARCHAR(255) NULL,
+        updated_at DATETIME NULL DEFAULT NULL
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+    $discountSettingsStmt = $db->query("SELECT setting_key, setting_value FROM store_settings WHERE setting_key IN ('senior_discount_rate', 'pwd_discount_rate')");
+    foreach ($discountSettingsStmt->fetchAll(PDO::FETCH_ASSOC) as $discountSetting) {
+        if (!is_numeric($discountSetting['setting_value'])) {
+            continue;
+        }
+        $rate = max(0, min(100, (float)$discountSetting['setting_value'])) / 100;
+        if ($discountSetting['setting_key'] === 'senior_discount_rate') {
+            $seniorDiscountRate = $rate;
+        } elseif ($discountSetting['setting_key'] === 'pwd_discount_rate') {
+            $pwdDiscountRate = $rate;
+        }
+    }
+} catch (PDOException $exception) {
+    // Keep the 20% defaults when settings storage is unavailable.
+}
+
 $userRole = strtolower($_SESSION['position'] ?? 'staff');
 $isManager = in_array($userRole, ['owner', 'admin']);
 
@@ -203,7 +227,9 @@ if (!empty($_SESSION['user_id'])) {
                             $discountRate = (float)($d['discount_rate'] ?? 0);
                             $isStatutoryDiscount = stripos($discountName, 'senior') !== false || stripos($discountName, 'pwd') !== false;
                             $displayName = $discountName;
-                            $displayRate = number_format($discountRate > 1 ? $discountRate / 100 : $discountRate, 2, '.', '');
+                            $displayRate = $isStatutoryDiscount
+                                ? (stripos($discountName, 'senior') !== false ? number_format($seniorDiscountRate, 4, '.', '') : number_format($pwdDiscountRate, 4, '.', ''))
+                                : number_format($discountRate > 1 ? $discountRate / 100 : $discountRate, 2, '.', '');
                             $displayRule = $isStatutoryDiscount ? 'statutory' : 'regular';
                             $displayExempt = $isStatutoryDiscount ? 1 : (int)($d['is_vat_exempt'] ?? 0);
                         ?>

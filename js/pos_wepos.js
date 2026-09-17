@@ -1244,7 +1244,9 @@ async function weposSubmitTransaction() {
                 customerId: weposCustomerId || '—',
                 finalVat: collectibleVat,
                 finalTotal,
-                discountLabel: selOpt.text,
+                discountLabel: discountRule === 'statutory'
+                    ? (weposCustomerType === 'pwd' ? 'PWD' : 'Senior Citizen') + ' (' + (dRate * 100).toFixed(2).replace(/\.00$/, '') + '%)'
+                    : selOpt.text,
                 method:       currentPayMethod,
                 tendered,
                 change
@@ -1286,7 +1288,9 @@ function weposShowReceipt(data) {
     document.getElementById('receiptCashier').textContent = data.cashier || 'Unknown';
     document.getElementById('receiptCustomer').textContent = data.customerName || 'Walk-in';
     document.getElementById('receiptCustomerId').textContent = data.customerId || '—';
-    document.getElementById('receiptRule').textContent = data.discountRule === 'statutory' ? 'Statutory Senior/PWD' : 'Regular';
+    document.getElementById('receiptRule').textContent = data.discountRule === 'statutory'
+        ? 'Statutory Senior/PWD (' + (data.dRate * 100).toFixed(2).replace(/\.00$/, '') + '%)'
+        : 'Regular';
 
     // Items list — columnar (issue #4 item 7): product, dosage, form,
     // qty and amount each get their own column so nothing sticks together.

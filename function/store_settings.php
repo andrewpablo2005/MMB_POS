@@ -9,6 +9,7 @@
  * Currently managed settings (whitelist):
  *   receipt_paper : '58' | '80'  (thermal roll width in mm — used by the
  *                                  POS receipt printer at print time)
+ *   senior_discount_rate, pwd_discount_rate : percentage values from 0 to 100
  *
  * Storage: `store_settings` table, created on first use (CREATE TABLE IF NOT
  * EXISTS), mirroring the guarded-migration pattern in save_customer_id.php.
@@ -37,6 +38,8 @@ if (empty($_SESSION['user_id'])) {
 // Whitelist: key => ['default', [allowed values]]
 $storeSettings = [
     'receipt_paper' => ['default' => '80', 'allowed' => ['58', '80']],
+    'senior_discount_rate' => ['default' => '20.00', 'min' => 0, 'max' => 100],
+    'pwd_discount_rate' => ['default' => '20.00', 'min' => 0, 'max' => 100],
     'statutory_discount_cap' => ['default' => '125.00', 'min' => 0, 'max' => 100000],
     'low_stock_threshold' => ['default' => '15', 'min' => 1, 'max' => 100000],
     'near_expiry_days' => ['default' => '60', 'min' => 1, 'max' => 3650],

@@ -70,7 +70,7 @@ class Product {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public static function calculateSpecialDiscount(array $cartItems, ?string $customerType, string $discountRule = 'regular', ?string $customerId = null, float $weekDiscountTotal = 0.0, float $weekEligibleSubtotal = 0.0, float $discountCap = 125.0): array {
+    public static function calculateSpecialDiscount(array $cartItems, ?string $customerType, string $discountRule = 'regular', ?string $customerId = null, float $weekDiscountTotal = 0.0, float $weekEligibleSubtotal = 0.0, float $discountCap = 125.0, float $seniorRate = 0.20, float $pwdRate = 0.20): array {
         $customerType = strtolower(trim((string)($customerType ?? '')));
         if (!in_array($customerType, ['senior', 'pwd'], true)) {
             return [
@@ -98,7 +98,9 @@ class Product {
             }
         }
 
-        $rate = ($discountRule === 'statutory') ? 0.20 : 0.05;
+        $rate = ($discountRule === 'statutory')
+            ? ($customerType === 'senior' ? $seniorRate : $pwdRate)
+            : 0.05;
         $remainingDiscountCap = max(0.0, $discountCap - (float)$weekDiscountTotal);
         $remainingPurchaseCap = max(0.0, 2500.0 - (float)$weekEligibleSubtotal);
         // The discount applies to the VAT-exclusive base while the 12% VAT
@@ -244,12 +246,26 @@ class Product {
             }
 
             $statutoryDiscountCap = 125.0;
+            $seniorDiscountRate = 0.20;
+            $pwdDiscountRate = 0.20;
             try {
                 $capStmt = $this->conn->prepare("SELECT setting_value FROM store_settings WHERE setting_key = 'statutory_discount_cap'");
                 $capStmt->execute();
                 $storedCap = $capStmt->fetchColumn();
                 if ($storedCap !== false && is_numeric($storedCap) && (float)$storedCap >= 0) {
                     $statutoryDiscountCap = (float)$storedCap;
+                }
+                $rateStmt = $this->conn->query("SELECT setting_key, setting_value FROM store_settings WHERE setting_key IN ('senior_discount_rate', 'pwd_discount_rate')");
+                foreach ($rateStmt->fetchAll(PDO::FETCH_ASSOC) as $rateRow) {
+                    if (!is_numeric($rateRow['setting_value'])) {
+                        continue;
+                    }
+                    $rate = max(0, min(100, (float)$rateRow['setting_value'])) / 100;
+                    if ($rateRow['setting_key'] === 'senior_discount_rate') {
+                        $seniorDiscountRate = $rate;
+                    } elseif ($rateRow['setting_key'] === 'pwd_discount_rate') {
+                        $pwdDiscountRate = $rate;
+                    }
                 }
             } catch (Throwable $ignore) {
                 // Keep the default cap when settings storage is unavailable.
@@ -279,7 +295,7 @@ class Product {
                 $weekEligibleRow = $weekEligibleStmt->fetch(PDO::FETCH_ASSOC);
                 $weekEligibleSubtotal = (float)($weekEligibleRow['week_eligible_subtotal'] ?? 0);
 
-                $discountDetails = self::calculateSpecialDiscount($cartItems, $customerType, $discountRule, $customerId, $weekDiscountTotal, $weekEligibleSubtotal, $statutoryDiscountCap);
+                $discountDetails = self::calculateSpecialDiscount($cartItems, $customerType, $discountRule, $customerId, $weekDiscountTotal, $weekEligibleSubtotal, $statutoryDiscountCap, $seniorDiscountRate, $pwdDiscountRate);
                 $appliedDiscount = (float)$discountDetails['discount_total'];
             }
 
@@ -299,7 +315,7 @@ class Product {
                 );
                 $weekCapStmt->execute([$customerTypeNorm, $customerId]);
                 $weekCapRow = $weekCapStmt->fetch(PDO::FETCH_ASSOC);
-                $statutory = self::calculateSpecialDiscount($cartItems, $customerType, 'statutory', $customerId, (float)($weekCapRow['week_discount_total'] ?? 0), 0.0, $statutoryDiscountCap);
+                $statutory = self::calculateSpecialDiscount($cartItems, $customerType, 'statutory', $customerId, (float)($weekCapRow['week_discount_total'] ?? 0), 0.0, $statutoryDiscountCap, $seniorDiscountRate, $pwdDiscountRate);
                 $allowedDiscount = max($allowedDiscount, (float)$statutory['discount_total']);
             }
 
