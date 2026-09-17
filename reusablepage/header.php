@@ -3,6 +3,7 @@ require_once __DIR__ . '/guard.php';
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
+$showAlertsAfterLogin = !empty($_SESSION['show_global_alerts_after_login']);
 
 require_once __DIR__ . "/../conn/database.php";
 require_once __DIR__ . "/../function/addprodfunct.php";
@@ -80,6 +81,10 @@ foreach ($expiryGroups as $group) {
     ];
 }
 
+if ($showAlertsAfterLogin && !empty($globalAlertItems)) {
+    unset($_SESSION['show_global_alerts_after_login']);
+}
+
 ?>
 
 <!-- ═══════════════════════════════════════════════════════════════
@@ -128,7 +133,7 @@ foreach ($expiryGroups as $group) {
 </nav>
 
 <?php if (!empty($globalAlertItems)): ?>
-<div id="globalAlertWidget" class="mmb-alert-widget" data-alert-signature="<?= htmlspecialchars(hash('sha256', json_encode($globalAlertItems)), ENT_QUOTES, 'UTF-8') ?>" style="z-index: 1085;">
+<div id="globalAlertWidget" class="mmb-alert-widget" data-show-after-login="<?= $showAlertsAfterLogin ? '1' : '0' ?>" data-alert-signature="<?= htmlspecialchars(hash('sha256', json_encode($globalAlertItems)), ENT_QUOTES, 'UTF-8') ?>" style="display: none; z-index: 1085;">
     <div class="bg-white border rounded-4 shadow-sm overflow-hidden position-relative" style="border-color: #ebebeb;">
         <button type="button" id="globalAlertClose" class="btn btn-link position-absolute top-0 end-0 p-2 text-muted" aria-label="Close notifications" style="z-index: 2; font-size: 0.9rem; line-height: 1;">
             <i class="fas fa-times"></i>
@@ -229,6 +234,7 @@ foreach ($expiryGroups as $group) {
         const alertNoResults = document.getElementById('globalAlertNoResults');
         const alertStorageKey = 'mmbDismissedGlobalAlertSignature';
         const alertSignature = alertWidget ? alertWidget.dataset.alertSignature : '';
+        const showAfterLogin = alertWidget && alertWidget.dataset.showAfterLogin === '1';
 
         function getTotalAlertCount() {
             return document.querySelectorAll('#globalAlertList .alert-item').length;
@@ -367,14 +373,21 @@ foreach ($expiryGroups as $group) {
             });
         });
 
+        let alertDismissed = false;
         try {
-            if (alertWidget && localStorage.getItem(alertStorageKey) === alertSignature) {
-                alertWidget.style.display = 'none';
+            if (showAfterLogin) {
+                localStorage.removeItem(alertStorageKey);
+            } else if (alertWidget && localStorage.getItem(alertStorageKey) === alertSignature) {
+                alertDismissed = true;
             }
         } catch (error) {
         }
 
-        updateAlertToggleUI();
+        if (alertDismissed) {
+            hideNotifications();
+        } else {
+            showAllNotifications();
+        }
     });
 </script>
 <?php endif; ?>

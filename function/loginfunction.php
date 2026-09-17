@@ -89,6 +89,7 @@ class Project
                 $_SESSION['user_id'] = $user['id'];
                 $_SESSION['username'] = $user['username'];
                 $_SESSION['position'] = $user['position'];
+                $_SESSION['show_global_alerts_after_login'] = true;
 
                 // AUDIT: successful sign-in — who logged in at which time (Task 42)
                 mmb_log_activity($this->con, 'auth', 'login',
