@@ -12,6 +12,7 @@ $products = $product->getProducts();
 $categories = $product->getCategories();
 $discounts = $product->getDiscounts();
 
+$vatRate = 0.00;
 $seniorDiscountRate = 0.20;
 $pwdDiscountRate = 0.20;
 try {
@@ -20,13 +21,15 @@ try {
         setting_value VARCHAR(255) NULL,
         updated_at DATETIME NULL DEFAULT NULL
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
-    $discountSettingsStmt = $db->query("SELECT setting_key, setting_value FROM store_settings WHERE setting_key IN ('senior_discount_rate', 'pwd_discount_rate')");
+    $discountSettingsStmt = $db->query("SELECT setting_key, setting_value FROM store_settings WHERE setting_key IN ('vat_rate', 'senior_discount_rate', 'pwd_discount_rate')");
     foreach ($discountSettingsStmt->fetchAll(PDO::FETCH_ASSOC) as $discountSetting) {
         if (!is_numeric($discountSetting['setting_value'])) {
             continue;
         }
         $rate = max(0, min(100, (float)$discountSetting['setting_value'])) / 100;
-        if ($discountSetting['setting_key'] === 'senior_discount_rate') {
+        if ($discountSetting['setting_key'] === 'vat_rate') {
+            $vatRate = $rate;
+        } elseif ($discountSetting['setting_key'] === 'senior_discount_rate') {
             $seniorDiscountRate = $rate;
         } elseif ($discountSetting['setting_key'] === 'pwd_discount_rate') {
             $pwdDiscountRate = $rate;
@@ -255,7 +258,7 @@ if (!empty($_SESSION['user_id'])) {
                     <span id="calcDiscount">-₱0.00</span>
                 </div>
                 <div class="wepos-calc-row text-muted" id="rowVat" style="display:none;">
-                    <span>VAT (0%)</span>
+                    <span id="calcVatLabel">VAT (0%, inclusive)</span>
                     <span id="calcVat">+₱0.00</span>
                 </div>
                 <div class="wepos-calc-row text-muted" id="rowVatExempt" style="display:none;">
@@ -527,7 +530,7 @@ if (!empty($_SESSION['user_id'])) {
                         <span style="color:#64748b;">Rule</span><strong id="receiptRule">Regular</strong>
                     </div>
                     <div style="display:flex; justify-content:space-between; margin-bottom:3px; color:#64748b;">
-                        <span>VAT (0%)</span><span id="receiptVat"></span>
+                        <span id="receiptVatLabel">VAT (0%, inclusive)</span><span id="receiptVat"></span>
                     </div>
                     <div style="display:flex; justify-content:space-between; margin-bottom:3px;">
                         <span>Subtotal</span><span id="receiptSubtotal"></span>
@@ -573,6 +576,7 @@ if (!empty($_SESSION['user_id'])) {
 
 <script>
     const WEPOS_ROLE = '<?= $userRole ?>';
+    window.WEPOS_VAT_RATE = <?= json_encode($vatRate) ?>;
     const WEPOS_IS_MANAGER = <?= $isManager ? 'true' : 'false' ?>;
     const WEPOS_CASHIER = <?= json_encode($cashierName) ?>;
 

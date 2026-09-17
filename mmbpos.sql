@@ -802,6 +802,7 @@ INSERT INTO `store_settings` (`setting_key`, `setting_value`, `updated_at`) VALU
 ('low_stock_threshold', '15', '2026-09-16 13:10:32'),
 ('near_expiry_days', '60', '2026-09-16 13:10:32'),
 ('receipt_paper', '80', '2026-09-16 13:10:32'),
+('vat_rate', '0.00', '2026-09-16 13:10:32'),
 ('senior_discount_rate', '20.00', '2026-09-16 13:10:32'),
 ('pwd_discount_rate', '20.00', '2026-09-16 13:10:32'),
 ('statutory_discount_cap', '200.00', '2026-09-16 13:10:32');

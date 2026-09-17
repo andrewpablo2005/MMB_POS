@@ -70,7 +70,7 @@ class Product {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public static function calculateSpecialDiscount(array $cartItems, ?string $customerType, string $discountRule = 'regular', ?string $customerId = null, float $weekDiscountTotal = 0.0, float $weekEligibleSubtotal = 0.0, float $discountCap = 125.0, float $seniorRate = 0.20, float $pwdRate = 0.20): array {
+    public static function calculateSpecialDiscount(array $cartItems, ?string $customerType, string $discountRule = 'regular', ?string $customerId = null, float $weekDiscountTotal = 0.0, float $weekEligibleSubtotal = 0.0, float $discountCap = 125.0, float $seniorRate = 0.20, float $pwdRate = 0.20, float $vatRate = 0.0): array {
         $customerType = strtolower(trim((string)($customerType ?? '')));
         if (!in_array($customerType, ['senior', 'pwd'], true)) {
             return [
@@ -92,7 +92,10 @@ class Product {
                 $qty = max(0, (int)($item['qty'] ?? 0));
                 $price = (float)($item['price'] ?? 0);
                 if ($qty > 0 && $price > 0) {
-                    $eligibleSubtotal += $price * $qty;
+                    $gross = $price * $qty;
+                    $eligibleSubtotal += !empty($item['has_vat']) && $vatRate > 0
+                        ? $gross / (1 + $vatRate)
+                        : $gross;
                     $eligibleItemCount++;
                 }
             }
@@ -103,8 +106,6 @@ class Product {
             : 0.05;
         $remainingDiscountCap = max(0.0, $discountCap - (float)$weekDiscountTotal);
         $remainingPurchaseCap = max(0.0, 2500.0 - (float)$weekEligibleSubtotal);
-        // POS prices are currently treated as non-VATable, so statutory
-        // discounts use the same gross-price base as the cart calculation.
         $discountableSubtotal = min($eligibleSubtotal, $remainingPurchaseCap);
         $discountTotal = round(min($discountableSubtotal * $rate, $remainingDiscountCap), 2);
 
@@ -143,6 +144,7 @@ class Product {
                            COALESCE(p.units_per_package, 1) AS units_per_package,
                            COALESCE(pc.senior_discount, 0) AS senior_eligible,
                            COALESCE(pc.pwd_discount, 0) AS pwd_eligible,
+                           COALESCE(pc.has_vat, 0) AS has_vat,
                            COALESCE((SELECT newest.sale_price
                                      FROM inventory newest
                                      WHERE newest.product_id = p.id
@@ -160,6 +162,7 @@ class Product {
                         'units_per_package'  => max(1, (int)$row['units_per_package']),
                         'senior_eligible'    => (bool)$row['senior_eligible'],
                         'pwd_eligible'       => (bool)$row['pwd_eligible'],
+                        'has_vat'            => (bool)$row['has_vat'],
                     ];
                 }
             }
@@ -248,6 +251,7 @@ class Product {
             $statutoryDiscountCap = 125.0;
             $seniorDiscountRate = 0.20;
             $pwdDiscountRate = 0.20;
+            $vatRate = 0.0;
             try {
                 $capStmt = $this->conn->prepare("SELECT setting_value FROM store_settings WHERE setting_key = 'statutory_discount_cap'");
                 $capStmt->execute();
@@ -266,6 +270,12 @@ class Product {
                     } elseif ($rateRow['setting_key'] === 'pwd_discount_rate') {
                         $pwdDiscountRate = $rate;
                     }
+                }
+                $vatStmt = $this->conn->prepare("SELECT setting_value FROM store_settings WHERE setting_key = 'vat_rate'");
+                $vatStmt->execute();
+                $storedVatRate = $vatStmt->fetchColumn();
+                if ($storedVatRate !== false && is_numeric($storedVatRate)) {
+                    $vatRate = max(0, min(100, (float)$storedVatRate)) / 100;
                 }
             } catch (Throwable $ignore) {
                 // Keep the default cap when settings storage is unavailable.
@@ -295,7 +305,7 @@ class Product {
                 $weekEligibleRow = $weekEligibleStmt->fetch(PDO::FETCH_ASSOC);
                 $weekEligibleSubtotal = (float)($weekEligibleRow['week_eligible_subtotal'] ?? 0);
 
-                $discountDetails = self::calculateSpecialDiscount($cartItems, $customerType, $discountRule, $customerId, $weekDiscountTotal, $weekEligibleSubtotal, $statutoryDiscountCap, $seniorDiscountRate, $pwdDiscountRate);
+                $discountDetails = self::calculateSpecialDiscount($cartItems, $customerType, $discountRule, $customerId, $weekDiscountTotal, $weekEligibleSubtotal, $statutoryDiscountCap, $seniorDiscountRate, $pwdDiscountRate, $vatRate);
                 $appliedDiscount = (float)$discountDetails['discount_total'];
             }
 
@@ -315,7 +325,7 @@ class Product {
                 );
                 $weekCapStmt->execute([$customerTypeNorm, $customerId]);
                 $weekCapRow = $weekCapStmt->fetch(PDO::FETCH_ASSOC);
-                $statutory = self::calculateSpecialDiscount($cartItems, $customerType, 'statutory', $customerId, (float)($weekCapRow['week_discount_total'] ?? 0), 0.0, $statutoryDiscountCap, $seniorDiscountRate, $pwdDiscountRate);
+                $statutory = self::calculateSpecialDiscount($cartItems, $customerType, 'statutory', $customerId, (float)($weekCapRow['week_discount_total'] ?? 0), 0.0, $statutoryDiscountCap, $seniorDiscountRate, $pwdDiscountRate, $vatRate);
                 $allowedDiscount = max($allowedDiscount, (float)$statutory['discount_total']);
             }
 
@@ -333,7 +343,9 @@ class Product {
                         $regularDiscount = 0.0;
                         foreach ($cartItems as $item) {
                             $gross = (float)$item['price'] * (int)$item['qty'];
-                            $regularDiscount += $gross * $rate;
+                            $regularDiscount += $item['has_vat'] && $vatRate > 0
+                                ? ($gross / (1 + $vatRate)) * $rate
+                                : $gross * $rate;
                         }
                         $allowedDiscount = max($allowedDiscount, round($regularDiscount, 2));
                     }
@@ -345,7 +357,9 @@ class Product {
             foreach ($cartItems as $item) {
                 foreach ($overrideRates[$item['id']] ?? [] as $rate) {
                     $gross = (float)$item['price'] * (int)$item['qty'];
-                    $overrideAllowed += $gross * $rate;
+                    $overrideAllowed += $item['has_vat'] && $vatRate > 0
+                        ? ($gross / (1 + $vatRate)) * $rate
+                        : $gross * $rate;
                 }
             }
             $allowedDiscount = round(max($allowedDiscount, $overrideAllowed), 2);

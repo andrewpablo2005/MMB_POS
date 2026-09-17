@@ -518,13 +518,13 @@ function weposCalcItem(item, dRate, isVatExempt, discountRule = 'regular') {
     let vatAmount = 0;
     let finalPrice = gross;
 
-    // Category-level VAT: treat all categories as VAT-inclusive per configuration
-    // (This enforces VAT display for every product regardless of product-level flags)
-    const isVatable = false; //make this true if you want to enforce VAT for all products, or use item.hasVat if you want per-item control
+    // Prices are VAT-inclusive; the store rate controls the VAT portion.
+    const vatRate = Number(window.WEPOS_VAT_RATE || 0);
+    const isVatable = item.hasVat === true && vatRate > 0;
 
     // Compute VAT portion when price is VAT-inclusive
     if (isVatable) {
-        const net = gross / 1.12;
+        const net = gross / (1 + vatRate);
         vatAmount = gross - net;      // VAT portion of the gross price
         // Do not change finalPrice yet; discount rules below will set payable
     } else {
@@ -543,7 +543,7 @@ function weposCalcItem(item, dRate, isVatExempt, discountRule = 'regular') {
                     // Keep the 12% VAT in the payable amount. The statutory
                     // discount is calculated from the VAT-exclusive base,
                     // but VAT is not exempted or removed from the total.
-                    const net = gross / 1.12;
+                    const net = gross / (1 + vatRate);
                     discount = net * dRate;
                     finalPrice = gross - discount;
                 } else {
@@ -560,7 +560,7 @@ function weposCalcItem(item, dRate, isVatExempt, discountRule = 'regular') {
             // Keep VAT payable for regular discounts too. Calculate the
             // discount from the VAT-exclusive base, then subtract it from
             // the VAT-inclusive gross amount.
-            const net = isVatable ? gross / 1.12 : gross;
+            const net = isVatable ? gross / (1 + vatRate) : gross;
             discount = net * dRate;
             finalPrice = gross - discount;
         }
@@ -714,6 +714,8 @@ function weposSetTotals(sub, disc, dRate, vatExempt, vat, total) {
     if (rowVat) {
         rowVat.style.display = 'flex';
         const calcVat = document.getElementById('calcVat');
+        const calcVatLabel = document.getElementById('calcVatLabel');
+        if (calcVatLabel) calcVatLabel.textContent = 'VAT (' + (Number(window.WEPOS_VAT_RATE || 0) * 100).toFixed(2).replace(/\.00$/, '') + '%, inclusive)';
         // Show VAT amount as informational only (no plus sign)
         if (calcVat) calcVat.textContent = '₱' + vat.toFixed(2);
     }
@@ -1325,7 +1327,9 @@ function weposShowReceipt(data) {
 
     // Totals
     document.getElementById('receiptSubtotal').textContent  = '\u20b1' + data.rawSubtotal.toFixed(2);
-    document.getElementById('receiptVat').textContent       = '\u20b10.00'; // uncomment this if need that vat to show + (typeof data.rawVat !== 'undefined' ? data.rawVat : data.finalVat).toFixed(2);
+    document.getElementById('receiptVat').textContent       = '\u20b1' + (typeof data.rawVat !== 'undefined' ? data.rawVat : data.finalVat).toFixed(2);
+    const receiptVatLabel = document.getElementById('receiptVatLabel');
+    if (receiptVatLabel) receiptVatLabel.textContent = 'VAT (' + (Number(window.WEPOS_VAT_RATE || 0) * 100).toFixed(2).replace(/\.00$/, '') + '%, inclusive)';
     document.getElementById('receiptTotal').textContent     = '\u20b1' + data.finalTotal.toFixed(2);
     document.getElementById('receiptMethod').textContent    = data.method;
 

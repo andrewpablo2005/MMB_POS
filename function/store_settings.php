@@ -38,6 +38,7 @@ if (empty($_SESSION['user_id'])) {
 // Whitelist: key => ['default', [allowed values]]
 $storeSettings = [
     'receipt_paper' => ['default' => '80', 'allowed' => ['58', '80']],
+    'vat_rate' => ['default' => '0.00', 'min' => 0, 'max' => 100],
     'senior_discount_rate' => ['default' => '20.00', 'min' => 0, 'max' => 100],
     'pwd_discount_rate' => ['default' => '20.00', 'min' => 0, 'max' => 100],
     'statutory_discount_cap' => ['default' => '125.00', 'min' => 0, 'max' => 100000],

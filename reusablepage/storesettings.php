@@ -6,6 +6,7 @@ require_once __DIR__ . '/../conn/activity_log.php'; // audit trail (Task 42)
 
 $storeSettingsMessage = null;
 $receiptPaper = '80';
+$vatRate = '0.00';
 $seniorDiscountRate = '20.00';
 $pwdDiscountRate = '20.00';
 $statutoryDiscountCap = '125.00';
@@ -19,10 +20,14 @@ try {
         updated_at DATETIME NULL DEFAULT NULL
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 
-    $settingsStmt = $db->query("SELECT setting_key, setting_value FROM store_settings WHERE setting_key IN ('receipt_paper', 'senior_discount_rate', 'pwd_discount_rate', 'statutory_discount_cap', 'low_stock_threshold', 'near_expiry_days')");
+    $settingsStmt = $db->query("SELECT setting_key, setting_value FROM store_settings WHERE setting_key IN ('receipt_paper', 'vat_rate', 'senior_discount_rate', 'pwd_discount_rate', 'statutory_discount_cap', 'low_stock_threshold', 'near_expiry_days')");
     foreach ($settingsStmt->fetchAll(PDO::FETCH_ASSOC) as $setting) {
         if ($setting['setting_key'] === 'receipt_paper' && in_array($setting['setting_value'], ['58', '80'], true)) {
             $receiptPaper = $setting['setting_value'];
+        }
+        if ($setting['setting_key'] === 'vat_rate'
+            && is_numeric($setting['setting_value']) && (float)$setting['setting_value'] >= 0 && (float)$setting['setting_value'] <= 100) {
+            $vatRate = number_format((float)$setting['setting_value'], 2, '.', '');
         }
         if (in_array($setting['setting_key'], ['senior_discount_rate', 'pwd_discount_rate'], true)
             && is_numeric($setting['setting_value']) && (float)$setting['setting_value'] >= 0 && (float)$setting['setting_value'] <= 100) {
@@ -49,6 +54,7 @@ try {
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['saveStoreSettings'])) {
         $csrfToken = (string)($_POST['csrf_token'] ?? '');
         $postedPaper = (string)($_POST['receipt_paper'] ?? '');
+        $postedVatRate = (float)($_POST['vat_rate'] ?? -1);
         $postedSeniorRate = (float)($_POST['senior_discount_rate'] ?? -1);
         $postedPwdRate = (float)($_POST['pwd_discount_rate'] ?? -1);
         $postedCap = (float)($_POST['statutory_discount_cap'] ?? -1);
@@ -59,6 +65,8 @@ try {
             $storeSettingsMessage = ['type' => 'danger', 'text' => 'Invalid or expired security token.'];
         } elseif (!in_array($postedPaper, ['58', '80'], true)) {
             $storeSettingsMessage = ['type' => 'danger', 'text' => 'Choose a valid receipt paper size.'];
+        } elseif ($postedVatRate < 0 || $postedVatRate > 100) {
+            $storeSettingsMessage = ['type' => 'danger', 'text' => 'Enter a VAT rate from 0 to 100%.'];
         } elseif ($postedSeniorRate < 0 || $postedSeniorRate > 100 || $postedPwdRate < 0 || $postedPwdRate > 100) {
             $storeSettingsMessage = ['type' => 'danger', 'text' => 'Enter Senior and PWD discount rates from 0 to 100%.'];
         } elseif ($postedCap < 0 || $postedCap > 100000) {
@@ -74,12 +82,14 @@ try {
                  ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value), updated_at = NOW()'
             );
             $saveStmt->execute(['receipt_paper', $postedPaper]);
+            $saveStmt->execute(['vat_rate', number_format($postedVatRate, 2, '.', '')]);
             $saveStmt->execute(['senior_discount_rate', number_format($postedSeniorRate, 2, '.', '')]);
             $saveStmt->execute(['pwd_discount_rate', number_format($postedPwdRate, 2, '.', '')]);
             $saveStmt->execute(['statutory_discount_cap', number_format($postedCap, 2, '.', '')]);
             $saveStmt->execute(['low_stock_threshold', (string) $postedLowStock]);
             $saveStmt->execute(['near_expiry_days', (string) $postedNearExpiry]);
             $receiptPaper = $postedPaper;
+            $vatRate = number_format($postedVatRate, 2, '.', '');
             $seniorDiscountRate = number_format($postedSeniorRate, 2, '.', '');
             $pwdDiscountRate = number_format($postedPwdRate, 2, '.', '');
             $statutoryDiscountCap = number_format($postedCap, 2, '.', '');
@@ -88,7 +98,7 @@ try {
 
             // AUDIT (Task 42)
             mmb_log_activity($db, 'settings', 'settings_update',
-                "Updated store settings — Senior discount: {$seniorDiscountRate}%, PWD discount: {$pwdDiscountRate}%, receipt paper: {$postedPaper}mm, weekly discount limit: " . number_format($postedCap, 2) . " PHP, low stock: {$postedLowStock}, near expiry: {$postedNearExpiry} days");
+                "Updated store settings — VAT: {$vatRate}%, Senior discount: {$seniorDiscountRate}%, PWD discount: {$pwdDiscountRate}%, receipt paper: {$postedPaper}mm, weekly discount limit: " . number_format($postedCap, 2) . " PHP, low stock: {$postedLowStock}, near expiry: {$postedNearExpiry} days");
 
             $storeSettingsMessage = ['type' => 'success', 'text' => 'Store settings saved successfully.'];
         }
@@ -149,6 +159,21 @@ try {
                                     min="0" max="100000" step="0.01" value="<?= htmlspecialchars($statutoryDiscountCap, ENT_QUOTES, 'UTF-8') ?>" required>
                             </div>
                             <small class="text-muted">Maximum Senior/PWD discount amount per customer per week.</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <h6>VAT</h6>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label" for="vatRate">VAT Rate</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" id="vatRate" name="vat_rate"
+                                    min="0" max="100" step="0.01" value="<?= htmlspecialchars($vatRate, ENT_QUOTES, 'UTF-8') ?>" required>
+                                <span class="input-group-text">%</span>
+                            </div>
+                            <small class="text-muted">Applied to products in VAT-enabled categories. Product prices are VAT-inclusive, so this shows the VAT portion already included in the price.</small>
                         </div>
                     </div>
                 </div>
