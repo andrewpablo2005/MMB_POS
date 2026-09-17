@@ -1,0 +1,320 @@
+/* ─── Dashboard Scoped Styles (v9 — compact type scale, mobile-safe KPIs) ─── */
+.dash-wrapper {
+  background: transparent;
+  min-height: 100%;
+  padding: 8px 0 32px;
+  font-family: 'Inter', sans-serif;
+}
+.min-w-0 { min-width: 0; }
+
+/* ─── Header ─── */
+.dash-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+.dash-header h4 {
+  font-size: 1.28rem;
+  font-weight: 700;
+  color: #1a2535;
+  margin: 0;
+  letter-spacing: -0.2px;
+}
+.dash-header .date-badge {
+  background: #fef2f2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+  font-size: .78rem;
+  font-weight: 600;
+  padding: 5px 14px;
+  border-radius: 50px;
+  letter-spacing: .3px;
+}
+
+/* ─── Stat Cards ─── */
+.stat-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 18px 20px;
+  box-shadow: 0 2px 12px rgba(0,0,0,.06);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  transition: transform .18s ease, box-shadow .18s ease;
+  border: 1px solid rgba(0,0,0,.04);
+  height: 100%;
+  min-width: 0;
+}
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,.10);
+}
+.stat-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 1.15rem;
+}
+.stat-icon.blue  { background: #eff6ff; color: #2563eb; }
+.stat-icon.crimson { background: #fef2f2; color: #dc2626; }
+.stat-icon.cyan  { background: #ecfeff; color: #0891b2; }
+.stat-icon.amber { background: #fffbeb; color: #d97706; }
+.stat-icon.purple { background: #faf5ff; color: #9333ea; }
+.stat-icon.orange { background: #fff7ed; color: #ea580c; }
+.stat-icon.teal  { background: #f0fdfa; color: #0d9488; }
+.stat-icon.indigo { background: #eef2ff; color: #4f46e5; }
+.stat-icon.rose  { background: #ffe4e6; color: #e11d48; }
+.stat-icon.lime  { background: #f7fee7; color: #65a30d; }
+.stat-icon.secondary { background: #f3f4f6; color: #6b7280; }
+.stat-icon.info { background: #cffafe; color: #0369a1; }
+.stat-icon.danger { background: #fee2e2; color: #dc2626; }
+.stat-icon.wine  { background: #fee2e2; color: #991b1b; }
+.stat-icon.slate { background: #f1f5f9; color: #334155; }
+.stat-icon.success { background: #f1f5f9; color: #334155; }
+.stat-label {
+  font-size: .73rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .7px;
+  color: #94a3b8;
+  margin-bottom: 4px;
+}
+.stat-value {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #1a2535;
+  line-height: 1.1;
+  overflow-wrap: anywhere;
+}
+.stat-value--xl {
+  font-size: 1.75rem;
+  letter-spacing: -.5px;
+}
+.stat-sub {
+  font-size: .73rem;
+  color: #94a3b8;
+  margin-top: 4px;
+  overflow-wrap: anywhere;
+}
+
+/* Mobile: KPI values must never clip — tighter type + smaller icons */
+@media (max-width: 575.98px) {
+  .stat-card { padding: 14px 16px; gap: 12px; border-radius: 14px; }
+  .stat-icon { width: 40px; height: 40px; border-radius: 11px; font-size: 1rem; }
+  .stat-value { font-size: 1.12rem; }
+  .stat-value--xl { font-size: 1.4rem; }
+  .stat-sub { font-size: .7rem; }
+  .dash-wrapper { padding: 4px 0 24px; }
+  .dash-header h4 { font-size: 1.15rem; }
+  .chart-wrapper { height: 220px; }
+}
+
+/* ─── Period dropdown (Sales card + chart range) ─── */
+.period-select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-color: #f1f5f9;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6' fill='none'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%2364748b' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right .7rem center;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  color: #475569;
+  font: 700 .74rem/1.2 'Inter', sans-serif;
+  padding: 6px 2rem 6px .8rem;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background-color .15s ease, color .15s ease, border-color .15s ease, box-shadow .15s ease;
+}
+.period-select:hover {
+  background-color: #e8edf3;
+  color: #1a2535;
+}
+.period-select:focus {
+  outline: none;
+  background-color: #fff;
+  border-color: #dc2626;
+  color: #b91c1c;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, .12);
+}
+.period-select option { background: #fff; color: #334155; }
+.period-select--sm {
+  padding: 4px 1.8rem 4px .7rem;
+  font-size: .72rem;
+}
+
+/* flagship sales card — a touch more presence */
+.stat-card--sales {
+  background: linear-gradient(135deg, #fff 55%, #fef2f2 100%);
+}
+
+/* value swap micro-animation (JS adds/removes .is-swapping) */
+.stat-value.is-swapping,
+.stat-sub.is-swapping {
+  opacity: 0;
+  transform: translateY(4px);
+}
+.stat-value,
+.stat-sub {
+  transition: opacity .12s ease, transform .12s ease;
+}
+
+/* Product thumbnails are defined in css/mmb-theme.css (.mmb-thumb) so
+   every page — dashboard, product management, inventory — shares them. */
+
+/* ─── Mini stat rows (Discounts & VAT card) ─── */
+.mini-stat-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 9px 0;
+  border-bottom: 1px solid #f8fafc;
+  font-size: .82rem;
+  color: #64748b;
+}
+.mini-stat-row:last-child { border-bottom: none; }
+.mini-stat-row strong {
+  color: #1a2535;
+  font-weight: 700;
+  font-size: .85rem;
+}
+
+/* ─── Section Cards ─── */
+.dash-card {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(0,0,0,.06);
+  border: 1px solid rgba(0,0,0,.04);
+  overflow: hidden;
+  height: 100%;
+  min-width: 0;
+}
+.dash-card-header {
+  padding: 18px 20px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+.dash-card-header h6 {
+  font-size: .92rem;
+  font-weight: 700;
+  color: #1a2535;
+  margin: 0;
+}
+.dash-card-body {
+  padding: 18px 20px 20px;
+  overflow-x: auto;   /* tables scroll in-card on narrow screens */
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ─── Chart ─── */
+.chart-wrapper {
+  position: relative;
+  height: 280px;
+}
+
+/* ─── Custom Table ─── */
+.dash-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .84rem;
+  min-width: 420px;   /* scroll past this inside dash-card-body */
+}
+.dash-table th {
+  text-transform: uppercase;
+  font-size: .7rem;
+  letter-spacing: .6px;
+  color: #64748b;
+  font-weight: 700;
+  padding: 0 1rem 10px 0;
+  border-bottom: 2px solid #f1f5f9;
+}
+.dash-table td {
+  padding: 12px 1rem 12px 0;
+  color: #374151;
+  border-bottom: 1px solid #f8fafc;
+}
+.dash-table tr:last-child td { border-bottom: none; }
+.dash-table tr:hover td     { background: #fafbfc; }
+
+.ref-id     { font-weight: 700; color: #1a2535; font-size: .82rem; }
+.amount-pos { color: #b91c1c; font-weight: 800; font-size: .9rem; }
+.amount-neg { color: #94a3b8; font-size: .82rem; }
+
+.pill {
+  padding: 3px 10px;
+  border-radius: 50px;
+  font-size: .72rem;
+  font-weight: 600;
+}
+.pill-gray  { background: #f1f5f9; color: #64748b; }
+.pill-green { background: #f1f5f9; color: #64748b; }
+.pill-brand { background: #fef2f2; color: #b91c1c; }
+
+/* ─── Top Products ─── */
+.top-product-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 11px 0;
+  border-bottom: 1px solid #f8fafc;
+}
+.top-product-item:last-child { border-bottom: none; }
+.product-rank {
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  background: #fef2f2;
+  color: #dc2626;
+  font-size: .72rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-right: 12px;
+}
+.top-product-item .product-name  { font-weight: 600; color: #1a2535; font-size: .85rem; }
+.top-product-item .product-sold  { font-size: .73rem; color: #94a3b8; }
+.top-product-item .product-price { font-weight: 700; color: #b91c1c; font-size: .88rem; }
+.top-product-item .mmb-thumb { margin-right: 0; }
+.top-product-item .product-rank { margin-right: 10px; }
+
+/* ─── Alert Widgets (issue #6.9: no more heavy side stripes — soft tinted
+     surfaces with a hairline border carry the same signal) ─── */
+.alert-card-warn {
+  background: #fffbeb !important;
+  border: 1px solid #fde68a !important;
+}
+.alert-card-warn .dash-card-header {
+  background: transparent;
+  border-bottom: 1px solid #fde68a;
+}
+.alert-card-warn .dash-card-header h6 { color: #b45309; }
+
+.alert-card-danger {
+  background: #fef2f2 !important;
+  border: 1px solid #fecaca !important;
+}
+.alert-card-danger .dash-card-header {
+  background: transparent;
+  border-bottom: 1px solid #fecaca;
+}
+.alert-card-danger .dash-card-header h6 { color: #b91c1c; }
+
+.badge-warn  { background: #fef3c7; color: #92400e; padding: 3px 10px; border-radius: 50px; font-size: .72rem; font-weight: 700; }
+.badge-danger{ background: #fee2e2; color: #991b1b; padding: 3px 10px; border-radius: 50px; font-size: .72rem; font-weight: 700; }
+
+/* ─── Empty State ─── */
+.empty-state { text-align: center; padding: 28px 0; color: #94a3b8; font-size: .85rem; }
+.empty-state i { font-size: 2rem; display: block; margin-bottom: 8px; opacity: .4; }

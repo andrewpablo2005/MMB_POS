@@ -1,0 +1,177 @@
+<?php
+
+namespace Classes;
+
+// PDO DB
+require_once __DIR__ . "/../conn/database.php"; //yours is Database.php
+require_once __DIR__ . "/../conn/basepath.php"; // URL base path (root or subfolder deploys)
+require_once __DIR__ . "/../conn/activity_log.php"; // audit trail (Task 42)
+
+global $db; // Make $db accessible
+
+
+class Project
+{
+    public int $username;
+    public string $password;
+    private $con;
+    private string $response;
+
+    public function __construct($db)
+    {
+        $this->con = $db;
+    }
+
+    public function login(string $username, string $password)
+    {
+        $ip = $_SERVER['REMOTE_ADDR'];
+
+        // CHECK IP LOCK
+        $stmt = $this->con->prepare("SELECT * FROM login_attempts WHERE ip_address = ?");
+        $stmt->execute([$ip]);
+        $attemptData = $stmt->fetch();
+
+        if ($attemptData && $attemptData['attempts'] >= 5) {
+            $lastAttempt = strtotime($attemptData['last_attempt']);
+
+            if ((time() - $lastAttempt) < 300) {
+                mmb_log_activity($this->con, 'auth', 'login_blocked',
+                    "Sign-in blocked (IP rate limit) for username '" . mb_substr($username, 0, 100) . "'",
+                    '', null, ['user_id' => null, 'username' => $username, 'role' => 'guest']);
+                return "Too many attempts. Try again later.";
+            }
+        }
+
+        // GET USER
+        $stmt = $this->con->prepare("SELECT * FROM users WHERE username = ? AND status = 'active'");
+        $stmt->execute([$username]);
+        $user = $stmt->fetch();
+
+        // =========================
+        // USER EXISTS
+        // =========================
+        if ($user) {
+
+            // CHECK USER LOCK
+            if ($user['failed_attempts'] >= 5) {
+                $lastAttempt = strtotime($user['last_attempt']);
+
+                if ((time() - $lastAttempt) < 300) {
+                    mmb_log_activity($this->con, 'auth', 'login_blocked',
+                        "Sign-in blocked (account lock) for username '" . mb_substr($username, 0, 100) . "'",
+                        '', null, ['user_id' => (int)$user['id'], 'username' => $user['username'], 'role' => strtolower($user['position'])]);
+                    return "Too many attempts. Try again later.";
+                }
+            }
+
+            // VERIFY PASSWORD
+            if (password_verify($password, $user['password'])) {
+
+                // REDIRECT BASED ON ROLE (case-insensitive) — validate the
+                // position BEFORE populating the session, otherwise an account
+                // with an unexpected role would still receive a valid session.
+                $position = strtolower($user['position']);
+                if (!in_array($position, ['owner', 'admin', 'staff'], true)) {
+                    return "Invalid user position: " . htmlspecialchars($user['position']);
+                }
+
+                // RESET USER ATTEMPTS
+                $resetUser = $this->con->prepare("UPDATE users SET failed_attempts = 0 WHERE id = ?");
+                $resetUser->execute([$user['id']]);
+
+                // RESET IP ATTEMPTS
+                $resetIP = $this->con->prepare("DELETE FROM login_attempts WHERE ip_address = ?");
+                $resetIP->execute([$ip]);
+
+                // SESSION
+                session_regenerate_id(true);
+
+                $_SESSION['user_id'] = $user['id'];
+                $_SESSION['username'] = $user['username'];
+                $_SESSION['position'] = $user['position'];
+                $_SESSION['show_global_alerts_after_login'] = true;
+
+                // AUDIT: successful sign-in — who logged in at which time (Task 42)
+                mmb_log_activity($this->con, 'auth', 'login',
+                    "Signed in successfully (" . $position . ")",
+                    'user', (int)$user['id'],
+                    ['user_id' => (int)$user['id'], 'username' => $user['username'], 'role' => $position]);
+
+                if ($position === 'owner') {
+                    header('Location: ' . mmbpos_base_path() . '/ownerpage/dashboard.php');
+                    exit;
+                } elseif ($position === 'admin') {
+                    header('Location: ' . mmbpos_base_path() . '/adminpage/dashboard.php');
+                    exit;
+                } else {
+                    header('Location: ' . mmbpos_base_path() . '/staffpos/dashboard.php');
+                    exit;
+                }
+            }
+            // =========================
+            // WRONG PASSWORD
+            // =========================
+            else {
+
+                // INCREMENT USER ATTEMPTS
+                $newAttempts = $user['failed_attempts'] + 1;
+
+                $updateUser = $this->con->prepare("UPDATE users SET failed_attempts = ?, last_attempt = NOW() WHERE id = ?");
+                $updateUser->execute([$newAttempts, $user['id']]);
+
+                // INCREMENT IP ATTEMPTS
+                if ($attemptData) {
+                    $ipAttempts = $attemptData['attempts'] + 1;
+
+                    $updateIP = $this->con->prepare("UPDATE login_attempts SET attempts = ?, last_attempt = NOW() WHERE ip_address = ?");
+                    $updateIP->execute([$ipAttempts, $ip]);
+
+                } else {
+                    $insertIP = $this->con->prepare("INSERT INTO login_attempts (ip_address, attempts, last_attempt) VALUES (?, 1, NOW())");
+                    $insertIP->execute([$ip]);
+                }
+
+                // AUDIT: wrong password for an existing account (Task 42)
+                mmb_log_activity($this->con, 'auth', 'login_failed',
+                    "Failed sign-in (wrong password) for username '" . mb_substr($username, 0, 100) . "'",
+                    '', null, ['user_id' => null, 'username' => $username, 'role' => 'guest']);
+
+                return "Invalid username or password";
+            }
+        }
+
+        // =========================
+        // USER NOT FOUND
+        // =========================
+        else {
+
+            // INCREMENT IP ATTEMPTS ONLY
+            if ($attemptData) {
+                $ipAttempts = $attemptData['attempts'] + 1;
+
+                $updateIP = $this->con->prepare("UPDATE login_attempts SET attempts = ?, last_attempt = NOW() WHERE ip_address = ?");
+                $updateIP->execute([$ipAttempts, $ip]);
+
+            } else {
+                $insertIP = $this->con->prepare("INSERT INTO login_attempts (ip_address, attempts, last_attempt) VALUES (?, 1, NOW())");
+                $insertIP->execute([$ip]);
+            }
+
+            // AUDIT: unknown username attempted (Task 42)
+            mmb_log_activity($this->con, 'auth', 'login_failed',
+                "Failed sign-in (unknown username) for '" . mb_substr($username, 0, 100) . "'",
+                '', null, ['user_id' => null, 'username' => $username, 'role' => 'guest']);
+
+            return "Invalid username or password";
+        }
+    }
+    private function responseSQL($stmt)
+    {
+        if ($stmt) {
+            $this->response = "Success";
+        } else {
+            $this->response = "Failed";
+        }
+    }
+}
+?>

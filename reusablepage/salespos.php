@@ -1,0 +1,877 @@
+<?php
+require_once __DIR__ . '/guard.php'; guard_require_roles(['owner','admin','staff']);
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+require_once __DIR__ . "/../conn/database.php";
+require_once __DIR__ . "/../function/workingpos.php";
+
+$product = new Product($db);
+$products = $product->getProducts();
+$categories = $product->getCategories();
+$discounts = $product->getDiscounts();
+
+$seniorDiscountRate = 0.20;
+$pwdDiscountRate = 0.20;
+try {
+    $db->exec("CREATE TABLE IF NOT EXISTS store_settings (
+        setting_key VARCHAR(50) NOT NULL PRIMARY KEY,
+        setting_value VARCHAR(255) NULL,
+        updated_at DATETIME NULL DEFAULT NULL
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+    $discountSettingsStmt = $db->query("SELECT setting_key, setting_value FROM store_settings WHERE setting_key IN ('senior_discount_rate', 'pwd_discount_rate')");
+    foreach ($discountSettingsStmt->fetchAll(PDO::FETCH_ASSOC) as $discountSetting) {
+        if (!is_numeric($discountSetting['setting_value'])) {
+            continue;
+        }
+        $rate = max(0, min(100, (float)$discountSetting['setting_value'])) / 100;
+        if ($discountSetting['setting_key'] === 'senior_discount_rate') {
+            $seniorDiscountRate = $rate;
+        } elseif ($discountSetting['setting_key'] === 'pwd_discount_rate') {
+            $pwdDiscountRate = $rate;
+        }
+    }
+} catch (PDOException $exception) {
+    // Keep the 20% defaults when settings storage is unavailable.
+}
+
+$userRole = strtolower($_SESSION['position'] ?? 'staff');
+$isManager = in_array($userRole, ['owner', 'admin']);
+
+$cashierName = $_SESSION['username'] ?? 'Unknown';
+if (!empty($_SESSION['user_id'])) {
+    $stmt = $db->prepare(
+        "SELECT COALESCE(NULLIF(CONCAT_WS(' ', ui.firstname, ui.lastname), ''), u.username) AS cashier_name
+         FROM users u
+         LEFT JOIN users_info ui ON u.id = ui.user_id
+         WHERE u.id = ?"
+    );
+    $stmt->execute([(int)$_SESSION['user_id']]);
+    $userRow = $stmt->fetch(PDO::FETCH_ASSOC);
+    if ($userRow && !empty($userRow['cashier_name'])) {
+        $cashierName = $userRow['cashier_name'];
+    }
+}
+?>
+
+<!-- wePOS Inspired CSS -->
+<link rel="stylesheet" href="../css/pos_wepos.css?v=1.10">
+
+<div class="wepos-wrapper" id="weposApp">
+    
+    <!-- ═══════════════ LEFT PANEL: PRODUCT GRID ═══════════════ -->
+    <div class="wepos-left">
+        
+        <!-- Header & Search -->
+        <div class="wepos-header">
+            <div class="wepos-search-container">
+                <i class="fas fa-search"></i>
+                <input type="text" id="weposSearch" placeholder="Scan barcode or search products..." autocomplete="off">
+                <kbd>F2</kbd>
+            </div>
+            <button type="button" class="wepos-btn wepos-btn-outline text-danger" style="border-color: #e74c3c; color: #c0392b;" onclick="openReturnModal()">
+                    Process Return <kbd style="font-size: 10px; background: #fee2e2; color: #c0392b; border: none; margin-left: 2px;">F9</kbd>
+                </button>
+            <button class="wepos-btn wepos-btn-outline" onclick="location.reload()">
+                Refresh <kbd style="font-size: 10px; background: #fee2e2; color: #c0392b; border: none; margin-left: 2px;">F5</kbd>
+            </button>
+            <button class="wepos-btn wepos-btn-outline text-primary" onclick="weposOpenClosingModal()">
+                Close Register <kbd style="font-size: 10px; background: #fee2e2; color: #c0392b; border: none; margin-left: 2px;">F10</kbd>
+            </button>
+        </div>
+
+        <!-- Categories -->
+        <div class="wepos-categories">
+            <button class="wepos-cat-btn active" onclick="weposFilterCat('All')">All</button>
+            <?php foreach ($categories as $cat): ?>
+                <button class="wepos-cat-btn" onclick="weposFilterCat('<?= htmlspecialchars($cat['category_name']) ?>')">
+                    <?= htmlspecialchars($cat['category_name']) ?>
+                </button>
+            <?php endforeach; ?>
+        </div>
+
+        <!-- Products -->
+        <div class="wepos-products-area">
+            <div class="wepos-products-grid" id="weposGrid">
+                <?php if (empty($products)): ?>
+                    <div class="w-100 text-center text-muted py-5 px-3">
+                        <i class="fas fa-box-open d-block mb-3" style="font-size: 2.5rem; color: #cbd5e1;"></i>
+                        <h5 class="mb-2">No products available</h5>
+                        <p class="mb-0">Add a product and inventory batch before starting a sale.</p>
+                    </div>
+                <?php else: ?>
+                <?php foreach ($products as $row): ?>
+                    <?php 
+                        $stock = (int)($row['stock'] ?? 0);
+                        $isOut = $stock <= 0;
+                        $expiryDate = $row['earliest_expiry_date'] ?? null;
+                        $isExpired = ($expiryDate && strtotime($expiryDate) < strtotime('today')) ? true : false;
+                        $image = !empty($row['imageproduct']) ? "../img/" . $row['imageproduct'] : "";
+                        $salePrice = (float)($row['total_price'] ?? $row['sale_price'] ?? 0);
+                        $costPrice = (float)($row['net_price'] ?? $row['purchase_cost'] ?? $salePrice);
+                    ?>
+                    <div class="wepos-product-card <?= $isOut ? 'out-of-stock' : '' ?><?= $isExpired ? ' expired' : '' ?>"
+                         data-id="<?= $row['id'] ?>"
+                         data-name="<?= htmlspecialchars($row['branded_name']) ?> <?= htmlspecialchars($row['generic_name']) ?> <?= htmlspecialchars($row['strength'] ?? '') ?> <?= htmlspecialchars($row['measurement_name'] ?? '') ?><?= !empty(trim($row['dosage_form'] ?? '')) ? ' ' . htmlspecialchars(trim($row['dosage_form'])) : '' ?><?= isset($row['strength_per_quantity']) && $row['strength_per_quantity'] > 0 ? ' (' . htmlspecialchars((string)$row['strength_per_quantity']) . ' ' . htmlspecialchars(trim($row['strength_per_quantity_unit'] ?? '')) . ' per unit)' : '' ?>"
+                         data-branded="<?= htmlspecialchars($row['branded_name']) ?>"
+                         data-generic="<?= htmlspecialchars($row['generic_name']) ?>"
+                         data-strength="<?= htmlspecialchars(trim(($row['strength'] ?? '') . (($row['strength'] ?? '') !== '' ? ' ' : '') . ($row['measurement_name'] ?? ''))) ?>"
+                         data-form="<?= htmlspecialchars(trim($row['dosage_form'] ?? '')) ?>"
+                         data-price="<?= $salePrice ?>"
+                         data-net="<?= $costPrice ?>"
+                         data-barcode="<?= htmlspecialchars($row['barcode'] ?? '') ?>"
+                         data-category="<?= htmlspecialchars($row['category_name'] ?? 'Uncategorized') ?>"
+                         data-has-vat="<?= (int)($row['has_vat'] ?? 0) ?>"
+                         data-senior="<?= (int)($row['senior_discount'] ?? 0) ?>"
+                         data-pwd="<?= (int)($row['pwd_discount'] ?? 0) ?>"
+                         data-stock="<?= $stock ?>"
+                         data-pcs="<?= (int)($row['pcs'] ?? 1) ?>"
+                         data-expired="<?= $isExpired ? '1' : '0' ?>"
+                         onclick="event.stopPropagation(); weposAddToCart(this)">
+                        
+                        <div class="wepos-card-img">
+                            <?php if ($image): ?>
+                                <img src="<?= $image ?>" alt="">
+                            <?php else: ?>
+                                <i class="fas fa-box" style="font-size: 2rem; color: #cbd5e1;"></i>
+                            <?php endif; ?>
+                            
+                            <!-- Expired Indicator -->
+                            <?php if ($isExpired): ?>
+                                <span class="wepos-stock-badge expired">EXPIRED</span>
+                            <!-- Stock Indicator -->
+                            <?php elseif ($isOut): ?>
+                                <span class="wepos-stock-badge empty">Out of Stock</span>
+                            <?php else: ?>
+                                <span class="wepos-stock-badge <?= $stock <= 10 ? 'low' : '' ?>"><?= $stock ?> in stock</span>
+                            <?php endif; ?>
+                            
+                            <!-- Hover Add Overlay -->
+                            <div class="wepos-card-add-overlay">
+                                <span class="wepos-add-btn-fake"><i class="fas fa-plus"></i> Add to Cart</span>
+                            </div>
+                        </div>
+                        
+                        <div class="wepos-card-info">
+                            <div class="wepos-card-price">₱<?= number_format($salePrice, 2) ?></div>
+                            <div class="wepos-card-name">
+                                <?= htmlspecialchars($row['branded_name']) ?> <?= htmlspecialchars($row['generic_name']) ?> <?= htmlspecialchars($row['strength'] ?? '') ?> <?= htmlspecialchars($row['measurement_name'] ?? '') ?><?= !empty(trim($row['dosage_form'] ?? '')) ? ' ' . htmlspecialchars(trim($row['dosage_form'])) : '' ?><?= isset($row['strength_per_quantity']) && $row['strength_per_quantity'] > 0 ? ' (' . htmlspecialchars((string)$row['strength_per_quantity']) . ' ' . htmlspecialchars(trim($row['strength_per_quantity_unit'] ?? '')) . ' per unit)' : '' ?>
+                            </div>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+                <?php endif; ?>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ═══════════════ RIGHT PANEL: CART & CHECKOUT ═══════════════ -->
+    <div class="wepos-right">
+
+        <!-- Cart width drag handle (issue #7.5) — drag to resize, persists per device -->
+        <div class="wepos-resizer" id="weposCartResizer" title="Drag to resize the cart panel" aria-label="Drag to resize the cart panel">
+            <i class="fas fa-grip-lines-vertical"></i>
+        </div>
+        
+        <!-- Cart Header -->
+        <div class="wepos-cart-header">
+            <span style="font-size:13px; font-weight:600; color:#50575e;">Current Order</span>
+            <div class="wepos-cart-actions">
+                <button class="wepos-btn wepos-btn-outline text-danger" style="border-color: #e74c3c; color: #c0392b;" onclick="weposClearCart()">
+                    Clear <kbd style="font-size: 10px; background: #fee2e2; color: #c0392b; border: none; margin-left: 2px;">F8</kbd>
+                </button>
+            </div>
+        </div>
+
+        <!-- Cart Items List -->
+        <div class="wepos-cart-items">
+            <table class="wepos-cart-table">
+                <thead>
+                    <tr>
+                        <th class="wepos-col-name">Product</th>
+                        <th class="wepos-col-price">Price</th>
+                        <th class="wepos-col-qty">Qty</th>
+                        <th class="wepos-col-total">Total</th>
+                        <th class="wepos-col-action"></th>
+                    </tr>
+                </thead>
+                <tbody id="weposCartBody">
+                    <tr>
+                        <td colspan="5" class="wepos-empty-cart">
+                            <div class="wepos-empty-cart-icon"><i class="fas fa-basket-shopping"></i></div>
+                            <p>Cart is empty</p>
+                            <small>Scan barcode or click products to add</small>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Calculations & Checkout -->
+        <div class="wepos-checkout-area">
+
+            <!-- Discount Selection (hidden — issue #7.1: the customer type is now
+                 chosen inside the payment flow. The select stays in the DOM and
+                 keeps driving all pricing / statutory logic exactly as before.) -->
+            <div class="wepos-discount-row" style="display:none;">
+                <div class="wepos-discount-label">Apply Discount</div>
+                <select id="weposDiscount" class="wepos-select" onchange="weposOnDiscountChange(this)">
+                    <?php foreach ($discounts as $d): ?>
+                        <?php
+                            $discountName = trim((string)($d['discount_name'] ?? ''));
+                            if (stripos($discountName, 'bnpc') !== false) {
+                                continue; // Do not expose BNPC as a manual discount option
+                            }
+                            $discountRate = (float)($d['discount_rate'] ?? 0);
+                            $isStatutoryDiscount = stripos($discountName, 'senior') !== false || stripos($discountName, 'pwd') !== false;
+                            $displayName = $discountName;
+                            $displayRate = $isStatutoryDiscount
+                                ? (stripos($discountName, 'senior') !== false ? number_format($seniorDiscountRate, 4, '.', '') : number_format($pwdDiscountRate, 4, '.', ''))
+                                : number_format($discountRate > 1 ? $discountRate / 100 : $discountRate, 2, '.', '');
+                            $displayRule = $isStatutoryDiscount ? 'statutory' : 'regular';
+                            $displayExempt = $isStatutoryDiscount ? 1 : (int)($d['is_vat_exempt'] ?? 0);
+                        ?>
+                        <option value="<?= (int)$d['id'] ?>"
+                                data-rate="<?= $displayRate ?>"
+                                data-rule="<?= $displayRule ?>"
+                                data-exempt="<?= $displayExempt ?>"
+                                <?= ($discountRate == 0) ? 'selected' : '' ?>>
+                            <?= htmlspecialchars($displayName, ENT_QUOTES, 'UTF-8') ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+
+            <!-- Math Breakdown -->
+            <div class="wepos-calc-box">
+                <div class="wepos-calc-row">
+                    <span>Subtotal</span>
+                    <span id="calcSub">₱0.00</span>
+                </div>
+                <div class="wepos-calc-row text-danger" id="rowDiscount" style="display:none;">
+                    <span>Discount (<span id="calcDiscountLabel">0%</span>)</span>
+                    <span id="calcDiscount">-₱0.00</span>
+                </div>
+                <div class="wepos-calc-row text-muted" id="rowVat" style="display:none;">
+                    <span>VAT (0%)</span>
+                    <span id="calcVat">+₱0.00</span>
+                </div>
+                <div class="wepos-calc-row text-muted" id="rowVatExempt" style="display:none;">
+                    <span>VAT Exemption</span>
+                    <span id="calcVatExempt">-₱0.00</span>
+                </div>
+
+                <div class="wepos-calc-row total-row">
+                    <span>Total Due</span>
+                    <span class="wepos-grand-total" id="calcTotal">₱0.00</span>
+                </div>
+            </div>
+
+            <!-- Pay Button -->
+            <button class="wepos-pay-btn" id="weposPayBtn" onclick="weposOpenPayModal()" disabled>
+                <span>Pay Now <kbd style="font-size: 10px; background: rgba(255,255,255,.25); color:#fff; border: none;">Shift</kbd></span>
+                <span class="wepos-pay-amount" id="btnTotalAmount">₱0.00</span>
+            </button>
+        </div>
+
+    </div>
+
+</div>
+
+<!-- REGISTER CLOSING MODAL -->
+<div class="wepos-modal-overlay" id="registerClosingModal" style="display:none;" onclick="weposCloseClosingModal(event)">
+    <div class="wepos-modal" onclick="event.stopPropagation()" style="max-width:520px;">
+        <div class="wepos-modal-head" style="background:#f8fafc; border-bottom:1px solid #e2e8f0;">
+            <h5 style="color:#1a2535;">Close Cashier Register</h5>
+            <button type="button" onclick="weposCloseClosingModal()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="wepos-modal-body">
+            <p class="text-muted" style="font-size:0.9rem;">Count the cash in your drawer and compare it with the system amount before closing.</p>
+            <div style="margin-bottom:12px;">
+                <label for="closingBusinessDate" style="font-weight:600; display:block; margin-bottom:4px;">Business date</label>
+                <input type="date" id="closingBusinessDate" class="wepos-input-lg" style="font-size:1rem; padding:8px;" value="<?= date('Y-m-d') ?>" max="<?= date('Y-m-d') ?>" readonly>
+            </div>
+            <div id="closingSummary" style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:6px; padding:12px; margin-bottom:12px;">
+                <div style="display:flex; justify-content:space-between;"><span>Transactions</span><strong id="closingTransactions">—</strong></div>
+                <div style="display:flex; justify-content:space-between;"><span>Opening cash</span><strong id="closingOpeningCash">₱0.00</strong></div>
+                <div style="display:flex; justify-content:space-between;"><span>Sales collected</span><strong id="closingSales">₱0.00</strong></div>
+                <div style="display:flex; justify-content:space-between;"><span>Cash refunds</span><strong id="closingRefunds" class="text-danger">-₱0.00</strong></div>
+                <div style="display:flex; justify-content:space-between; border-top:1px solid #cbd5e1; margin-top:8px; padding-top:8px; font-size:1.05rem;"><span>System cash</span><strong id="closingSystemCash" class="text-primary">₱0.00</strong></div>
+            </div>
+            <div style="margin-bottom:12px;">
+                <label for="closingCountedCash" style="font-weight:600; display:block; margin-bottom:4px;">Counted cash</label>
+                <input type="number" id="closingCountedCash" class="wepos-input-lg" min="0" step="0.01" placeholder="0.00" oninput="weposUpdateClosingVariance()">
+            </div>
+            <div id="closingVariance" style="display:none; padding:10px; border-radius:5px; margin-bottom:12px; font-weight:600;"></div>
+            <div>
+                <label for="closingNotes" style="font-weight:600; display:block; margin-bottom:4px;">Notes (optional)</label>
+                <textarea id="closingNotes" rows="2" class="form-control" placeholder="Explain any shortage or overage"></textarea>
+            </div>
+            <div id="closingError" class="text-danger" style="display:none; margin-top:10px;"></div>
+        </div>
+        <div class="wepos-modal-foot">
+            <button type="button" class="wepos-btn wepos-btn-outline" onclick="weposCloseClosingModal()">Cancel</button>
+            <button type="button" class="wepos-btn wepos-btn-primary" id="confirmClosingBtn" onclick="weposConfirmRegisterClosing()" disabled>Confirm Closing</button>
+        </div>
+    </div>
+</div>
+
+<!-- REGISTER OPENING MODAL -->
+<div class="wepos-modal-overlay" id="registerOpeningModal" style="display:none;" onclick="weposCloseOpeningModal(event)">
+    <div class="wepos-modal" onclick="event.stopPropagation()" style="max-width:440px;">
+        <div class="wepos-modal-head" style="background:#f0fdf4; border-bottom:1px solid #bbf7d0;">
+            <h5 style="color:#166534;">Welcome to the POS</h5>
+            <button type="button" onclick="weposCloseOpeningModal()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="wepos-modal-body">
+            <p class="text-muted" style="font-size:0.9rem;">Start your shift by recording the cash currently placed in the drawer. This is optional and can be skipped.</p>
+            <label for="openingCashAmount" style="font-weight:600; display:block; margin-bottom:4px;">Opening cash</label>
+            <input type="number" id="openingCashAmount" class="wepos-input-lg" min="0" step="0.01" placeholder="0.00" autofocus>
+            <label for="openingCashNotes" style="font-weight:600; display:block; margin:12px 0 4px;">Notes (optional)</label>
+            <textarea id="openingCashNotes" rows="2" class="form-control" placeholder="Drawer handover or starting cash note"></textarea>
+            <div id="openingCashError" class="text-danger" style="display:none; margin-top:10px;"></div>
+        </div>
+        <div class="wepos-modal-foot">
+            <button type="button" class="wepos-btn wepos-btn-outline" onclick="weposSkipOpeningModal()">Skip for now</button>
+            <button type="button" class="wepos-btn wepos-btn-primary" id="confirmOpeningBtn" onclick="weposSubmitRegisterOpening()">Open Register</button>
+        </div>
+    </div>
+</div>
+
+<!-- REGISTER CLOSING CONFIRMATION MODAL -->
+<div class="wepos-modal-overlay" id="registerClosingConfirmModal" style="display:none;" onclick="weposCloseClosingConfirmModal(event)">
+    <div class="wepos-modal" onclick="event.stopPropagation()" style="max-width:440px;">
+        <div class="wepos-modal-head" style="background:#fff7ed; border-bottom:1px solid #fed7aa;">
+            <h5 style="color:#9a3412;">Confirm Register Closing</h5>
+            <button type="button" onclick="weposCloseClosingConfirmModal()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="wepos-modal-body">
+            <p>Are you sure you want to close the register? This action cannot be repeated for the same business date.</p>
+            <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:6px; padding:12px;">
+                <div style="display:flex; justify-content:space-between;"><span>Business date</span><strong id="closingConfirmDate"></strong></div>
+                <div style="display:flex; justify-content:space-between;"><span>Opening cash</span><strong id="closingConfirmOpeningCash"></strong></div>
+                <div style="display:flex; justify-content:space-between;"><span>System cash</span><strong id="closingConfirmSystemCash"></strong></div>
+                <div style="display:flex; justify-content:space-between;"><span>Counted cash</span><strong id="closingConfirmCountedCash"></strong></div>
+                <div style="display:flex; justify-content:space-between; border-top:1px solid #cbd5e1; margin-top:8px; padding-top:8px;"><span>Variance</span><strong id="closingConfirmVariance"></strong></div>
+            </div>
+        </div>
+        <div class="wepos-modal-foot">
+            <button type="button" class="wepos-btn wepos-btn-outline" onclick="weposCloseClosingConfirmModal()">Go Back</button>
+            <button type="button" class="wepos-btn wepos-btn-primary" onclick="weposSubmitRegisterClosing()">Close Register</button>
+        </div>
+    </div>
+</div>
+
+<!-- ═══════════════ PAYMENT MODAL ═══════════════ -->
+<div class="wepos-modal-overlay" id="weposPayModal" style="display:none;" onclick="weposClosePayModal(event)">
+    <div class="wepos-modal" onclick="event.stopPropagation()">
+        <div class="wepos-modal-head">
+            <h5>Complete Payment</h5>
+            <button onclick="weposClosePayModal()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="wepos-modal-body">
+            
+            <div class="wepos-modal-totals">
+                <div class="wepos-modal-amt">Amount Due: <strong class="text-primary" id="modalAmountDue">₱0.00</strong></div>
+            </div>
+
+            <!-- Customer Type (issue #7.1) — asked AFTER Pay is clicked.
+                 Senior/PWD opens the ID verification flow on top of this modal. -->
+            <div class="wepos-ctype-row">
+                <div class="wepos-ctype-label"><i class="fas fa-user-tag"></i> Customer Type</div>
+                <div class="wepos-ctype-btns">
+                    <button type="button" class="wepos-ctype-btn active" data-ctype="regular" onclick="weposSetCustomerType('regular', this)">Regular</button>
+                    <button type="button" class="wepos-ctype-btn" data-ctype="senior" onclick="weposSetCustomerType('senior', this)">Senior</button>
+                    <button type="button" class="wepos-ctype-btn" data-ctype="pwd" onclick="weposSetCustomerType('pwd', this)">PWD</button>
+                </div>
+            </div>
+
+            <!-- Checkout Items (issue #8.3: capped at 120px so the modal stays short) -->
+            <div id="weposCheckoutItems" style="max-height: 120px; overflow-y: auto; margin-bottom: 12px; border: 1px solid #e0e0e0; border-radius: 4px; display: none;"></div>
+
+
+
+            <div class="wepos-tendered-box">
+                <label>Amount Tendered (₱)</label>
+                <input type="number" id="weposTendered" class="wepos-input-lg" placeholder="" oninput="weposCalcChange()" autofocus>
+
+                <div class="wepos-enter-hint">Type the amount, then press <kbd>Shift</kbd> to confirm</div>
+
+                <div class="wepos-quick-cash" id="weposQuickCash"></div>
+            </div>
+
+        </div>
+
+        <!-- issue #8.3 — PINNED SUMMARY STRIP: Change / Balance Due live outside
+             the scrolling body, directly above the buttons, so they are always
+             visible without scrolling no matter how many items are in the cart. -->
+        <div class="wepos-modal-summary">
+            <div class="wepos-change-box" id="weposChangeBox" style="display:none;">
+                <span>Change:</span>
+                <strong id="modalChange">₱0.00</strong>
+            </div>
+
+            <!-- Remaining amount when the cash tendered does not cover the
+                 total yet — mirrors the Change box styling in amber -->
+            <div class="wepos-balance-box" id="weposBalanceBox" style="display:none;">
+                <span>Balance Due:</span>
+                <strong id="modalBalance">₱0.00</strong>
+                <small>Add <span id="modalBalanceMore">₱0.00</span> more to complete this payment.</small>
+            </div>
+        </div>
+
+        <div class="wepos-modal-foot">
+            <button class="wepos-btn wepos-btn-outline" onclick="weposClosePayModal()">Cancel</button>
+            <button class="wepos-btn wepos-btn-primary" id="modalConfirmBtn" onclick="weposOpenConfirmModal()" disabled>Confirm Payment <kbd>Shift</kbd></button>
+        </div>
+    </div>
+</div>
+
+<!-- ═══════════════ PAYMENT CONFIRMATION MODAL ═══════════════ -->
+<div class="wepos-modal-overlay" id="weposConfirmModal" style="display:none;" onclick="weposCloseConfirmModal(event)">
+    <div class="wepos-modal" onclick="event.stopPropagation()">
+        <div class="wepos-modal-head">
+            <h5>Confirm Payment</h5>
+            <button onclick="weposCloseConfirmModal()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="wepos-modal-body">
+            <div style="margin-bottom: 1rem; font-size: 1rem;">
+                Please verify the payment details before proceeding.
+            </div>
+            <div style="margin-bottom: 0.75rem; display:flex; justify-content:space-between;">
+                <span>Total Due</span>
+                <strong id="confirmAmount">₱0.00</strong>
+            </div>
+            <div style="margin-bottom: 0.75rem; display:flex; justify-content:space-between;">
+                <span>Payment Method</span>
+                <strong id="confirmMethod">—</strong>
+            </div>
+            <div style="margin-bottom: 0.75rem; display:flex; justify-content:space-between;">
+                <span>Amount Tendered</span>
+                <strong id="confirmTendered">₱0.00</strong>
+            </div>
+            <div style="margin-bottom: 0.75rem; display:flex; justify-content:space-between;">
+                <span>Change</span>
+                <strong id="confirmChange">₱0.00</strong>
+            </div>
+        </div>
+        <div class="wepos-modal-foot">
+            <button class="wepos-btn wepos-btn-outline" onclick="weposCloseConfirmModal()">Cancel</button>
+            <button class="wepos-btn wepos-btn-primary" id="confirmPayBtn" onclick="weposSubmitTransaction()">Pay Now <kbd>Shift</kbd></button>
+        </div>
+    </div>
+</div>
+
+<!-- ═══════════════ VOID AUTH MODAL ═══════════════ -->
+<div class="wepos-modal-overlay" id="voidAuthModal" style="display:none;" onclick="event.stopPropagation()">
+    <div class="wepos-modal" onclick="event.stopPropagation()">
+        <div class="wepos-modal-head" style="background: #fee2e2; border-bottom: 1px solid #fecaca;">
+            <h5 style="color: #991b1b;">Manager Void Required</h5>
+            <button onclick="weposCancelVoidAuth()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="wepos-modal-body">
+            <div id="voidItemPreview" style="background:#f8f9fa; border:1px solid #dcdcde; padding:10px 14px; border-radius:4px; font-size:13px; margin-bottom:14px;"></div>
+            <p class="text-muted" style="font-size:0.9rem; margin-bottom:1rem;">
+                Please enter the 7-digit Manager Void PIN to remove this item from the cart.
+            </p>
+            <div style="margin-bottom:0.75rem;">
+                <input type="password" id="voidAuthPin" placeholder="7-Digit Void PIN" style="width:100%; border-radius:4px; border:1px solid #8c8f94; padding:0.5rem; font-size:1.2rem; text-align:center; letter-spacing:4px;" autocomplete="off" maxlength="7">
+            </div>
+            <div id="voidAuthError" class="text-danger" style="font-size:0.85rem; display:none; margin-bottom:0.5rem; text-align:center;"></div>
+        </div>
+        <div class="wepos-modal-foot">
+            <button class="wepos-btn wepos-btn-outline" onclick="weposCancelVoidAuth()">Cancel</button>
+            <button class="wepos-btn wepos-btn-primary" style="background-color: #dc2626; border-color: #dc2626;" id="voidAuthBtn" onclick="weposSubmitVoidAuth()"><i class="fas fa-trash"></i> Confirm Remove</button>
+        </div>
+    </div>
+</div>
+
+<!-- ═══════════════ RECEIPT MODAL ═══════════════ -->
+<div class="wepos-modal-overlay" id="weposReceiptModal" style="display:none;" onclick="event.stopPropagation()">
+    <div class="wepos-modal" onclick="event.stopPropagation()" style="max-width:400px; border-radius:8px;">
+        <div class="wepos-modal-head" style="background:#fef2f2; border-bottom:1px solid #fecaca;">
+            <h5 style="color:#b91c1c;">Payment Successful</h5>
+            <button onclick="weposCloseReceipt()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="wepos-modal-body" id="weposReceiptBody" style="padding:0;">
+
+            <!-- Printable Receipt -->
+            <div id="weposReceiptPrint" style="padding:20px; font-family:'Courier New',monospace; font-size:13px;">
+                <div style="text-align:center; margin-bottom:12px;">
+                    <div style="font-size:16px; font-weight:700;">MMB'SS DRUGSTORE</div>
+                    <div style="font-size:11px; color:#64748b;">8VFW+7CP, Provincial Road, Jaen, Nueva Ecija</div>
+                    <div style="font-size:11px; color:#64748b;">0965-845-2485</div>
+                    <div style="font-size:11px; color:#64748b;">Official Receipt</div>
+                    <div style="font-size:11px; color:#64748b;" id="receiptDateTime"></div>
+
+                </div>
+                <div style="border-top:1px dashed #cbd5e1; border-bottom:1px dashed #cbd5e1; padding:6px 0; margin-bottom:10px;">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                        <span style="color:#64748b;">Ref #:</span> <strong id="receiptRefNo"></strong>
+                    </div>
+                    <div style="display:flex; justify-content:space-between;">
+                        <span style="color:#64748b;">Cashier:</span> <strong id="receiptCashier"></strong>
+                    </div>
+                </div>
+                <div id="receiptItems" style="margin-bottom:10px;"></div>
+                <div style="border-top:1px dashed #cbd5e1; padding-top:8px; font-size:12px;">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                        <span style="color:#64748b;">Customer</span><strong id="receiptCustomer">Walk-in</strong>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                        <span style="color:#64748b;">ID</span><strong id="receiptCustomerId">—</strong>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                        <span style="color:#64748b;">Rule</span><strong id="receiptRule">Regular</strong>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; margin-bottom:3px; color:#64748b;">
+                        <span>VAT (0%)</span><span id="receiptVat"></span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; margin-bottom:3px;">
+                        <span>Subtotal</span><span id="receiptSubtotal"></span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; margin-bottom:3px; color:#dc2626;" id="receiptDiscountRow">
+                        <span>Discount (<span id="receiptDiscLabel"></span>)</span><span id="receiptDiscount"></span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; margin-bottom:3px; color:#64748b;" id="receiptVatExRow">
+                        <span>VAT Exempt</span><span id="receiptVatEx"></span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; font-size:15px; font-weight:700; border-top:1px solid #e2e8f0; padding-top:6px; margin-top:4px;">
+                        <span>TOTAL</span><span id="receiptTotal" style="color:#b91c1c;"></span>
+                    </div>
+                </div>
+                <div style="border-top:1px dashed #cbd5e1; margin-top:10px; padding-top:8px; font-size:12px;">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:3px;">
+                        <span>Payment Method</span><span id="receiptMethod"></span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; margin-bottom:3px;" id="receiptTenderedRow">
+                        <span>Cash Tendered</span><span id="receiptTendered"></span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; font-weight:700;" id="receiptChangeRow">
+                        <span>Change</span><span id="receiptChange"></span>
+                    </div>
+                </div>
+                <div style="text-align:center; margin-top:14px; font-size:11px; color:#94a3b8;">
+                    Thank you for your purchase!<br>
+                    Please come again.
+                </div>
+            </div>
+
+        </div>
+        <div class="wepos-modal-foot" style="gap:10px;">
+            <button class="wepos-btn wepos-btn-outline" onclick="weposPrintReceipt()">
+                Print Receipt
+            </button>
+            <button class="wepos-btn wepos-btn-primary" onclick="weposCloseReceipt()">
+                Done <kbd>Enter</kbd>
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const WEPOS_ROLE = '<?= $userRole ?>';
+    const WEPOS_IS_MANAGER = <?= $isManager ? 'true' : 'false' ?>;
+    const WEPOS_CASHIER = <?= json_encode($cashierName) ?>;
+
+    let weposClosingSystemCash = 0;
+    let weposRegisterOpened = false;
+    let weposRegisterClosed = false;
+
+    function weposFormatClosingCurrency(value) {
+        return '₱' + Number(value || 0).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    async function weposOpenOpeningModal() {
+        const modal = document.getElementById('registerOpeningModal');
+        const error = document.getElementById('openingCashError');
+        const button = document.getElementById('confirmOpeningBtn');
+        error.style.display = 'none';
+        button.disabled = false;
+        document.getElementById('openingCashAmount').value = '';
+        document.getElementById('openingCashNotes').value = '';
+        modal.style.display = 'flex';
+        setTimeout(() => document.getElementById('openingCashAmount')?.focus(), 100);
+    }
+
+    function weposCloseOpeningModal(event) {
+        if (!event || event.target === event.currentTarget) {
+            document.getElementById('registerOpeningModal').style.display = 'none';
+        }
+    }
+
+    function weposSkipOpeningModal() {
+        weposRegisterOpened = false;
+        document.getElementById('registerOpeningModal').style.display = 'none';
+        mmbNotify({ type: 'warning', title: 'POS locked', message: 'Enter opening cash before processing a sale.' });
+    }
+
+    async function weposSubmitRegisterOpening() {
+        const amountInput = document.getElementById('openingCashAmount');
+        const error = document.getElementById('openingCashError');
+        const button = document.getElementById('confirmOpeningBtn');
+        const amount = Number(amountInput.value);
+        error.style.display = 'none';
+        if (!Number.isFinite(amount) || amount <= 0) {
+            error.textContent = 'Enter a positive amount, or choose Skip for now.';
+            error.style.display = 'block';
+            return;
+        }
+        button.disabled = true;
+        try {
+            const response = await fetch('../function/close_register.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    action: 'open',
+                    business_date: document.getElementById('closingBusinessDate').value,
+                    opening_cash: amount,
+                    notes: document.getElementById('openingCashNotes').value
+                })
+            });
+            const result = await response.json();
+            if (!result.success) {
+                if (result.pending_register && result.pending_business_date) {
+                    weposCloseOpeningModal();
+                    document.getElementById('closingBusinessDate').value = result.pending_business_date;
+                    return weposOpenClosingModal();
+                }
+                throw new Error(result.error);
+            }
+
+            if (result.pending_register && result.pending_business_date) {
+                document.getElementById('closingBusinessDate').value = result.pending_business_date;
+                return weposOpenClosingModal();
+            }
+            weposCloseOpeningModal();
+            weposRegisterOpened = true;
+            if (typeof weposUpdateCart === 'function') weposUpdateCart();
+            mmbNotify({ type: 'success', title: 'Register opened', message: 'Opening cash recorded: ' + weposFormatClosingCurrency(result.opening_cash) });
+        } catch (requestError) {
+            error.textContent = requestError.message || 'Unable to open register.';
+            error.style.display = 'block';
+            button.disabled = false;
+        }
+    }
+
+    async function weposOpenClosingModal() {
+        if (weposRegisterClosed) {
+            mmbNotify({ type: 'warning', title: 'Register already closed', message: 'This staff register is already closed for today.' });
+            return;
+        }
+
+        const modal = document.getElementById('registerClosingModal');
+        const error = document.getElementById('closingError');
+        const date = document.getElementById('closingBusinessDate').value;
+        error.style.display = 'none';
+        document.getElementById('confirmClosingBtn').disabled = true;
+        modal.style.display = 'flex';
+
+        try {
+            const response = await fetch('../function/close_register.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'preview', business_date: date })
+            });
+            const result = await response.json();
+            if (!result.success) throw new Error(result.error);
+
+            weposClosingSystemCash = Number(result.system_cash || 0);
+            weposRegisterOpened = result.opening_exists === true;
+            document.getElementById('closingTransactions').textContent = result.transaction_count;
+            document.getElementById('closingOpeningCash').textContent = weposFormatClosingCurrency(result.opening_cash);
+            document.getElementById('closingSales').textContent = weposFormatClosingCurrency(result.sales_total);
+            document.getElementById('closingRefunds').textContent = '-' + weposFormatClosingCurrency(result.refund_total);
+            document.getElementById('closingSystemCash').textContent = weposFormatClosingCurrency(weposClosingSystemCash);
+            document.getElementById('confirmClosingBtn').disabled = result.already_closed || weposClosingSystemCash <= 0;
+            if (result.already_closed) {
+                error.textContent = 'This register is already closed for the selected date.';
+                error.style.display = 'block';
+            }
+            weposUpdateClosingVariance();
+        } catch (requestError) {
+            error.textContent = requestError.message || 'Unable to load register totals.';
+            error.style.display = 'block';
+        }
+    }
+
+    function weposCloseClosingModal(event) {
+        if (!event || event.target === event.currentTarget) {
+            document.getElementById('registerClosingModal').style.display = 'none';
+        }
+    }
+
+    function weposUpdateClosingVariance() {
+        const counted = Number(document.getElementById('closingCountedCash').value);
+        const varianceBox = document.getElementById('closingVariance');
+        const confirmButton = document.getElementById('confirmClosingBtn');
+        if (!Number.isFinite(counted) || counted < 0) {
+            varianceBox.style.display = 'none';
+            confirmButton.disabled = true;
+            return;
+        }
+
+        const variance = Math.round((counted - weposClosingSystemCash) * 100) / 100;
+        varianceBox.textContent = variance === 0
+            ? 'Counted cash matches the system amount.'
+            : (variance > 0 ? 'Overage: ' : 'Shortage: ') + weposFormatClosingCurrency(Math.abs(variance));
+        varianceBox.style.display = 'block';
+        varianceBox.style.background = variance === 0 ? '#f1f5f9' : '#fef3c7';
+        varianceBox.style.color = variance === 0 ? '#334155' : '#92400e';
+        confirmButton.disabled = false;
+    }
+
+    function weposConfirmRegisterClosing() {
+        const counted = Number(document.getElementById('closingCountedCash').value);
+        if (!Number.isFinite(counted) || counted < 0) {
+            return;
+        }
+
+        const variance = Math.round((counted - weposClosingSystemCash) * 100) / 100;
+        document.getElementById('closingConfirmDate').textContent = document.getElementById('closingBusinessDate').value;
+        document.getElementById('closingConfirmOpeningCash').textContent = document.getElementById('closingOpeningCash').textContent;
+        document.getElementById('closingConfirmSystemCash').textContent = weposFormatClosingCurrency(weposClosingSystemCash);
+        document.getElementById('closingConfirmCountedCash').textContent = weposFormatClosingCurrency(counted);
+        document.getElementById('closingConfirmVariance').textContent = (variance < 0 ? '-' : '') + weposFormatClosingCurrency(Math.abs(variance));
+        document.getElementById('registerClosingConfirmModal').style.display = 'flex';
+    }
+
+    function weposCloseClosingConfirmModal(event) {
+        if (!event || event.target === event.currentTarget) {
+            document.getElementById('registerClosingConfirmModal').style.display = 'none';
+        }
+    }
+
+    async function weposSubmitRegisterClosing() {
+        const button = document.getElementById('confirmClosingBtn');
+        const error = document.getElementById('closingError');
+        button.disabled = true;
+        error.style.display = 'none';
+        document.getElementById('registerClosingConfirmModal').style.display = 'none';
+        try {
+            const response = await fetch('../function/close_register.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    action: 'close',
+                    business_date: document.getElementById('closingBusinessDate').value,
+                    counted_cash: document.getElementById('closingCountedCash').value,
+                    notes: document.getElementById('closingNotes').value
+                })
+            });
+            const result = await response.json();
+            if (!result.success) throw new Error(result.error);
+            weposRegisterOpened = false;
+            weposRegisterClosed = true;
+            weposCart = {};
+            if (typeof weposUpdateCart === 'function') weposUpdateCart();
+            const closedBusinessDate = document.getElementById('closingBusinessDate').value;
+            const today = new Date().toISOString().slice(0, 10);
+            if (closedBusinessDate < today) {
+                mmbNotify({ type: 'success', title: 'Previous register closed', message: 'Variance: ' + weposFormatClosingCurrency(result.variance) + '. Refreshing POS…', duration: 2500 });
+                setTimeout(function () { window.location.reload(); }, 1600);
+            } else {
+                mmbNotify({ type: 'success', title: 'Register closed', message: 'Variance: ' + weposFormatClosingCurrency(result.variance) + '. Logging out…', duration: 5000 });
+                setTimeout(function () { window.location.href = '../login_logout_page/logout.php'; }, 2600);
+            }
+        } catch (requestError) {
+            error.textContent = requestError.message || 'Unable to close register.';
+            error.style.display = 'block';
+            button.disabled = false;
+        }
+    }
+
+    async function weposEnsureRegisterOpened() {
+        try {
+            const response = await fetch('../function/close_register.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'preview', business_date: document.getElementById('closingBusinessDate').value })
+            });
+            const result = await response.json();
+            if (result.success && result.pending_register && result.pending_business_date) {
+                document.getElementById('closingBusinessDate').value = result.pending_business_date;
+                weposOpenClosingModal();
+                return;
+            }
+            weposRegisterClosed = Boolean(result.success && result.already_closed);
+            weposRegisterOpened = Boolean(result.success && result.opening_exists === true && !weposRegisterClosed);
+            if (!weposRegisterOpened && !weposRegisterClosed) weposOpenOpeningModal();
+        } catch (requestError) {
+            weposRegisterOpened = false;
+            weposOpenOpeningModal();
+        }
+    }
+
+    setTimeout(weposEnsureRegisterOpened, 250);
+</script>
+
+<!-- ═══════════════ SENIOR/PWD VERIFY MODAL ═══════════════ -->
+<div class="wepos-modal-overlay" id="verifyIdModal" style="display:none;" onclick="event.stopPropagation()">
+    <div class="wepos-modal" onclick="event.stopPropagation()">
+        <div class="wepos-modal-head" style="background: #eef2ff; border-bottom: 1px solid #c7d2fe;">
+            <h5 style="color: #3730a3;" id="verifyIdTitle">ID Verification</h5>
+            <button onclick="weposCancelVerifyId()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="wepos-modal-body">
+            <p class="text-muted" style="font-size:0.9rem; margin-bottom:1rem;">
+                Please enter the customer's details to verify their ID.
+            </p>
+            
+            <div style="margin-bottom: 0.75rem;">
+                <label style="font-size:0.85rem; font-weight:600; margin-bottom:0.25rem; display:block;">Full Name <span style="font-weight:400; color:#6b7280;">(First Middle Last — as printed, letters only)</span></label>
+                <input type="text" id="verifyIdName" placeholder="JUAN DELA CRUZ" style="width:100%; border-radius:4px; border:1px solid #8c8f94; padding:0.5rem; font-size:1rem; text-transform:uppercase;" autocomplete="off">
+            </div>
+            
+            <div style="margin-bottom:0.75rem;">
+                <label style="font-size:0.85rem; font-weight:600; margin-bottom:0.25rem; display:block;">ID Number</label>
+                <input type="text" id="verifyIdNumber" placeholder="XXXX-XXXX-XXXX" style="width:100%; border-radius:4px; border:1px solid #8c8f94; padding:0.5rem; font-size:1rem;" autocomplete="off">
+                <div id="verifyIdFormatHint" style="font-size:0.72rem; color:#6b7280; margin-top:0.3rem;">Senior ID: 10–12 digits (PhilSys / OSCA / UMID)</div>
+                <!-- Live lookup feedback: name auto-fills from the verified
+                     registry as soon as the cashier finishes typing the ID -->
+                <div id="verifyIdLookupStatus" style="display:none; margin-top:0.4rem; font-size:0.8rem; padding:7px 10px; border-radius:4px; align-items:center; gap:6px;"></div>
+            </div>
+            
+            <div id="verifyIdError" class="text-danger" style="font-size:0.85rem; display:none; margin-bottom:0.5rem;"></div>
+            
+            <div id="verifyIdNewMsg" style="font-size:0.85rem; display:none; margin-bottom:0.5rem; color: #92400e; background: #fef3c7; padding: 8px; border-radius: 4px; border-left: 3px solid #f59e0b;">
+                <i class="fas fa-exclamation-triangle"></i> This ID is not yet on file. <strong>Inspect the physical ID card</strong> and complete the checklist below.
+            </div>
+
+            <!-- IN-APP PHYSICAL ID INSPECTION CHECKLIST (replaces the
+                 external-website redirect flow) -->
+            <div id="verifyIdChecklist" style="display:none; margin-top:0.75rem; border:1px solid #e5e7eb; border-radius:6px; padding:12px; background:#f9fafb;">
+                <p style="font-size:0.8rem; font-weight:600; margin:0 0 8px 0; color:#374151;"><i class="fas fa-clipboard-check"></i> Physical ID Inspection Checklist</p>
+                <label style="display:flex; align-items:center; gap:8px; font-size:0.85rem; margin-bottom:6px; cursor:pointer;">
+                    <input type="checkbox" class="verifyIdCheck" id="verifyIdCheckPhoto"> Photo and name on the ID match the customer
+                </label>
+                <label style="display:flex; align-items:center; gap:8px; font-size:0.85rem; margin-bottom:6px; cursor:pointer;">
+                    <input type="checkbox" class="verifyIdCheck" id="verifyIdCheckGov"> ID is a government-issued Senior/PWD ID (valid signature, not expired)
+                </label>
+                <label style="display:flex; align-items:center; gap:8px; font-size:0.85rem; margin-bottom:0; cursor:pointer;">
+                    <input type="checkbox" class="verifyIdCheck" id="verifyIdCheckNumber"> ID number entered above matches the ID card
+                </label>
+                <p style="font-size:0.72rem; color:#6b7280; margin:8px 0 0 0;">
+                    Optional extra check:
+                    <a href="#" id="verifyIdExternalLink" style="color:#2563eb;">open the official NCSC / DOH registry (small helper window) <i class="fas fa-external-link-alt" style="font-size:0.65rem;"></i></a>
+                    — not required if the physical ID is genuine.
+                </p>
+            </div>
+        </div>
+        <div class="wepos-modal-foot" id="verifyIdFootInitial">
+            <button class="wepos-btn wepos-btn-outline" onclick="weposCancelVerifyId()">Cancel</button>
+            <button class="wepos-btn wepos-btn-primary" id="verifyIdBtn" onclick="weposSubmitVerifyId()">Verify</button>
+        </div>
+        <div class="wepos-modal-foot" id="verifyIdFootManual" style="display:none; justify-content: space-between;">
+            <button class="wepos-btn wepos-btn-outline" onclick="weposDeclineVerify()">Decline</button>
+            <div style="display:flex; gap: 8px;">
+                <button class="wepos-btn wepos-btn-primary" id="verifyIdAcceptBtn" onclick="weposApproveVerify()" disabled><i class="fas fa-check"></i> Confirm ID Verified</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<?php include __DIR__ . '/returnmodal.php'; ?>
+<script src="../js/pos_wepos.js?v=1.98"></script>

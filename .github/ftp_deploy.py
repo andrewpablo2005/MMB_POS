@@ -1,0 +1,395 @@
+#!/usr/bin/env python3
+"""
+MMB POS auto-deploy: GitHub Actions -> InfinityFree FTP (passive mode).
+
+Strategy:
+  1. Read the last deployed commit SHA from the FTP marker file (.deploy-sha).
+     Fallback: the 'before' SHA of the push event; if neither is usable,
+     do a full sync of every tracked file.
+  2. git diff <base>..HEAD -> upload added/modified files, delete removed files.
+     .github/, .git*, README.md, mmbpos.sql and docs/ are never deployed.
+  3. Size-verify every upload; retry with reconnect on failure.
+  4. Only after a fully successful run, write the new SHA to the marker.
+     A failed run leaves the marker untouched, so the next run self-heals
+     by re-deploying the same diff plus whatever came after it.
+
+Exit code 0 = deployed (or nothing to deploy), 1 = failure (run shows red X).
+"""
+import ftplib
+import os
+import subprocess
+import sys
+import time
+
+try:
+    import mysql.connector
+except ImportError:
+    mysql = None
+
+HOST = os.environ.get("IF_FTP_HOST", "").strip()
+USER = os.environ.get("IF_FTP_USER", "").strip()
+PASS = os.environ.get("IF_FTP_PASS", "")
+WS = os.environ.get("GITHUB_WORKSPACE", os.getcwd())
+EVENT_BEFORE = (os.environ.get("EVENT_BEFORE") or "").strip()
+FULL_SYNC = (os.environ.get("FULL_SYNC") or "").strip().lower() in ("1", "true", "yes")
+FORCE_DB = (os.environ.get("FORCE_DB") or "").strip().lower() in ("1", "true", "yes")
+DB_HOST = os.environ.get("IF_DB_HOST", "").strip()
+DB_NAME = os.environ.get("IF_DB_NAME", "").strip()
+DB_USER = os.environ.get("IF_DB_USER", "").strip()
+DB_PASS = os.environ.get("IF_DB_PASS", "")
+
+
+def _env_port(name: str, default: int) -> int:
+    """Unset repo secrets arrive as EMPTY strings, not as the fallback default:
+    os.environ.get(name, "3306") returns "" -> int("") raised ValueError and
+    killed every deploy at import time (run #51). Treat blank/garbage as default."""
+    raw = (os.environ.get(name) or "").strip()
+    try:
+        return int(raw)
+    except ValueError:
+        return default
+
+
+DB_PORT = _env_port("IF_DB_PORT", 3306)
+ROOT_DIR = "htdocs"
+MARKER = ".deploy-sha"
+MIGRATIONS_DIR = os.path.join(WS, ".github", "migrations")
+
+EXCLUDE_TOP = {".git", ".github", "docs", "img"}      # never deployed: img/ is runtime
+# content (product photos uploaded by the app / manually via file manager) —
+# deploys must never PUT or DEL anything under img/
+EXCLUDE_FILES = {".gitignore", ".gitattributes", ".gitmodules", "README.md", "mmbpos.sql"}
+
+
+def excluded(path: str) -> bool:
+    if path.split("/", 1)[0] in EXCLUDE_TOP:
+        return True
+    return path in EXCLUDE_FILES
+
+
+def git(*args):
+    r = subprocess.run(["git", "-c", "core.quotepath=off", "-C", WS, *args],
+                       capture_output=True, text=True)
+    if r.returncode != 0:
+        raise RuntimeError(f"git {' '.join(args)}: {r.stderr.strip()}")
+    return r.stdout.rstrip("\n")
+
+
+def commit_exists(sha: str) -> bool:
+    if not sha or any(c not in "0123456789abcdef" for c in sha.lower()):
+        return False
+    return subprocess.run(["git", "-C", WS, "cat-file", "-e", sha + "^{commit}"],
+                          capture_output=True).returncode == 0
+
+
+def apply_database_migrations():
+    """Apply tracked idempotent migrations directly to the production DB."""
+    if mysql is None:
+        raise RuntimeError("mysql-connector-python is required for database migrations")
+    if not all((DB_HOST, DB_NAME, DB_USER)):
+        raise RuntimeError("Database secrets are not configured (IF_DB_HOST, IF_DB_NAME, IF_DB_USER, IF_DB_PASS)")
+
+    files = sorted(
+        os.path.join(MIGRATIONS_DIR, name)
+        for name in os.listdir(MIGRATIONS_DIR)
+        if name.endswith(".sql") and os.path.isfile(os.path.join(MIGRATIONS_DIR, name))
+    ) if os.path.isdir(MIGRATIONS_DIR) else []
+    if not files:
+        print("No database migrations found.")
+        return
+
+    print(f"Connecting to database {DB_NAME} at {DB_HOST}:{DB_PORT}...")
+    connection = mysql.connector.connect(
+        host=DB_HOST,
+        port=DB_PORT,
+        database=DB_NAME,
+        user=DB_USER,
+        password=DB_PASS,
+        connection_timeout=30,
+    )
+    try:
+        cursor = connection.cursor()
+        for path in files:
+            name = os.path.basename(path)
+            print(f"Applying database migration: {name}")
+            with open(path, "r", encoding="utf-8") as fh:
+                sql = fh.read().strip()
+            if sql:
+                for statement in (part.strip() for part in sql.split(";")):
+                    if statement:
+                        cursor.execute(statement)
+            connection.commit()
+        cursor.close()
+    finally:
+        connection.close()
+
+
+class Deployer:
+    def __init__(self):
+        self.ftp = None
+
+    def connect(self, quiet=False):
+        last = None
+        for attempt in range(5):
+            try:
+                f = ftplib.FTP()
+                f.connect(HOST, timeout=45)
+                f.login(USER, PASS)
+                f.set_pasv(True)
+                f.cwd(ROOT_DIR)
+                self.ftp = f
+                return
+            except Exception as e:
+                last = e
+                time.sleep(4 * (attempt + 1))
+        raise RuntimeError(f"FTP connect failed: {last}")
+
+    def read_marker(self) -> str | None:
+        try:
+            buf = []
+            self.ftp.retrlines(f"RETR {MARKER}", buf.append)
+            sha = "".join(buf).strip().lower()
+            return sha if len(sha) == 40 else None
+        except Exception:
+            return None
+
+    def write_marker(self, sha: str):
+        tmp = "/tmp/deploy_sha_marker"
+        with open(tmp, "w") as fh:
+            fh.write(sha + "\n")
+        with open(tmp, "rb") as fh:
+            self.ftp.storbinary(f"STOR {MARKER}", fh)
+
+    def ensure_dir(self, rel_dir: str):
+        cur = ""
+        for part in rel_dir.split("/"):
+            cur = f"{cur}/{part}" if cur else part
+            try:
+                self.ftp.mkd(cur)
+            except ftplib.error_perm:
+                pass  # already exists
+
+    def upload(self, rel: str) -> bool:
+        """STOR once, then poll SIZE with backoff before re-uploading.
+
+        Why: the hosting FTP backend can serve a STALE size for a freshly
+        stored file (SIZE != uploaded bytes for a short while after the
+        server already ack'd the transfer). Re-uploading instantly (the old
+        behavior) just hits the same stale value 4 times in a row and fails
+        the run even though the file landed correctly. So: check size
+        immediately (happy path, no delay), then re-check with growing
+        waits, and only re-upload if it still mismatches.
+        """
+        local = os.path.join(WS, rel)
+        size = os.path.getsize(local)
+        for attempt in range(3):
+            try:
+                parent = "/".join(rel.split("/")[:-1])
+                if parent:
+                    self.ensure_dir(parent)
+                with open(local, "rb") as fh:
+                    self.ftp.storbinary(f"STOR {rel}", fh, blocksize=65536)
+            except Exception as e:
+                print(f"    transfer error on {rel} ({e.__class__.__name__}), reconnecting")
+                time.sleep(3)
+                try:
+                    self.ftp.quit()
+                except Exception:
+                    pass
+                self.connect()
+                continue
+            for wait_s in (0, 1, 2, 4, 8):
+                if wait_s:
+                    time.sleep(wait_s)
+                try:
+                    got = self.ftp.size(rel)
+                except Exception:
+                    got = None
+                if got == size:
+                    return True
+                print(f"    size check on {rel}: expected {size}, got {got}"
+                      + (f", waiting {wait_s}s" if wait_s else ""))
+            print(f"    re-uploading {rel} (attempt {attempt + 2}/3)")
+        return False
+
+    def verify_sizes(self, rels) -> list:
+        """Final pass: re-check sizes of all uploaded files once the dust settled.
+
+        Tolerant polling: the FTP backend is load-balanced over nodes whose
+        filesystem sync lags, so a single SIZE right after a batch of uploads
+        can still return a stale number even though the upload itself was
+        verified moments earlier. Each file gets checked at 0s / 5s / 10s and
+        passes if ANY check matches; only a sustained mismatch fails.
+        """
+        bad = []
+        for rel in rels:
+            local = os.path.join(WS, rel)
+            try:
+                size = os.path.getsize(local)
+            except OSError:
+                continue
+            ok = False
+            for wait_s in (0, 5, 10):
+                if wait_s:
+                    time.sleep(wait_s)
+                try:
+                    got = self.ftp.size(rel)
+                except Exception:
+                    got = None
+                    try:
+                        self.ftp.quit()
+                    except Exception:
+                        pass
+                    self.connect()
+                    try:
+                        got = self.ftp.size(rel)
+                    except Exception:
+                        got = None
+                if got == size:
+                    ok = True
+                    break
+                print(f"    verify {rel}: expected {size}, got {got}"
+                      + (f", rechecking in {wait_s}s" if wait_s else ""))
+            if not ok:
+                bad.append(rel)
+        return bad
+
+    def delete(self, rel: str) -> bool:
+        try:
+            self.ftp.delete(rel)
+            return True
+        except ftplib.error_perm:
+            return True  # already gone
+        except Exception:
+            return False
+
+
+def build_plan(head_sha: str):
+    """Returns (mode, [(action, path), ...], base_or_None)."""
+    d = Deployer()
+    d.connect()
+    marker = d.read_marker()
+    try:
+        d.ftp.quit()
+    except Exception:
+        pass
+
+    base = None
+    if not FULL_SYNC:
+        if marker and commit_exists(marker):
+            base = marker
+        elif commit_exists(EVENT_BEFORE) and not EVENT_BEFORE.startswith("0" * 6):
+            base = EVENT_BEFORE
+    mode = "incremental" if base else "full"
+
+    if mode == "incremental":
+        out = git("diff", "--no-renames", "--name-status", base, head_sha)
+        plan = []
+        for line in out.splitlines():
+            if not line.strip():
+                continue
+            parts = line.split("\t")
+            st, path = parts[0], parts[-1]
+            if excluded(path):
+                continue
+            st = st[0]
+            if st in ("A", "M", "C", "T"):
+                plan.append(("PUT", path))
+            elif st == "D":
+                plan.append(("DEL", path))
+    else:
+        files = [p for p in git("ls-files").splitlines() if p and not excluded(p)]
+        plan = [("PUT", p) for p in files]
+    return mode, plan, base
+
+
+def main():
+    if not (HOST and USER and PASS):
+        raise SystemExit("::error::FTP secrets are not configured on the repository")
+
+    head_sha = git("rev-parse", "HEAD")
+    print(f"HEAD = {head_sha}")
+
+    if FORCE_DB:
+        try:
+            apply_database_migrations()
+            print("Database migrations completed successfully.")
+        except SystemExit:
+            raise
+        except Exception as exc:
+            # Explicitly requested DB update failed: fail the run loudly but
+            # with a readable annotation instead of a raw traceback.
+            raise SystemExit(f"::error::Database migrations failed: {exc}")
+
+    mode, plan, base = build_plan(head_sha)
+    print(f"Deploy mode: {mode}" + (f" (base {base})" if base else ""))
+
+    puts = [p for a, p in plan if a == "PUT"]
+    dels = [p for a, p in plan if a == "DEL"]
+    if not puts and not dels:
+        print("Nothing to deploy (only excluded files changed or marker already current).")
+        # Keep the marker tracking HEAD so the next run's diff starts here.
+        d = Deployer()
+        d.connect()
+        marker = d.read_marker()
+        if marker != head_sha:
+            d.write_marker(head_sha)
+            print(f"Marker advanced to {head_sha[:10]} (deployable state unchanged).")
+        try:
+            d.ftp.quit()
+        except Exception:
+            pass
+        return
+
+    print(f"Files: {len(puts)} to upload, {len(dels)} to delete")
+    for p in (puts + dels)[:60]:
+        print(f"  {p}")
+    if len(plan) > 60:
+        print(f"  ... and {len(plan) - 60} more")
+
+    d = Deployer()
+    d.connect()
+    print(f"Connected to {HOST} -> /{ROOT_DIR}")
+
+    t0 = time.time()
+    failed = []
+    for rel in puts:
+        if not d.upload(rel):
+            failed.append(rel)
+    for rel in dels:
+        if not d.delete(rel):
+            failed.append(rel)
+    elapsed = time.time() - t0
+
+    if failed:
+        print("::error::Failed after retries: " + ", ".join(failed[:20]))
+        raise SystemExit(1)
+
+    # Final verification pass: the FTP backend can lag on fresh uploads, so
+    # re-check every uploaded file's size once all transfers are done.
+    if puts:
+        print("Final verification pass...")
+        bad = d.verify_sizes(puts)
+        if bad:
+            print("::error::Size verification failed for: " + ", ".join(bad[:20]))
+            raise SystemExit(1)
+
+    d.write_marker(head_sha)
+    print(f"Deployed {len(puts)} file(s), deleted {len(dels)}, in {elapsed:.0f}s. Marker -> {head_sha[:10]}")
+
+    # GitHub step summary
+    summary = os.environ.get("GITHUB_STEP_SUMMARY")
+    if summary:
+        with open(summary, "a") as fh:
+            fh.write(f"### Deployed to live site\n- Mode: **{mode}**\n- Base: `{base or 'full sync'}`\n")
+            fh.write(f"- Uploaded: **{len(puts)}**, deleted: **{len(dels)}**, took {elapsed:.0f}s\n")
+            if puts:
+                fh.write("\n Uploaded files:\n" + "".join(f"- `{p}`\n" for p in puts[:40]))
+    try:
+        d.ftp.quit()
+    except Exception:
+        pass
+
+
+if __name__ == "__main__":
+    main()
