@@ -7,7 +7,7 @@ Strategy:
      Fallback: the 'before' SHA of the push event; if neither is usable,
      do a full sync of every tracked file.
   2. git diff <base>..HEAD -> upload added/modified files, delete removed files.
-     .github/, .git*, README.md, mmbpos.sql and docs/ are never deployed.
+     .github/, .git*, README.md, docs/ and ALL .sql files are never deployed.
   3. Size-verify every upload; retry with reconnect on failure.
   4. Only after a fully successful run, write the new SHA to the marker.
      A failed run leaves the marker untouched, so the next run self-heals
@@ -64,7 +64,15 @@ EXCLUDE_FILES = {".gitignore", ".gitattributes", ".gitmodules", "README.md", "mm
 def excluded(path: str) -> bool:
     if path.split("/", 1)[0] in EXCLUDE_TOP:
         return True
-    return path in EXCLUDE_FILES
+    if path in EXCLUDE_FILES:
+        return True
+    # No SQL ever belongs on the web server: schema changes ship inside PHP
+    # self-healing code (CREATE TABLE IF NOT EXISTS / column checks), and
+    # seed/dump files (mmbpos.sql, seed_products_inventory_100.sql, ...) are
+    # dev-only. This also keeps them out of the public webroot.
+    if path.endswith(".sql"):
+        return True
+    return False
 
 
 def git(*args):
