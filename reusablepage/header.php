@@ -78,8 +78,8 @@ foreach ($lowStockItems as $item) {
             'category' => 'low-stock',
             'title' => 'Low Stock',
             'message' => htmlspecialchars($item['product_name']) . ' has only ' . $lowStockTotal . ' unit(s) left.',
-            'icon' => 'fas fa-exclamation-triangle',
-            'bg' => '#dc2626',
+            'icon' => 'fas fa-circle-exclamation',
+            'bg' => '#d97706',
             'href' => 'dashboard.php?tab=inventory&alert_product_id=' . (int)$item['id'] . '&alert_batch_id=' . (int)($firstLowStockBatch['batch_id'] ?? 0) . '&alert_type=low-stock',
             'batches' => $lowStockBatches
         ];
