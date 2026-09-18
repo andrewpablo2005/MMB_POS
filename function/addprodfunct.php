@@ -454,7 +454,7 @@ class ProductManagement
     return false;
 }
     // GET ALL PRODUCTS (IMPROVED - GROUPED INVENTORY)
-    public function getAllProducts()
+    public function getAllProducts(bool $includeHidden = false)
     {
         $hasBasic = $this->hasColumn('products', 'is_basic_necessities');
         $basicSelect = $hasBasic ? 'p.is_basic_necessities,' : '';
@@ -489,6 +489,7 @@ class ProductManagement
         $measurementField = $hasMeasurement ? "p.measurement_id," : "0 AS measurement_id,";
         $categoryIdField  = $hasCategoryId  ? "p.category_id," : "0 AS category_id,";
         $imageField       = $hasImage       ? "p.imageproduct," : "'' AS imageproduct,";
+        $hiddenField      = $this->hasColumn('products', 'is_hidden') ? "COALESCE(p.is_hidden, 0) AS is_hidden," : "0 AS is_hidden,";
         $categoryNameField= $this->hasColumn('product_categories', 'category_name') ? "COALESCE(pc.category_name, 'N/A') AS category_name," : "'N/A' AS category_name,";
         $batchField = $this->hasColumn('inventory', 'batch_number') ? "MAX(i.batch_number) AS batch_number," : "'' AS batch_number,";
 
@@ -508,13 +509,14 @@ class ProductManagement
                 p.units_per_package,
                 {$categoryIdField}
                 {$imageField}
+                {$hiddenField}
                 {$batchField} ";
 
         $sql .= $basicSelect . " COALESCE(SUM(i.received_quantity), 0) AS received_quantity, COALESCE(SUM(i.current_quantity), 0) AS current_quantity, MIN(i.expiry_date) AS expiry_date
             FROM products p
             LEFT JOIN product_categories pc ON p.category_id = pc.id
             LEFT JOIN inventory i ON p.id = i.product_id
-            WHERE " . ($this->hasColumn('products', 'is_hidden') ? "COALESCE(p.is_hidden, 0) = 0" : "1 = 1") . "
+            WHERE " . (!$includeHidden && $this->hasColumn('products', 'is_hidden') ? "COALESCE(p.is_hidden, 0) = 0" : "1 = 1") . "
             GROUP BY p.id
             ORDER BY {$orderBy}";
 
@@ -980,81 +982,38 @@ class ProductManagement
         return $stmt->fetchAll();
     }
 
-    // DELETE PRODUCT — sales history is PRESERVED.
-    // A product that has ever been sold cannot be hard-deleted (its
-    // transaction_items rows are the store's financial record). Products
-    // with history are soft-hidden instead.
-    public function deleteProduct($productId)
+    public function toggleProductStatus($productId): bool
     {
-        if (!$productId) {
+        if (!$productId || !isset($_POST['toggleProductStatus'])) {
             $this->response = "Invalid product ID";
             return false;
         }
 
         try {
-            $this->con->beginTransaction();
-
-            // Does this product have sales history or remaining stock?
-            $histStmt = $this->con->prepare("SELECT COUNT(*) AS c FROM transaction_items WHERE product_id = ?");
-            $histStmt->execute([$productId]);
-            $hasHistory = ((int)($histStmt->fetch(\PDO::FETCH_ASSOC)['c'] ?? 0)) > 0;
-
-            $stockStmt = $this->con->prepare("SELECT COALESCE(SUM(current_quantity), 0) AS qty FROM inventory WHERE product_id = ?");
-            $stockStmt->execute([$productId]);
-            $stockRow = $stockStmt->fetch(\PDO::FETCH_ASSOC);
-            $hasStock = ((float)($stockRow['qty'] ?? 0)) > 0;
-
-            if ($hasHistory || $hasStock) {
-                // Ensure soft-delete column exists (guarded, one-time)
-                if (!$this->hasColumn('products', 'is_hidden')) {
-                    $this->con->exec("ALTER TABLE products ADD COLUMN is_hidden TINYINT(1) NOT NULL DEFAULT 0");
-                }
-                // Soft-delete: hide from catalog but keep history intact
-                $this->con->prepare("UPDATE products SET is_hidden = 1 WHERE id = ?")->execute([$productId]);
-                $this->con->prepare("UPDATE inventory SET current_quantity = 0 WHERE product_id = ? AND current_quantity > 0")->execute([$productId]);
-                $this->con->commit();
-
-                // AUDIT (Task 42) — soft delete (history preserved)
-                mmb_log_activity($this->con, 'products', 'product_delete',
-                    "Removed product " . mmb_audit_product_name($this->con, (int) $productId) . " from catalog (hidden, history preserved)",
-                    'product', (int) $productId);
-
-                $this->response = $hasHistory
-                    ? "Product has sales history — hidden from catalog instead of deleted (history preserved)."
-                    : "Product still has stock — quantities zeroed and hidden from catalog.";
-                return true;
+            if (!$this->hasColumn('products', 'is_hidden')) {
+                $this->con->exec("ALTER TABLE products ADD COLUMN is_hidden TINYINT(1) NOT NULL DEFAULT 0");
             }
 
-            // No history and no stock -> safe to remove completely
-            // Capture the name BEFORE the row disappears (audit, Task 42)
-            $auditDeleteName = mmb_audit_product_name($this->con, (int) $productId);
-
-            $stmt = $this->con->prepare("DELETE FROM inventory WHERE product_id = ?");
+            $stmt = $this->con->prepare("SELECT is_hidden FROM products WHERE id = ?");
             $stmt->execute([$productId]);
-
-            $stmt = $this->con->prepare("DELETE FROM products WHERE id = ?");
-            $result = $stmt->execute([$productId]);
-
-            $this->con->commit();
-
-            if ($result) {
-                // AUDIT (Task 42) — hard delete (no history)
-                mmb_log_activity($this->con, 'products', 'product_delete',
-                    "Permanently deleted product " . $auditDeleteName,
-                    'product', (int) $productId);
-
-                $this->response = "Success";
-                return true;
+            $currentState = $stmt->fetchColumn();
+            if ($currentState === false) {
+                $this->response = "Product not found";
+                return false;
             }
 
-            $this->response = "Failed to delete product";
-            return false;
+            $newState = ((int) $currentState) === 1 ? 0 : 1;
+            $this->con->prepare("UPDATE products SET is_hidden = ? WHERE id = ?")->execute([$newState, $productId]);
+            $status = $newState === 1 ? 'disabled' : 'enabled';
+            mmb_log_activity($this->con, 'products', 'product_status',
+                ucfirst($status) . " product " . mmb_audit_product_name($this->con, (int) $productId),
+                'product', (int) $productId);
+
+            $this->response = "Product {$status} successfully";
+            return true;
         } catch (\Exception $e) {
-            if ($this->con->inTransaction()) {
-                $this->con->rollBack();
-            }
-            error_log('deleteProduct failed: ' . $e->getMessage());
-            $this->response = "Delete failed";
+            error_log('toggleProductStatus failed: ' . $e->getMessage());
+            $this->response = "Unable to change product status";
             return false;
         }
     }

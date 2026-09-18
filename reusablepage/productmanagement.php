@@ -6,7 +6,7 @@ require_once __DIR__ . "/../conn/connection_links.php";
 use Classes\ProductManagement;
 
 $product = new ProductManagement($db);
-$products = $product->getAllProducts();
+$products = $product->getAllProducts(true);
 $categories = $product->getCategories();
 $servingUnits = $product->getUnitMeasurements();
 $unitMeasurements = $product->getPackageUnitMeasurements();
@@ -18,21 +18,20 @@ usort($products, static function (array $first, array $second): int {
 $pmUserRole = strtolower($_SESSION['position'] ?? 'staff');
 $pmIsManager = in_array($pmUserRole, ['owner', 'admin']);
 
-if (isset($_GET['deleteProduct'])) {
-    // CSRF protection: deletes are only accepted with a valid per-session token
-    $deleteToken = (string)($_GET['t'] ?? '');
-    if (!hash_equals($_SESSION['csrf_token'] ?? '', $deleteToken)) {
-        echo "<script>mmbNotify({type:'warning', title:'Invalid or expired delete request'}); setTimeout(function(){ window.location.href='dashboard.php?tab=product'; }, 1800);</script>";
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['toggleProductStatus'])) {
+    $statusToken = (string)($_POST['csrf_token'] ?? '');
+    if (!hash_equals($_SESSION['csrf_token'] ?? '', $statusToken)) {
+        echo "<script>mmbNotify({type:'warning', title:'Invalid or expired request'}); setTimeout(function(){ window.location.href='dashboard.php?tab=product'; }, 1800);</script>";
         exit;
     }
 
-    $id = (int) $_GET['deleteProduct'];
+    $id = (int) ($_POST['product_id'] ?? 0);
 
-    if ($product->deleteProduct($id)) {
-        echo "<script>mmbNotify({type:'success', title:'Product deleted successfully'}); setTimeout(function(){ window.location.href = 'dashboard.php?tab=product'; }, 1600);</script>";
+    if ($product->toggleProductStatus($id)) {
+        echo "<script>mmbNotify({type:'success', title:" . json_encode($product->getResponse()) . "}); setTimeout(function(){ window.location.href = 'dashboard.php?tab=product'; }, 1600);</script>";
         exit;
     } else {
-        echo "<script>mmbNotify({type:'danger', title:'Delete failed', message:" . json_encode($product->getResponse()) . "});</script>";
+        echo "<script>mmbNotify({type:'danger', title:'Status change failed', message:" . json_encode($product->getResponse()) . "});</script>";
     }
 }
 
@@ -130,11 +129,17 @@ if ($product->addProduct()) {
                                 data-bs-target="#editProduct<?= htmlspecialchars((string)($prod['id']), ENT_QUOTES, 'UTF-8') ?>">
                                 Edit
                             </button>
-                            <!-- DELETE -->
-                            <a href="?tab=product&amp;deleteProduct=<?= htmlspecialchars((string)($prod['id']), ENT_QUOTES, 'UTF-8') ?>&amp;t=<?= htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8') ?>" class="btn btn-sm btn-danger"
-                                data-mmb-confirm="Delete this product? This cannot be undone." data-mmb-ok="Yes, delete">
-                                Delete
-                            </a>
+                            <!-- ENABLE / DISABLE -->
+                            <form method="post" class="d-inline">
+                                <input type="hidden" name="toggleProductStatus" value="1">
+                                <input type="hidden" name="product_id" value="<?= (int) $prod['id'] ?>">
+                                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
+                                <button type="submit" class="btn btn-sm <?= !empty($prod['is_hidden']) ? 'btn-success' : 'btn-danger' ?>"
+                                    data-mmb-confirm="<?= !empty($prod['is_hidden']) ? 'Enable this product for POS?' : 'Disable this product from POS?' ?>"
+                                    data-mmb-ok="<?= !empty($prod['is_hidden']) ? 'Yes, enable' : 'Yes, disable' ?>">
+                                    <?= !empty($prod['is_hidden']) ? 'Enable' : 'Disable' ?>
+                                </button>
+                            </form>
                         </td>
                     </tr>
                 <?php endforeach; ?>

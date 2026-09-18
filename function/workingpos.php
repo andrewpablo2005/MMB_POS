@@ -46,6 +46,7 @@ class Product {
                 LEFT JOIN product_categories pc ON p.category_id = pc.id
                 LEFT JOIN serving_unit um ON p.measurement_id = um.id
                 LEFT JOIN inventory i ON p.id = i.product_id
+                WHERE COALESCE(p.is_hidden, 0) = 0
                 GROUP BY p.id
                 ORDER BY p.generic_name ASC";
 
@@ -152,7 +153,8 @@ class Product {
                                      LIMIT 1), 0) AS base_price
                     FROM products p
                     LEFT JOIN product_categories pc ON p.category_id = pc.id
-                    WHERE p.id = ?
+                                        WHERE p.id = ?
+                                            AND COALESCE(p.is_hidden, 0) = 0
                 ");
                 $prodStmt->execute([$pid]);
                 $row = $prodStmt->fetch(PDO::FETCH_ASSOC);
