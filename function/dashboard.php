@@ -86,7 +86,21 @@ class DashboardManager
                 FROM products p 
                 JOIN inventory i ON p.id = i.product_id 
                 LEFT JOIN product_categories pc ON p.category_id = pc.id 
-                WHERE i.current_quantity <= 15 
+                                WHERE i.current_quantity <= 15
+                                    AND NOT EXISTS (
+                                        SELECT 1
+                                        FROM inventory_no_stock n
+                                        WHERE n.product_id = i.product_id
+                                                AND n.batch_number <=> i.batch_number
+                                                AND n.expiry_date <=> i.expiry_date
+                                    )
+                                    AND NOT EXISTS (
+                                        SELECT 1
+                                        FROM inventory_disposals d
+                                        WHERE d.product_id = i.product_id
+                                                AND d.batch_number <=> i.batch_number
+                                                AND d.expiry_date <=> i.expiry_date
+                                    )
                 ORDER BY i.current_quantity ASC";
         $stmt = $this->db->query($sql);
         return $stmt->fetchAll();
@@ -99,7 +113,22 @@ class DashboardManager
                 FROM products p 
                 JOIN inventory i ON p.id = i.product_id 
                 LEFT JOIN product_categories pc ON p.category_id = pc.id 
-                WHERE i.expiry_date BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 30 DAY) 
+                                WHERE i.expiry_date BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 30 DAY)
+                                    AND i.current_quantity > 0
+                                    AND NOT EXISTS (
+                                        SELECT 1
+                                        FROM inventory_no_stock n
+                                        WHERE n.product_id = i.product_id
+                                                AND n.batch_number <=> i.batch_number
+                                                AND n.expiry_date <=> i.expiry_date
+                                    )
+                                    AND NOT EXISTS (
+                                        SELECT 1
+                                        FROM inventory_disposals d
+                                        WHERE d.product_id = i.product_id
+                                                AND d.batch_number <=> i.batch_number
+                                                AND d.expiry_date <=> i.expiry_date
+                                    )
                 ORDER BY i.expiry_date ASC";
         $stmt = $this->db->query($sql);
         return $stmt->fetchAll();

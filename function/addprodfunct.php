@@ -1423,6 +1423,7 @@ class ProductManagement
     // LOW STOCK ALERT (FULL HTML OUTPUT)
     public function getLowStockAlertItems($limit = null)
     {
+        $this->ensureInventoryNoStockTable();
         $lowStockThreshold = $this->getInventoryAlertSetting('low_stock_threshold', 15, 1, 100000);
         $hasGeneric = $this->hasColumn('products', 'generic_name');
         $hasBranded = $this->hasColumn('products', 'branded_name');
@@ -1444,6 +1445,20 @@ class ProductManagement
                 COALESCE(SUM(i.current_quantity), 0) AS quantity
             FROM products p
             INNER JOIN inventory i ON p.id = i.product_id
+            WHERE NOT EXISTS (
+                SELECT 1
+                FROM inventory_no_stock n
+                WHERE n.product_id = i.product_id
+                    AND n.batch_number <=> i.batch_number
+                    AND n.expiry_date <=> i.expiry_date
+            )
+              AND NOT EXISTS (
+                SELECT 1
+                FROM inventory_disposals d
+                WHERE d.product_id = i.product_id
+                    AND d.batch_number <=> i.batch_number
+                    AND d.expiry_date <=> i.expiry_date
+            )
             GROUP BY p.id
             HAVING quantity <= ? OR SUM(CASE WHEN i.current_quantity <= 0 THEN 1 ELSE 0 END) > 0
         ");
@@ -1455,6 +1470,20 @@ class ProductManagement
         $batchStmt = $this->con->prepare("SELECT i.id, i.current_quantity{$batchNumberSelect}
             FROM inventory i
             WHERE i.product_id = ? AND i.current_quantity >= 0
+                AND NOT EXISTS (
+                    SELECT 1
+                    FROM inventory_no_stock n
+                    WHERE n.product_id = i.product_id
+                        AND n.batch_number <=> i.batch_number
+                        AND n.expiry_date <=> i.expiry_date
+                )
+                AND NOT EXISTS (
+                    SELECT 1
+                    FROM inventory_disposals d
+                    WHERE d.product_id = i.product_id
+                        AND d.batch_number <=> i.batch_number
+                        AND d.expiry_date <=> i.expiry_date
+                )
             ORDER BY i.id ASC");
 
         foreach ($rows as &$row) {
@@ -1557,6 +1586,20 @@ class ProductManagement
             WHERE i.expiry_date IS NOT NULL
               AND TRIM(i.expiry_date) <> ''
                             AND i.current_quantity > 0
+                            AND NOT EXISTS (
+                                SELECT 1
+                                FROM inventory_no_stock n
+                                WHERE n.product_id = i.product_id
+                                        AND n.batch_number <=> i.batch_number
+                                        AND n.expiry_date <=> i.expiry_date
+                            )
+                            AND NOT EXISTS (
+                                SELECT 1
+                                FROM inventory_disposals d
+                                WHERE d.product_id = i.product_id
+                                        AND d.batch_number <=> i.batch_number
+                                        AND d.expiry_date <=> i.expiry_date
+                            )
             ORDER BY i.expiry_date ASC, i.id ASC
         ";
 

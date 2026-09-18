@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 16, 2026 at 07:21 AM
+-- Generation Time: Sep 17, 2026 at 05:44 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -92,7 +92,227 @@ INSERT INTO `activity_logs` (`id`, `user_id`, `username`, `role`, `module`, `act
 (43, 2, 'andrew_admin', 'admin', 'settings', 'settings_update', NULL, NULL, 'Updated store settings — receipt paper: 80mm, weekly discount limit: 200.00 PHP, low stock: 15, near expiry: 3 days', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-16 05:09:05'),
 (44, 2, 'andrew_admin', 'admin', 'settings', 'settings_update', NULL, NULL, 'Updated store settings — receipt paper: 80mm, weekly discount limit: 200.00 PHP, low stock: 15, near expiry: 3 days', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-16 05:09:07'),
 (45, 2, 'andrew_admin', 'admin', 'settings', 'settings_update', NULL, NULL, 'Updated store settings — receipt paper: 80mm, weekly discount limit: 200.00 PHP, low stock: 15, near expiry: 60 days', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-16 05:09:17'),
-(46, 2, 'andrew_admin', 'admin', 'settings', 'settings_update', NULL, NULL, 'Updated store settings — receipt paper: 80mm, weekly discount limit: 200.00 PHP, low stock: 15, near expiry: 60 days', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-16 05:10:32');
+(46, 2, 'andrew_admin', 'admin', 'settings', 'settings_update', NULL, NULL, 'Updated store settings — receipt paper: 80mm, weekly discount limit: 200.00 PHP, low stock: 15, near expiry: 60 days', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-16 05:10:32'),
+(47, 1, 'andrew_owner', 'owner', 'products', 'supplier_add', 'supplier', 2, 'Added supplier \'Andrew Gonzales Pablo\'', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-16 14:35:13'),
+(48, 1, 'andrew_owner', 'owner', 'products', 'supplier_add', 'supplier', 3, 'Added supplier \'Andrew Gonzales Pabloff\'', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-16 14:36:49'),
+(49, 1, 'andrew_owner', 'owner', 'sales', 'register_open', 'register_opening', 1, 'Opened register with 1,000.00 PHP opening cash for 2026-09-16', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-16 14:56:33'),
+(50, 1, 'andrew_owner', 'owner', 'sales', 'sale_completed', 'transaction', 1, 'Completed sale #000001 — 14.40 PHP, 2 items, customer: Walk-in', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-16 14:58:27'),
+(51, 1, 'andrew_owner', 'owner', 'sales', 'sale_completed', 'transaction', 7, 'Completed sale #000007 — 6.00 PHP, 1 items, customer: Walk-in', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-16 15:03:11'),
+(52, 1, 'andrew_owner', 'owner', 'settings', 'settings_update', NULL, NULL, 'Updated store settings — receipt paper: 80mm, weekly discount limit: 200.00 PHP, low stock: 100, near expiry: 60 days', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-16 15:06:09'),
+(53, 1, 'andrew_owner', 'owner', 'settings', 'settings_update', NULL, NULL, 'Updated store settings — receipt paper: 80mm, weekly discount limit: 200.00 PHP, low stock: 15, near expiry: 60 days', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-16 15:10:47'),
+(54, 1, 'andrew_owner', 'owner', 'sales', 'sale_completed', 'transaction', 1, 'Completed sale #000001 — 4,413.60 PHP, 26 items, customer: Walk-in', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-16 15:11:26'),
+(55, 1, 'andrew_owner', 'owner', 'settings', 'settings_update', NULL, NULL, 'Updated store settings — receipt paper: 80mm, weekly discount limit: 200.00 PHP, low stock: 100, near expiry: 60 days', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-16 15:20:56'),
+(56, 1, 'andrew_owner', 'owner', 'inventory', 'batch_add', 'product', 10075, 'Added batch \'Batch-1\' (1 packs) to Kojic', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-16 15:26:39'),
+(57, 1, 'andrew_owner', 'owner', 'inventory', 'batch_add', 'product', 10075, 'Added batch \'Batch-2\' (10 packs) to Kojic', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-16 15:27:16'),
+(58, 1, 'andrew_owner', 'owner', 'sales', 'register_close', 'register_closing', 1, 'Closed register for 2026-09-16 — system 5,413.60 PHP, counted 5,413.30 PHP, variance -0.30 PHP', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-16 15:47:04'),
+(59, 1, 'andrew_owner', 'owner', 'auth', 'logout', NULL, NULL, 'Signed out', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-16 15:47:07'),
+(60, 1, 'Andrew Pablo', NULL, 'auth', 'password_reset_requested', 'user', 1, 'Requested a password reset link for \'andrewpablo2005@gmail.com\'', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-16 15:47:21'),
+(61, 1, 'andrew_owner', 'owner', 'auth', 'login', 'user', 1, 'Signed in successfully (owner)', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 00:47:34'),
+(62, 1, 'andrew_owner', 'owner', 'sales', 'register_open', 'register_opening', 2, 'Opened register with 1,000.00 PHP opening cash for 2026-09-17', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 00:52:04'),
+(63, 1, 'andrew_owner', 'owner', 'auth', 'login', 'user', 1, 'Signed in successfully (owner)', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 01:07:33'),
+(64, 1, 'andrew_owner', 'owner', 'sales', 'sale_completed', 'transaction', 2, 'Completed sale #000002 — 4.93 PHP, 1 items, customer: ANDREW PABLO', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 01:08:27'),
+(65, 1, 'andrew_owner', 'owner', 'sales', 'sale_completed', 'transaction', 3, 'Completed sale #000003 — 2.40 PHP, 1 items, customer: Walk-in', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 01:09:04'),
+(66, 1, 'andrew_owner', 'owner', 'auth', 'logout', NULL, NULL, 'Signed out', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 01:28:23'),
+(67, 1, 'andrew_owner', 'owner', 'auth', 'login', 'user', 1, 'Signed in successfully (owner)', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 01:28:30'),
+(68, 1, 'andrew_owner', 'owner', 'auth', 'logout', NULL, NULL, 'Signed out', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 01:35:57'),
+(69, 1, 'andrew_owner', 'owner', 'auth', 'login', 'user', 1, 'Signed in successfully (owner)', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 01:36:03'),
+(70, 1, 'andrew_owner', 'owner', 'settings', 'settings_update', NULL, NULL, 'Updated store settings — receipt paper: 80mm, weekly discount limit: 200.00 PHP, senior discount: 20%, pwd discount: 5%, low stock: 100, near expiry: 60 days', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 01:54:00'),
+(71, 1, 'andrew_owner', 'owner', 'settings', 'settings_update', NULL, NULL, 'Updated store settings — receipt paper: 80mm, weekly discount limit: 200.00 PHP, senior discount: 20%, pwd discount: 20%, low stock: 100, near expiry: 60 days', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 01:54:04'),
+(72, 1, 'andrew_owner', 'owner', 'settings', 'settings_update', NULL, NULL, 'Updated store settings — receipt paper: 80mm, weekly discount limit: 200.00 PHP, senior discount: 15%, pwd discount: 20%, low stock: 100, near expiry: 60 days', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 01:54:08'),
+(73, 1, 'andrew_owner', 'owner', 'sales', 'sale_completed', 'transaction', 4, 'Completed sale #000004 — 4.93 PHP, 1 items, customer: ANDREW PABLO', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 01:55:01'),
+(74, 1, 'andrew_owner', 'owner', 'settings', 'settings_update', NULL, NULL, 'Updated store settings — receipt paper: 80mm, weekly discount limit: 200.00 PHP, senior discount: 15%, pwd discount: 15%, low stock: 100, near expiry: 60 days', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 01:59:14'),
+(75, 1, 'andrew_owner', 'owner', 'settings', 'settings_update', NULL, NULL, 'Updated store settings — receipt paper: 80mm, weekly discount limit: 200.00 PHP, senior discount: 15%, pwd discount: 15%, low stock: 100, near expiry: 60 days', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 01:59:18'),
+(76, 1, 'andrew_owner', 'owner', 'sales', 'sale_completed', 'transaction', 5, 'Completed sale #000005 — 18.71 PHP, 1 items, customer: ANDREW PABLO', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 02:00:37'),
+(77, 1, 'andrew_owner', 'owner', 'settings', 'settings_update', NULL, NULL, 'Updated store settings — receipt paper: 80mm, weekly discount limit: 200.00 PHP, senior discount: 20%, pwd discount: 15%, low stock: 100, near expiry: 60 days', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 02:05:19'),
+(78, 1, 'andrew_owner', 'owner', 'settings', 'settings_update', NULL, NULL, 'Updated store settings — Senior discount: 15.00%, PWD discount: 20.00%, receipt paper: 80mm, weekly discount limit: 200.00 PHP, low stock: 100, near expiry: 60 days', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 02:11:10'),
+(79, 1, 'andrew_owner', 'owner', 'settings', 'settings_update', NULL, NULL, 'Updated store settings — Senior discount: 15.00%, PWD discount: 15.00%, receipt paper: 80mm, weekly discount limit: 200.00 PHP, low stock: 100, near expiry: 60 days', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 02:11:14'),
+(80, 1, 'andrew_owner', 'owner', 'sales', 'sale_completed', 'transaction', 6, 'Completed sale #000006 — 77.95 PHP, 1 items, customer: ANDREW PABLO', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 02:12:26'),
+(81, 1, 'andrew_owner', 'owner', 'sales', 'sale_completed', 'transaction', 7, 'Completed sale #000007 — 5.20 PHP, 1 items, customer: ANDREW PABLO', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 02:14:33'),
+(82, 1, 'andrew_owner', 'owner', 'sales', 'sale_completed', 'transaction', 8, 'Completed sale #000008 — 5.20 PHP, 1 items, customer: ANDREW PABLO', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 02:21:19'),
+(83, 1, 'andrew_owner', 'owner', 'settings', 'settings_update', NULL, NULL, 'Updated store settings — Senior discount: 20.00%, PWD discount: 20.00%, receipt paper: 80mm, weekly discount limit: 125.00 PHP, low stock: 15, near expiry: 60 days', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 02:22:49'),
+(84, 1, 'andrew_owner', 'owner', 'settings', 'settings_update', NULL, NULL, 'Updated store settings — Senior discount: 14.36%, PWD discount: 20.00%, receipt paper: 80mm, weekly discount limit: 125.00 PHP, low stock: 15, near expiry: 60 days', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 02:23:09'),
+(85, 1, 'andrew_owner', 'owner', 'settings', 'settings_update', NULL, NULL, 'Updated store settings — Senior discount: 20.00%, PWD discount: 20.00%, receipt paper: 80mm, weekly discount limit: 125.00 PHP, low stock: 15, near expiry: 60 days', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 02:23:19'),
+(86, 1, 'andrew_owner', 'owner', 'sales', 'sale_completed', 'transaction', 9, 'Completed sale #000009 — 17.74 PHP, 1 items, customer: ANDREW PABLO', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 02:23:50'),
+(87, 1, 'andrew_owner', 'owner', 'sales', 'sale_completed', 'transaction', 10, 'Completed sale #000010 — 73.93 PHP, 1 items, customer: ANDREW PABLO', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 02:25:14'),
+(88, 1, 'andrew_owner', 'owner', 'products', 'measurement_add', 'unit_measurement', 25, 'Added unit measurement \'pack\'', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 02:26:42'),
+(89, 1, 'andrew_owner', 'owner', 'products', 'supplier_add', 'supplier', 2, 'Added supplier \'Andrew Gonzales Pablo\'', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 02:26:55'),
+(90, 1, 'andrew_owner', 'owner', 'products', 'product_add', 'product', 10101, 'Added product \'boba\' with initial batch \'Batch-1\' (100 packs)', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 02:27:24'),
+(91, 1, 'andrew_owner', 'owner', 'sales', 'sale_completed', 'transaction', 11, 'Completed sale #000011 — 52.50 PHP, 1 items, customer: Walk-in', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 02:27:53'),
+(92, 1, 'andrew_owner', 'owner', 'products', 'product_update', 'product', 10101, 'Updated product \'boba\'', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 02:28:32'),
+(93, 1, 'andrew_owner', 'owner', 'sales', 'sale_completed', 'transaction', 12, 'Completed sale #000012 — 43.12 PHP, 1 items, customer: ANDREW PABLO', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 02:29:31'),
+(94, 1, 'andrew_owner', 'owner', 'sales', 'sale_completed', 'transaction', 13, 'Completed sale #000013 — 43.12 PHP, 1 items, customer: ANDREW PABLO', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 02:29:58'),
+(95, 1, 'andrew_owner', 'owner', 'settings', 'settings_update', NULL, NULL, 'Updated store settings — Senior discount: 10.00%, PWD discount: 20.00%, receipt paper: 80mm, weekly discount limit: 125.00 PHP, low stock: 15, near expiry: 60 days', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 02:42:45'),
+(96, 1, 'andrew_owner', 'owner', 'sales', 'sale_completed', 'transaction', 14, 'Completed sale #000014 — 18.58 PHP, 2 items, customer: ANDREW PABLO', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 02:44:45'),
+(97, 1, 'andrew_owner', 'owner', 'sales', 'sale_completed', 'transaction', 15, 'Completed sale #000015 — 5.46 PHP, 1 items, customer: ANDREW PABLO', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 02:46:59'),
+(98, 1, 'andrew_owner', 'owner', 'sales', 'sale_completed', 'transaction', 16, 'Completed sale #000016 — 12.96 PHP, 1 items, customer: ANDREW PABLO', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 02:51:56'),
+(99, 1, 'andrew_owner', 'owner', 'settings', 'settings_update', NULL, NULL, 'Updated store settings — VAT: 36.00%, Senior discount: 10.00%, PWD discount: 20.00%, receipt paper: 80mm, weekly discount limit: 125.00 PHP, low stock: 15, near expiry: 60 days', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 03:45:00'),
+(100, 1, 'andrew_owner', 'owner', 'sales', 'sale_completed', 'transaction', 17, 'Completed sale #000017 — 13.20 PHP, 2 items, customer: Walk-in', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 03:45:19'),
+(101, 1, 'andrew_owner', 'owner', 'products', 'product_add', 'product', 10102, 'Added product \'TEST\' with initial batch \'Batch-1\' (100 packs)', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 03:50:55'),
+(102, 1, 'andrew_owner', 'owner', 'settings', 'settings_update', NULL, NULL, 'Updated store settings — VAT: 10.00%, Senior discount: 10.00%, PWD discount: 20.00%, receipt paper: 80mm, weekly discount limit: 125.00 PHP, low stock: 15, near expiry: 60 days', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 03:52:17'),
+(103, 1, 'andrew_owner', 'owner', 'settings', 'settings_update', NULL, NULL, 'Updated store settings — VAT: 12.00%, Senior discount: 10.00%, PWD discount: 20.00%, receipt paper: 80mm, weekly discount limit: 125.00 PHP, low stock: 15, near expiry: 60 days', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 03:57:44'),
+(104, 1, 'andrew_owner', 'owner', 'sales', 'sale_completed', 'transaction', 18, 'Completed sale #000018 — 2.40 PHP, 1 items, customer: Walk-in', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 03:58:24'),
+(105, 1, 'andrew_owner', 'owner', 'settings', 'settings_update', NULL, NULL, 'Updated store settings — VAT: 0.00%, Senior discount: 10.00%, PWD discount: 20.00%, receipt paper: 80mm, weekly discount limit: 125.00 PHP, low stock: 15, near expiry: 60 days', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 03:58:38'),
+(106, 1, 'andrew_owner', 'owner', 'sales', 'sale_completed', 'transaction', 19, 'Completed sale #000019 — 2.40 PHP, 1 items, customer: Walk-in', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 03:58:48'),
+(107, 1, 'andrew_owner', 'owner', 'settings', 'settings_update', NULL, NULL, 'Updated store settings — VAT: 12.00%, Senior discount: 10.00%, PWD discount: 20.00%, receipt paper: 80mm, weekly discount limit: 125.00 PHP, low stock: 15, near expiry: 60 days', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 04:05:56'),
+(108, 1, 'andrew_owner', 'owner', 'auth', 'login', 'user', 1, 'Signed in successfully (owner)', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 07:01:07'),
+(109, 1, 'andrew_owner', 'owner', 'auth', 'login', 'user', 1, 'Signed in successfully (owner)', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Code/1.137.0 Chrome/148.0.7778.280 Electron/42.10.0 Safari/537.36', '2026-09-17 07:04:16'),
+(110, 1, 'andrew_owner', 'owner', 'sales', 'sale_completed', 'transaction', 20, 'Completed sale #000020 — 960.00 PHP, 100 items, customer: Walk-in', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 07:06:55'),
+(111, 1, 'andrew_owner', 'owner', 'auth', 'logout', NULL, NULL, 'Signed out', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 07:10:36'),
+(112, 1, 'andrew_owner', 'owner', 'auth', 'login', 'user', 1, 'Signed in successfully (owner)', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 07:10:53'),
+(113, NULL, 'andrew_owner', 'guest', 'auth', 'login_failed', NULL, NULL, 'Failed sign-in (wrong password) for username \'andrew_owner\'', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 07:11:32'),
+(114, 1, 'andrew_owner', 'owner', 'auth', 'login', 'user', 1, 'Signed in successfully (owner)', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 07:11:53'),
+(115, 1, 'andrew_owner', 'owner', 'auth', 'login', 'user', 1, 'Signed in successfully (owner)', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36', '2026-09-17 07:13:36'),
+(116, 1, 'andrew_owner', 'owner', 'auth', 'logout', NULL, NULL, 'Signed out', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 07:15:06'),
+(117, 2, 'andrew_admin', 'admin', 'auth', 'login', 'user', 2, 'Signed in successfully (admin)', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 07:15:12'),
+(118, 1, 'andrew_owner', 'owner', 'auth', 'login', 'user', 1, 'Signed in successfully (owner)', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Code/1.137.0 Chrome/148.0.7778.280 Electron/42.10.0 Safari/537.36', '2026-09-17 07:15:34'),
+(119, 1, 'andrew_owner', 'owner', 'auth', 'login', 'user', 1, 'Signed in successfully (owner)', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36 Edg/153.0.0.0', '2026-09-17 07:17:28'),
+(120, 2, 'andrew_admin', 'admin', 'inventory', 'batch_disposal', 'inventory', 2, 'Disposed 10 packs from batch \'SEED-BATCH-002\' of Tempra (reason: Expired)', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 07:31:46'),
+(121, 2, 'andrew_admin', 'admin', 'products', 'product_add', 'product', 10103, 'Added product \'dsfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff\'', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 08:21:04'),
+(122, 2, 'andrew_admin', 'admin', 'inventory', 'batch_add', 'product', 10103, 'Added batch \'Batch-1\' (952 packs) to dsfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 08:21:41'),
+(123, 2, 'andrew_admin', 'admin', 'inventory', 'batch_disposal', 'inventory', 132, 'Disposed 952 packs from batch \'Batch-1\' of dsfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff (reason: damages)', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 08:22:32'),
+(124, 2, 'andrew_admin', 'admin', 'auth', 'login', 'user', 2, 'Signed in successfully (admin)', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 09:42:04'),
+(125, 2, 'andrew_admin', 'admin', 'products', 'serving_unit_add', 'serving_unit', 7, 'Added serving unit \'pc\'', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 10:13:14'),
+(126, 2, 'andrew_admin', 'admin', 'products', 'product_add', 'product', 10104, 'Added product \'brief\'', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 10:13:19'),
+(127, 2, 'andrew_admin', 'admin', 'inventory', 'batch_add', 'product', 10104, 'Added batch \'Batch-1\' (50 packs) to brief', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 10:17:22'),
+(128, 2, 'andrew_admin', 'admin', 'products', 'product_add', 'product', 10105, 'Added product \'Amoxicillindd\'', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 10:20:41'),
+(129, 2, 'andrew_admin', 'admin', 'products', 'product_add', 'product', 10106, 'Added product \'tut\'', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 10:21:24'),
+(130, 2, 'andrew_admin', 'admin', 'products', 'product_add', 'product', 10107, 'Added product \'Paracetamolddd\'', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 10:21:57'),
+(131, 2, 'andrew_admin', 'admin', 'products', 'product_add', 'product', 10108, 'Added product \'dd\'', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 10:23:07'),
+(132, 2, 'andrew_admin', 'admin', 'products', 'serving_unit_add', 'serving_unit', 8, 'Added serving unit \'L\'', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 10:25:55'),
+(133, 2, 'andrew_admin', 'admin', 'products', 'product_add', 'product', 10109, 'Added product \'ddd\'', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 10:26:29'),
+(134, 2, 'andrew_admin', 'admin', 'products', 'product_add', 'product', 10110, 'Added product \'dddddss\'', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 10:31:21'),
+(135, 2, 'andrew_admin', 'admin', 'products', 'serving_unit_add', 'serving_unit', 9, 'Added serving unit \'Liters\'', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 10:32:17'),
+(136, 2, 'andrew_admin', 'admin', 'products', 'product_add', 'product', 10111, 'Added product \'tiss\'', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 10:32:24'),
+(137, 2, 'andrew_admin', 'admin', 'auth', 'login', 'user', 2, 'Signed in successfully (admin)', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 14:20:11'),
+(138, 2, 'andrew_admin', 'admin', 'inventory', 'batch_add', 'product', 10103, 'Added batch \'Batch-2\' (100 packs) to dsfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 14:51:43'),
+(139, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 18, 'Updated category \'Over-the-Counter (OTC)\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:23:43'),
+(140, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 17, 'Updated category \'Prescription Medicines\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:23:43'),
+(141, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 20, 'Updated category \'Vitamins & Supplements\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:23:44'),
+(142, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 21, 'Updated category \'First Aid\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:23:44'),
+(143, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 19, 'Updated category \'Medical Supplies\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:23:44'),
+(144, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 22, 'Updated category \'Diagnostics\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:23:44'),
+(145, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 23, 'Updated category \'Herbal Products\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:23:44'),
+(146, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 24, 'Updated category \'Health & Wellness\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:23:44'),
+(147, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 25, 'Updated category \'Personal Care\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:23:44'),
+(148, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 26, 'Updated category \'Baby Care\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:23:44'),
+(149, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 27, 'Updated category \'Beverage/Beverages\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:23:44'),
+(150, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 28, 'Updated category \'Snacks\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:23:44'),
+(151, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 29, 'Updated category \'Canned Goods\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:23:44'),
+(152, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 30, 'Updated category \'Instant Food\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:23:44'),
+(153, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 31, 'Updated category \'Dairy Products\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:23:44'),
+(154, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 18, 'Updated category \'Over-the-Counter (OTC)\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:26:34'),
+(155, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 17, 'Updated category \'Prescription Medicines\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:26:34'),
+(156, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 20, 'Updated category \'Vitamins & Supplements\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:26:34'),
+(157, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 21, 'Updated category \'First Aid\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:26:35'),
+(158, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 19, 'Updated category \'Medical Supplies\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:26:35'),
+(159, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 22, 'Updated category \'Diagnostics\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:26:35'),
+(160, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 23, 'Updated category \'Herbal Products\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:26:35'),
+(161, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 24, 'Updated category \'Health & Wellness\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:26:35'),
+(162, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 25, 'Updated category \'Personal Care\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:26:35'),
+(163, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 26, 'Updated category \'Baby Care\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:26:35'),
+(164, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 27, 'Updated category \'Beverage/Beverages\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:26:35'),
+(165, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 28, 'Updated category \'Snacks\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:26:35'),
+(166, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 29, 'Updated category \'Canned Goods\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:26:35'),
+(167, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 30, 'Updated category \'Instant Food\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:26:35'),
+(168, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 31, 'Updated category \'Dairy Products\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:26:35'),
+(169, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 17, 'Updated category \'Prescription Medicines\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:26:53');
+INSERT INTO `activity_logs` (`id`, `user_id`, `username`, `role`, `module`, `action`, `entity_type`, `entity_id`, `description`, `ip_address`, `user_agent`, `created_at`) VALUES
+(170, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 18, 'Updated category \'Over-the-Counter (OTC)\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:26:53'),
+(171, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 19, 'Updated category \'Medical Supplies\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:26:53'),
+(172, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 20, 'Updated category \'Vitamins & Supplements\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:26:53'),
+(173, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 22, 'Updated category \'Diagnostics\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:26:53'),
+(174, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 21, 'Updated category \'First Aid\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:26:53'),
+(175, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 23, 'Updated category \'Herbal Products\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:26:53'),
+(176, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 24, 'Updated category \'Health & Wellness\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:26:53'),
+(177, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 25, 'Updated category \'Personal Care\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:26:53'),
+(178, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 26, 'Updated category \'Baby Care\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:26:53'),
+(179, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 27, 'Updated category \'Beverage/Beverages\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:26:53'),
+(180, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 28, 'Updated category \'Snacks\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:26:53'),
+(181, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 29, 'Updated category \'Canned Goods\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:26:53'),
+(182, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 30, 'Updated category \'Instant Food\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:26:53'),
+(183, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 31, 'Updated category \'Dairy Products\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:26:54'),
+(184, 2, 'andrew_admin', 'admin', 'sales', 'register_open', 'register_opening', 3, 'Opened register with 100.00 PHP opening cash for 2026-09-17', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:27:07'),
+(185, 2, 'andrew_admin', 'admin', 'sales', 'sale_completed', 'transaction', 21, 'Completed sale #000021 — 6.00 PHP, 1 items, customer: ANDREW PABLO', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:27:42'),
+(186, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 17, 'Updated category \'Prescription Medicines\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:28:12'),
+(187, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 19, 'Updated category \'Medical Supplies\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:28:12'),
+(188, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 18, 'Updated category \'Over-the-Counter (OTC)\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:28:12'),
+(189, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 21, 'Updated category \'First Aid\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:28:12'),
+(190, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 20, 'Updated category \'Vitamins & Supplements\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:28:12'),
+(191, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 22, 'Updated category \'Diagnostics\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:28:12'),
+(192, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 23, 'Updated category \'Herbal Products\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:28:12'),
+(193, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 24, 'Updated category \'Health & Wellness\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:28:12'),
+(194, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 25, 'Updated category \'Personal Care\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:28:12'),
+(195, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 26, 'Updated category \'Baby Care\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:28:12'),
+(196, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 27, 'Updated category \'Beverage/Beverages\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:28:12'),
+(197, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 28, 'Updated category \'Snacks\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:28:12'),
+(198, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 29, 'Updated category \'Canned Goods\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:28:12'),
+(199, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 30, 'Updated category \'Instant Food\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:28:12'),
+(200, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 31, 'Updated category \'Dairy Products\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:28:12'),
+(201, 2, 'andrew_admin', 'admin', 'settings', 'settings_update', NULL, NULL, 'Updated store settings — VAT: 0.00%, Senior discount: 20.00%, PWD discount: 20.00%, receipt paper: 80mm, weekly discount limit: 125.00 PHP, low stock: 15, near expiry: 60 days', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:28:38'),
+(202, 2, 'andrew_admin', 'admin', 'sales', 'sale_completed', 'transaction', 22, 'Completed sale #000022 — 4.80 PHP, 1 items, customer: ANDREW PABLO', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:31:24'),
+(203, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 17, 'Updated category \'Prescription Medicines\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:38:38'),
+(204, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 18, 'Updated category \'Over-the-Counter (OTC)\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:38:38'),
+(205, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 19, 'Updated category \'Medical Supplies\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:38:38'),
+(206, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 21, 'Updated category \'First Aid\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:38:38'),
+(207, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 22, 'Updated category \'Diagnostics\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:38:38'),
+(208, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 20, 'Updated category \'Vitamins & Supplements\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:38:38'),
+(209, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 23, 'Updated category \'Herbal Products\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:38:38'),
+(210, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 24, 'Updated category \'Health & Wellness\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:38:38'),
+(211, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 25, 'Updated category \'Personal Care\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:38:38'),
+(212, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 26, 'Updated category \'Baby Care\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:38:38'),
+(213, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 27, 'Updated category \'Beverage/Beverages\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:38:38'),
+(214, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 28, 'Updated category \'Snacks\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:38:38'),
+(215, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 29, 'Updated category \'Canned Goods\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:38:39'),
+(216, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 30, 'Updated category \'Instant Food\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:38:39'),
+(217, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 31, 'Updated category \'Dairy Products\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:38:39'),
+(218, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 17, 'Updated category \'Prescription Medicines\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:38:46'),
+(219, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 19, 'Updated category \'Medical Supplies\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:38:46'),
+(220, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 18, 'Updated category \'Over-the-Counter (OTC)\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:38:46'),
+(221, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 20, 'Updated category \'Vitamins & Supplements\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:38:46'),
+(222, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 21, 'Updated category \'First Aid\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:38:46'),
+(223, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 22, 'Updated category \'Diagnostics\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:38:46'),
+(224, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 23, 'Updated category \'Herbal Products\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:38:46'),
+(225, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 24, 'Updated category \'Health & Wellness\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:38:46'),
+(226, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 25, 'Updated category \'Personal Care\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:38:46'),
+(227, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 26, 'Updated category \'Baby Care\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:38:46'),
+(228, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 27, 'Updated category \'Beverage/Beverages\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:38:46'),
+(229, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 28, 'Updated category \'Snacks\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:38:46'),
+(230, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 29, 'Updated category \'Canned Goods\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:38:46'),
+(231, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 30, 'Updated category \'Instant Food\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:38:46'),
+(232, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 31, 'Updated category \'Dairy Products\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:38:46'),
+(233, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 17, 'Updated category \'Prescription Medicines\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:39:59'),
+(234, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 18, 'Updated category \'Over-the-Counter (OTC)\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:39:59'),
+(235, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 19, 'Updated category \'Medical Supplies\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:39:59'),
+(236, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 22, 'Updated category \'Diagnostics\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:39:59'),
+(237, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 20, 'Updated category \'Vitamins & Supplements\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:39:59'),
+(238, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 21, 'Updated category \'First Aid\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:39:59'),
+(239, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 23, 'Updated category \'Herbal Products\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:39:59'),
+(240, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 24, 'Updated category \'Health & Wellness\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:39:59'),
+(241, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 25, 'Updated category \'Personal Care\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:39:59'),
+(242, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 26, 'Updated category \'Baby Care\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:39:59'),
+(243, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 27, 'Updated category \'Beverage/Beverages\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:39:59'),
+(244, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 28, 'Updated category \'Snacks\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:39:59'),
+(245, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 29, 'Updated category \'Canned Goods\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:39:59'),
+(246, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 30, 'Updated category \'Instant Food\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:39:59'),
+(247, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 31, 'Updated category \'Dairy Products\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:39:59'),
+(248, 2, 'andrew_admin', 'admin', 'sales', 'sale_completed', 'transaction', 23, 'Completed sale #000023 — 6.00 PHP, 1 items, customer: ANDREW PABLO', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:40:24'),
+(249, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 17, 'Updated category \'Prescription Medicines\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:40:38'),
+(250, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 20, 'Updated category \'Vitamins & Supplements\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:40:38'),
+(251, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 18, 'Updated category \'Over-the-Counter (OTC)\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:40:38'),
+(252, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 21, 'Updated category \'First Aid\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:40:38'),
+(253, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 19, 'Updated category \'Medical Supplies\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:40:38'),
+(254, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 22, 'Updated category \'Diagnostics\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:40:38'),
+(255, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 23, 'Updated category \'Herbal Products\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:40:38'),
+(256, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 24, 'Updated category \'Health & Wellness\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:40:38'),
+(257, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 25, 'Updated category \'Personal Care\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:40:39'),
+(258, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 26, 'Updated category \'Baby Care\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:40:39'),
+(259, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 27, 'Updated category \'Beverage/Beverages\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:40:39'),
+(260, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 28, 'Updated category \'Snacks\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:40:39'),
+(261, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 29, 'Updated category \'Canned Goods\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:40:39'),
+(262, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 30, 'Updated category \'Instant Food\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:40:39'),
+(263, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 31, 'Updated category \'Dairy Products\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:40:39'),
+(264, 2, 'andrew_admin', 'admin', 'sales', 'sale_completed', 'transaction', 24, 'Completed sale #000024 — 4.80 PHP, 1 items, customer: ANDREW PABLO', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:41:03'),
+(265, 2, 'andrew_admin', 'admin', 'auth', 'logout', NULL, NULL, 'Signed out', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:43:59');
 
 -- --------------------------------------------------------
 
@@ -184,39 +404,113 @@ CREATE TABLE `inventory` (
 --
 
 INSERT INTO `inventory` (`id`, `product_id`, `supplier_id`, `batch_number`, `date_received`, `manufacture_date`, `purchase_cost`, `markup`, `sale_price`, `received_quantity`, `created_at`, `updated_at`, `current_quantity`, `expiry_date`) VALUES
-(1, 1, 1, 'Batch-1', '2026-09-08', NULL, 110.00, 5.00, 115.50, 100, '2026-09-08 06:18:40', '2026-09-09 00:37:00', 0, '2030-02-02'),
-(2, 1, 1, 'Batch-2', '2026-09-08', NULL, 50.00, 5.00, 52.50, 100, '2026-09-08 06:46:50', '2026-09-16 01:08:22', 0, '2027-05-08'),
-(3, 1, 1, 'Batch-3', '2026-09-09', NULL, 152.00, 5.00, 159.60, 1000, '2026-09-09 00:35:06', '2026-09-16 01:08:22', 0, '2030-02-02'),
-(4, 1, 1, 'Batch-4', '2026-09-14', NULL, 100.00, 5.00, 105.00, 100, '2026-09-14 07:28:12', '2026-09-16 01:08:22', 0, '2035-02-02'),
-(5, 1, 1, 'Batch-5', '2026-09-14', NULL, 200.00, 5.00, 210.00, 100, '2026-09-14 07:28:53', '2026-09-16 01:08:22', 0, '2033-02-02'),
-(6, 1, 1, 'Batch-6', '2026-09-14', NULL, 2000.00, 5.00, 2100.00, 200, '2026-09-14 07:31:21', '2026-09-16 01:08:22', 0, '2029-02-02'),
-(7, 1, 1, 'Batch-7', '2026-09-14', NULL, 1000.00, 5.00, 1050.00, 100, '2026-09-14 07:31:40', '2026-09-16 01:08:22', 0, '2029-02-02'),
-(8, 1, 1, 'Batch-8', '2026-09-14', NULL, 1000.00, 5.00, 1050.00, 200, '2026-09-14 07:31:58', '2026-09-16 01:08:22', 0, '2036-02-02'),
-(9, 1, NULL, 'Batch-9', '2026-09-14', NULL, 1000.00, 5.00, 1050.00, 1000, '2026-09-14 07:32:20', '2026-09-16 01:08:22', 0, '2036-02-02'),
-(11, 1, 1, 'Batch-11', '2026-09-14', NULL, 1000.00, 5.00, 1050.00, 100, '2026-09-14 07:33:06', '2026-09-16 01:08:22', 0, '2029-02-10'),
-(12, 2, 1, 'Batch-1', '2026-09-14', NULL, 20.00, 5.00, 21.00, 1000, '2026-09-14 07:49:45', '2026-09-15 01:27:56', 0, '2029-02-02'),
-(17, 4, 1, 'Batch-1', '2026-09-15', NULL, 25.00, 5.00, 26.25, 1, '2026-09-15 04:29:23', '2026-09-15 04:29:50', 0, '2030-02-02'),
-(19, 5, 1, 'Batch-1', '2026-09-15', NULL, 200.00, 5.00, 210.00, 1, '2026-09-15 07:20:22', '2026-09-15 07:20:37', 0, '2030-02-02'),
-(20, 2, NULL, 'Batch-2', '2026-09-15', NULL, 50.00, 5.00, 52.50, 1, '2026-09-15 07:56:45', '2026-09-15 07:57:01', 0, '2029-02-02'),
-(21, 1, 1, 'Batch-TEST', '2026-09-15', NULL, 10.00, 5.00, 10.50, 10, '2026-09-15 08:47:38', '2026-09-16 01:08:22', 0, '2030-12-31'),
-(22, 1, 1, 'Batch-14', '2026-09-15', NULL, 10.00, 5.00, 10.50, 10, '2026-09-15 08:55:20', '2026-09-16 01:08:22', 0, '2030-12-31'),
-(23, 5, 1, 'Batch-2', '2026-09-15', NULL, 50.00, 5.00, 52.50, 1, '2026-09-15 08:55:31', '2026-09-15 08:55:46', 0, '2029-02-02'),
-(24, 5, 1, 'Batch-3', '2026-09-15', NULL, 50.00, 5.00, 52.50, 1, '2026-09-15 08:57:51', '2026-09-15 08:58:03', 0, '2030-02-02'),
-(25, 5, 1, 'Batch-4', '2026-09-15', NULL, 50.00, 5.00, 52.50, 1, '2026-09-15 09:02:14', '2026-09-15 09:02:33', 0, '2036-02-02'),
-(26, 5, 1, 'Batch-5', '2026-09-15', NULL, 50.00, 5.00, 52.50, 1, '2026-09-15 09:05:45', '2026-09-15 09:05:52', 0, '2036-02-02'),
-(27, 5, 1, 'Batch-6', '2026-09-15', NULL, 50.00, 5.00, 52.50, 1, '2026-09-15 09:09:56', '2026-09-15 09:10:05', 0, '2029-02-02'),
-(28, 5, 1, 'Batch-7', '2026-09-15', NULL, 50.00, 5.00, 52.50, 1, '2026-09-15 09:17:52', '2026-09-15 09:18:05', 0, '2030-02-02'),
-(29, 5, 1, 'Batch-8', '2026-09-16', NULL, 50.00, 5.00, 52.50, 1, '2026-09-16 00:55:27', '2026-09-16 00:55:39', 0, '2039-02-02'),
-(30, 2, 1, 'Batch-3', '2026-09-16', NULL, 50.00, 5.00, 52.50, 1, '2026-09-16 00:57:25', '2026-09-16 00:57:35', 0, '2030-02-02'),
-(31, 4, 1, 'Batch-2', '2026-09-16', NULL, 50.00, 5.00, 52.50, 1, '2026-09-16 01:02:03', '2026-09-16 01:02:28', 0, '2029-02-02'),
-(32, 1, 1, 'Batch-15', '2026-09-16', NULL, 100.00, 5.00, 105.00, 1, '2026-09-16 01:07:33', '2026-09-16 01:08:22', 0, '2030-02-02'),
-(33, 2, 1, 'Batch-4', '2026-09-16', NULL, 50.00, 5.00, 52.50, 1, '2026-09-16 01:16:13', '2026-09-16 01:16:13', 1, '2029-02-02'),
-(34, 2, 1, 'Batch-5', '2026-09-16', NULL, 50.00, 5.00, 52.50, 1000, '2026-09-16 04:28:31', '2026-09-16 04:28:31', 1000, '2030-02-02'),
-(35, 2, 1, 'Batch-6', '2026-09-16', NULL, 49.93, 5.00, 52.43, 16, '2026-09-16 04:58:49', '2026-09-16 04:58:49', 16, '2029-02-02'),
-(36, 4, 1, 'Batch-3', '2026-09-16', NULL, 255.00, 5.00, 267.75, 16, '2026-09-16 04:59:24', '2026-09-16 05:00:10', 15, '2030-02-02'),
-(37, 2, 1, 'Batch-7', '2026-09-16', NULL, 50.00, 5.00, 52.50, 15, '2026-09-16 05:05:30', '2026-09-16 05:05:30', 15, '2026-07-22'),
-(38, 2, 1, 'Batch-8', '2026-09-16', NULL, 550.00, 5.00, 577.50, 100, '2026-09-16 05:07:00', '2026-09-16 05:07:00', 100, '2026-11-11'),
-(39, 4, 1, 'Batch-4', '2026-09-16', NULL, 200.00, 5.00, 210.00, 100, '2026-09-16 05:08:38', '2026-09-16 05:08:38', 100, '2026-09-19');
+(1, 10001, 1, 'SEED-BATCH-001', '2026-09-16', NULL, 8.00, 20.00, 9.60, 100, '2026-09-16 15:10:31', '2026-09-17 07:06:55', 0, '2027-03-22'),
+(2, 10002, 1, 'SEED-BATCH-002', '2026-09-16', NULL, 55.00, 20.00, 66.00, 80, '2026-09-16 15:10:31', '2026-09-17 07:31:46', 70, '2027-03-29'),
+(3, 10003, 1, 'SEED-BATCH-003', '2026-09-16', NULL, 12.00, 20.00, 14.40, 100, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 100, '2027-04-05'),
+(4, 10004, 1, 'SEED-BATCH-004', '2026-09-16', NULL, 14.00, 20.00, 16.80, 100, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 100, '2027-04-12'),
+(5, 10005, 1, 'SEED-BATCH-005', '2026-09-16', NULL, 18.00, 20.00, 21.60, 90, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 90, '2027-04-19'),
+(6, 10006, 1, 'SEED-BATCH-006', '2026-09-16', NULL, 9.00, 20.00, 10.80, 100, '2026-09-16 15:10:31', '2026-09-17 03:45:19', 98, '2027-04-26'),
+(7, 10007, 1, 'SEED-BATCH-007', '2026-09-16', NULL, 22.00, 20.00, 26.40, 80, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 80, '2027-05-03'),
+(8, 10008, 1, 'SEED-BATCH-008', '2026-09-16', NULL, 10.00, 20.00, 12.00, 100, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 100, '2027-05-10'),
+(9, 10009, 1, 'SEED-BATCH-009', '2026-09-16', NULL, 25.00, 20.00, 30.00, 60, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 60, '2027-05-17'),
+(10, 10010, 1, 'SEED-BATCH-010', '2026-09-16', NULL, 18.00, 20.00, 21.60, 90, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 90, '2027-05-24'),
+(11, 10011, 1, 'SEED-BATCH-011', '2026-09-16', NULL, 20.00, 20.00, 24.00, 90, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 90, '2027-05-31'),
+(12, 10012, 1, 'SEED-BATCH-012', '2026-09-16', NULL, 12.00, 20.00, 14.40, 100, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 100, '2027-06-07'),
+(13, 10013, 1, 'SEED-BATCH-013', '2026-09-16', NULL, 14.00, 20.00, 16.80, 100, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 100, '2027-06-14'),
+(14, 10014, 1, 'SEED-BATCH-014', '2026-09-16', NULL, 12.00, 20.00, 14.40, 80, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 80, '2027-06-21'),
+(15, 10015, 1, 'SEED-BATCH-015', '2026-09-16', NULL, 16.00, 20.00, 19.20, 80, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 80, '2027-06-28'),
+(16, 10016, 1, 'SEED-BATCH-016', '2026-09-16', NULL, 95.00, 20.00, 114.00, 60, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 60, '2027-07-05'),
+(17, 10017, 1, 'SEED-BATCH-017', '2026-09-16', NULL, 110.00, 20.00, 132.00, 40, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 40, '2027-07-12'),
+(18, 10018, 1, 'SEED-BATCH-018', '2026-09-16', NULL, 45.00, 20.00, 54.00, 80, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 80, '2027-07-19'),
+(19, 10019, 1, 'SEED-BATCH-019', '2026-09-16', NULL, 180.00, 20.00, 216.00, 40, '2026-09-16 15:10:31', '2026-09-16 15:11:26', 39, '2027-07-26'),
+(20, 10020, 1, 'SEED-BATCH-020', '2026-09-16', NULL, 220.00, 20.00, 264.00, 40, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 40, '2027-08-02'),
+(21, 10021, 1, 'SEED-BATCH-021', '2026-09-16', NULL, 35.00, 20.00, 42.00, 60, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 60, '2027-08-09'),
+(22, 10022, 1, 'SEED-BATCH-022', '2026-09-16', NULL, 12.00, 20.00, 14.40, 80, '2026-09-16 15:10:31', '2026-09-17 02:51:56', 78, '2027-08-16'),
+(23, 10023, 1, 'SEED-BATCH-023', '2026-09-16', NULL, 75.00, 20.00, 90.00, 50, '2026-09-16 15:10:31', '2026-09-17 02:25:14', 48, '2027-08-23'),
+(24, 10024, 1, 'SEED-BATCH-024', '2026-09-16', NULL, 18.00, 20.00, 21.60, 60, '2026-09-16 15:10:31', '2026-09-17 02:23:50', 59, '2027-08-30'),
+(25, 10025, 1, 'SEED-BATCH-025', '2026-09-16', NULL, 20.00, 20.00, 24.00, 50, '2026-09-16 15:10:31', '2026-09-16 15:11:26', 49, '2027-09-06'),
+(26, 10026, 1, 'SEED-BATCH-026', '2026-09-16', NULL, 8.00, 20.00, 9.60, 60, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 60, '2027-09-13'),
+(27, 10027, 1, 'SEED-BATCH-027', '2026-09-16', NULL, 16.00, 20.00, 19.20, 50, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 50, '2027-09-20'),
+(28, 10028, 1, 'SEED-BATCH-028', '2026-09-16', NULL, 65.00, 20.00, 78.00, 40, '2026-09-16 15:10:31', '2026-09-16 15:11:26', 39, '2027-09-27'),
+(29, 10029, 1, 'SEED-BATCH-029', '2026-09-16', NULL, 6.00, 20.00, 7.20, 100, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 100, '2027-10-04'),
+(30, 10030, 1, 'SEED-BATCH-030', '2026-09-16', NULL, 5.00, 20.00, 6.00, 100, '2026-09-16 15:10:31', '2026-09-17 15:41:03', 90, '2027-10-11'),
+(31, 10031, 1, 'SEED-BATCH-031', '2026-09-16', NULL, 4.00, 20.00, 4.80, 100, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 100, '2027-10-18'),
+(32, 10032, 1, 'SEED-BATCH-032', '2026-09-16', NULL, 8.00, 20.00, 9.60, 80, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 80, '2027-10-25'),
+(33, 10033, 1, 'SEED-BATCH-033', '2026-09-16', NULL, 18.00, 20.00, 21.60, 60, '2026-09-16 15:10:31', '2026-09-17 02:00:37', 58, '2027-11-01'),
+(34, 10034, 1, 'SEED-BATCH-034', '2026-09-16', NULL, 25.00, 20.00, 30.00, 50, '2026-09-16 15:10:31', '2026-09-16 15:11:26', 49, '2027-11-08'),
+(35, 10035, 1, 'SEED-BATCH-035', '2026-09-16', NULL, 10.00, 20.00, 12.00, 50, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 50, '2027-11-15'),
+(36, 10036, 1, 'SEED-BATCH-036', '2026-09-16', NULL, 320.00, 20.00, 384.00, 30, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 30, '2027-11-22'),
+(37, 10037, 1, 'SEED-BATCH-037', '2026-09-16', NULL, 450.00, 20.00, 540.00, 20, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 20, '2027-11-29'),
+(38, 10038, 1, 'SEED-BATCH-038', '2026-09-16', NULL, 950.00, 20.00, 1140.00, 20, '2026-09-16 15:10:31', '2026-09-16 15:11:26', 19, '2027-12-06'),
+(39, 10039, 1, 'SEED-BATCH-039', '2026-09-16', NULL, 125.00, 20.00, 150.00, 50, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 50, '2027-12-13'),
+(40, 10040, 1, 'SEED-BATCH-040', '2026-09-16', NULL, 180.00, 20.00, 216.00, 40, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 40, '2027-12-20'),
+(41, 10041, 1, 'SEED-BATCH-041', '2026-09-16', NULL, 12.00, 20.00, 14.40, 80, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 80, '2027-12-27'),
+(42, 10042, 1, 'SEED-BATCH-042', '2026-09-16', NULL, 9.00, 20.00, 10.80, 100, '2026-09-16 15:10:31', '2026-09-16 15:11:26', 99, '2028-01-03'),
+(43, 10043, 1, 'SEED-BATCH-043', '2026-09-16', NULL, 18.00, 20.00, 21.60, 80, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 80, '2028-01-10'),
+(44, 10044, 1, 'SEED-BATCH-044', '2026-09-16', NULL, 15.00, 20.00, 18.00, 70, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 70, '2028-01-17'),
+(45, 10045, 1, 'SEED-BATCH-045', '2026-09-16', NULL, 20.00, 20.00, 24.00, 60, '2026-09-16 15:10:31', '2026-09-16 15:11:26', 59, '2028-01-24'),
+(46, 10046, 1, 'SEED-BATCH-046', '2026-09-16', NULL, 12.00, 20.00, 14.40, 70, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 70, '2028-01-31'),
+(47, 10047, 1, 'SEED-BATCH-047', '2026-09-16', NULL, 10.00, 20.00, 12.00, 80, '2026-09-16 15:10:31', '2026-09-16 15:11:26', 79, '2028-02-07'),
+(48, 10048, 1, 'SEED-BATCH-048', '2026-09-16', NULL, 8.00, 20.00, 9.60, 40, '2026-09-16 15:10:31', '2026-09-16 15:11:26', 39, '2028-02-14'),
+(49, 10049, 1, 'SEED-BATCH-049', '2026-09-16', NULL, 7.00, 20.00, 8.40, 70, '2026-09-16 15:10:31', '2026-09-16 15:11:26', 69, '2028-02-21'),
+(50, 10050, 1, 'SEED-BATCH-050', '2026-09-16', NULL, 5.00, 20.00, 6.00, 70, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 70, '2028-02-28'),
+(51, 10051, 1, 'SEED-BATCH-051', '2026-09-16', NULL, 95.00, 20.00, 114.00, 60, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 60, '2028-03-06'),
+(52, 10052, 1, 'SEED-BATCH-052', '2026-09-16', NULL, 85.00, 20.00, 102.00, 80, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 80, '2028-03-13'),
+(53, 10053, 1, 'SEED-BATCH-053', '2026-09-16', NULL, 35.00, 20.00, 42.00, 60, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 60, '2028-03-20'),
+(54, 10054, 1, 'SEED-BATCH-054', '2026-09-16', NULL, 180.00, 20.00, 216.00, 40, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 40, '2028-03-27'),
+(55, 10055, 1, 'SEED-BATCH-055', '2026-09-16', NULL, 160.00, 20.00, 192.00, 40, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 40, '2028-04-03'),
+(56, 10056, 1, 'SEED-BATCH-056', '2026-09-16', NULL, 125.00, 20.00, 150.00, 40, '2026-09-16 15:10:31', '2026-09-16 15:11:26', 39, '2028-04-10'),
+(57, 10057, 1, 'SEED-BATCH-057', '2026-09-16', NULL, 12.00, 20.00, 14.40, 80, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 80, '2028-04-17'),
+(58, 10058, 1, 'SEED-BATCH-058', '2026-09-16', NULL, 2.00, 20.00, 2.40, 100, '2026-09-16 15:10:31', '2026-09-17 03:58:48', 95, '2028-04-24'),
+(59, 10059, 1, 'SEED-BATCH-059', '2026-09-16', NULL, 110.00, 20.00, 132.00, 40, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 40, '2028-05-01'),
+(60, 10060, 1, 'SEED-BATCH-060', '2026-09-16', NULL, 95.00, 20.00, 114.00, 50, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 50, '2028-05-08'),
+(61, 10061, 1, 'SEED-BATCH-061', '2026-09-16', NULL, 250.00, 20.00, 300.00, 40, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 40, '2028-05-15'),
+(62, 10062, 1, 'SEED-BATCH-062', '2026-09-16', NULL, 120.00, 20.00, 144.00, 50, '2026-09-16 15:10:31', '2026-09-16 15:11:26', 49, '2028-05-22'),
+(63, 10063, 1, 'SEED-BATCH-063', '2026-09-16', NULL, 350.00, 20.00, 420.00, 30, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 30, '2028-05-29'),
+(64, 10064, 1, 'SEED-BATCH-064', '2026-09-16', NULL, 250.00, 20.00, 300.00, 30, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 30, '2028-06-05'),
+(65, 10065, 1, 'SEED-BATCH-065', '2026-09-16', NULL, 220.00, 20.00, 264.00, 30, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 30, '2028-06-12'),
+(66, 10066, 1, 'SEED-BATCH-066', '2026-09-16', NULL, 45.00, 20.00, 54.00, 60, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 60, '2028-06-19'),
+(67, 10067, 1, 'SEED-BATCH-067', '2026-09-16', NULL, 75.00, 20.00, 90.00, 50, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 50, '2028-06-26'),
+(68, 10068, 1, 'SEED-BATCH-068', '2026-09-16', NULL, 65.00, 20.00, 78.00, 40, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 40, '2028-07-03'),
+(69, 10069, 1, 'SEED-BATCH-069', '2026-09-16', NULL, 180.00, 20.00, 216.00, 30, '2026-09-16 15:10:31', '2026-09-16 15:11:26', 29, '2028-07-10'),
+(70, 10070, 1, 'SEED-BATCH-070', '2026-09-16', NULL, 450.00, 20.00, 540.00, 25, '2026-09-16 15:10:31', '2026-09-16 15:11:26', 24, '2028-07-17'),
+(71, 10071, 1, 'SEED-BATCH-071', '2026-09-16', NULL, 35.00, 20.00, 42.00, 80, '2026-09-16 15:10:31', '2026-09-16 15:11:26', 79, '2028-07-24'),
+(72, 10072, 1, 'SEED-BATCH-072', '2026-09-16', NULL, 180.00, 20.00, 216.00, 40, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 40, '2028-07-31'),
+(73, 10073, 1, 'SEED-BATCH-073', '2026-09-16', NULL, 160.00, 20.00, 192.00, 40, '2026-09-16 15:10:31', '2026-09-16 15:11:26', 39, '2028-08-07'),
+(74, 10074, 1, 'SEED-BATCH-074', '2026-09-16', NULL, 180.00, 20.00, 216.00, 40, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 40, '2028-08-14'),
+(75, 10075, 1, 'SEED-BATCH-075', '2026-09-16', NULL, 45.00, 20.00, 54.00, 60, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 60, '2028-08-21'),
+(76, 10076, 1, 'SEED-BATCH-076', '2026-09-16', NULL, 350.00, 20.00, 420.00, 30, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 30, '2028-08-28'),
+(77, 10077, 1, 'SEED-BATCH-077', '2026-09-16', NULL, 220.00, 20.00, 264.00, 30, '2026-09-16 15:10:31', '2026-09-16 15:11:26', 29, '2028-09-04'),
+(78, 10078, 1, 'SEED-BATCH-078', '2026-09-16', NULL, 95.00, 20.00, 114.00, 60, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 60, '2028-09-11'),
+(79, 10079, 1, 'SEED-BATCH-079', '2026-09-16', NULL, 180.00, 20.00, 216.00, 40, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 40, '2028-09-18'),
+(80, 10080, 1, 'SEED-BATCH-080', '2026-09-16', NULL, 85.00, 20.00, 102.00, 40, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 40, '2028-09-25'),
+(81, 10081, 1, 'SEED-BATCH-081', '2026-09-16', NULL, 120.00, 20.00, 144.00, 40, '2026-09-16 15:10:31', '2026-09-16 15:11:26', 39, '2028-10-02'),
+(82, 10082, 1, 'SEED-BATCH-082', '2026-09-16', NULL, 280.00, 20.00, 336.00, 30, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 30, '2028-10-09'),
+(83, 10083, 1, 'SEED-BATCH-083', '2026-09-16', NULL, 300.00, 20.00, 360.00, 30, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 30, '2028-10-16'),
+(84, 10084, 1, 'SEED-BATCH-084', '2026-09-16', NULL, 310.00, 20.00, 372.00, 30, '2026-09-16 15:10:31', '2026-09-16 15:11:26', 29, '2028-10-23'),
+(85, 10085, 1, 'SEED-BATCH-085', '2026-09-16', NULL, 950.00, 20.00, 1140.00, 20, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 20, '2028-10-30'),
+(86, 10086, 1, 'SEED-BATCH-086', '2026-09-16', NULL, 900.00, 20.00, 1080.00, 20, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 20, '2028-11-06'),
+(87, 10087, 1, 'SEED-BATCH-087', '2026-09-16', NULL, 85.00, 20.00, 102.00, 50, '2026-09-16 15:10:31', '2026-09-16 15:11:26', 49, '2028-11-13'),
+(88, 10088, 1, 'SEED-BATCH-088', '2026-09-16', NULL, 150.00, 20.00, 180.00, 40, '2026-09-16 15:10:31', '2026-09-16 15:11:26', 39, '2028-11-20'),
+(89, 10089, 1, 'SEED-BATCH-089', '2026-09-16', NULL, 180.00, 20.00, 216.00, 40, '2026-09-16 15:10:31', '2026-09-16 15:11:26', 39, '2028-11-27'),
+(90, 10090, 1, 'SEED-BATCH-090', '2026-09-16', NULL, 220.00, 20.00, 264.00, 30, '2026-09-16 15:10:31', '2026-09-16 15:11:26', 29, '2028-12-04'),
+(91, 10091, 1, 'SEED-BATCH-091', '2026-09-16', NULL, 12.00, 20.00, 14.40, 100, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 100, '2028-12-11'),
+(92, 10092, 1, 'SEED-BATCH-092', '2026-09-16', NULL, 180.00, 20.00, 216.00, 40, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 40, '2028-12-18'),
+(93, 10093, 1, 'SEED-BATCH-093', '2026-09-16', NULL, 150.00, 20.00, 180.00, 40, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 40, '2028-12-25'),
+(94, 10094, 1, 'SEED-BATCH-094', '2026-09-16', NULL, 250.00, 20.00, 300.00, 30, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 30, '2029-01-01'),
+(95, 10095, 1, 'SEED-BATCH-095', '2026-09-16', NULL, 210.00, 20.00, 252.00, 30, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 30, '2029-01-08'),
+(96, 10096, 1, 'SEED-BATCH-096', '2026-09-16', NULL, 150.00, 20.00, 180.00, 40, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 40, '2029-01-15'),
+(97, 10097, 1, 'SEED-BATCH-097', '2026-09-16', NULL, 120.00, 20.00, 144.00, 40, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 40, '2029-01-22'),
+(98, 10098, 1, 'SEED-BATCH-098', '2026-09-16', NULL, 180.00, 20.00, 216.00, 30, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 30, '2029-01-29'),
+(99, 10099, 1, 'SEED-BATCH-099', '2026-09-16', NULL, 260.00, 20.00, 312.00, 30, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 30, '2029-02-05'),
+(100, 10100, 1, 'SEED-BATCH-100', '2026-09-16', NULL, 8.00, 20.00, 9.60, 70, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 70, '2029-02-12'),
+(128, 10075, 1, 'Batch-1', '2026-09-16', NULL, 50.00, 5.00, 52.50, 1, '2026-09-16 15:26:39', '2026-09-16 15:26:39', 1, '2029-02-02'),
+(129, 10075, NULL, 'Batch-2', '2026-09-16', NULL, 50.00, 5.00, 52.50, 10, '2026-09-16 15:27:16', '2026-09-16 15:27:16', 10, '2020-02-02'),
+(130, 10101, 2, 'Batch-1', '2026-09-17', NULL, 50.00, 5.00, 52.50, 100, '2026-09-17 02:27:24', '2026-09-17 02:29:58', 97, '2030-02-02'),
+(131, 10102, 1, 'Batch-1', '2026-09-17', NULL, 10.00, 5.00, 10.50, 100, '2026-09-17 03:50:55', '2026-09-17 03:50:55', 100, '2029-01-02'),
+(132, 10103, 1, 'Batch-1', '2026-09-17', NULL, 10.00, 5.00, 10.50, 952, '2026-09-17 08:21:41', '2026-09-17 08:22:32', 0, '2029-02-02'),
+(133, 10104, 2, 'Batch-1', '2026-09-17', NULL, 243.00, 5.00, 255.15, 50, '2026-09-17 10:17:22', '2026-09-17 10:17:22', 50, '2026-09-20'),
+(134, 10103, 1, 'Batch-2', '2026-09-17', NULL, 50.00, 5.00, 52.50, 100, '2026-09-17 14:51:43', '2026-09-17 14:51:43', 100, '2030-02-02');
 
 -- --------------------------------------------------------
 
@@ -239,15 +533,6 @@ CREATE TABLE `inventory_alerts` (
   `updated_at` datetime DEFAULT NULL,
   `resolved_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `inventory_alerts`
---
-
-INSERT INTO `inventory_alerts` (`id`, `product_id`, `batch_id`, `alert_type`, `severity`, `message`, `current_quantity`, `minimum_stock`, `expiry_date`, `status`, `created_at`, `updated_at`, `resolved_at`) VALUES
-(388, 1, 13, 'expired', 'critical', 'Restime - Simeticone (40.00) (Batch-12) has expired and should be removed from sale.', 0.00, 0.00, '2020-02-02', 'open', '2026-09-15 09:12:08', '2026-09-15 09:12:08', NULL),
-(389, 3, 14, 'expired', 'critical', 'Amoxil - Paracetamol (500.00) (Batch-1) has expired and should be removed from sale.', 0.00, 0.00, '2026-02-02', 'open', '2026-09-15 09:12:08', '2026-09-15 09:12:08', NULL),
-(390, 3, 15, 'expired', 'critical', 'Amoxil - Paracetamol (500.00) (Batch-2) has expired and should be removed from sale.', 0.00, 0.00, '2026-08-01', 'open', '2026-09-15 09:12:08', '2026-09-15 09:12:08', NULL);
 
 -- --------------------------------------------------------
 
@@ -293,24 +578,8 @@ CREATE TABLE `inventory_disposals` (
 --
 
 INSERT INTO `inventory_disposals` (`id`, `product_id`, `batch_number`, `quantity`, `expiry_date`, `reason`, `disposed_at`) VALUES
-(1, 3, 'Batch-1', 1, '2026-02-02', 'Expired', '2026-09-15 09:20:19'),
-(2, 1, 'Batch-1', 0, '2030-02-02', 'no stock', '2026-09-15 09:49:02'),
-(3, 1, 'Batch-1', 0, '2030-02-02', 'no stock', '2026-09-15 09:49:29'),
-(4, 3, 'Batch-2', 100, '2026-08-01', 'Expired', '2026-09-15 09:53:26'),
-(5, 1, 'Batch-3', 50, '2030-02-02', 'Damage', '2026-09-15 12:16:59'),
-(6, 1, 'Batch-10', 20, '2029-02-02', 'damage', '2026-09-15 12:25:20'),
-(7, 4, 'TEST-DISP-1789446972', 0, '2026-10-15', 'Expired', '2026-09-15 12:36:12'),
-(8, 1, 'Batch-3', 10, '2030-02-02', 'damaged', '2026-09-15 12:37:02'),
-(9, 1, 'Batch-8', 0, '2036-02-02', 'Expired', '2026-09-15 15:19:26'),
-(10, 1, 'Batch-3', 12, '2030-02-02', 'damages', '2026-09-15 15:35:29'),
-(11, 1, 'Batch-12', 222, '2020-02-02', 'Expired', '2026-09-15 15:50:02'),
-(12, 1, 'Batch-13', 1, '2020-02-02', 'Expired', '2026-09-15 15:50:02'),
-(13, 1, 'Batch-3', 10, '2030-02-02', 'damages', '2026-09-15 15:50:45'),
-(14, 1, 'Batch-3', 10, '2030-02-02', 'damages', '2026-09-15 16:34:35'),
-(15, 1, 'Batch-4', 10, '2035-02-02', 'damaged', '2026-09-15 16:59:06'),
-(16, 1, 'Batch-3', 10, '2030-02-02', 'dM', '2026-09-15 17:07:43'),
-(17, 1, 'Batch-3', 10, '2030-02-02', 'DAMAGES', '2026-09-16 09:00:15'),
-(18, 1, 'Batch-7', 0, '2029-02-02', 'Expired', '2026-09-16 09:15:52');
+(1, 10002, 'SEED-BATCH-002', 10, '2027-03-29', 'Expired', '2026-09-17 15:31:46'),
+(2, 10103, 'Batch-1', 952, '2029-02-02', 'damages', '2026-09-17 16:22:32');
 
 -- --------------------------------------------------------
 
@@ -334,33 +603,7 @@ CREATE TABLE `inventory_no_stock` (
 --
 
 INSERT INTO `inventory_no_stock` (`id`, `product_id`, `batch_number`, `current_quantity`, `received_quantity`, `expiry_date`, `reason`, `moved_at`) VALUES
-(1, 1, 'Batch-1', 0, 100, '2030-02-02', 'No stock', '2026-09-15 15:53:31'),
-(2, 1, 'Batch-1', 0, 100, '2030-02-02', 'No stock', '2026-09-15 15:54:03'),
-(3, 1, 'Batch-1', 0, 100, '2030-02-02', 'No stock', '2026-09-15 15:54:03'),
-(4, 1, 'Batch-1', 0, 100, '2030-02-02', 'No stock', '2026-09-15 15:54:04'),
-(5, 1, 'Batch-1', 0, 100, '2030-02-02', 'No stock', '2026-09-15 15:54:04'),
-(6, 1, 'Batch-1', 0, 100, '2030-02-02', 'No stock', '2026-09-15 15:54:17'),
-(7, 1, 'Batch-1', 0, 100, '2030-02-02', 'No stock', '2026-09-15 15:54:21'),
-(8, 1, 'Batch-1', 0, 100, '2030-02-02', 'No stock', '2026-09-15 15:54:24'),
-(9, 1, 'Batch-2', 0, 100, '2027-05-08', 'No stock', '2026-09-15 15:54:51'),
-(10, 2, 'Batch-1', 0, 1000, '2029-02-02', 'No stock', '2026-09-15 15:54:51'),
-(11, 4, 'Batch-1', 0, 1, '2030-02-02', 'No stock', '2026-09-15 15:54:51'),
-(12, 5, 'Batch-1', 0, 1, '2030-02-02', 'No stock', '2026-09-15 15:54:51'),
-(13, 2, 'Batch-2', 0, 1, '2029-02-02', 'No stock', '2026-09-15 15:57:05'),
-(14, 5, 'Batch-2', 0, 1, '2029-02-02', 'No stock', '2026-09-15 16:56:20'),
-(15, 5, 'Batch-3', 0, 1, '2030-02-02', 'No stock', '2026-09-15 16:58:26'),
-(16, 5, 'Batch-4', 0, 1, '2036-02-02', 'No stock', '2026-09-15 17:03:23'),
-(17, 5, 'Batch-5', 0, 1, '2036-02-02', 'No stock', '2026-09-15 17:06:04'),
-(18, 5, 'Batch-6', 0, 1, '2029-02-02', 'No stock', '2026-09-15 17:10:19'),
-(19, 5, 'Batch-7', 0, 1, '2030-02-02', 'No stock', '2026-09-15 17:18:24'),
-(20, 5, 'Batch-8', 0, 1, '2039-02-02', 'No stock', '2026-09-16 08:56:04'),
-(21, 2, 'Batch-3', 0, 1, '2030-02-02', 'No stock', '2026-09-16 08:58:24'),
-(22, 4, 'Batch-2', 0, 1, '2029-02-02', 'No stock', '2026-09-16 09:02:42'),
-(23, 1, 'Batch-3', 0, 1000, '2030-02-02', 'No stock', '2026-09-16 09:08:40'),
-(24, 1, 'Batch-4', 0, 100, '2035-02-02', 'No stock', '2026-09-16 09:09:13'),
-(25, 1, 'Batch-5', 0, 100, '2033-02-02', 'No stock', '2026-09-16 09:09:29'),
-(26, 1, 'Batch-6', 0, 200, '2029-02-02', 'No stock', '2026-09-16 09:15:31'),
-(27, 1, 'Batch-7', 0, 100, '2029-02-02', 'No stock', '2026-09-16 12:30:07');
+(1, 10001, 'SEED-BATCH-001', 0, 100, '2027-03-22', 'No stock', '2026-09-17 15:27:17');
 
 -- --------------------------------------------------------
 
@@ -417,14 +660,6 @@ CREATE TABLE `override_log` (
   `created_at` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `override_log`
---
-
-INSERT INTO `override_log` (`id`, `transaction_id`, `product_id`, `product_name`, `cashier_id`, `cashier_name`, `approver_id`, `approver_name`, `original_price`, `discounted_price`, `discount_amount`, `discount_percent`, `reason`, `created_at`) VALUES
-(1, NULL, 1, 'Restime Simeticone 40.00 mg Drops (10.00 mL per unit)', 9, 'owner321', 1, 'Andrew Pablo', 159.60, 119.70, 39.90, 25.00, 'prind', '2026-09-10 13:25:58'),
-(2, NULL, 1, 'Restime Simeticone 40.00 mg Drops (10.00 mL per unit)', 9, 'owner321', 1, 'Andrew Pablo', 159.60, 156.41, 3.19, 2.00, 'prind', '2026-09-10 13:27:22');
-
 -- --------------------------------------------------------
 
 --
@@ -445,18 +680,7 @@ CREATE TABLE `password_reset_tokens` (
 --
 
 INSERT INTO `password_reset_tokens` (`id`, `user_id`, `token_hash`, `expires_at`, `used_at`, `created_at`) VALUES
-(1, 1, '6fef0807307f8dcebc4f720e0ad5d614188cd689c0128b40debc3807e6528a0f', '2026-09-10 12:48:10', '2026-09-10 12:19:00', '2026-09-10 04:18:10'),
-(2, 1, 'ecf65bed90d968cd64411aa1e9cbb48e0fc7b6f7abb331d908091bf7e37095ab', '2026-09-10 12:49:00', '2026-09-10 12:21:08', '2026-09-10 04:19:00'),
-(3, 1, 'e25a7052841f85a93c65c6398a808e4225ae17c7553b3852f041af3cb33f1578', '2026-09-10 12:51:08', '2026-09-10 12:21:42', '2026-09-10 04:21:08'),
-(4, 1, '927b302f16beed8bdb2f08a1ba98ac027f2b125ea15e1cbad52c62b4cc8b6ad6', '2026-09-10 12:51:42', '2026-09-10 12:31:16', '2026-09-10 04:21:42'),
-(5, 1, '69ba9db977a7638633b6f053cd0b36e2e2bcb1078e168137efc673d7ca689c99', '2026-09-10 13:01:16', '2026-09-10 12:31:20', '2026-09-10 04:31:16'),
-(6, 1, 'f11f8a3a400f396c822c96cca0f70653a163fec86cc8779a23506bd34f513689', '2026-09-10 13:01:20', '2026-09-10 12:31:57', '2026-09-10 04:31:20'),
-(7, 1, '91a7e2d88c5c2fff27cb313dae9034da15121eb057d2fe166c019fb2e1ec6a22', '2026-09-10 13:01:57', '2026-09-10 12:32:02', '2026-09-10 04:31:57'),
-(8, 1, '309781ad046196afcd3ccd61788c11fd2ef3c846a16c49a4abe4f093a9140124', '2026-09-10 13:02:02', '2026-09-10 12:33:21', '2026-09-10 04:32:02'),
-(9, 1, '782724b487cf20d9f0f85bc77ee694c366ba534292b0e274e703d9b64228b848', '2026-09-10 13:03:45', '2026-09-10 12:37:01', '2026-09-10 04:33:45'),
-(10, 1, 'd445e5269b9598e3425dc379e3e2a848fa1b58c47962030c6eb0244fa931bcbf', '2026-09-10 13:08:03', '2026-09-10 12:42:18', '2026-09-10 04:38:03'),
-(11, 1, 'fa15a4cf8c28b17185c2e028a3b3fc88b75b5e8af5ff6ffcbe90266b13d4b72d', '2026-09-10 13:12:18', '2026-09-10 12:43:06', '2026-09-10 04:42:18'),
-(12, 1, 'cf3718badcf11e78d7fbde8d9f21f477af34d5012e78005700b41b710be78821', '2026-09-10 13:13:06', NULL, '2026-09-10 04:43:06');
+(1, 1, '84691ccb8115e897d6ec5b4dc06ed7f90d46bb92b6ea5c1cd72ea7dafe6564c2', '2026-09-17 00:17:16', NULL, '2026-09-16 15:47:16');
 
 -- --------------------------------------------------------
 
@@ -526,11 +750,117 @@ CREATE TABLE `products` (
 --
 
 INSERT INTO `products` (`id`, `branded_name`, `generic_name`, `strength`, `measurement_id`, `barcode`, `category_id`, `classification_id`, `units_per_package`, `imageproduct`, `is_basic_necessities`, `package_type`, `dosage_form`, `dosage_form_id`, `strength_per_quantity`, `strength_per_quantity_unit`, `is_hidden`) VALUES
-(1, 'Restime', 'Simeticone', 40.00, 2, '4807788523709', 18, NULL, 0, '6a9fa888056ce-1788848264IMG_4549.jpeg', 0, '', 'Drops', 7, 10.00, 'mL', 0),
-(2, '', 'chip ahoys', 65.00, 3, '427277220421', 17, NULL, 0, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, '', '', NULL, 1.00, 'pc', 0),
-(3, 'Amoxil', 'Paracetamol', 500.00, 2, '962694121724', 18, NULL, 0, '6aa7b367bb010-1789375335ChatGPT Image Sep 7, 2026, 05_27_12 PM.png', 0, '', 'Capsule', 2, 1.00, 'pcs', 0),
-(4, 'coke', 'DF', 750.00, 6, '569941321341', 27, NULL, 0, '6aa8c9a3ab9ef-178944656390cad0b147733b4e7eebebc091c701f1.jpg', 0, '', '', NULL, 1.00, 'pc', 0),
-(5, '', 'fe', 344.00, 2, '534635950872', 24, NULL, 0, '', 0, '', '', NULL, NULL, '', 0);
+(10001, 'Biogesic', 'Paracetamol', 500.00, 2, '2999000000001', 18, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Tablet', 1, 10.00, 'pcs', 0),
+(10002, 'Tempra', 'Paracetamol', 250.00, 2, '2999000000002', 18, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Bottle', 'Syrup', 3, 5.00, 'mL', 0),
+(10003, 'Advil', 'Ibuprofen', 200.00, 2, '2999000000003', 18, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Capsule', 2, 10.00, 'pcs', 0),
+(10004, 'Alaxan FR', 'Ibuprofen + Paracetamol', 200.00, 2, '2999000000004', 18, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Capsule', 2, 10.00, 'pcs', 0),
+(10005, 'Mefinamic', 'Mefenamic Acid', 500.00, 2, '2999000000005', 18, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Capsule', 2, 10.00, 'pcs', 0),
+(10006, 'Kremil-S', 'Aluminum Hydroxide + Magnesium Hydroxide', 178.00, 2, '2999000000006', 18, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Tablet', 1, 10.00, 'pcs', 0),
+(10007, 'Buscopan', 'Hyoscine Butylbromide', 10.00, 2, '2999000000007', 18, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Tablet', 1, 10.00, 'pcs', 0),
+(10008, 'Diatabs', 'Loperamide', 2.00, 2, '2999000000008', 18, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Capsule', 2, 4.00, 'pcs', 0),
+(10009, 'Imodium', 'Loperamide', 2.00, 2, '2999000000009', 18, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Capsule', 2, 4.00, 'pcs', 0),
+(10010, 'Zyrtec', 'Cetirizine', 10.00, 2, '2999000000010', 18, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Tablet', 1, 10.00, 'pcs', 0),
+(10011, 'Claritin', 'Loratadine', 10.00, 2, '2999000000011', 18, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Tablet', 1, 10.00, 'pcs', 0),
+(10012, 'Neozep', 'Phenylephrine + Chlorphenamine + Paracetamol', 500.00, 2, '2999000000012', 18, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Tablet', 1, 10.00, 'pcs', 0),
+(10013, 'Bioflu', 'Phenylephrine + Chlorphenamine + Paracetamol', 500.00, 2, '2999000000013', 18, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Tablet', 1, 10.00, 'pcs', 0),
+(10014, 'Decolgen', 'Phenylephrine + Chlorphenamine + Paracetamol', 500.00, 2, '2999000000014', 18, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Tablet', 1, 10.00, 'pcs', 0),
+(10015, 'Solmux', 'Carbocisteine', 500.00, 2, '2999000000015', 18, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Capsule', 2, 10.00, 'pcs', 0),
+(10016, 'Ascof', 'Lagundi Leaf Extract', 600.00, 2, '2999000000016', 18, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Bottle', 'Syrup', 3, 60.00, 'mL', 0),
+(10017, 'Ventolin', 'Salbutamol', 2.00, 2, '2999000000017', 17, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Bottle', 'Syrup', 3, 60.00, 'mL', 0),
+(10018, 'Strepsils', 'Amylmetacresol + Dichlorobenzyl Alcohol', 1.00, 2, '2999000000018', 18, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Tablet', 1, 16.00, 'pcs', 0),
+(10019, 'Difflam', 'Benzydamine Hydrochloride', 3.00, 2, '2999000000019', 18, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Bottle', 'Solution', 11, 100.00, 'mL', 0),
+(10020, 'Gaviscon', 'Sodium Alginate + Sodium Bicarbonate', 500.00, 2, '2999000000020', 18, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Bottle', 'Suspension', 3, 150.00, 'mL', 0),
+(10021, 'Losec', 'Omeprazole', 20.00, 2, '2999000000021', 17, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Capsule', 2, 14.00, 'pcs', 0),
+(10022, 'Amoxil', 'Amoxicillin', 500.00, 2, '2999000000022', 17, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Capsule', 2, 20.00, 'pcs', 0),
+(10023, 'Augmentin', 'Amoxicillin + Clavulanic Acid', 625.00, 2, '2999000000023', 17, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Tablet', 1, 14.00, 'pcs', 0),
+(10024, 'Keflex', 'Cephalexin', 500.00, 2, '2999000000024', 17, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Capsule', 2, 20.00, 'pcs', 0),
+(10025, 'Cipro', 'Ciprofloxacin', 500.00, 2, '2999000000025', 17, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Tablet', 1, 10.00, 'pcs', 0),
+(10026, 'Flagyl', 'Metronidazole', 500.00, 2, '2999000000026', 17, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Tablet', 1, 20.00, 'pcs', 0),
+(10027, 'Bactrim', 'Sulfamethoxazole + Trimethoprim', 800.00, 2, '2999000000027', 17, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Tablet', 1, 10.00, 'pcs', 0),
+(10028, 'Diflucan', 'Fluconazole', 150.00, 2, '2999000000028', 17, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Capsule', 2, 1.00, 'pcs', 0),
+(10029, 'Losartan', 'Losartan Potassium', 50.00, 2, '2999000000029', 17, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Tablet', 1, 30.00, 'pcs', 0),
+(10030, 'Norvasc', 'Amlodipine', 5.00, 2, '2999000000030', 17, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Tablet', 1, 30.00, 'pcs', 0),
+(10031, 'Metformin', 'Metformin Hydrochloride', 500.00, 2, '2999000000031', 17, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Tablet', 1, 30.00, 'pcs', 0),
+(10032, 'Glucophage', 'Metformin Hydrochloride', 850.00, 2, '2999000000032', 17, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Tablet', 1, 30.00, 'pcs', 0),
+(10033, 'Lipitor', 'Atorvastatin', 20.00, 2, '2999000000033', 17, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Tablet', 1, 30.00, 'pcs', 0),
+(10034, 'Plavix', 'Clopidogrel', 75.00, 2, '2999000000034', 17, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Tablet', 1, 28.00, 'pcs', 0),
+(10035, 'Levothyroxine', 'Levothyroxine Sodium', 50.00, 2, '2999000000035', 17, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Tablet', 1, 30.00, 'pcs', 0),
+(10036, 'Ventolin', 'Salbutamol', 100.00, 2, '2999000000036', 17, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Inhaler', 16, 1.00, 'pc', 0),
+(10037, 'Insulin Pen', 'Human Insulin', 100.00, 12, '2999000000037', 17, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Injection', 8, 1.00, 'pc', 0),
+(10038, 'PediaSure', 'Complete Nutrition Formula', 850.00, 3, '2999000000038', 20, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Can', 'Powder', 9, 850.00, 'g', 0),
+(10039, 'Ceelin', 'Vitamin C', 30.00, 2, '2999000000039', 20, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Bottle', 'Drops', 7, 30.00, 'mL', 0),
+(10040, 'Cherifer', 'Multivitamins + Lysine', 500.00, 2, '2999000000040', 20, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Bottle', 'Syrup', 3, 60.00, 'mL', 0),
+(10041, 'Conzace', 'Vitamin A + C + E + Zinc', 500.00, 2, '2999000000041', 20, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Capsule', 2, 30.00, 'pcs', 0),
+(10042, 'Enervon', 'B-Complex + Vitamin C', 500.00, 2, '2999000000042', 20, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Tablet', 1, 30.00, 'pcs', 0),
+(10043, 'Stresstabs', 'Multivitamins + Minerals', 1.00, 15, '2999000000043', 20, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Tablet', 1, 30.00, 'pcs', 0),
+(10044, 'Immunomax', 'Vitamin C + Zinc', 500.00, 2, '2999000000044', 20, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Tablet', 1, 30.00, 'pcs', 0),
+(10045, 'Caltrate', 'Calcium Carbonate + Vitamin D3', 600.00, 2, '2999000000045', 20, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Tablet', 1, 30.00, 'pcs', 0),
+(10046, 'Fern-C', 'Ascorbic Acid + Zinc', 500.00, 2, '2999000000046', 20, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Tablet', 1, 30.00, 'pcs', 0),
+(10047, 'Potencee', 'Ascorbic Acid', 500.00, 2, '2999000000047', 20, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Tablet', 1, 30.00, 'pcs', 0),
+(10048, 'Kirkland', 'Fish Oil', 1000.00, 2, '2999000000048', 20, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Bottle', 'Capsule', 2, 100.00, 'pcs', 0),
+(10049, 'Iron Plus', 'Ferrous Sulfate', 325.00, 2, '2999000000049', 20, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Tablet', 1, 30.00, 'pcs', 0),
+(10050, 'Folart', 'Folic Acid', 5.00, 2, '2999000000050', 20, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Tablet', 1, 30.00, 'pcs', 0),
+(10051, 'Betadine', 'Povidone Iodine', 10.00, 11, '2999000000051', 21, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Bottle', 'Solution', 11, 60.00, 'mL', 0),
+(10052, 'Alcohol 70%', 'Ethyl Alcohol', 70.00, 11, '2999000000052', 21, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Bottle', 'Solution', 11, 500.00, 'mL', 0),
+(10053, 'Agua Oxigenada', 'Hydrogen Peroxide', 3.00, 11, '2999000000053', 21, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Bottle', 'Solution', 11, 120.00, 'mL', 0),
+(10054, 'Bactroban', 'Mupirocin', 2.00, 11, '2999000000054', 21, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Tube', 'Ointment', 6, 15.00, 'g', 0),
+(10055, 'Fucidin', 'Fusidic Acid', 2.00, 11, '2999000000055', 21, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Tube', 'Cream', 5, 15.00, 'g', 0),
+(10056, 'Caladryl', 'Calamine + Diphenhydramine', 8.00, 11, '2999000000056', 21, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Bottle', 'Lotion', 13, 60.00, 'mL', 0),
+(10057, 'Salonpas', 'Methyl Salicylate + Menthol', 1.00, 15, '2999000000057', 21, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Patch', 15, 20.00, 'pcs', 0),
+(10058, 'Omega Plaster', 'Adhesive Bandage', 1.00, 15, '2999000000058', 21, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Patch', 15, 100.00, 'pcs', 0),
+(10059, 'Betadine Gargle', 'Povidone Iodine', 1.00, 11, '2999000000059', 21, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Bottle', 'Solution', 11, 120.00, 'mL', 0),
+(10060, 'Efficascent Oil', 'Menthol + Methyl Salicylate', 1.00, 15, '2999000000060', 21, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Bottle', 'Solution', 11, 100.00, 'mL', 0),
+(10061, 'N95 Mask', 'Particulate Respirator', 1.00, 15, '2999000000061', 19, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Powder', 9, 20.00, 'pcs', 0),
+(10062, 'Surgical Mask', 'Disposable Face Mask', 1.00, 15, '2999000000062', 19, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Powder', 9, 50.00, 'pcs', 0),
+(10063, 'Latex Gloves', 'Examination Gloves', 1.00, 15, '2999000000063', 19, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Powder', 9, 100.00, 'pcs', 0),
+(10064, 'Syringe 5mL', 'Sterile Disposable Syringe', 1.00, 15, '2999000000064', 19, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Powder', 9, 100.00, 'pcs', 0),
+(10065, 'Syringe 10mL', 'Sterile Disposable Syringe', 1.00, 15, '2999000000065', 19, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Powder', 9, 50.00, 'pcs', 0),
+(10066, 'Cotton Balls', 'Sterile Cotton Balls', 1.00, 15, '2999000000066', 19, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Pack', 'Powder', 9, 100.00, 'pcs', 0),
+(10067, 'Gauze Pads', 'Sterile Gauze Pad', 1.00, 15, '2999000000067', 19, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Pack', 'Powder', 9, 25.00, 'pcs', 0),
+(10068, 'Elastic Bandage', 'Elastic Crepe Bandage', 1.00, 15, '2999000000068', 19, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Roll', 'Powder', 9, 1.00, 'pcs', 0),
+(10069, 'Digital Thermometer', 'Digital Clinical Thermometer', 1.00, 15, '2999000000069', 22, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Powder', 9, 1.00, 'pcs', 0),
+(10070, 'Blood Glucose Strips', 'Blood Glucose Test Strips', 1.00, 15, '2999000000070', 22, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Powder', 9, 50.00, 'pcs', 0),
+(10071, 'Safeguard', 'Antibacterial Soap', 90.00, 3, '2999000000071', 25, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Bar', 'Powder', 9, 1.00, 'pcs', 0),
+(10072, 'Cetaphil', 'Gentle Cleansing Bar', 127.00, 3, '2999000000072', 25, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Powder', 9, 1.00, 'pcs', 0),
+(10073, 'Lactacyd', 'Feminine Wash', 200.00, 6, '2999000000073', 25, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Bottle', 'Powder', 9, 1.00, 'pcs', 0),
+(10074, 'Nivea', 'Moisturizing Lotion', 250.00, 6, '2999000000074', 25, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Bottle', 'Powder', 9, 1.00, 'pcs', 0),
+(10075, 'Kojic', 'Kojic Acid Soap', 65.00, 3, '2999000000075', 25, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Bar', 'Powder', 9, 1.00, 'pcs', 0),
+(10076, 'Sunscreen SPF50', 'Broad Spectrum Sunscreen', 50.00, 11, '2999000000076', 25, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Tube', 'Powder', 9, 1.00, 'pcs', 0),
+(10077, 'Pond\'s', 'Facial Moisturizer', 50.00, 3, '2999000000077', 25, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Jar', 'Powder', 9, 1.00, 'pcs', 0),
+(10078, 'Colgate', 'Fluoride Toothpaste', 1450.00, 11, '2999000000078', 25, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Tube', 'Powder', 9, 100.00, 'pcs', 0),
+(10079, 'Listerine', 'Mouthwash', 250.00, 6, '2999000000079', 25, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Bottle', 'Powder', 9, 1.00, 'pcs', 0),
+(10080, 'Vaseline', 'Petroleum Jelly', 100.00, 3, '2999000000080', 25, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Jar', 'Powder', 9, 1.00, 'pcs', 0),
+(10081, 'Johnson\'s Baby', 'Baby Powder', 200.00, 3, '2999000000081', 26, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Bottle', 'Powder', 9, 1.00, 'pcs', 0),
+(10082, 'Huggies', 'Baby Diaper Small', 1.00, 15, '2999000000082', 26, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Pack', 'Powder', 9, 24.00, 'pcs', 0),
+(10083, 'Huggies', 'Baby Diaper Medium', 1.00, 15, '2999000000083', 26, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Pack', 'Powder', 9, 24.00, 'pcs', 0),
+(10084, 'Huggies', 'Baby Diaper Large', 1.00, 15, '2999000000084', 26, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Pack', 'Powder', 9, 20.00, 'pcs', 0),
+(10085, 'Enfamil', 'Infant Formula', 800.00, 3, '2999000000085', 26, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Can', 'Powder', 9, 1.00, 'pcs', 0),
+(10086, 'Similac', 'Infant Formula', 800.00, 3, '2999000000086', 26, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Can', 'Powder', 9, 1.00, 'pcs', 0),
+(10087, 'Nursicare', 'Baby Wipes', 80.00, 15, '2999000000087', 26, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Pack', 'Powder', 9, 1.00, 'pcs', 0),
+(10088, 'Johnson\'s Baby', 'Baby Shampoo', 200.00, 6, '2999000000088', 26, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Bottle', 'Powder', 9, 1.00, 'pcs', 0),
+(10089, 'Baby Dove', 'Baby Lotion', 200.00, 6, '2999000000089', 26, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Bottle', 'Powder', 9, 1.00, 'pcs', 0),
+(10090, 'Pigeon', 'Feeding Bottle', 240.00, 6, '2999000000090', 26, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Bottle', 'Powder', 9, 1.00, 'pcs', 0),
+(10091, 'ORS Hydrite', 'Oral Rehydration Salts', 1.00, 15, '2999000000091', 24, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Sachet', 'Powder', 9, 1.00, 'pcs', 0),
+(10092, 'Daktarin', 'Miconazole Nitrate', 2.00, 11, '2999000000092', 24, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Tube', 'Cream', 5, 15.00, 'g', 0),
+(10093, 'Canesten', 'Clotrimazole', 1.00, 11, '2999000000093', 24, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Tube', 'Cream', 5, 15.00, 'g', 0),
+(10094, 'Tears Naturale', 'Hypromellose', 3.00, 11, '2999000000094', 24, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Bottle', 'Drops', 7, 15.00, 'mL', 0),
+(10095, 'Nafcon-A', 'Naphazoline + Pheniramine', 1.00, 11, '2999000000095', 24, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Bottle', 'Drops', 7, 15.00, 'mL', 0),
+(10096, 'Vicks', 'Menthol + Camphor', 1.00, 15, '2999000000096', 24, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Jar', 'Ointment', 6, 50.00, 'g', 0),
+(10097, 'Tiger Balm', 'Camphor + Menthol', 1.00, 15, '2999000000097', 24, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Jar', 'Ointment', 6, 20.00, 'g', 0),
+(10098, 'Salonpas Gel', 'Methyl Salicylate + Menthol', 1.00, 15, '2999000000098', 24, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Tube', 'Gel', 12, 30.00, 'g', 0),
+(10099, 'Gaviscon Double Action', 'Sodium Alginate + Calcium Carbonate', 500.00, 2, '2999000000099', 18, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Bottle', 'Suspension', 3, 150.00, 'mL', 0),
+(10100, 'Pharex', 'Vitamin B Complex', 1.00, 15, '2999000000100', 20, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Tablet', 1, 30.00, 'pcs', 0),
+(10101, '', 'boba', 100.00, 3, '170669953033', 17, NULL, 0, '6aab500c85da6-1789612044Screenshot 2026-07-23 144850.png', 0, '', '', NULL, 1.00, 'pack', 0),
+(10102, '', 'TEST', 100.00, 3, '102673930621', 17, NULL, 0, '6aab639f342b2-1789617055Screenshot 2026-07-23 150101.png', 0, '', '', NULL, NULL, '', 0),
+(10103, 'dsfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff', 'dsfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff', 1000.00, 3, '952347658942', 17, NULL, 0, '6aaba2f0533b7-1789633264Screenshot 2026-07-23 150101.png', 0, '', '', NULL, 1.00, 'pc', 0),
+(10104, '', 'brief', 1.00, 7, '1789639999241', 20, NULL, 0, '', 0, '', '', NULL, NULL, '', 0),
+(10105, '', 'Amoxicillindd', 1.00, 3, '530569427720', 26, NULL, 0, '', 0, '', '', NULL, NULL, '', 0),
+(10106, '', 'tut', 1.00, 7, '887476421576', 28, NULL, 0, '', 0, '', '', NULL, NULL, '', 0),
+(10107, '', 'Paracetamolddd', 1.00, 2, '1789640517401', 26, NULL, 0, '', 0, '', '', NULL, NULL, '', 0),
+(10108, '', 'dd', 1.00, 6, '1789640587339', 28, NULL, 0, '', 0, '', '', NULL, NULL, '', 0),
+(10109, '', 'ddd', 1.00, 8, '286125365552', 28, NULL, 0, '', 0, '', 'Lozenge', 17, 1.00, 'box', 0),
+(10110, '', 'dddddss', 1.00, 7, '278470884217', 28, NULL, 0, '', 0, '', '', NULL, NULL, '', 0),
+(10111, '', 'tiss', 266.00, 9, '008878145600', 25, NULL, 0, '', 0, '', '', NULL, NULL, '', 0);
 
 -- --------------------------------------------------------
 
@@ -620,8 +950,7 @@ CREATE TABLE `pwd_customers` (
 --
 
 INSERT INTO `pwd_customers` (`id`, `customer_name`, `id_number`, `cashier_id`, `verified_at`, `verified_by`) VALUES
-(1, 'ANDREW PABLO', '12345678910', 1, '2026-09-08 14:53:55', NULL),
-(2, 'ANDREW PABLO', '123456789100', 1, '2026-09-09 08:04:53', 1);
+(1, 'ANDREW PABLO', '12345678910', 1, '2026-09-17 08:56:01', 1);
 
 -- --------------------------------------------------------
 
@@ -645,15 +974,7 @@ CREATE TABLE `register_closings` (
 --
 
 INSERT INTO `register_closings` (`id`, `user_id`, `business_date`, `system_cash`, `counted_cash`, `variance`, `notes`, `closed_at`) VALUES
-(1, 1, '2026-09-08', 1037.50, 1037.50, 0.00, NULL, '2026-09-10 03:29:36'),
-(2, 1, '2026-09-09', 28437.10, 28437.10, 0.00, NULL, '2026-09-10 03:37:18'),
-(3, 1, '2026-09-10', 1159.60, 1159.60, 0.00, NULL, '2026-09-10 03:38:36'),
-(4, 2, '2026-09-10', 1159.60, 1159.60, 0.00, NULL, '2026-09-10 03:45:57'),
-(5, 3, '2026-09-10', 1478.80, 1478.80, 0.00, NULL, '2026-09-10 03:47:00'),
-(6, 1, '2026-09-14', 3525.10, 3525.10, 0.00, NULL, '2026-09-14 07:14:51'),
-(7, 2, '2026-09-14', 6289.25, 6289.25, 0.00, NULL, '2026-09-15 01:27:27'),
-(8, 1, '2026-09-16', 270587.50, 270587.50, 0.00, NULL, '2026-09-16 01:10:50'),
-(9, 2, '2026-09-15', 22456.75, 22456.75, 0.00, NULL, '2026-09-16 04:59:54');
+(1, 1, '2026-09-16', 5413.60, 5413.30, -0.30, 'no cents', '2026-09-16 15:47:04');
 
 -- --------------------------------------------------------
 
@@ -675,18 +996,9 @@ CREATE TABLE `register_openings` (
 --
 
 INSERT INTO `register_openings` (`id`, `user_id`, `business_date`, `opening_cash`, `notes`, `opened_at`) VALUES
-(1, 1, '2026-09-08', 1000.00, NULL, '2026-09-08 06:47:28'),
-(2, 1, '2026-09-09', 1000.00, NULL, '2026-09-08 23:45:34'),
-(3, 1, '2026-09-10', 1000.00, NULL, '2026-09-10 03:37:32'),
-(4, 2, '2026-09-10', 1000.00, NULL, '2026-09-10 03:45:37'),
-(5, 3, '2026-09-10', 1000.00, NULL, '2026-09-10 03:46:26'),
-(6, 9, '2026-09-10', 1000.00, NULL, '2026-09-10 05:18:33'),
-(7, 1, '2026-09-14', 1000.00, NULL, '2026-09-14 06:51:24'),
-(8, 2, '2026-09-14', 1000.00, NULL, '2026-09-14 07:38:01'),
-(9, 3, '2026-09-14', 1000.00, NULL, '2026-09-14 08:27:32'),
-(10, 2, '2026-09-15', 1000.00, NULL, '2026-09-15 01:27:33'),
-(11, 1, '2026-09-16', 1000.00, NULL, '2026-09-16 00:55:33'),
-(12, 2, '2026-09-16', 100.00, NULL, '2026-09-16 05:00:04');
+(1, 1, '2026-09-16', 1000.00, NULL, '2026-09-16 14:56:33'),
+(2, 1, '2026-09-17', 1000.00, NULL, '2026-09-17 00:52:04'),
+(3, 2, '2026-09-17', 100.00, NULL, '2026-09-17 15:27:07');
 
 -- --------------------------------------------------------
 
@@ -707,13 +1019,6 @@ CREATE TABLE `return_items` (
   `cost_of_goods` decimal(10,2) NOT NULL DEFAULT 0.00
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `return_items`
---
-
-INSERT INTO `return_items` (`id`, `return_transaction_id`, `product_id`, `quantity`, `price`, `subtotal`, `item_type`, `restocked`, `restockable`, `cost_of_goods`) VALUES
-(1, 1, 1, 1, 37.50, 37.50, 'returned', 1, 0, 0.00);
-
 -- --------------------------------------------------------
 
 --
@@ -732,13 +1037,6 @@ CREATE TABLE `return_transactions` (
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `approver_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `return_transactions`
---
-
-INSERT INTO `return_transactions` (`id`, `original_transaction_id`, `user_id`, `refund_amount`, `replacement_product_id`, `replacement_quantity`, `reason`, `refund_method`, `created_at`, `approver_id`) VALUES
-(1, 1, 2, 37.50, NULL, 0, 'Customer Request / Change of Mind', 'Cash', '2026-09-15 16:12:00', 1);
 
 -- --------------------------------------------------------
 
@@ -760,7 +1058,7 @@ CREATE TABLE `senior_customers` (
 --
 
 INSERT INTO `senior_customers` (`id`, `customer_name`, `id_number`, `cashier_id`, `verified_at`, `verified_by`) VALUES
-(1, 'ANDREW PABLO', '12345678910', 1, '2026-09-09 08:03:59', 1);
+(1, 'ANDREW PABLO', '12345678910', 1, '2026-09-17 08:54:16', 1);
 
 -- --------------------------------------------------------
 
@@ -780,7 +1078,10 @@ CREATE TABLE `serving_unit` (
 INSERT INTO `serving_unit` (`id`, `serving_unit_name`) VALUES
 (2, 'mg'),
 (3, 'grams'),
-(6, 'ML');
+(6, 'ML'),
+(7, 'pc'),
+(8, 'L'),
+(9, 'Liters');
 
 -- --------------------------------------------------------
 
@@ -799,13 +1100,13 @@ CREATE TABLE `store_settings` (
 --
 
 INSERT INTO `store_settings` (`setting_key`, `setting_value`, `updated_at`) VALUES
-('low_stock_threshold', '15', '2026-09-16 13:10:32'),
-('near_expiry_days', '60', '2026-09-16 13:10:32'),
-('receipt_paper', '80', '2026-09-16 13:10:32'),
-('vat_rate', '0.00', '2026-09-16 13:10:32'),
-('senior_discount_rate', '20.00', '2026-09-16 13:10:32'),
-('pwd_discount_rate', '20.00', '2026-09-16 13:10:32'),
-('statutory_discount_cap', '200.00', '2026-09-16 13:10:32');
+('low_stock_threshold', '15', '2026-09-17 23:28:38'),
+('near_expiry_days', '60', '2026-09-17 23:28:38'),
+('pwd_discount_rate', '20.00', '2026-09-17 23:28:38'),
+('receipt_paper', '80', '2026-09-17 23:28:38'),
+('senior_discount_rate', '20.00', '2026-09-17 23:28:38'),
+('statutory_discount_cap', '125.00', '2026-09-17 23:28:38'),
+('vat_rate', '0.00', '2026-09-17 23:28:38');
 
 -- --------------------------------------------------------
 
@@ -831,7 +1132,8 @@ CREATE TABLE `suppliers` (
 --
 
 INSERT INTO `suppliers` (`id`, `supplier_name`, `contact_person`, `contact_number`, `email`, `address`, `supplier_type`, `is_active`, `created_at`, `updated_at`) VALUES
-(1, 'ABC PHARMA', NULL, '+639651800675', 'andrewpablo2005@gmail.com', 'Manila Philippines', NULL, 1, '2026-09-08 06:18:21', '2026-09-08 06:18:21');
+(1, 'ABC PHARMA', NULL, '+639651800675', 'andrewpablo2005@gmail.com', 'Manila Philippines', 'Pharmaceutical Distributor', 1, '2026-09-16 14:54:43', '2026-09-16 14:54:43'),
+(2, 'Andrew Gonzales Pablo', NULL, '+639651800675', 'andrewpablo2005@gmail.com', 'N/A', NULL, 1, '2026-09-17 02:26:55', '2026-09-17 02:26:55');
 
 -- --------------------------------------------------------
 
@@ -857,67 +1159,30 @@ CREATE TABLE `transactions` (
 --
 
 INSERT INTO `transactions` (`id`, `user_id`, `discount_id`, `customer_name`, `customer_id`, `customer_type`, `total_amount`, `created_at`, `discount_total`, `total_vat_exemption`) VALUES
-(1, 1, 3, 'ANDREW PABLO', '1', 'pwd', 37.50, '2026-09-08 06:55:29', 9.37, 5.63),
-(2, 1, 1, 'Walk-in', NULL, '', 2992.50, '2026-09-08 23:51:26', 0.00, 0.00),
-(3, 1, 1, 'Walk-in', NULL, '', 682.50, '2026-09-08 23:51:36', 0.00, 0.00),
-(4, 1, 1, 'Walk-in', NULL, '', 2992.50, '2026-09-08 23:53:33', 0.00, 0.00),
-(5, 1, 1, 'Walk-in', NULL, '', 52.50, '2026-09-08 23:56:21', 0.00, 0.00),
-(6, 1, 3, 'ANDREW PABLO', '2', 'pwd', 37.50, '2026-09-09 00:05:15', 9.37, 5.63),
-(7, 1, 1, 'Walk-in', NULL, '', 210.00, '2026-09-09 00:11:35', 0.00, 0.00),
-(8, 1, 1, 'Walk-in', NULL, '', 472.50, '2026-09-09 00:16:23', 0.00, 0.00),
-(9, 1, 1, 'Walk-in', NULL, '', 1312.50, '2026-09-09 00:18:15', 0.00, 0.00),
-(10, 1, 1, 'Walk-in', NULL, '', 630.00, '2026-09-09 00:27:22', 0.00, 0.00),
-(11, 1, 1, 'Walk-in', NULL, '', 367.50, '2026-09-09 00:29:38', 0.00, 0.00),
-(12, 1, 1, 'Walk-in', NULL, '', 17556.00, '2026-09-09 00:37:00', 0.00, 0.00),
-(13, 1, 2, 'ANDREW PABLO', '1', 'senior', 131.10, '2026-09-09 00:46:34', 28.50, 0.00),
-(14, 1, 1, 'Walk-in', NULL, '', 159.60, '2026-09-10 03:38:09', 0.00, 0.00),
-(15, 1, 1, 'Walk-in', NULL, '', 319.20, '2026-09-10 03:39:01', 0.00, 0.00),
-(16, 1, 1, 'Walk-in', NULL, '', 159.60, '2026-09-10 03:43:54', 0.00, 0.00),
-(17, 2, 1, 'Walk-in', NULL, '', 159.60, '2026-09-10 03:45:44', 0.00, 0.00),
-(18, 3, 1, 'Walk-in', NULL, '', 478.80, '2026-09-10 03:46:33', 0.00, 0.00),
-(19, 9, 1, 'Walk-in', NULL, '', 159.60, '2026-09-10 05:19:46', 0.00, 0.00),
-(20, 9, 1, 'Walk-in', NULL, '', 478.80, '2026-09-10 05:23:17', 0.00, 0.00),
-(21, 9, 1, 'Walk-in', NULL, '', 92.98, '2026-09-10 05:26:15', 26.72, 0.00),
-(22, 9, 1, 'Walk-in', NULL, '', 153.22, '2026-09-10 05:27:35', 3.19, 0.00),
-(23, 1, 1, 'Walk-in', NULL, '', 159.60, '2026-09-14 06:53:59', 0.00, 0.00),
-(24, 1, 1, 'Walk-in', NULL, '', 159.60, '2026-09-14 06:54:33', 0.00, 0.00),
-(25, 1, 1, 'Walk-in', NULL, '', 319.20, '2026-09-14 06:54:44', 0.00, 0.00),
-(26, 1, 1, 'Walk-in', NULL, '', 159.60, '2026-09-14 06:54:56', 0.00, 0.00),
-(27, 1, 1, 'Walk-in', NULL, '', 159.60, '2026-09-14 06:57:43', 0.00, 0.00),
-(28, 1, 1, 'Walk-in', NULL, '', 159.60, '2026-09-14 06:57:59', 0.00, 0.00),
-(29, 1, 1, 'Walk-in', NULL, '', 159.60, '2026-09-14 06:59:24', 0.00, 0.00),
-(30, 1, 1, 'Walk-in', NULL, '', 159.60, '2026-09-14 07:00:09', 0.00, 0.00),
-(31, 1, 1, 'Walk-in', NULL, '', 159.60, '2026-09-14 07:02:49', 0.00, 0.00),
-(32, 1, 1, 'Walk-in', NULL, '', 798.00, '2026-09-14 07:08:00', 0.00, 0.00),
-(33, 1, 2, 'ANDREW PABLO', '1', 'senior', 131.10, '2026-09-14 07:09:42', 28.50, 0.00),
-(34, 2, 1, 'Walk-in', NULL, '', 1050.00, '2026-09-14 07:38:30', 0.00, 0.00),
-(35, 2, 1, 'Walk-in', NULL, '', 1050.00, '2026-09-14 07:39:14', 0.00, 0.00),
-(36, 2, 1, 'Walk-in', NULL, '', 1050.00, '2026-09-14 07:40:02', 0.00, 0.00),
-(37, 2, 2, 'ANDREW PABLO', '1', 'senior', 953.50, '2026-09-14 07:40:22', 96.50, 0.00),
-(38, 2, 2, 'ANDREW PABLO', '1', 'senior', 1050.00, '2026-09-14 07:44:00', 0.00, 0.00),
-(39, 2, 1, 'Walk-in', NULL, '', 21.00, '2026-09-14 07:50:35', 0.00, 0.00),
-(40, 2, 2, 'ANDREW PABLO', '1', 'senior', 21.00, '2026-09-14 07:51:13', 0.00, 0.00),
-(41, 2, 2, 'ANDREW PABLO', '1', 'senior', 21.00, '2026-09-14 07:52:38', 0.00, 0.00),
-(42, 2, 2, 'ANDREW PABLO', '1', 'senior', 21.00, '2026-09-14 08:03:15', 0.00, 0.00),
-(43, 2, 3, 'ANDREW PABLO', '1', 'pwd', 17.25, '2026-09-14 08:06:44', 3.75, 0.00),
-(44, 2, 3, 'ANDREW PABLO', '1', 'pwd', 17.25, '2026-09-14 08:07:22', 3.75, 0.00),
-(45, 2, 2, 'ANDREW PABLO', '1', 'senior', 17.25, '2026-09-14 08:20:26', 3.75, 0.00),
-(46, 3, 1, 'Walk-in', NULL, '', 1050.00, '2026-09-14 08:27:44', 0.00, 0.00),
-(47, 2, 1, 'Walk-in', NULL, '', 20853.00, '2026-09-15 01:27:56', 0.00, 0.00),
-(48, 2, 1, 'Walk-in', NULL, '', 26.25, '2026-09-15 04:29:50', 0.00, 0.00),
-(49, 2, 1, 'Walk-in', NULL, '', 210.00, '2026-09-15 07:20:37', 0.00, 0.00),
-(50, 2, 1, 'Walk-in', NULL, '', 52.50, '2026-09-15 07:57:01', 0.00, 0.00),
-(51, 2, 1, 'Walk-in', NULL, '', 52.50, '2026-09-15 08:55:46', 0.00, 0.00),
-(52, 2, 1, 'Walk-in', NULL, '', 52.50, '2026-09-15 08:58:03', 0.00, 0.00),
-(53, 2, 1, 'Walk-in', NULL, '', 52.50, '2026-09-15 09:02:33', 0.00, 0.00),
-(54, 2, 1, 'Walk-in', NULL, '', 52.50, '2026-09-15 09:05:52', 0.00, 0.00),
-(55, 2, 1, 'Walk-in', NULL, '', 52.50, '2026-09-15 09:10:05', 0.00, 0.00),
-(56, 2, 1, 'Walk-in', NULL, '', 52.50, '2026-09-15 09:18:05', 0.00, 0.00),
-(57, 1, 1, 'Walk-in', NULL, '', 52.50, '2026-09-16 00:55:39', 0.00, 0.00),
-(58, 1, 1, 'Walk-in', NULL, '', 52.50, '2026-09-16 00:57:35', 0.00, 0.00),
-(59, 1, 1, 'Walk-in', NULL, '', 52.50, '2026-09-16 01:02:28', 0.00, 0.00),
-(60, 1, 1, 'Walk-in', NULL, '', 269430.00, '2026-09-16 01:08:22', 0.00, 0.00),
-(61, 2, 1, 'Walk-in', NULL, '', 267.75, '2026-09-16 05:00:10', 0.00, 0.00);
+(1, 1, 1, 'Walk-in', NULL, '', 4413.60, '2026-09-16 15:11:26', 0.00, 0.00),
+(2, 1, 3, 'ANDREW PABLO', '1', 'pwd', 4.93, '2026-09-17 01:08:27', 1.07, 0.00),
+(3, 1, 1, 'Walk-in', NULL, '', 2.40, '2026-09-17 01:09:04', 0.00, 0.00),
+(4, 1, 2, 'ANDREW PABLO', '1', 'senior', 4.93, '2026-09-17 01:55:01', 1.07, 0.00),
+(5, 1, 2, 'ANDREW PABLO', '1', 'senior', 18.71, '2026-09-17 02:00:37', 2.89, 0.00),
+(6, 1, 2, 'ANDREW PABLO', '1', 'senior', 77.95, '2026-09-17 02:12:26', 12.05, 0.00),
+(7, 1, 2, 'ANDREW PABLO', '1', 'senior', 5.20, '2026-09-17 02:14:33', 0.80, 0.00),
+(8, 1, 2, 'ANDREW PABLO', '1', 'senior', 5.20, '2026-09-17 02:21:19', 0.80, 0.00),
+(9, 1, 2, 'ANDREW PABLO', '1', 'senior', 17.74, '2026-09-17 02:23:50', 3.86, 0.00),
+(10, 1, 2, 'ANDREW PABLO', '1', 'senior', 73.93, '2026-09-17 02:25:14', 16.07, 0.00),
+(11, 1, 1, 'Walk-in', NULL, '', 52.50, '2026-09-17 02:27:53', 0.00, 0.00),
+(12, 1, 2, 'ANDREW PABLO', '1', 'senior', 43.12, '2026-09-17 02:29:31', 9.38, 0.00),
+(13, 1, 3, 'ANDREW PABLO', '1', 'pwd', 43.12, '2026-09-17 02:29:58', 9.38, 0.00),
+(14, 1, 2, 'ANDREW PABLO', '1', 'senior', 18.58, '2026-09-17 02:44:45', 1.82, 0.00),
+(15, 1, 2, 'ANDREW PABLO', '1', 'senior', 5.46, '2026-09-17 02:46:59', 0.54, 0.00),
+(16, 1, 2, 'ANDREW PABLO', '1', 'senior', 12.96, '2026-09-17 02:51:56', 1.44, 0.00),
+(17, 1, 1, 'Walk-in', NULL, '', 13.20, '2026-09-17 03:45:19', 0.00, 0.00),
+(18, 1, 1, 'Walk-in', NULL, '', 2.40, '2026-09-17 03:58:24', 0.00, 0.00),
+(19, 1, 1, 'Walk-in', NULL, '', 2.40, '2026-09-17 03:58:48', 0.00, 0.00),
+(20, 1, 1, 'Walk-in', NULL, '', 960.00, '2026-09-17 07:06:55', 0.00, 0.00),
+(21, 2, 2, 'ANDREW PABLO', '1', 'senior', 6.00, '2026-09-17 15:27:42', 0.00, 0.00),
+(22, 2, 2, 'ANDREW PABLO', '1', 'senior', 4.80, '2026-09-17 15:31:24', 1.20, 0.00),
+(23, 2, 2, 'ANDREW PABLO', '1', 'senior', 6.00, '2026-09-17 15:40:24', 0.00, 0.00),
+(24, 2, 2, 'ANDREW PABLO', '1', 'senior', 4.80, '2026-09-17 15:41:03', 1.20, 0.00);
 
 -- --------------------------------------------------------
 
@@ -955,67 +1220,57 @@ CREATE TABLE `transaction_items` (
 --
 
 INSERT INTO `transaction_items` (`id`, `transaction_id`, `product_id`, `batch_id`, `quantity`, `price`, `subtotal`) VALUES
-(1, 1, 1, 2, 1, 52.50, 37.50),
-(2, 2, 1, 2, 57, 52.50, 2992.50),
-(3, 3, 1, 2, 13, 52.50, 682.50),
-(4, 4, 1, NULL, 57, 52.50, 2992.50),
-(5, 5, 1, 1, 1, 52.50, 52.50),
-(6, 6, 1, 1, 1, 52.50, 37.50),
-(7, 7, 1, 1, 4, 52.50, 210.00),
-(8, 8, 1, 1, 9, 52.50, 472.50),
-(9, 9, 1, 1, 25, 52.50, 1312.50),
-(10, 10, 1, 1, 12, 52.50, 630.00),
-(11, 11, 1, 1, 7, 52.50, 367.50),
-(12, 12, 1, NULL, 110, 159.60, 17556.00),
-(13, 13, 1, 3, 1, 159.60, 131.10),
-(14, 14, 1, 3, 1, 159.60, 159.60),
-(15, 15, 1, 3, 2, 159.60, 319.20),
-(16, 16, 1, 3, 1, 159.60, 159.60),
-(17, 17, 1, 3, 1, 159.60, 159.60),
-(18, 18, 1, 3, 3, 159.60, 478.80),
-(19, 19, 1, 3, 1, 159.60, 159.60),
-(20, 20, 1, 3, 3, 159.60, 478.80),
-(21, 21, 1, 3, 1, 119.70, 92.98),
-(22, 22, 1, 3, 1, 156.41, 153.22),
-(23, 23, 1, 3, 1, 159.60, 159.60),
-(24, 24, 1, 3, 1, 159.60, 159.60),
-(25, 25, 1, 3, 2, 159.60, 319.20),
-(26, 26, 1, 3, 1, 159.60, 159.60),
-(27, 27, 1, 3, 1, 159.60, 159.60),
-(28, 28, 1, 3, 1, 159.60, 159.60),
-(29, 29, 1, 3, 1, 159.60, 159.60),
-(30, 30, 1, 3, 1, 159.60, 159.60),
-(31, 31, 1, 3, 1, 159.60, 159.60),
-(32, 32, 1, 3, 5, 159.60, 798.00),
-(33, 33, 1, 3, 1, 159.60, 131.10),
-(34, 34, 1, 6, 1, 1050.00, 1050.00),
-(35, 35, 1, 6, 1, 1050.00, 1050.00),
-(36, 36, 1, 6, 1, 1050.00, 1050.00),
-(37, 37, 1, 6, 1, 1050.00, 953.50),
-(38, 38, 1, 6, 1, 1050.00, 1050.00),
-(39, 39, 2, 12, 1, 21.00, 21.00),
-(40, 40, 2, 12, 1, 21.00, 21.00),
-(41, 41, 2, 12, 1, 21.00, 21.00),
-(42, 42, 2, 12, 1, 21.00, 21.00),
-(43, 43, 2, 12, 1, 21.00, 17.25),
-(44, 44, 2, 12, 1, 21.00, 17.25),
-(45, 45, 2, 12, 1, 21.00, 17.25),
-(46, 46, 1, 6, 1, 1050.00, 1050.00),
-(47, 47, 2, 12, 993, 21.00, 20853.00),
-(48, 48, 4, 17, 1, 26.25, 26.25),
-(49, 49, 5, 19, 1, 210.00, 210.00),
-(50, 50, 2, 20, 1, 52.50, 52.50),
-(51, 51, 5, 23, 1, 52.50, 52.50),
-(52, 52, 5, 24, 1, 52.50, 52.50),
-(53, 53, 5, 25, 1, 52.50, 52.50),
-(54, 54, 5, 26, 1, 52.50, 52.50),
-(55, 55, 5, 27, 1, 52.50, 52.50),
-(56, 56, 5, 28, 1, 52.50, 52.50),
-(57, 57, 5, 29, 1, 52.50, 52.50),
-(58, 58, 2, 30, 1, 52.50, 52.50),
-(59, 59, 4, 31, 1, 52.50, 52.50),
-(60, 60, 1, NULL, 2566, 105.00, 269430.00),
-(61, 61, 4, 36, 1, 267.75, 267.75);
+(1, 1, 10006, 6, 1, 10.80, 10.80),
+(2, 1, 10019, 19, 1, 216.00, 216.00),
+(3, 1, 10025, 25, 1, 24.00, 24.00),
+(4, 1, 10028, 28, 1, 78.00, 78.00),
+(5, 1, 10033, 33, 1, 21.60, 21.60),
+(6, 1, 10034, 34, 1, 30.00, 30.00),
+(7, 1, 10038, 38, 1, 1140.00, 1140.00),
+(8, 1, 10042, 42, 1, 10.80, 10.80),
+(9, 1, 10045, 45, 1, 24.00, 24.00),
+(10, 1, 10047, 47, 1, 12.00, 12.00),
+(11, 1, 10048, 48, 1, 9.60, 9.60),
+(12, 1, 10049, 49, 1, 8.40, 8.40),
+(13, 1, 10056, 56, 1, 150.00, 150.00),
+(14, 1, 10058, 58, 1, 2.40, 2.40),
+(15, 1, 10062, 62, 1, 144.00, 144.00),
+(16, 1, 10069, 69, 1, 216.00, 216.00),
+(17, 1, 10070, 70, 1, 540.00, 540.00),
+(18, 1, 10071, 71, 1, 42.00, 42.00),
+(19, 1, 10073, 73, 1, 192.00, 192.00),
+(20, 1, 10077, 77, 1, 264.00, 264.00),
+(21, 1, 10081, 81, 1, 144.00, 144.00),
+(22, 1, 10084, 84, 1, 372.00, 372.00),
+(23, 1, 10087, 87, 1, 102.00, 102.00),
+(24, 1, 10088, 88, 1, 180.00, 180.00),
+(25, 1, 10089, 89, 1, 216.00, 216.00),
+(26, 1, 10090, 90, 1, 264.00, 264.00),
+(27, 2, 10030, 30, 1, 6.00, 4.93),
+(28, 3, 10058, 58, 1, 2.40, 2.40),
+(29, 4, 10030, 30, 1, 6.00, 4.93),
+(30, 5, 10033, 33, 1, 21.60, 18.71),
+(31, 6, 10023, 23, 1, 90.00, 77.95),
+(32, 7, 10030, 30, 1, 6.00, 5.20),
+(33, 8, 10030, 30, 1, 6.00, 5.20),
+(34, 9, 10024, 24, 1, 21.60, 17.74),
+(35, 10, 10023, 23, 1, 90.00, 73.93),
+(36, 11, 10101, 130, 1, 52.50, 52.50),
+(37, 12, 10101, 130, 1, 52.50, 43.12),
+(38, 13, 10101, 130, 1, 52.50, 43.12),
+(39, 14, 10022, 22, 1, 14.40, 13.12),
+(40, 14, 10030, 30, 1, 6.00, 5.46),
+(41, 15, 10030, 30, 1, 6.00, 5.46),
+(42, 16, 10022, 22, 1, 14.40, 12.96),
+(43, 17, 10006, 6, 1, 10.80, 10.80),
+(44, 17, 10058, 58, 1, 2.40, 2.40),
+(45, 18, 10058, 58, 1, 2.40, 2.40),
+(46, 19, 10058, 58, 1, 2.40, 2.40),
+(47, 20, 10001, 1, 100, 9.60, 960.00),
+(48, 21, 10030, 30, 1, 6.00, 6.00),
+(49, 22, 10030, 30, 1, 6.00, 4.80),
+(50, 23, 10030, 30, 1, 6.00, 6.00),
+(51, 24, 10030, 30, 1, 6.00, 4.80);
 
 -- --------------------------------------------------------
 
@@ -1037,80 +1292,57 @@ CREATE TABLE `transaction_item_batches` (
 --
 
 INSERT INTO `transaction_item_batches` (`id`, `transaction_item_id`, `inventory_id`, `quantity`, `purchase_cost`, `created_at`) VALUES
-(1, 1, 2, 1, 50.00, '2026-09-08 06:55:29'),
-(2, 2, 2, 57, 50.00, '2026-09-08 23:51:26'),
-(3, 3, 2, 13, 50.00, '2026-09-08 23:51:36'),
-(4, 4, 2, 29, 50.00, '2026-09-08 23:53:33'),
-(5, 4, 1, 28, 110.00, '2026-09-08 23:53:33'),
-(6, 5, 1, 1, 110.00, '2026-09-08 23:56:21'),
-(7, 6, 1, 1, 110.00, '2026-09-09 00:05:15'),
-(8, 7, 1, 4, 110.00, '2026-09-09 00:11:35'),
-(9, 8, 1, 9, 110.00, '2026-09-09 00:16:23'),
-(10, 9, 1, 25, 110.00, '2026-09-09 00:18:15'),
-(11, 10, 1, 12, 110.00, '2026-09-09 00:27:22'),
-(12, 11, 1, 7, 110.00, '2026-09-09 00:29:38'),
-(13, 12, 1, 13, 110.00, '2026-09-09 00:37:00'),
-(14, 12, 3, 97, 152.00, '2026-09-09 00:37:00'),
-(15, 13, 3, 1, 152.00, '2026-09-09 00:46:34'),
-(16, 14, 3, 1, 152.00, '2026-09-10 03:38:09'),
-(17, 15, 3, 2, 152.00, '2026-09-10 03:39:01'),
-(18, 16, 3, 1, 152.00, '2026-09-10 03:43:54'),
-(19, 17, 3, 1, 152.00, '2026-09-10 03:45:44'),
-(20, 18, 3, 3, 152.00, '2026-09-10 03:46:33'),
-(21, 19, 3, 1, 152.00, '2026-09-10 05:19:46'),
-(22, 20, 3, 3, 152.00, '2026-09-10 05:23:17'),
-(23, 21, 3, 1, 152.00, '2026-09-10 05:26:15'),
-(24, 22, 3, 1, 152.00, '2026-09-10 05:27:35'),
-(25, 23, 3, 1, 152.00, '2026-09-14 06:53:59'),
-(26, 24, 3, 1, 152.00, '2026-09-14 06:54:33'),
-(27, 25, 3, 2, 152.00, '2026-09-14 06:54:44'),
-(28, 26, 3, 1, 152.00, '2026-09-14 06:54:56'),
-(29, 27, 3, 1, 152.00, '2026-09-14 06:57:43'),
-(30, 28, 3, 1, 152.00, '2026-09-14 06:57:59'),
-(31, 29, 3, 1, 152.00, '2026-09-14 06:59:24'),
-(32, 30, 3, 1, 152.00, '2026-09-14 07:00:09'),
-(33, 31, 3, 1, 152.00, '2026-09-14 07:02:49'),
-(34, 32, 3, 5, 152.00, '2026-09-14 07:08:00'),
-(35, 33, 3, 1, 152.00, '2026-09-14 07:09:42'),
-(36, 34, 6, 1, 2000.00, '2026-09-14 07:38:30'),
-(37, 35, 6, 1, 2000.00, '2026-09-14 07:39:14'),
-(38, 36, 6, 1, 2000.00, '2026-09-14 07:40:02'),
-(39, 37, 6, 1, 2000.00, '2026-09-14 07:40:22'),
-(40, 38, 6, 1, 2000.00, '2026-09-14 07:44:00'),
-(41, 39, 12, 1, 20.00, '2026-09-14 07:50:35'),
-(42, 40, 12, 1, 20.00, '2026-09-14 07:51:13'),
-(43, 41, 12, 1, 20.00, '2026-09-14 07:52:38'),
-(44, 42, 12, 1, 20.00, '2026-09-14 08:03:15'),
-(45, 43, 12, 1, 20.00, '2026-09-14 08:06:44'),
-(46, 44, 12, 1, 20.00, '2026-09-14 08:07:22'),
-(47, 45, 12, 1, 20.00, '2026-09-14 08:20:26'),
-(48, 46, 6, 1, 2000.00, '2026-09-14 08:27:44'),
-(49, 47, 12, 993, 20.00, '2026-09-15 01:27:56'),
-(50, 48, 17, 1, 25.00, '2026-09-15 04:29:50'),
-(51, 49, 19, 1, 200.00, '2026-09-15 07:20:37'),
-(52, 50, 20, 1, 50.00, '2026-09-15 07:57:01'),
-(53, 51, 23, 1, 50.00, '2026-09-15 08:55:46'),
-(54, 52, 24, 1, 50.00, '2026-09-15 08:58:03'),
-(55, 53, 25, 1, 50.00, '2026-09-15 09:02:33'),
-(56, 54, 26, 1, 50.00, '2026-09-15 09:05:52'),
-(57, 55, 27, 1, 50.00, '2026-09-15 09:10:05'),
-(58, 56, 28, 1, 50.00, '2026-09-15 09:18:05'),
-(59, 57, 29, 1, 50.00, '2026-09-16 00:55:39'),
-(60, 58, 30, 1, 50.00, '2026-09-16 00:57:35'),
-(61, 59, 31, 1, 50.00, '2026-09-16 01:02:28'),
-(62, 60, 2, 1, 50.00, '2026-09-16 01:08:22'),
-(63, 60, 6, 194, 2000.00, '2026-09-16 01:08:22'),
-(64, 60, 7, 100, 1000.00, '2026-09-16 01:08:22'),
-(65, 60, 11, 100, 1000.00, '2026-09-16 01:08:22'),
-(66, 60, 3, 760, 152.00, '2026-09-16 01:08:22'),
-(67, 60, 32, 1, 100.00, '2026-09-16 01:08:22'),
-(68, 60, 21, 10, 10.00, '2026-09-16 01:08:22'),
-(69, 60, 22, 10, 10.00, '2026-09-16 01:08:22'),
-(70, 60, 5, 100, 200.00, '2026-09-16 01:08:22'),
-(71, 60, 4, 90, 100.00, '2026-09-16 01:08:22'),
-(72, 60, 8, 200, 1000.00, '2026-09-16 01:08:22'),
-(73, 60, 9, 1000, 1000.00, '2026-09-16 01:08:22'),
-(74, 61, 36, 1, 255.00, '2026-09-16 05:00:10');
+(1, 1, 6, 1, 9.00, '2026-09-16 15:11:26'),
+(2, 2, 19, 1, 180.00, '2026-09-16 15:11:26'),
+(3, 3, 25, 1, 20.00, '2026-09-16 15:11:26'),
+(4, 4, 28, 1, 65.00, '2026-09-16 15:11:26'),
+(5, 5, 33, 1, 18.00, '2026-09-16 15:11:26'),
+(6, 6, 34, 1, 25.00, '2026-09-16 15:11:26'),
+(7, 7, 38, 1, 950.00, '2026-09-16 15:11:26'),
+(8, 8, 42, 1, 9.00, '2026-09-16 15:11:26'),
+(9, 9, 45, 1, 20.00, '2026-09-16 15:11:26'),
+(10, 10, 47, 1, 10.00, '2026-09-16 15:11:26'),
+(11, 11, 48, 1, 8.00, '2026-09-16 15:11:26'),
+(12, 12, 49, 1, 7.00, '2026-09-16 15:11:26'),
+(13, 13, 56, 1, 125.00, '2026-09-16 15:11:26'),
+(14, 14, 58, 1, 2.00, '2026-09-16 15:11:26'),
+(15, 15, 62, 1, 120.00, '2026-09-16 15:11:26'),
+(16, 16, 69, 1, 180.00, '2026-09-16 15:11:26'),
+(17, 17, 70, 1, 450.00, '2026-09-16 15:11:26'),
+(18, 18, 71, 1, 35.00, '2026-09-16 15:11:26'),
+(19, 19, 73, 1, 160.00, '2026-09-16 15:11:26'),
+(20, 20, 77, 1, 220.00, '2026-09-16 15:11:26'),
+(21, 21, 81, 1, 120.00, '2026-09-16 15:11:26'),
+(22, 22, 84, 1, 310.00, '2026-09-16 15:11:26'),
+(23, 23, 87, 1, 85.00, '2026-09-16 15:11:26'),
+(24, 24, 88, 1, 150.00, '2026-09-16 15:11:26'),
+(25, 25, 89, 1, 180.00, '2026-09-16 15:11:26'),
+(26, 26, 90, 1, 220.00, '2026-09-16 15:11:26'),
+(27, 27, 30, 1, 5.00, '2026-09-17 01:08:27'),
+(28, 28, 58, 1, 2.00, '2026-09-17 01:09:04'),
+(29, 29, 30, 1, 5.00, '2026-09-17 01:55:01'),
+(30, 30, 33, 1, 18.00, '2026-09-17 02:00:37'),
+(31, 31, 23, 1, 75.00, '2026-09-17 02:12:26'),
+(32, 32, 30, 1, 5.00, '2026-09-17 02:14:33'),
+(33, 33, 30, 1, 5.00, '2026-09-17 02:21:19'),
+(34, 34, 24, 1, 18.00, '2026-09-17 02:23:50'),
+(35, 35, 23, 1, 75.00, '2026-09-17 02:25:14'),
+(36, 36, 130, 1, 50.00, '2026-09-17 02:27:53'),
+(37, 37, 130, 1, 50.00, '2026-09-17 02:29:31'),
+(38, 38, 130, 1, 50.00, '2026-09-17 02:29:58'),
+(39, 39, 22, 1, 12.00, '2026-09-17 02:44:45'),
+(40, 40, 30, 1, 5.00, '2026-09-17 02:44:45'),
+(41, 41, 30, 1, 5.00, '2026-09-17 02:46:59'),
+(42, 42, 22, 1, 12.00, '2026-09-17 02:51:56'),
+(43, 43, 6, 1, 9.00, '2026-09-17 03:45:19'),
+(44, 44, 58, 1, 2.00, '2026-09-17 03:45:19'),
+(45, 45, 58, 1, 2.00, '2026-09-17 03:58:24'),
+(46, 46, 58, 1, 2.00, '2026-09-17 03:58:48'),
+(47, 47, 1, 100, 8.00, '2026-09-17 07:06:55'),
+(48, 48, 30, 1, 5.00, '2026-09-17 15:27:42'),
+(49, 49, 30, 1, 5.00, '2026-09-17 15:31:24'),
+(50, 50, 30, 1, 5.00, '2026-09-17 15:40:24'),
+(51, 51, 30, 1, 5.00, '2026-09-17 15:41:03');
 
 -- --------------------------------------------------------
 
@@ -1148,7 +1380,8 @@ INSERT INTO `unit_measurement` (`unit_id`, `different_measurement`) VALUES
 (18, 'tbsp'),
 (19, 'tsp'),
 (20, 'box'),
-(21, 'mgg');
+(21, 'mgg'),
+(25, 'pack');
 
 -- --------------------------------------------------------
 
@@ -1173,7 +1406,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `username`, `password`, `void_password`, `position`, `failed_attempts`, `last_attempt`, `status`, `created_at`) VALUES
-(1, 'andrew_owner', '$2y$10$2Rqa4Se609iFKRTnJpX3SuAIE7v1vZwwCtGK2WHBvnBxQ2.w9RBAS', '1234567', 'Owner', 0, '2026-09-16 01:11:04', 'active', '2026-09-05 08:53:02'),
+(1, 'andrew_owner', '$2y$10$2Rqa4Se609iFKRTnJpX3SuAIE7v1vZwwCtGK2WHBvnBxQ2.w9RBAS', '1234567', 'Owner', 0, '2026-09-17 07:11:32', 'active', '2026-09-05 08:53:02'),
 (2, 'andrew_admin', '$2y$10$.pMY78gCNdiWGwCw8DAIse7SS./j5d9T8pQ87YhhLoOum4yKzJL.m', '1234567', 'Admin', 0, '2026-08-20 01:56:58', 'active', '2026-09-05 08:53:02'),
 (3, 'andrew_staff', '$2y$10$WESQ6f2mApseNhMhKMmW8e6gg.tp9AU8CsY/mQrU4g6GHEWmFCWGG', '1234567', 'Staff', 0, '2026-07-26 14:50:35', 'active', '2026-09-05 08:53:02'),
 (4, 'staff1', '$2y$10$U60z2JyVRKxJ.x36cqpJkuzZDPRFtOF5aZqUO7QCyBBN.P614oIoy', NULL, 'Staff', 0, NULL, 'active', '2026-09-05 08:53:02'),
@@ -1475,7 +1708,7 @@ ALTER TABLE `users_info`
 -- AUTO_INCREMENT for table `activity_logs`
 --
 ALTER TABLE `activity_logs`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=266;
 
 --
 -- AUTO_INCREMENT for table `discounts`
@@ -1493,25 +1726,25 @@ ALTER TABLE `dosage_forms`
 -- AUTO_INCREMENT for table `inventory`
 --
 ALTER TABLE `inventory`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=135;
 
 --
 -- AUTO_INCREMENT for table `inventory_alerts`
 --
 ALTER TABLE `inventory_alerts`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=391;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `inventory_disposals`
 --
 ALTER TABLE `inventory_disposals`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `inventory_no_stock`
 --
 ALTER TABLE `inventory_no_stock`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `inventory_transactions`
@@ -1523,19 +1756,19 @@ ALTER TABLE `inventory_transactions`
 -- AUTO_INCREMENT for table `login_attempts`
 --
 ALTER TABLE `login_attempts`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `override_log`
 --
 ALTER TABLE `override_log`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `password_reset_tokens`
 --
 ALTER TABLE `password_reset_tokens`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `pre_approved_users`
@@ -1553,7 +1786,7 @@ ALTER TABLE `pre_approved_users_info`
 -- AUTO_INCREMENT for table `products`
 --
 ALTER TABLE `products`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10112;
 
 --
 -- AUTO_INCREMENT for table `product_categories`
@@ -1565,31 +1798,31 @@ ALTER TABLE `product_categories`
 -- AUTO_INCREMENT for table `pwd_customers`
 --
 ALTER TABLE `pwd_customers`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `register_closings`
 --
 ALTER TABLE `register_closings`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `register_openings`
 --
 ALTER TABLE `register_openings`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `return_items`
 --
 ALTER TABLE `return_items`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `return_transactions`
 --
 ALTER TABLE `return_transactions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `senior_customers`
@@ -1601,19 +1834,19 @@ ALTER TABLE `senior_customers`
 -- AUTO_INCREMENT for table `serving_unit`
 --
 ALTER TABLE `serving_unit`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `suppliers`
 --
 ALTER TABLE `suppliers`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `transactions`
 --
 ALTER TABLE `transactions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=62;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- AUTO_INCREMENT for table `transaction_batch_allocations`
@@ -1625,19 +1858,19 @@ ALTER TABLE `transaction_batch_allocations`
 -- AUTO_INCREMENT for table `transaction_items`
 --
 ALTER TABLE `transaction_items`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=62;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=52;
 
 --
 -- AUTO_INCREMENT for table `transaction_item_batches`
 --
 ALTER TABLE `transaction_item_batches`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=75;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=52;
 
 --
 -- AUTO_INCREMENT for table `unit_measurement`
 --
 ALTER TABLE `unit_measurement`
-  MODIFY `unit_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+  MODIFY `unit_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT for table `users`
