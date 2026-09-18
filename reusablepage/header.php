@@ -23,35 +23,67 @@ if ($showGlobalAlerts) {
 $globalAlertItems = [];
 
 foreach ($lowStockItems as $item) {
+    $noStockBatches = [];
     $lowStockBatches = [];
+
     foreach (($item['batches'] ?? []) as $batch) {
         $batchNumber = trim((string) ($batch['batch_number'] ?? ''));
         $batchLabel = $batchNumber !== ''
             ? (preg_match('/^batch(?:[\s-]|$)/i', $batchNumber) ? $batchNumber : 'Batch ' . $batchNumber)
             : 'Batch #' . (int) $batch['id'];
-        $lowStockBatches[] = [
+
+        $batchEntry = [
+            'batch_id' => (int) $batch['id'],
             'name' => $batchLabel,
             'quantity' => (int) $batch['current_quantity'],
             'href' => 'dashboard.php?tab=inventory&alert_product_id=' . (int) $item['id'] . '&alert_batch_id=' . (int) $batch['id'] . '&alert_type=low-stock'
         ];
+
+        if ((int) ($batch['current_quantity'] ?? 0) <= 0) {
+            $noStockBatches[] = $batchEntry;
+        } else {
+            $lowStockBatches[] = $batchEntry;
+        }
     }
 
-    $hasNoStockBatch = !empty($item['has_no_stock_batch']);
-    $noStockBatchNames = $item['no_stock_batch_names'] ?? [];
-    $noStockBatchLabel = implode(', ', array_map('htmlspecialchars', $noStockBatchNames));
+    $noStockBatchNames = [];
+    foreach ($noStockBatches as $batch) {
+        $noStockBatchNames[] = $batch['name'];
+    }
 
-    $globalAlertItems[] = [
-        'type' => count($lowStockBatches) > 1 ? 'batch-group' : 'single',
-        'category' => $hasNoStockBatch ? 'no-stock' : 'low-stock',
-        'title' => $hasNoStockBatch ? 'No Stock' : 'Low Stock',
-        'message' => $hasNoStockBatch
-            ? htmlspecialchars($item['product_name']) . ' has no stock in ' . $noStockBatchLabel . '.'
-            : htmlspecialchars($item['product_name']) . ' has only ' . ($item['quantity'] ?? 0) . ' unit(s) left.',
-        'icon' => 'fas fa-exclamation-triangle',
-        'bg' => '#dc2626',
-        'href' => 'dashboard.php?tab=inventory&alert_product_id=' . (int)$item['id'] . '&alert_type=low-stock',
-        'batches' => $lowStockBatches
-    ];
+    if (!empty($noStockBatches)) {
+        $firstNoStockBatch = $noStockBatches[0];
+        $noStockBatchLabel = implode(', ', array_map('htmlspecialchars', $noStockBatchNames));
+        $globalAlertItems[] = [
+            'type' => count($noStockBatches) > 1 ? 'batch-group' : 'single',
+            'category' => 'no-stock',
+            'title' => 'No Stock',
+            'message' => htmlspecialchars($item['product_name']) . ' has no stock in ' . $noStockBatchLabel . '.',
+            'icon' => 'fas fa-exclamation-triangle',
+            'bg' => '#dc2626',
+            'href' => 'dashboard.php?tab=inventory&alert_product_id=' . (int)$item['id'] . '&alert_batch_id=' . (int)($firstNoStockBatch['batch_id'] ?? 0) . '&alert_type=low-stock',
+            'batches' => $noStockBatches
+        ];
+    }
+
+    if (!empty($lowStockBatches)) {
+        $firstLowStockBatch = $lowStockBatches[0];
+        $lowStockTotal = 0;
+        foreach ($lowStockBatches as $batch) {
+            $lowStockTotal += (int) $batch['quantity'];
+        }
+
+        $globalAlertItems[] = [
+            'type' => count($lowStockBatches) > 1 ? 'batch-group' : 'single',
+            'category' => 'low-stock',
+            'title' => 'Low Stock',
+            'message' => htmlspecialchars($item['product_name']) . ' has only ' . $lowStockTotal . ' unit(s) left.',
+            'icon' => 'fas fa-exclamation-triangle',
+            'bg' => '#dc2626',
+            'href' => 'dashboard.php?tab=inventory&alert_product_id=' . (int)$item['id'] . '&alert_batch_id=' . (int)($firstLowStockBatch['batch_id'] ?? 0) . '&alert_type=low-stock',
+            'batches' => $lowStockBatches
+        ];
+    }
 }
 
 $expiryGroups = [];

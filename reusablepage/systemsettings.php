@@ -221,7 +221,7 @@ $currentUser = $usersmanagement->getUserById($userId);
     </div>
 
     <?php if (in_array(strtolower(trim((string) ($_SESSION['position'] ?? ''))), ['owner', 'admin'], true)): ?>
-        <div class="card mt-4 border-danger">
+        <!-- <div class="card mt-4 border-danger">
             <div class="card-body p-4">
                 <div class="settings-section mb-0">
                     <h6 class="text-danger">Reset Database Data</h6>
@@ -237,7 +237,7 @@ $currentUser = $usersmanagement->getUserById($userId);
                     </form>
                 </div>
             </div>
-        </div>
+        </div> -->
     <?php endif; ?>
 
     
