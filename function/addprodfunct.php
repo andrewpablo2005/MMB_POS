@@ -1452,14 +1452,20 @@ class ProductManagement
             $nameSelect = "'' AS generic_name, '' AS branded_name, ";
         }
 
+        $batchNumberSelect = $this->hasColumn('inventory', 'batch_number') ? ', i.batch_number' : '';
+
         $stmt = $this->con->prepare("
             SELECT 
                 p.id,
                 {$nameSelect}
-                COALESCE(SUM(i.current_quantity), 0) AS quantity
+                i.id AS batch_id,
+                i.current_quantity AS batch_quantity
+                {$batchNumberSelect}
             FROM products p
             INNER JOIN inventory i ON p.id = i.product_id
-            WHERE NOT EXISTS (
+            WHERE i.current_quantity >= 0
+              AND i.current_quantity <= ?
+              AND NOT EXISTS (
                 SELECT 1
                 FROM inventory_no_stock n
                 WHERE n.product_id = i.product_id
@@ -1473,62 +1479,73 @@ class ProductManagement
                     AND d.batch_number <=> i.batch_number
                     AND d.expiry_date <=> i.expiry_date
             )
-            GROUP BY p.id
-            HAVING quantity <= ? OR SUM(CASE WHEN i.current_quantity <= 0 THEN 1 ELSE 0 END) > 0
+            ORDER BY p.id ASC, i.id ASC
         ");
 
         $stmt->execute([$lowStockThreshold]);
         $rows = $stmt->fetchAll();
 
-        $batchNumberSelect = $this->hasColumn('inventory', 'batch_number') ? ', i.batch_number' : '';
-        $batchStmt = $this->con->prepare("SELECT i.id, i.current_quantity{$batchNumberSelect}
-            FROM inventory i
-            WHERE i.product_id = ? AND i.current_quantity >= 0
-                AND NOT EXISTS (
-                    SELECT 1
-                    FROM inventory_no_stock n
-                    WHERE n.product_id = i.product_id
-                        AND n.batch_number <=> i.batch_number
-                        AND n.expiry_date <=> i.expiry_date
-                )
-                AND NOT EXISTS (
-                    SELECT 1
-                    FROM inventory_disposals d
-                    WHERE d.product_id = i.product_id
-                        AND d.batch_number <=> i.batch_number
-                        AND d.expiry_date <=> i.expiry_date
-                )
-            ORDER BY i.id ASC");
+        $itemsByProduct = [];
 
-        foreach ($rows as &$row) {
-            $branded = trim($row['branded_name'] ?? '');
-            $generic = trim($row['generic_name'] ?? '');
-            if ($branded !== '' && $generic !== '') {
-                $row['product_name'] = $branded . ' (' . $generic . ')';
-            } else if ($generic !== '') {
-                $row['product_name'] = $generic;
-            } else if ($branded !== '') {
-                $row['product_name'] = $branded;
-            } else {
-                $row['product_name'] = 'Product #' . $row['id'];
+        foreach ($rows as $row) {
+            $productId = (int) ($row['id'] ?? 0);
+            if ($productId <= 0) {
+                continue;
             }
 
-            $batchStmt->execute([(int) $row['id']]);
-            $allBatches = $batchStmt->fetchAll();
-            $zeroStockBatches = array_values(array_filter($allBatches, static function (array $batch): bool {
-                return (int) ($batch['current_quantity'] ?? 0) <= 0;
-            }));
-            $row['has_no_stock_batch'] = !empty($zeroStockBatches);
-            $row['no_stock_batch_names'] = array_values(array_filter(array_map(static function (array $batch): string {
-                $batchNumber = trim((string) ($batch['batch_number'] ?? ''));
-                return $batchNumber !== '' ? $batchNumber : 'Batch #' . (int) $batch['id'];
-            }, $zeroStockBatches)));
-            $row['batches'] = $row['has_no_stock_batch']
-                ? $zeroStockBatches
-                : $allBatches;
+            if (!isset($itemsByProduct[$productId])) {
+                $branded = trim((string) ($row['branded_name'] ?? ''));
+                $generic = trim((string) ($row['generic_name'] ?? ''));
+                if ($branded !== '' && $generic !== '') {
+                    $productName = $branded . ' (' . $generic . ')';
+                } else if ($generic !== '') {
+                    $productName = $generic;
+                } else if ($branded !== '') {
+                    $productName = $branded;
+                } else {
+                    $productName = 'Product #' . $productId;
+                }
+
+                $itemsByProduct[$productId] = [
+                    'id' => $productId,
+                    'product_name' => $productName,
+                    'quantity' => 0,
+                    'batches' => [],
+                    'has_no_stock_batch' => false,
+                    'no_stock_batch_names' => []
+                ];
+            }
+
+            $batchQty = (int) ($row['batch_quantity'] ?? 0);
+            $batchId = (int) ($row['batch_id'] ?? 0);
+            $batchNumber = trim((string) ($row['batch_number'] ?? ''));
+
+            $itemsByProduct[$productId]['quantity'] += $batchQty;
+            $itemsByProduct[$productId]['batches'][] = [
+                'id' => $batchId,
+                'batch_number' => $batchNumber,
+                'current_quantity' => $batchQty,
+                'name' => $batchNumber !== '' ? $batchNumber : 'Batch #' . $batchId
+            ];
+
+            if ($batchQty <= 0) {
+                $itemsByProduct[$productId]['has_no_stock_batch'] = true;
+                $itemsByProduct[$productId]['no_stock_batch_names'][] = $batchNumber !== '' ? $batchNumber : 'Batch #' . $batchId;
+            }
         }
 
-        return $rows;
+        $items = array_values($itemsByProduct);
+
+        foreach ($items as &$item) {
+            $item['no_stock_batch_names'] = array_values(array_unique($item['no_stock_batch_names']));
+        }
+        unset($item);
+
+        if ($limit !== null && is_numeric($limit)) {
+            $items = array_slice($items, 0, (int) $limit);
+        }
+
+        return $items;
     }
 
     public function renderLowStockAlert($limit = 50)

@@ -402,6 +402,7 @@ if ($showAlertsAfterLogin && !empty($globalAlertItems)) {
         try {
             if (showAfterLogin) {
                 localStorage.removeItem(alertStorageKey);
+                showAllNotifications();
             } else if (alertWidget && localStorage.getItem(alertStorageKey) === alertSignature) {
                 alertDismissed = true;
             }
@@ -410,8 +411,8 @@ if ($showAlertsAfterLogin && !empty($globalAlertItems)) {
 
         if (alertDismissed) {
             hideNotifications();
-        } else {
-            showAllNotifications();
+        } else if (!showAfterLogin) {
+            hideNotifications();
         }
     });
 </script>
