@@ -48,6 +48,7 @@ class Product {
                 LEFT JOIN inventory i ON p.id = i.product_id
                 WHERE COALESCE(p.is_hidden, 0) = 0
                 GROUP BY p.id
+                HAVING stock > 0
                 ORDER BY p.generic_name ASC";
 
         $stmt = $this->conn->prepare($sql);
