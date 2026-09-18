@@ -29,8 +29,6 @@ $averageTransactionValue = $dashboardManager->getAverageTransactionValue();
 
 $recentTransactions  = $dashboardManager->getRecentTransactions(5);
 $topProducts         = $dashboardManager->getTopSellingProducts(5);
-$lowStockItems       = $dashboardManager->getLowStockAlerts();
-$expiringItems       = $dashboardManager->getExpiringProducts();
 $monthlySalesTrend   = $dashboardManager->getMonthlySalesTrend();
 
 date_default_timezone_set('Asia/Manila');
@@ -59,7 +57,7 @@ function dash_product_thumb(?string $image, string $sizeClass = 'mmb-thumb'): st
         sales:   <?php echo json_encode('₱' . number_format($netSalesToday, 2)); ?>,
         sub:     <?php echo json_encode("Returns from today's sales: -₱" . number_format($totalRefundToday, 2)); ?>,
         revenue: <?php echo json_encode('₱' . number_format($realRevenueToday, 2)); ?>,
-        revSub:  'Net of refunds & restock costs — today',
+        revSub:  'After refunds & product costs',
         transactions: <?php echo json_encode(number_format((float)$transactionsToday)); ?>,
         transactionsLabel: 'Transactions Today'
       },
@@ -67,7 +65,7 @@ function dash_product_thumb(?string $image, string $sizeClass = 'mmb-thumb'): st
         sales:   <?php echo json_encode('₱' . number_format($totalSalesMonth, 2)); ?>,
         sub:     <?php echo json_encode(date('F Y') . ' · gross'); ?>,
         revenue: <?php echo json_encode('₱' . number_format($realRevenueMonth, 2)); ?>,
-        revSub:  <?php echo json_encode(date('F Y')); ?>,
+        revSub:  'After refunds & product costs',
         transactions: <?php echo json_encode(number_format((float)$transactionsMonth)); ?>,
         transactionsLabel: 'Transactions This Month'
       },
@@ -75,7 +73,7 @@ function dash_product_thumb(?string $image, string $sizeClass = 'mmb-thumb'): st
         sales:   <?php echo json_encode('₱' . number_format($totalSalesYear, 2)); ?>,
         sub:     <?php echo json_encode(date('Y') . ' · gross'); ?>,
         revenue: <?php echo json_encode('₱' . number_format($realRevenueYear, 2)); ?>,
-        revSub:  <?php echo json_encode(date('Y') ); ?>,
+        revSub:  'After refunds & product costs',
         transactions: <?php echo json_encode(number_format((float)$transactionsYear)); ?>,
         transactionsLabel: 'Transactions This Year'
       }
@@ -116,7 +114,7 @@ function dash_product_thumb(?string $image, string $sizeClass = 'mmb-thumb'): st
         <div class="min-w-0">
           <div class="stat-label">Real Revenue</div>
           <div class="stat-value" id="revenueValue">₱<?php echo number_format($realRevenueToday, 2); ?></div>
-          <div class="stat-sub" id="revenueSub">Net of refunds & restock costs — today</div>
+          <div class="stat-sub" id="revenueSub"></div>
         </div>
       </div>
     </div>
@@ -161,7 +159,6 @@ function dash_product_thumb(?string $image, string $sizeClass = 'mmb-thumb'): st
         <div class="min-w-0">
           <div class="stat-label">Catalog</div>
           <div class="stat-value"><?php echo number_format((float)$totalProducts); ?> products</div>
-          <div class="stat-sub"><?php echo count($lowStockItems); ?> low stock · <?php echo count($expiringItems); ?> expiring in 30d</div>
         </div>
       </div>
       <div class="dash-card flex-grow-1">
@@ -197,7 +194,7 @@ function dash_product_thumb(?string $image, string $sizeClass = 'mmb-thumb'): st
       <div class="dash-card">
         <div class="dash-card-header">
           <h6>Recent Transactions</h6>
-          <a href="#" class="pill pill-gray text-decoration-none">View All</a>
+          <a href="dashboard.php?tab=reports&amp;detail_period=date&amp;detail_value=<?= htmlspecialchars(date('Y-m-d'), ENT_QUOTES, 'UTF-8') ?>#v-pills-reports" class="pill pill-gray text-decoration-none">View All</a>
         </div>
         <div class="dash-card-body">
           <?php if (empty($recentTransactions)): ?>
@@ -253,78 +250,6 @@ function dash_product_thumb(?string $image, string $sizeClass = 'mmb-thumb'): st
                 <div class="product-price">₱<?php echo number_format($product['price'], 2); ?></div>
               </div>
             <?php endforeach; ?>
-          <?php endif; ?>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ── Alert Widgets ── -->
-  <div class="row g-3">
-    <!-- Low Stock -->
-    <div class="col-12 col-xl-6">
-      <div class="dash-card alert-card-warn">
-        <div class="dash-card-header">
-          <h6>Low Stock Alerts</h6>
-          <?php if (!empty($lowStockItems)): ?>
-            <span class="badge-warn"><?php echo count($lowStockItems); ?> items</span>
-          <?php endif; ?>
-        </div>
-        <div class="dash-card-body">
-          <?php if (empty($lowStockItems)): ?>
-            <div class="empty-state"><i class="fas fa-circle-check" style="color:#16a34a;opacity:1"></i>All inventory looks good!</div>
-          <?php else: ?>
-            <table class="dash-table">
-              <thead><tr><th></th><th>Product</th><th>Stock</th><th>Reorder At</th></tr></thead>
-              <tbody>
-                <?php foreach ($lowStockItems as $item): ?>
-                  <tr>
-                    <td class="pt-2 pb-2"><?php echo dash_product_thumb($item['imageproduct'] ?? null); ?></td>
-                    <td class="fw-semibold"><?php echo htmlspecialchars(trim(($item['branded_name'] ?? '') !== '' ? $item['branded_name'] : $item['name'])); ?></td>
-                    <td><span class="badge-warn"><?php echo $item['stock_quantity']; ?></span></td>
-                    <td style="color:#94a3b8;font-size:.8rem"><?php echo $item['reorder_level']; ?></td>
-                  </tr>
-                <?php endforeach; ?>
-              </tbody>
-            </table>
-          <?php endif; ?>
-        </div>
-      </div>
-    </div>
-
-    <!-- Expiring Soon -->
-    <div class="col-12 col-xl-6">
-      <div class="dash-card alert-card-danger">
-        <div class="dash-card-header">
-          <h6>Expiring Soon (30 Days)</h6>
-          <?php if (!empty($expiringItems)): ?>
-            <span class="badge-danger"><?php echo count($expiringItems); ?> items</span>
-          <?php endif; ?>
-        </div>
-        <div class="dash-card-body">
-          <?php if (empty($expiringItems)): ?>
-            <div class="empty-state"><i class="fas fa-circle-check" style="color:#16a34a;opacity:1"></i>No immediate expiries.</div>
-          <?php else: ?>
-            <table class="dash-table">
-              <thead><tr><th></th><th>Product</th><th>Expiry Date</th><th>Status</th></tr></thead>
-              <tbody>
-                <?php foreach ($expiringItems as $item): ?>
-                  <?php $days = (strtotime($item['expiry_date']) - time()) / 86400; ?>
-                  <tr>
-                    <td class="pt-2 pb-2"><?php echo dash_product_thumb($item['imageproduct'] ?? null); ?></td>
-                    <td class="fw-semibold"><?php echo htmlspecialchars(trim(($item['branded_name'] ?? '') !== '' ? $item['branded_name'] : $item['name'])); ?></td>
-                    <td style="font-size:.82rem"><?php echo date('M d, Y', strtotime($item['expiry_date'])); ?></td>
-                    <td>
-                      <?php if ($days <= 10): ?>
-                        <span class="badge-danger">Critical</span>
-                      <?php else: ?>
-                        <span class="badge-warn">Warning</span>
-                      <?php endif; ?>
-                    </td>
-                  </tr>
-                <?php endforeach; ?>
-              </tbody>
-            </table>
           <?php endif; ?>
         </div>
       </div>
