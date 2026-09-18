@@ -570,6 +570,7 @@ CREATE TABLE `inventory_disposals` (
   `quantity` int(11) DEFAULT 0,
   `expiry_date` date DEFAULT NULL,
   `reason` varchar(100) NOT NULL DEFAULT 'Expired',
+  `disposal_proof_filename` varchar(255) DEFAULT NULL,
   `disposed_at` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 

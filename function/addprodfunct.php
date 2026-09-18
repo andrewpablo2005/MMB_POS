@@ -762,6 +762,13 @@ class ProductManagement
         ");
     }
 
+    private function ensureInventoryDisposalProofColumn(): void
+    {
+        if (!$this->hasColumn('inventory_disposals', 'disposal_proof_filename')) {
+            $this->con->exec("ALTER TABLE inventory_disposals ADD COLUMN disposal_proof_filename VARCHAR(255) DEFAULT NULL AFTER reason");
+        }
+    }
+
     public function moveZeroStockBatchesToNoStock(): int
     {
         $this->ensureInventoryNoStockTable();
@@ -883,6 +890,8 @@ class ProductManagement
 
     public function getDisposedBatches(): array
     {
+        $this->ensureInventoryDisposalProofColumn();
+
         $sql = "
             SELECT 
                 d.id,
@@ -900,6 +909,7 @@ class ProductManagement
                 d.quantity,
                 d.expiry_date,
                 d.reason,
+                d.disposal_proof_filename,
                 d.disposed_at
             FROM inventory_disposals d
             LEFT JOIN products p ON p.id = d.product_id
@@ -1313,13 +1323,49 @@ class ProductManagement
         $inventoryId = (int) ($_POST['inventory_id'] ?? 0);
         $quantity = (int) ($_POST['quantity'] ?? 0);
         $reason = trim($_POST['reason'] ?? 'Disposed');
+        $proofFile = $_FILES['disposal_proof'] ?? null;
+        $storedProofFilename = null;
 
         if ($inventoryId <= 0 || $quantity < 0) {
             $this->response = "Invalid inventory batch or quantity";
             return false;
         }
 
+        if (!is_array($proofFile) || ($proofFile['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK) {
+            $this->response = "A proof image is required before disposing a product.";
+            return false;
+        }
+
+        if ((int) ($proofFile['size'] ?? 0) > 5 * 1024 * 1024) {
+            $this->response = "The proof image must be 5 MB or smaller.";
+            return false;
+        }
+
+        $proofMime = (new \finfo(FILEINFO_MIME_TYPE))->file($proofFile['tmp_name']);
+        $proofExtension = [
+            'image/jpeg' => 'jpg',
+            'image/png' => 'png'
+        ][$proofMime] ?? null;
+        if ($proofExtension === null || @getimagesize($proofFile['tmp_name']) === false) {
+            $this->response = "Proof image must be a valid JPG or PNG file.";
+            return false;
+        }
+
+        $proofDirectory = __DIR__ . '/../img/disposal-proofs';
+        if (!is_dir($proofDirectory) && !mkdir($proofDirectory, 0755, true) && !is_dir($proofDirectory)) {
+            $this->response = "Unable to prepare proof image storage.";
+            return false;
+        }
+
         try {
+            $storedProofFilename = bin2hex(random_bytes(16)) . '.' . $proofExtension;
+            if (!move_uploaded_file($proofFile['tmp_name'], $proofDirectory . '/' . $storedProofFilename)) {
+                $this->response = "Unable to save the proof image.";
+                return false;
+            }
+
+            $this->ensureInventoryDisposalProofColumn();
+
             $this->con->beginTransaction();
 
             $batchStmt = $this->con->prepare("SELECT id, product_id, batch_number, current_quantity, expiry_date FROM inventory WHERE id = ? FOR UPDATE");
@@ -1328,6 +1374,7 @@ class ProductManagement
 
             if (!$batch) {
                 $this->con->rollBack();
+                @unlink($proofDirectory . '/' . $storedProofFilename);
                 $this->response = "Inventory batch not found";
                 return false;
             }
@@ -1335,12 +1382,14 @@ class ProductManagement
             $availableQty = (int) ($batch['current_quantity'] ?? 0);
             if ($availableQty > 0 && $quantity > $availableQty) {
                 $this->con->rollBack();
+                @unlink($proofDirectory . '/' . $storedProofFilename);
                 $this->response = "Disposal quantity exceeds available stock";
                 return false;
             }
 
             if ($availableQty <= 0 && $quantity > 0) {
                 $this->con->rollBack();
+                @unlink($proofDirectory . '/' . $storedProofFilename);
                 $this->response = "This batch has no current stock available to dispose. Use 0 quantity to record an empty-batch disposal.";
                 return false;
             }
@@ -1353,13 +1402,14 @@ class ProductManagement
                 $this->con->prepare("UPDATE inventory SET current_quantity = current_quantity - ? WHERE id = ?")->execute([$quantity, $inventoryId]);
             }
 
-            $insertStmt = $this->con->prepare("INSERT INTO inventory_disposals (product_id, batch_number, quantity, expiry_date, reason, disposed_at) VALUES (?, ?, ?, ?, ?, NOW())");
+            $insertStmt = $this->con->prepare("INSERT INTO inventory_disposals (product_id, batch_number, quantity, expiry_date, reason, disposal_proof_filename, disposed_at) VALUES (?, ?, ?, ?, ?, ?, NOW())");
             $insertStmt->execute([
                 (int) ($batch['product_id'] ?? 0),
                 $batch['batch_number'] ?? null,
                 $quantity,
                 $batch['expiry_date'] ?? null,
-                $reason ?: 'Disposed'
+                $reason ?: 'Disposed',
+                $storedProofFilename
             ]);
 
             $this->con->commit();
@@ -1373,7 +1423,12 @@ class ProductManagement
             $this->response = "Inventory batch disposed successfully";
             return true;
         } catch (\Exception $e) {
-            $this->con->rollBack();
+            if ($this->con->inTransaction()) {
+                $this->con->rollBack();
+            }
+            if ($storedProofFilename !== null) {
+                @unlink($proofDirectory . '/' . $storedProofFilename);
+            }
             $this->response = "Failed to dispose inventory batch: " . $e->getMessage();
             return false;
         }

@@ -283,13 +283,14 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
                         <th>Quantity</th>
                         <th>Expiry</th>
                         <th>Reason</th>
+                        <th>Proof</th>
                         <th>Disposed At</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php if (empty($disposedBatches)): ?>
                         <tr>
-                            <td colspan="7" class="text-center text-muted py-4">No disposed or expired inventory found.</td>
+                            <td colspan="8" class="text-center text-muted py-4">No disposed or expired inventory found.</td>
                         </tr>
                     <?php else: ?>
                         <?php foreach ($disposedBatches as $disposed): ?>
@@ -318,6 +319,20 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
                                 <td data-label="Quantity"><?= htmlspecialchars(($disposed['quantity'] ?? 0)) ?></td>
                                 <td data-label="Expiry"><?= htmlspecialchars($disposed['expiry_date'] ?: 'N/A') ?></td>
                                 <td data-label="Reason"><?= htmlspecialchars($disposed['reason'] ?? 'N/A') ?></td>
+                                <td data-label="Proof">
+                                    <?php if (!empty($disposed['disposal_proof_filename'])): ?>
+                                        <button type="button"
+                                                class="btn btn-sm btn-outline-primary disposal-proof-view-btn"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#disposalProofModal"
+                                                data-proof-image="../img/disposal-proofs/<?= htmlspecialchars($disposed['disposal_proof_filename'], ENT_QUOTES, 'UTF-8') ?>"
+                                                data-proof-title="<?= htmlspecialchars(trim(($disposed['branded_name'] ?? '') . ' ' . ($disposed['generic_name'] ?? '') . ' proof'), ENT_QUOTES, 'UTF-8') ?>">
+                                            View image
+                                        </button>
+                                    <?php else: ?>
+                                        <span class="text-muted">N/A</span>
+                                    <?php endif; ?>
+                                </td>
                                 <td data-label="Disposed At"><?= htmlspecialchars($disposed['disposed_at'] ?? 'N/A') ?></td>
                             </tr>
                         <?php endforeach; ?>
@@ -775,7 +790,7 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
 <div class="modal fade" id="addBatchModal" tabindex="-1" aria-labelledby="addBatchModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg add-product-dialog">
         <div class="modal-content add-product-modal">
-            <form method="POST">
+            <form method="POST" enctype="multipart/form-data">
                 <input type="hidden" name="addInventoryBatch" value="1">
                 <div class="modal-header">
                     <h5 class="modal-title" id="addBatchModalLabel">Add Stock Batch</h5>
@@ -1355,7 +1370,7 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
 <div class="modal fade" id="disposeBatchModal" tabindex="-1" aria-labelledby="disposeBatchModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form method="POST">
+            <form method="POST" enctype="multipart/form-data">
                 <input type="hidden" name="disposeInventoryBatch" value="1">
                 <div class="modal-header">
                     <h5 class="modal-title" id="disposeBatchModalLabel">Dispose Inventory Batch</h5>
@@ -1380,7 +1395,12 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
                     </div>
                     <div class="mb-3">
                         <label for="dispose_reason" class="form-label">Reason</label>
-                        <input type="text" id="dispose_reason" name="reason" class="form-control" placeholder="e.g. Expired, Damaged" value="Expired">
+                        <input type="text" id="dispose_reason" name="reason" class="form-control" placeholder="e.g. Expired, Damaged" value="Expired" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="disposal_proof" class="form-label">Proof Image</label>
+                        <input type="file" id="disposal_proof" name="disposal_proof" class="form-control" accept="image/jpeg,image/png" required>
+                        <div class="form-text">Upload a JPG or PNG photo showing why this product must be disposed. Maximum 5 MB.</div>
                     </div>
                     <div class="alert alert-danger small mb-0">
                         Manual archive action: this batch will be moved to Disposed / Expired history. Use this only for expired, damaged, or otherwise unusable stock.
@@ -1394,3 +1414,39 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="disposalProofModal" tabindex="-1" aria-labelledby="disposalProofModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="disposalProofModalLabel">Disposal proof</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <img id="disposalProofImage" src="" alt="Disposal proof" class="img-fluid rounded" style="max-height:70vh; object-fit:contain;">
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function () {
+        const proofModal = document.getElementById('disposalProofModal');
+        const proofImage = document.getElementById('disposalProofImage');
+        const proofTitle = document.getElementById('disposalProofModalLabel');
+        if (!proofModal || !proofImage || !proofTitle) return;
+
+        document.addEventListener('click', function (event) {
+            const button = event.target.closest('.disposal-proof-view-btn');
+            if (!button) return;
+
+            proofImage.src = button.getAttribute('data-proof-image') || '';
+            proofImage.alt = button.getAttribute('data-proof-title') || 'Disposal proof';
+            proofTitle.textContent = button.getAttribute('data-proof-title') || 'Disposal proof';
+        });
+
+        proofModal.addEventListener('hidden.bs.modal', function () {
+            proofImage.removeAttribute('src');
+        });
+    }());
+</script>
