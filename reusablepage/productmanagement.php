@@ -115,10 +115,7 @@ if ($product->addProduct()) {
                         <td><?= htmlspecialchars($categoryName !== '' ? $categoryName : 'N/A', ENT_QUOTES, 'UTF-8') ?></td>
                        
                         <td>
-                            <!-- BARCODE (issue #4: preview + download the real Code 128 label) -->
-                            <button class="btn btn-outline-secondary btn-sm mmb-barcode-btn" data-barcode="<?= htmlspecialchars((string)($prod['barcode']), ENT_QUOTES, 'UTF-8') ?>" data-product="<?= htmlspecialchars(trim(($prod['branded_name'] ?? '') . ' ' . ($prod['generic_name'] ?? '') . ' ' . ($prod['strength'] ?? '') . ' ' . ($prod['measurement_name'] ?? '') . ' ' . trim($prod['dosage_form'] ?? '')), ENT_QUOTES, 'UTF-8') ?>" aria-label="Barcode preview">
-                                <i class="fas fa-barcode"></i>
-                            </button>
+                           
                             <!-- VIEW -->
                             <button class="btn btn-info btn-sm" data-bs-toggle="modal"
                                 data-bs-target="#viewProduct<?= htmlspecialchars((string)($prod['id']), ENT_QUOTES, 'UTF-8') ?>">
