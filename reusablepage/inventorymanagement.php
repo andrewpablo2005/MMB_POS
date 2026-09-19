@@ -214,8 +214,32 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
                         <?php foreach ($inventoryBatches as $batch): ?>
                             <?php
                                 $batchNumber = trim((string) ($batch['batch_number'] ?? ''));
+                                $batchCurrentQuantity = (int) ($batch['current_quantity'] ?? 0);
+                                $batchExpiryDate = trim((string) ($batch['expiry_date'] ?? ''));
+                                $rowWarningClass = '';
+                                $today = new DateTime('today');
+                                $nearExpiryDate = (clone $today)->modify('+90 days');
+
+                                if ($batchCurrentQuantity <= 0) {
+                                    $rowWarningClass = 'table-secondary';
+                                } elseif ($batchCurrentQuantity <= 15) {
+                                    $rowWarningClass = 'table-warning';
+                                }
+
+                                if ($batchExpiryDate !== '') {
+                                    try {
+                                        $batchExpiry = new DateTime($batchExpiryDate);
+                                        if ($batchExpiry < $today) {
+                                            $rowWarningClass = 'table-danger';
+                                        } elseif ($batchExpiry <= $nearExpiryDate && $rowWarningClass === '') {
+                                            $rowWarningClass = 'table-warning';
+                                        }
+                                    } catch (Exception $e) {
+                                        // Ignore invalid expiry input and allow the stock status to dictate the row color.
+                                    }
+                                }
                             ?>
-                            <tr data-product-id="<?= (int)($batch['product_id'] ?? 0) ?>" data-batch-id="<?= (int)($batch['id'] ?? 0) ?>">
+                            <tr class="<?= $rowWarningClass ?>" data-product-id="<?= (int)($batch['product_id'] ?? 0) ?>" data-batch-id="<?= (int)($batch['id'] ?? 0) ?>">
                                 <td data-label="ID"><?= (int)($batch['id'] ?? 0) ?></td>
                                 <td data-label="Batch No."><?= htmlspecialchars($batchNumber !== '' ? $batchNumber : 'N/A') ?></td>
                                 <td data-label="Product">
