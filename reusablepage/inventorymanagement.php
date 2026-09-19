@@ -805,44 +805,78 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
                     <div class="add-product-row">
                     <div class="add-product-field">
                         <label for="batch_product_search" class="form-label">Product</label>
-                        <input type="text" id="batch_product_search" class="form-control" placeholder="Search product..." list="batch_product_list" autocomplete="off" required>
+                        <div class="batch-product-search-wrap">
+                            <input type="text" id="batch_product_search" class="form-control" placeholder="Search product..." autocomplete="off" required>
+                            <button type="button" class="batch-product-toggle" aria-label="Show product list">
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
+                            <div id="batch_product_dropdown" class="batch-product-dropdown" aria-live="polite">
+                                <?php foreach ($products as $product): ?>
+                                    <?php $productLabel = trim(($product['branded_name'] ?? '') . ' ' . ($product['generic_name'] ?? '')); ?>
+                                    <button type="button" class="batch-product-option" data-id="<?= (int)($product['id'] ?? 0) ?>" data-label="<?= htmlspecialchars($productLabel, ENT_QUOTES, 'UTF-8') ?>">
+                                        <?= htmlspecialchars($productLabel) ?>
+                                    </button>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
                         <input type="hidden" id="batch_product_id" name="product_id">
-                        <datalist id="batch_product_list">
-                            <?php foreach ($products as $product): ?>
-                                <option value="<?= htmlspecialchars(trim(($product['branded_name'] ?? '') . ' ' . ($product['generic_name'] ?? ''))) ?>" data-id="<?= (int)($product['id'] ?? 0) ?>">
-                            <?php endforeach; ?>
-                        </datalist>
                     </div>
                     <div class="add-product-field">
-                        <label for="batch_supplier_id" class="form-label">Supplier <span class="text-muted fw-normal">(optional)</span></label>
-                        <div class="d-flex gap-2">
-                            <select id="batch_supplier_id" name="supplier_id" class="form-select">
-                                <option value="">Select supplier or leave blank</option>
-                                <?php 
-                                // Get suppliers from database if available
-                                try {
-                                    $chdir_result = chdir(__DIR__ . '/../function');
-                                    require_once __DIR__ . '/../conn/database.php';
-                                    $db = Database::getConnection();
-                                    $stmt = $db->prepare("SELECT id, supplier_name FROM suppliers ORDER BY supplier_name ASC");
-                                    $stmt->execute();
-                                    $suppliers = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                                    foreach ($suppliers as $supplier):
-                                ?>
-                                    <option value="<?= (int)($supplier['id'] ?? 0) ?>">
-                                        <?= htmlspecialchars($supplier['supplier_name'] ?? '') ?>
-                                    </option>
-                                <?php 
-                                    endforeach;
-                                } catch (\Exception $e) {
-                                    // Suppliers table may not be populated yet
-                                }
-                                ?>
-                            </select>
+                        <label for="batch_supplier_search" class="form-label">Supplier <span class="text-muted fw-normal">(optional)</span></label>
+                        <div class="d-flex gap-2 align-items-start">
+                            <div class="batch-product-search-wrap flex-grow-1">
+                                <input type="text" id="batch_supplier_search" class="form-control" placeholder="Search supplier..." autocomplete="off">
+                                <button type="button" class="batch-product-toggle batch-supplier-toggle" aria-label="Show supplier list">
+                                    <i class="fas fa-chevron-down"></i>
+                                </button>
+                                <div id="batch_supplier_dropdown" class="batch-product-dropdown" aria-live="polite">
+                                    <button type="button" class="batch-product-option batch-supplier-option" data-id="" data-label="Select supplier or leave blank">
+                                        Select supplier or leave blank
+                                    </button>
+                                    <?php 
+                                    // Get suppliers from database if available
+                                    try {
+                                        $chdir_result = chdir(__DIR__ . '/../function');
+                                        require_once __DIR__ . '/../conn/database.php';
+                                        $db = Database::getConnection();
+                                        $stmt = $db->prepare("SELECT id, supplier_name FROM suppliers ORDER BY supplier_name ASC");
+                                        $stmt->execute();
+                                        $suppliers = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                                        foreach ($suppliers as $supplier):
+                                            $supplierName = htmlspecialchars($supplier['supplier_name'] ?? '', ENT_QUOTES, 'UTF-8');
+                                    ?>
+                                        <button type="button" class="batch-product-option batch-supplier-option" data-id="<?= (int)($supplier['id'] ?? 0) ?>" data-label="<?= $supplierName ?>">
+                                            <?= $supplierName ?>
+                                        </button>
+                                    <?php 
+                                        endforeach;
+                                    } catch (\Exception $e) {
+                                        // Suppliers table may not be populated yet
+                                    }
+                                    ?>
+                                </div>
+                            </div>
                             <button type="button" class="btn btn-danger btn-sm d-inline-flex align-items-center justify-content-center" data-bs-toggle="modal" data-bs-target="#addSupplierModal" aria-label="Add supplier" title="Add supplier">
                                 <i class="fas fa-plus" aria-hidden="true"></i>
                             </button>
                         </div>
+                        <select id="batch_supplier_id" name="supplier_id" class="form-select d-none" aria-hidden="true">
+                            <option value="">Select supplier or leave blank</option>
+                            <?php 
+                            try {
+                                if (!empty($suppliers)) {
+                                    foreach ($suppliers as $supplier):
+                            ?>
+                                <option value="<?= (int)($supplier['id'] ?? 0) ?>">
+                                    <?= htmlspecialchars($supplier['supplier_name'] ?? '') ?>
+                                </option>
+                            <?php
+                                    endforeach;
+                                }
+                            } catch (\Exception $e) {
+                            }
+                            ?>
+                        </select>
                     </div>
                     </div>
 
@@ -877,7 +911,7 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
                         </div>
                         <div class="add-product-field">
                             <label for="batch_sale_price" class="form-label">Sale Price per Unit (optional)</label>
-                            <input type="number" id="batch_sale_price" name="sale_price" class="form-control" step="0.01" min="0" placeholder="e.g. 75.00" readonly>
+                            <input type="number" id="batch_sale_price" name="sale_price" class="form-control" step="0.01" min="0" placeholder="e.g. 75.00">
                         </div>
                     </div>
 
@@ -901,6 +935,67 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
     </div>
 </div>
 
+<style>
+    .batch-product-search-wrap {
+        position: relative;
+    }
+
+    .batch-product-toggle {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        border: none;
+        background: transparent;
+        color: #5a6471;
+        padding: 4px 8px;
+        border-radius: 6px;
+    }
+
+    .batch-product-toggle:hover {
+        background: #eef3f9;
+    }
+
+    #batch_product_search {
+        padding-right: 38px;
+    }
+
+    .batch-product-dropdown {
+        position: absolute;
+        top: calc(100% + 6px);
+        left: 0;
+        right: 0;
+        z-index: 1060;
+        display: none;
+        max-height: 240px;
+        overflow-y: auto;
+        background: #ffffff;
+        border: 1px solid #dfe6ee;
+        border-radius: 12px;
+        box-shadow: 0 12px 28px rgba(15, 23, 42, 0.12);
+    }
+
+    .batch-product-dropdown.show {
+        display: block;
+    }
+
+    .batch-product-option {
+        display: block;
+        width: 100%;
+        border: none;
+        background: transparent;
+        text-align: left;
+        padding: 10px 12px;
+        font-size: 0.95rem;
+        color: #1f2d3d;
+    }
+
+    .batch-product-option:hover,
+    .batch-product-option.active {
+        background: #edf4ff;
+    }
+</style>
+
 <script>
     function attachBatchPriceCalculator(modalSelector) {
         const modal = document.querySelector(modalSelector);
@@ -914,7 +1009,13 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
             return;
         }
 
+        let salePriceLockedToMarkup = true;
+
         const updateSalePrice = () => {
+            if (!salePriceLockedToMarkup) {
+                return;
+            }
+
             const purchaseCost = parseFloat(purchaseCostInput.value);
             const markup = parseFloat(markupInput.value);
 
@@ -928,12 +1029,38 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
             salePriceInput.value = computedSalePrice.toFixed(2);
         };
 
+        salePriceInput.addEventListener('input', function () {
+            salePriceLockedToMarkup = false;
+        });
+
+        salePriceInput.addEventListener('focus', function () {
+            if (!this.value) {
+                salePriceLockedToMarkup = true;
+            }
+        });
+
         if (!markupInput.value) {
             markupInput.value = '5';
         }
 
-        purchaseCostInput.oninput = updateSalePrice;
-        markupInput.oninput = updateSalePrice;
+        purchaseCostInput.oninput = function () {
+            if (salePriceLockedToMarkup) {
+                updateSalePrice();
+            }
+        };
+
+        markupInput.oninput = function () {
+            if (salePriceLockedToMarkup) {
+                updateSalePrice();
+            }
+        };
+
+        salePriceInput.addEventListener('keydown', function (event) {
+            if (event.key === 'Enter') {
+                salePriceLockedToMarkup = false;
+            }
+        });
+
         updateSalePrice();
     }
 
@@ -1079,8 +1206,93 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
         const productSearch = document.getElementById('batch_product_search');
         const productIdInput = document.getElementById('batch_product_id');
         const batchNumberInput = document.getElementById('batch_number');
+        const productDropdown = document.getElementById('batch_product_dropdown');
+        const productToggle = document.querySelector('.batch-product-toggle');
+        const supplierSearch = document.getElementById('batch_supplier_search');
+        const supplierIdSelect = document.getElementById('batch_supplier_id');
+        const supplierDropdown = document.getElementById('batch_supplier_dropdown');
+        const supplierToggle = document.querySelector('.batch-supplier-toggle');
         const inventoryBatches = <?= json_encode($inventoryBatches, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT) ?>;
         const inventoryBatchSequence = <?= json_encode($inventoryBatchSequence, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT) ?>;
+
+        if (supplierSearch && supplierIdSelect && supplierDropdown) {
+            const supplierOptions = Array.from(supplierDropdown.querySelectorAll('.batch-supplier-option'));
+
+            const applySupplierDropdownState = () => {
+                const query = (supplierSearch.value || '').trim().toLowerCase();
+                let visibleCount = 0;
+
+                supplierOptions.forEach((option) => {
+                    const label = (option.dataset.label || '').trim().toLowerCase();
+                    const showOption = !query || label.includes(query);
+                    option.style.display = showOption ? 'block' : 'none';
+                    if (showOption) visibleCount++;
+                });
+
+                if (visibleCount === 0 && supplierSearch.value.trim() !== '') {
+                    supplierDropdown.classList.add('show');
+                }
+            };
+
+            const setSelectedSupplier = (selectedOption) => {
+                if (!selectedOption) {
+                    supplierSearch.value = '';
+                    supplierIdSelect.value = '';
+                    return;
+                }
+
+                const supplierId = selectedOption.dataset.id || '';
+                const supplierLabel = selectedOption.dataset.label || selectedOption.textContent.trim();
+                supplierSearch.value = supplierLabel === 'Select supplier or leave blank' ? '' : supplierLabel;
+                supplierIdSelect.value = supplierId;
+                supplierDropdown.classList.remove('show');
+                supplierOptions.forEach((option) => option.classList.toggle('active', option === selectedOption));
+            };
+
+            supplierSearch.addEventListener('focus', function () {
+                applySupplierDropdownState();
+                supplierDropdown.classList.add('show');
+            });
+
+            supplierSearch.addEventListener('input', function () {
+                applySupplierDropdownState();
+                supplierDropdown.classList.add('show');
+
+                if (this.value.trim() === '') {
+                    supplierIdSelect.value = '';
+                    return;
+                }
+
+                const matched = supplierOptions.find((option) => (option.dataset.label || '').trim().toLowerCase() === this.value.trim().toLowerCase());
+                if (matched) {
+                    setSelectedSupplier(matched);
+                } else {
+                    supplierIdSelect.value = '';
+                }
+            });
+
+            supplierOptions.forEach((option) => {
+                option.addEventListener('mousedown', function (event) {
+                    event.preventDefault();
+                    setSelectedSupplier(option);
+                });
+            });
+
+            if (supplierToggle) {
+                supplierToggle.addEventListener('click', function () {
+                    const isVisible = supplierDropdown.classList.contains('show');
+                    supplierDropdown.classList.toggle('show', !isVisible);
+                    if (!isVisible) supplierSearch.focus();
+                });
+            }
+
+            document.addEventListener('click', function (event) {
+                const inputWrap = supplierSearch.closest('.batch-product-search-wrap');
+                if (!inputWrap || !inputWrap.contains(event.target)) {
+                    supplierDropdown.classList.remove('show');
+                }
+            });
+        }
 
         const showNextBatchNumber = (productId) => {
             if (!batchNumberInput) return;
@@ -1106,18 +1318,48 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
             batchNumberInput.placeholder = 'Automatically generated';
         };
 
-        if (productSearch && productIdInput) {
+        const applyProductDropdownState = () => {
+            if (!productDropdown) return;
+            const query = (productSearch?.value || '').trim().toLowerCase();
+            const productOptions = Array.from(productDropdown.querySelectorAll('.batch-product-option'));
+            let visibleCount = 0;
+
+            productOptions.forEach((option) => {
+                const label = (option.dataset.label || '').trim().toLowerCase();
+                const showOption = !query || label.includes(query);
+                option.style.display = showOption ? 'block' : 'none';
+                if (showOption) visibleCount++;
+            });
+
+            if (visibleCount === 0 && productSearch && productSearch.value.trim() !== '') {
+                productDropdown.classList.add('show');
+            }
+        };
+
+        if (productSearch && productIdInput && productDropdown) {
             const form = productSearch.closest('form');
-            const productOptions = Array.from(document.querySelectorAll('#batch_product_list option'));
+            const productOptions = Array.from(productDropdown.querySelectorAll('.batch-product-option'));
+
+            const setSelectedProduct = (selectedOption) => {
+                if (!selectedOption) return;
+
+                const productId = selectedOption.dataset.id || '';
+                const productLabel = selectedOption.dataset.label || selectedOption.textContent.trim();
+
+                productSearch.value = productLabel;
+                productIdInput.value = productId;
+                productSearch.setCustomValidity('');
+                showNextBatchNumber(productId);
+                productDropdown.classList.remove('show');
+                productOptions.forEach((option) => option.classList.toggle('active', option === selectedOption));
+            };
 
             const validateProductSelection = () => {
                 const value = productSearch.value.trim();
-                const matched = productOptions.find((option) => option.value.trim() === value);
+                const matched = productOptions.find((option) => (option.dataset.label || '').trim().toLowerCase() === value.toLowerCase());
 
                 if (matched) {
-                    productIdInput.value = matched.getAttribute('data-id') || '';
-                    productSearch.setCustomValidity('');
-                    showNextBatchNumber(productIdInput.value);
+                    setSelectedProduct(matched);
                     return true;
                 }
 
@@ -1127,7 +1369,15 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
                 return false;
             };
 
+            productSearch.addEventListener('focus', function () {
+                applyProductDropdownState();
+                productDropdown.classList.add('show');
+            });
+
             productSearch.addEventListener('input', function () {
+                applyProductDropdownState();
+                productDropdown.classList.add('show');
+
                 if (this.value.trim() === '') {
                     productIdInput.value = '';
                     showNextBatchNumber('');
@@ -1135,15 +1385,37 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
                     return;
                 }
 
-                const matched = productOptions.find((option) => option.value.trim().toLowerCase() === this.value.trim().toLowerCase());
+                const matched = productOptions.find((option) => (option.dataset.label || '').trim().toLowerCase() === this.value.trim().toLowerCase());
                 if (matched) {
-                    productIdInput.value = matched.getAttribute('data-id') || '';
-                    showNextBatchNumber(productIdInput.value);
-                    productSearch.setCustomValidity('');
+                    setSelectedProduct(matched);
                 } else {
                     productIdInput.value = '';
                     showNextBatchNumber('');
                     productSearch.setCustomValidity('Please select a product from the list.');
+                }
+            });
+
+            productOptions.forEach((option) => {
+                option.addEventListener('mousedown', function (event) {
+                    event.preventDefault();
+                    setSelectedProduct(option);
+                });
+            });
+
+            if (productToggle) {
+                productToggle.addEventListener('click', function () {
+                    const isVisible = productDropdown.classList.contains('show');
+                    productDropdown.classList.toggle('show', !isVisible);
+                    if (!isVisible) {
+                        productSearch.focus();
+                    }
+                });
+            }
+
+            document.addEventListener('click', function (event) {
+                const inputWrap = productSearch.closest('.batch-product-search-wrap');
+                if (!inputWrap || !inputWrap.contains(event.target)) {
+                    productDropdown.classList.remove('show');
                 }
             });
 
