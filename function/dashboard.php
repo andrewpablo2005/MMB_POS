@@ -149,11 +149,16 @@ class DashboardManager
 
     public function getTopSellingProducts($limit = 5)
     {
-        $sql = "SELECT p.generic_name as name, p.branded_name, p.imageproduct, SUM(ti.quantity) as total_sold, ti.price 
-                FROM transaction_items ti 
-                JOIN products p ON ti.product_id = p.id 
-                GROUP BY ti.product_id, p.generic_name, p.branded_name, p.imageproduct, ti.price 
-                ORDER BY total_sold DESC 
+        $sql = "SELECT p.id AS product_id,
+                       p.generic_name AS name,
+                       p.branded_name,
+                       p.imageproduct,
+                       SUM(ti.quantity) AS total_sold,
+                       MAX(ti.price) AS price
+                FROM transaction_items ti
+                JOIN products p ON ti.product_id = p.id
+                GROUP BY p.id, p.generic_name, p.branded_name, p.imageproduct
+                ORDER BY total_sold DESC
                 LIMIT :limit";
         $stmt = $this->db->prepare($sql);
         $stmt->bindValue(':limit', (int)$limit, \PDO::PARAM_INT);

@@ -411,16 +411,18 @@ class ProductManagement
                 }
 
                 $this->batch_number = $this->generateBatchNumber((int) $productId);
+                $receivedDate = !empty($_POST['date_received']) ? $_POST['date_received'] : date('Y-m-d');
 
                 $stmt = $this->con->prepare("
                     INSERT INTO inventory (product_id, supplier_id, batch_number, date_received, expiry_date, purchase_cost, markup, sale_price, received_quantity, current_quantity)
-                    VALUES (?, ?, ?, NOW(), ?, ?, ?, ?, ?, ?)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 ");
 
                 $stmt->execute([
                     $productId,
                     ($this->supplier_id > 0) ? $this->supplier_id : null,
                     $this->batch_number ?: null,
+                    $receivedDate,
                     $this->expiry_date ?: null,
                     $this->purchase_cost,
                     $this->markup,
@@ -848,12 +850,6 @@ class ProductManagement
                 return false;
             }
 
-            if ((int) ($batch['current_quantity'] ?? 0) > 0) {
-                $this->con->rollBack();
-                $this->response = "Only batches with zero stock can be moved to no-stock history.";
-                return false;
-            }
-
             $checkStmt = $this->con->prepare(
                 "SELECT 1 FROM inventory_no_stock WHERE product_id = ? AND batch_number = ? AND expiry_date <=> ? LIMIT 1"
             );
@@ -1127,16 +1123,18 @@ class ProductManagement
                     }
 
                     $this->batch_number = $this->generateBatchNumber($this->id);
+                    $receivedDate = !empty($_POST['date_received']) ? $_POST['date_received'] : date('Y-m-d');
 
                     $batchStmt = $this->con->prepare("
                         INSERT INTO inventory (product_id, supplier_id, batch_number, date_received, expiry_date, purchase_cost, markup, sale_price, received_quantity, current_quantity)
-                        VALUES (?, ?, ?, NOW(), ?, ?, ?, ?, ?, ?)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                     ");
 
                     $batchStmt->execute([
                         $this->id,
                         ((int) ($_POST['supplier_id'] ?? 0) > 0) ? (int) $_POST['supplier_id'] : null,
                         $this->batch_number,
+                        $receivedDate,
                         $_POST['expiry_date'] ?? null,
                         isset($_POST['purchase_cost']) && $_POST['purchase_cost'] !== '' ? (float) $_POST['purchase_cost'] : 0,
                         isset($_POST['markup']) && $_POST['markup'] !== '' ? (float) $_POST['markup'] : 0,
@@ -1252,6 +1250,7 @@ class ProductManagement
         $purchaseCost = isset($_POST['purchase_cost']) && $_POST['purchase_cost'] !== '' ? (float) $_POST['purchase_cost'] : 0;
         $markup = isset($_POST['markup']) && $_POST['markup'] !== '' ? (float) $_POST['markup'] : 0;
         $salePrice = isset($_POST['sale_price']) && $_POST['sale_price'] !== '' ? (float) $_POST['sale_price'] : 0;
+        $receivedDate = !empty($_POST['date_received']) ? $_POST['date_received'] : date('Y-m-d');
 
         // VALIDATE REQUIRED FIELDS
         if ($productId <= 0) {
@@ -1282,12 +1281,13 @@ class ProductManagement
                 INSERT INTO inventory 
                 (product_id, supplier_id, batch_number, date_received, expiry_date, 
                  purchase_cost, markup, sale_price, received_quantity, current_quantity) 
-                VALUES (?, ?, ?, NOW(), ?, ?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ");
             $stmt->execute([
                 $productId,
                 $supplierId > 0 ? $supplierId : null,
                 $batchNumber,
+                $receivedDate,
                 $expiryDate,
                 $purchaseCost,
                 $markup,

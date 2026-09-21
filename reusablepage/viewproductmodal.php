@@ -102,6 +102,7 @@ require_once __DIR__ . '/guard.php'; guard_require_roles(['owner','admin']);
                                         <thead class="table-light">
                                             <tr>
                                                 <th>Batch No</th>
+                                                <th>Date Received</th>
                                                 <th>Original Qty</th>
                                                 <th>Current Qty</th>
                                                 <th>Expiry</th>
@@ -155,6 +156,7 @@ require_once __DIR__ . '/guard.php'; guard_require_roles(['owner','admin']);
                                                 ?>
                                                 <tr class="<?= $batchRowClass ?>">
                                                     <td><?= htmlspecialchars(trim((string) ($batch['batch_number'] ?? 'N/A'))) ?></td>
+                                                    <td><?= htmlspecialchars(($batch['date_received'] ?? 'N/A') ?: 'N/A') ?></td>
                                                     <td><?= htmlspecialchars((string) ($batch['received_quantity'] ?? 0)) ?></td>
                                                     <td><?= htmlspecialchars((string) $batchCurrentQuantity) ?></td>
                                                     <td><?= htmlspecialchars(($batch['expiry_date'] ?? 'N/A') ?: 'N/A') ?></td>

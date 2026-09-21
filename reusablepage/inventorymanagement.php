@@ -105,27 +105,27 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
                 min-width: 0 !important;
                 table-layout: fixed;
             }
-            #currentInventoryTable col:nth-child(1) { width: 6% !important; }
-            #currentInventoryTable col:nth-child(2) { width: 13% !important; }
-            #currentInventoryTable col:nth-child(3) { width: 31% !important; }
+            #currentInventoryTable col:nth-child(1) { width: 8% !important; }
+            #currentInventoryTable col:nth-child(2) { width: 26% !important; }
+            #currentInventoryTable col:nth-child(3) { width: 18% !important; }
             #currentInventoryTable col:nth-child(4),
-            #currentInventoryTable col:nth-child(5) { width: 13% !important; }
-            #currentInventoryTable col:nth-child(6) { width: 10% !important; }
-            #currentInventoryTable col:nth-child(7) { width: 14% !important; }
+            #currentInventoryTable col:nth-child(5) { width: 12% !important; }
+            #currentInventoryTable col:nth-child(6) { width: 12% !important; }
+            #currentInventoryTable col:nth-child(7) { width: 12% !important; }
             #currentInventoryTable th:nth-child(1),
-            #currentInventoryTable td:nth-child(1) { width: 6% !important; }
+            #currentInventoryTable td:nth-child(1) { width: 8% !important; }
             #currentInventoryTable th:nth-child(2),
-            #currentInventoryTable td:nth-child(2) { width: 13% !important; }
+            #currentInventoryTable td:nth-child(2) { width: 26% !important; }
             #currentInventoryTable th:nth-child(3),
-            #currentInventoryTable td:nth-child(3) { width: 31% !important; }
+            #currentInventoryTable td:nth-child(3) { width: 18% !important; }
             #currentInventoryTable th:nth-child(4),
             #currentInventoryTable td:nth-child(4),
             #currentInventoryTable th:nth-child(5),
-            #currentInventoryTable td:nth-child(5) { width: 13% !important; }
+            #currentInventoryTable td:nth-child(5) { width: 12% !important; }
             #currentInventoryTable th:nth-child(6),
-            #currentInventoryTable td:nth-child(6) { width: 10% !important; }
+            #currentInventoryTable td:nth-child(6) { width: 12% !important; }
             #currentInventoryTable th:nth-child(7),
-            #currentInventoryTable td:nth-child(7) { width: 14% !important; }
+            #currentInventoryTable td:nth-child(7) { width: 12% !important; }
             #currentInventoryTable th,
             #currentInventoryTable td {
                 white-space: normal !important;
@@ -198,9 +198,9 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
             <table id="currentInventoryTable" class="table table-striped table-hover align-middle w-100 mmb-stack inventory-data-table">
                 <thead class="table-dark">
                     <tr>
-                        <th data-priority="1">ID</th>
-                        <th data-priority="2">Batch No.</th>
-                        <th data-priority="3">Product</th>
+                        <th data-priority="1">Batch No.</th>
+                        <th data-priority="2">Product</th>
+                        <th data-priority="3">Date Received</th>
                         <th data-priority="4">Original Quantity</th>
                         <th data-priority="5">Current Quantity</th>
                         <th data-priority="6">Expiry</th>
@@ -240,7 +240,6 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
                                 }
                             ?>
                             <tr class="<?= $rowWarningClass ?>" data-product-id="<?= (int)($batch['product_id'] ?? 0) ?>" data-batch-id="<?= (int)($batch['id'] ?? 0) ?>">
-                                <td data-label="ID"><?= (int)($batch['id'] ?? 0) ?></td>
                                 <td data-label="Batch No."><?= htmlspecialchars($batchNumber !== '' ? $batchNumber : 'N/A') ?></td>
                                 <td data-label="Product">
                                     <div class="d-flex align-items-center">
@@ -254,6 +253,7 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
                                         <span><?= htmlspecialchars(trim(($batch['branded_name'] ?? '') . ' ' . ($batch['generic_name'] ?? '') . ' ' . ($batch['strength'] ?? '') . ' ' . ($batch['measurement_name'] ?? ''))) ?></span>
                                     </div>
                                 </td>
+                                <td data-label="Date Received"><?= htmlspecialchars($batch['date_received'] ?: 'N/A') ?></td>
                                 <td data-label="Original Qty"><?= htmlspecialchars((string) ($batch['received_quantity'] ?? 0)) ?></td>
                                 <td data-label="Current Qty"><?= htmlspecialchars((string) ($batch['current_quantity'] ?? 0)) ?></td>
                                 <td data-label="Expiry"><?= htmlspecialchars($batch['expiry_date'] ?: 'N/A') ?></td>
@@ -264,8 +264,8 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
                                                 data-batch-id="<?= (int)($batch['id'] ?? 0) ?>"
                                                 data-batch-number="<?= htmlspecialchars((string)($batchNumber !== '' ? $batchNumber : 'N/A'), ENT_QUOTES, 'UTF-8') ?>"
                                                 data-product-name="<?= htmlspecialchars(trim(($batch['branded_name'] ?? '') . ' ' . ($batch['generic_name'] ?? '') . ' ' . ($batch['strength'] ?? '') . ' ' . ($batch['measurement_name'] ?? '')), ENT_QUOTES, 'UTF-8') ?>"
-                                                onclick="(function(){var select=document.getElementById('move_no_stock_inventory_id'); var batchId='<?= (int)($batch['id'] ?? 0) ?>'; var batchNumber='<?= htmlspecialchars((string)($batchNumber !== '' ? $batchNumber : 'N/A'), ENT_QUOTES, 'UTF-8') ?>'; var productName='<?= htmlspecialchars(trim(($batch['branded_name'] ?? '') . ' ' . ($batch['generic_name'] ?? '') . ' ' . ($batch['strength'] ?? '') . ' ' . ($batch['measurement_name'] ?? '')), ENT_QUOTES, 'UTF-8') ?>'; if(select){ var match=null; for(var i=0;i<select.options.length;i++){var option=select.options[i]; var optionText=(option.textContent||'').trim().toLowerCase(); if(option.value === String(batchId)) { match=option; break; } if(batchNumber && productName && optionText.indexOf(batchNumber.toLowerCase()) !== -1 && optionText.indexOf(productName.toLowerCase()) !== -1) { match=option; break; } } if(match){ select.value = match.value; if(typeof select.dispatchEvent === 'function'){ select.dispatchEvent(new Event('change', { bubbles: true })); } } } var modalEl=document.getElementById('moveNoStockModal'); if(modalEl && window.bootstrap && bootstrap.Modal){ bootstrap.Modal.getOrCreateInstance(modalEl).show(); }})();"
-                                                <?= ((int)($batch['current_quantity'] ?? 0) > 0) ? 'disabled' : '' ?>>
+                                                data-current-quantity="<?= (int)($batch['current_quantity'] ?? 0) ?>"
+                                                onclick="(function(){var select=document.getElementById('move_no_stock_inventory_id'); var batchId='<?= (int)($batch['id'] ?? 0) ?>'; var batchNumber='<?= htmlspecialchars((string)($batchNumber !== '' ? $batchNumber : 'N/A'), ENT_QUOTES, 'UTF-8') ?>'; var productName='<?= htmlspecialchars(trim(($batch['branded_name'] ?? '') . ' ' . ($batch['generic_name'] ?? '') . ' ' . ($batch['strength'] ?? '') . ' ' . ($batch['measurement_name'] ?? '')), ENT_QUOTES, 'UTF-8') ?>'; var currentQty = Number('<?= (int)($batch['current_quantity'] ?? 0) ?>'); var form=document.querySelector('#moveNoStockModal form'); var batchLabel = batchNumber ? batchNumber : (productName || 'the selected batch'); var isEmptyBatch = currentQty <= 0; if(select){ var match=null; for(var i=0;i<select.options.length;i++){var option=select.options[i]; var optionText=(option.textContent||'').trim().toLowerCase(); if(option.value === String(batchId)) { match=option; break; } if(batchNumber && productName && optionText.indexOf(batchNumber.toLowerCase()) !== -1 && optionText.indexOf(productName.toLowerCase()) !== -1) { match=option; break; } } if(match){ select.value = match.value; if(typeof select.dispatchEvent === 'function'){ select.dispatchEvent(new Event('change', { bubbles: true })); } } } if(!isEmptyBatch){ mmbNotify({ type: 'warning', title: 'Batch still has stock', message: 'Cannot move ' + batchLabel + ' to No Stock because it still has ' + currentQty + ' unit(s) in stock.' }); return; } var message = 'You are manually archiving ' + batchLabel + ' as a zero-stock batch.\n\nThis batch is empty and will be moved to No Stock history. It will no longer appear in active inventory and should only be used when the product has no remaining stock.'; mmbConfirm({ title: 'Move empty batch to No Stock history?', message: message, okLabel: 'Yes, move to No Stock', danger: false }).then(function (yes) { if (!yes) return; if (form) { form.dataset.confirmed = '1'; form.submit(); } });})();">
                                             Move No Stock
                                         </button>
                                         <button type="button"
@@ -816,6 +816,7 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
         <div class="modal-content add-product-modal">
             <form method="POST" enctype="multipart/form-data">
                 <input type="hidden" name="addInventoryBatch" value="1">
+                <input type="hidden" name="date_received" value="<?= date('Y-m-d') ?>">
                 <div class="modal-header">
                     <h5 class="modal-title" id="addBatchModalLabel">Add Stock Batch</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -1180,13 +1181,23 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
         if (noStockForm) {
             noStockForm.addEventListener('submit', function (event) {
                 if (noStockForm.dataset.confirmed === '1') return;
-                event.preventDefault();
 
                 const select = document.getElementById('move_no_stock_inventory_id');
-                const batchLabel = (select && select.selectedIndex > 0)
-                    ? select.options[select.selectedIndex].text
-                    : 'the selected batch';
+                const selectedOption = select && select.selectedIndex > 0 ? select.options[select.selectedIndex] : null;
+                const currentQuantity = Number(selectedOption ? (selectedOption.dataset.currentQuantity || 0) : 0);
+                const batchLabel = selectedOption ? selectedOption.text : 'the selected batch';
 
+                if (currentQuantity > 0) {
+                    event.preventDefault();
+                    mmbNotify({
+                        type: 'warning',
+                        title: 'Batch still has stock',
+                        message: 'Cannot move ' + batchLabel + ' to No Stock because it still has ' + currentQuantity + ' unit(s) in stock.'
+                    });
+                    return;
+                }
+
+                event.preventDefault();
                 mmbConfirm({
                     title: 'Move empty batch to No Stock history?',
                     message: 'You are manually archiving ' + batchLabel + ' as a zero-stock batch.\n\nThis batch is empty and will be moved to No Stock history. It will no longer appear in active inventory and should only be used when the product has no remaining stock.',
@@ -1642,16 +1653,14 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
                         <select id="move_no_stock_inventory_id" name="inventory_id" class="form-select" required>
                             <option value="">Select batch</option>
                             <?php foreach ($inventoryBatches as $batch): ?>
-                                <?php if ((int)($batch['current_quantity'] ?? 0) <= 0): ?>
-                                    <option value="<?= (int)($batch['id'] ?? 0) ?>">
-                                        <?= htmlspecialchars(trim(($batch['branded_name'] ?? '') . ' ' . ($batch['generic_name'] ?? ''))) ?> - Qty: 0 - Batch: <?= htmlspecialchars($batch['batch_number'] ?: 'N/A') ?>
-                                    </option>
-                                <?php endif; ?>
+                                <option value="<?= (int)($batch['id'] ?? 0) ?>" data-current-quantity="<?= (int)($batch['current_quantity'] ?? 0) ?>">
+                                    <?= htmlspecialchars(trim(($batch['branded_name'] ?? '') . ' ' . ($batch['generic_name'] ?? ''))) ?> - Qty: <?= (int)($batch['current_quantity'] ?? 0) ?> - Batch: <?= htmlspecialchars($batch['batch_number'] ?: 'N/A') ?>
+                                </option>
                             <?php endforeach; ?>
                         </select>
                     </div>
                     <div class="alert alert-warning small mb-0">
-                        Manual archive action: this selected empty batch will be moved to the No Stock history and will no longer appear in active inventory.
+                        Manual archive action: this selected batch will be moved to No Stock history. If it still has stock, the active quantity will be set to 0 and archived.
                     </div>
                 </div>
                 <div class="modal-footer">

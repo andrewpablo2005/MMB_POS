@@ -94,7 +94,7 @@ $dosageForms = $product->getDosageForms();
 
                     <div class="add-product-row">
                         <div class="add-product-field">
-                            <label for="strength" class="form-label">Amount per Serving <span
+                            <label for="strength" class="form-label">Serving Size / Quantity Per Serving <span
                                     class="text-danger">*</span></label>
                             <div class="input-group">
                                 <input type="number" id="strength" name="strength" class="form-control"
@@ -253,6 +253,7 @@ $dosageForms = $product->getDosageForms();
                                     title="Skip adding a batch" data-bs-toggle="tooltip">No</button>
                             </div>
                             <input type="hidden" name="add_batch_prompt" id="add_batch_prompt" value="no">
+                            <input type="hidden" name="date_received" id="batch_received_date" value="<?= date('Y-m-d') ?>">
                         </div>
                     </div>
 
