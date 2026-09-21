@@ -124,6 +124,38 @@ class ProductManagement
         }
     }
 
+    private function ensureServingUnitForeignKey(): void
+    {
+        try {
+            $fkRow = $this->con->prepare("SELECT CONSTRAINT_NAME
+                FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
+                WHERE TABLE_SCHEMA = DATABASE()
+                  AND TABLE_NAME = 'products'
+                  AND COLUMN_NAME = 'measurement_id'
+                  AND REFERENCED_TABLE_NAME IS NOT NULL");
+            $fkRow->execute();
+            $constraintName = (string) ($fkRow->fetchColumn() ?? '');
+
+            if ($constraintName !== '') {
+                $this->con->exec("ALTER TABLE products DROP FOREIGN KEY `{$constraintName}`");
+            }
+
+            $existingFk = $this->con->prepare("SELECT COUNT(*)
+                FROM INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS
+                WHERE CONSTRAINT_SCHEMA = DATABASE()
+                  AND TABLE_NAME = 'products'
+                  AND CONSTRAINT_NAME = 'fk_products_measurement'");
+            $existingFk->execute();
+            $hasFk = (int) $existingFk->fetchColumn() > 0;
+
+            if (!$hasFk) {
+                $this->con->exec("ALTER TABLE products ADD CONSTRAINT fk_products_measurement FOREIGN KEY (measurement_id) REFERENCES serving_unit(id) ON UPDATE CASCADE ON DELETE SET NULL");
+            }
+        } catch (\Throwable $e) {
+            // Ignore if the schema is already aligned; this is only a safeguard.
+        }
+    }
+
     // Supplier columns are no longer in products table - they belong in suppliers table
     // Pricing columns are no longer in products table - they belong in inventory table
 
@@ -293,7 +325,8 @@ class ProductManagement
             // Batch/Inventory fields (for inventory table)
             $this->expiry_date = $_POST['expiry_date'] ?? '';
             $this->batch_number = trim($_POST['batch_number'] ?? '');
-            $this->supplier_id = (int) ($_POST['supplier_id'] ?? 0);
+            $selectedSupplierId = $_POST['supplier_id'] ?? $_POST['batch_supplier_id'] ?? 0;
+            $this->supplier_id = (int) $selectedSupplierId;
             $this->purchase_cost = (float) ($_POST['purchase_cost'] ?? 0);
             $this->markup = (float) ($_POST['markup'] ?? 0);
             $this->sale_price = (float) ($_POST['sale_price'] ?? 0);
@@ -333,6 +366,7 @@ class ProductManagement
         }
         try {
             $this->ensureMeasurementColumnOptional();
+            $this->ensureServingUnitForeignKey();
             $this->con->beginTransaction();
 
             // INSERT THIS BLOCK HERE

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 17, 2026 at 05:44 PM
+-- Generation Time: Sep 21, 2026 at 12:38 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -312,7 +312,42 @@ INSERT INTO `activity_logs` (`id`, `user_id`, `username`, `role`, `module`, `act
 (262, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 30, 'Updated category \'Instant Food\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:40:39'),
 (263, 2, 'andrew_admin', 'admin', 'products', 'category_update', 'category', 31, 'Updated category \'Dairy Products\' settings', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:40:39'),
 (264, 2, 'andrew_admin', 'admin', 'sales', 'sale_completed', 'transaction', 24, 'Completed sale #000024 — 4.80 PHP, 1 items, customer: ANDREW PABLO', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:41:03'),
-(265, 2, 'andrew_admin', 'admin', 'auth', 'logout', NULL, NULL, 'Signed out', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:43:59');
+(265, 2, 'andrew_admin', 'admin', 'auth', 'logout', NULL, NULL, 'Signed out', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-17 15:43:59'),
+(266, 1, 'andrew_owner', 'owner', 'inventory', 'batch_add', 'product', 10058, 'Added batch \'Batch-1\' (100 packs) to Omega Plaster', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-19 01:16:48'),
+(267, 1, 'andrew_owner', 'owner', 'sales', 'register_close', 'register_closing', 2, 'Closed register for 2026-09-17 — system 2,364.73 PHP, counted 2,364.73 PHP, variance 0.00 PHP', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-19 01:17:11'),
+(268, 1, 'andrew_owner', 'owner', 'sales', 'register_open', 'register_opening', 4, 'Opened register with 1,000.00 PHP opening cash for 2026-09-19', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-19 01:17:17'),
+(269, 1, 'andrew_owner', 'owner', 'sales', 'sale_completed', 'transaction', 25, 'Completed sale #000025 — 50.00 PHP, 1 items, customer: Walk-in', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-19 01:17:34'),
+(270, 1, 'andrew_owner', 'owner', 'inventory', 'batch_add', 'product', 10075, 'Added batch \'Batch-3\' (1000 packs) to Kojic', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-19 01:22:49'),
+(271, 1, 'andrew_owner', 'owner', 'auth', 'login', 'user', 1, 'Signed in successfully (owner)', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-21 08:10:55'),
+(272, 1, 'andrew_owner', 'owner', 'products', 'product_add', 'product', 1, 'Added product \'Restime\'', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-21 08:16:53'),
+(273, 1, 'andrew_owner', 'owner', 'inventory', 'batch_add', 'product', 1, 'Added batch \'Batch-1\' (100 packs) to Restime', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-21 08:17:37'),
+(274, 1, 'andrew_owner', 'owner', 'sales', 'register_open', 'register_opening', 1, 'Opened register with 1,000.00 PHP opening cash for 2026-09-21', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-21 08:17:44'),
+(275, 1, 'andrew_owner', 'owner', 'products', 'product_add', 'product', 2, 'Added product \'Fita\'', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-21 08:37:50'),
+(276, 1, 'andrew_owner', 'owner', 'inventory', 'batch_add', 'product', 2, 'Added batch \'Batch-1\' (100 packs) to Fita', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-21 08:38:13'),
+(277, 1, 'andrew_owner', 'owner', 'inventory', 'batch_add', 'product', 2, 'Added batch \'Batch-2\' (100 packs) to Fita', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-21 08:38:51'),
+(278, 1, 'andrew_owner', 'owner', 'sales', 'sale_completed', 'transaction', 1, 'Completed sale #000001 — 10,890.00 PHP, 99 items, customer: Walk-in', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-21 08:40:32'),
+(279, 1, 'andrew_owner', 'owner', 'inventory', 'batch_add', 'product', 2, 'Added batch \'Batch-3\' (100 packs) to Fita', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-21 08:41:19'),
+(280, 1, 'andrew_owner', 'owner', 'sales', 'sale_completed', 'transaction', 2, 'Completed sale #000002 — 115.50 PHP, 1 items, customer: Walk-in', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-21 08:42:42'),
+(281, 1, 'andrew_owner', 'owner', 'sales', 'sale_completed', 'transaction', 3, 'Completed sale #000003 — 115.50 PHP, 1 items, customer: Walk-in', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-21 08:43:32'),
+(282, 1, 'andrew_owner', 'owner', 'sales', 'sale_completed', 'transaction', 4, 'Completed sale #000004 — 11,434.50 PHP, 99 items, customer: Walk-in', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-21 08:44:06'),
+(283, 1, 'andrew_owner', 'owner', 'inventory', 'batch_add', 'product', 2, 'Added batch \'Batch-4\' (1 packs) to Fita', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-21 08:45:15'),
+(284, 1, 'andrew_owner', 'owner', 'inventory', 'batch_add', 'product', 2, 'Added batch \'Batch-5\' (1 packs) to Fita', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-21 08:46:05'),
+(285, 1, 'andrew_owner', 'owner', 'inventory', 'batch_disposal', 'inventory', 2, 'Disposed 100 packs from batch \'Batch-1\' of Fita (reason: Expired)', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-21 08:52:59'),
+(286, 1, 'andrew_owner', 'owner', 'products', 'product_status', 'product', 1, 'Disabled product Restime', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-21 09:08:10'),
+(287, 1, 'andrew_owner', 'owner', 'products', 'product_status', 'product', 2, 'Disabled product Fita', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-21 09:08:19'),
+(288, 1, 'andrew_owner', 'owner', 'products', 'product_status', 'product', 2, 'Enabled product Fita', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-21 09:08:27'),
+(289, 1, 'andrew_owner', 'owner', 'products', 'product_status', 'product', 1, 'Enabled product Restime', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-21 09:08:33'),
+(290, 1, 'andrew_owner', 'owner', 'sales', 'sale_completed', 'transaction', 5, 'Completed sale #000005 — 14,850.00 PHP, 99 items, customer: Walk-in', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-21 09:17:55'),
+(291, 1, 'andrew_owner', 'owner', 'auth', 'login', 'user', 1, 'Signed in successfully (owner)', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Code/1.138.0 Chrome/148.0.7778.280 Electron/42.10.0 Safari/537.36', '2026-09-21 10:06:56'),
+(292, 1, 'andrew_owner', 'owner', 'auth', 'logout', NULL, NULL, 'Signed out', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-21 10:12:52'),
+(293, 1, 'andrew_owner', 'owner', 'auth', 'login', 'user', 1, 'Signed in successfully (owner)', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-21 10:13:25'),
+(294, 1, 'andrew_owner', 'owner', 'auth', 'logout', NULL, NULL, 'Signed out', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-21 10:13:32'),
+(295, 3, 'andrew_staff', 'staff', 'auth', 'login', 'user', 3, 'Signed in successfully (staff)', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-21 10:13:37'),
+(296, 3, 'andrew_staff', 'staff', 'sales', 'register_open', 'register_opening', 2, 'Opened register with 100.00 PHP opening cash for 2026-09-21', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-21 10:13:42'),
+(297, 1, 'andrew_owner', 'owner', 'auth', 'login', 'user', 1, 'Signed in successfully (owner)', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-21 10:18:38'),
+(298, 1, 'andrew_owner', 'owner', 'auth', 'logout', NULL, NULL, 'Signed out', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-21 10:21:38'),
+(299, 2, 'andrew_admin', 'admin', 'auth', 'login', 'user', 2, 'Signed in successfully (admin)', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-21 10:21:42'),
+(300, 2, 'andrew_admin', 'admin', 'sales', 'register_open', 'register_opening', 3, 'Opened register with 100.00 PHP opening cash for 2026-09-21', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-21 10:21:48');
 
 -- --------------------------------------------------------
 
@@ -404,113 +439,12 @@ CREATE TABLE `inventory` (
 --
 
 INSERT INTO `inventory` (`id`, `product_id`, `supplier_id`, `batch_number`, `date_received`, `manufacture_date`, `purchase_cost`, `markup`, `sale_price`, `received_quantity`, `created_at`, `updated_at`, `current_quantity`, `expiry_date`) VALUES
-(1, 10001, 1, 'SEED-BATCH-001', '2026-09-16', NULL, 8.00, 20.00, 9.60, 100, '2026-09-16 15:10:31', '2026-09-17 07:06:55', 0, '2027-03-22'),
-(2, 10002, 1, 'SEED-BATCH-002', '2026-09-16', NULL, 55.00, 20.00, 66.00, 80, '2026-09-16 15:10:31', '2026-09-17 07:31:46', 70, '2027-03-29'),
-(3, 10003, 1, 'SEED-BATCH-003', '2026-09-16', NULL, 12.00, 20.00, 14.40, 100, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 100, '2027-04-05'),
-(4, 10004, 1, 'SEED-BATCH-004', '2026-09-16', NULL, 14.00, 20.00, 16.80, 100, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 100, '2027-04-12'),
-(5, 10005, 1, 'SEED-BATCH-005', '2026-09-16', NULL, 18.00, 20.00, 21.60, 90, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 90, '2027-04-19'),
-(6, 10006, 1, 'SEED-BATCH-006', '2026-09-16', NULL, 9.00, 20.00, 10.80, 100, '2026-09-16 15:10:31', '2026-09-17 03:45:19', 98, '2027-04-26'),
-(7, 10007, 1, 'SEED-BATCH-007', '2026-09-16', NULL, 22.00, 20.00, 26.40, 80, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 80, '2027-05-03'),
-(8, 10008, 1, 'SEED-BATCH-008', '2026-09-16', NULL, 10.00, 20.00, 12.00, 100, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 100, '2027-05-10'),
-(9, 10009, 1, 'SEED-BATCH-009', '2026-09-16', NULL, 25.00, 20.00, 30.00, 60, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 60, '2027-05-17'),
-(10, 10010, 1, 'SEED-BATCH-010', '2026-09-16', NULL, 18.00, 20.00, 21.60, 90, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 90, '2027-05-24'),
-(11, 10011, 1, 'SEED-BATCH-011', '2026-09-16', NULL, 20.00, 20.00, 24.00, 90, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 90, '2027-05-31'),
-(12, 10012, 1, 'SEED-BATCH-012', '2026-09-16', NULL, 12.00, 20.00, 14.40, 100, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 100, '2027-06-07'),
-(13, 10013, 1, 'SEED-BATCH-013', '2026-09-16', NULL, 14.00, 20.00, 16.80, 100, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 100, '2027-06-14'),
-(14, 10014, 1, 'SEED-BATCH-014', '2026-09-16', NULL, 12.00, 20.00, 14.40, 80, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 80, '2027-06-21'),
-(15, 10015, 1, 'SEED-BATCH-015', '2026-09-16', NULL, 16.00, 20.00, 19.20, 80, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 80, '2027-06-28'),
-(16, 10016, 1, 'SEED-BATCH-016', '2026-09-16', NULL, 95.00, 20.00, 114.00, 60, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 60, '2027-07-05'),
-(17, 10017, 1, 'SEED-BATCH-017', '2026-09-16', NULL, 110.00, 20.00, 132.00, 40, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 40, '2027-07-12'),
-(18, 10018, 1, 'SEED-BATCH-018', '2026-09-16', NULL, 45.00, 20.00, 54.00, 80, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 80, '2027-07-19'),
-(19, 10019, 1, 'SEED-BATCH-019', '2026-09-16', NULL, 180.00, 20.00, 216.00, 40, '2026-09-16 15:10:31', '2026-09-16 15:11:26', 39, '2027-07-26'),
-(20, 10020, 1, 'SEED-BATCH-020', '2026-09-16', NULL, 220.00, 20.00, 264.00, 40, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 40, '2027-08-02'),
-(21, 10021, 1, 'SEED-BATCH-021', '2026-09-16', NULL, 35.00, 20.00, 42.00, 60, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 60, '2027-08-09'),
-(22, 10022, 1, 'SEED-BATCH-022', '2026-09-16', NULL, 12.00, 20.00, 14.40, 80, '2026-09-16 15:10:31', '2026-09-17 02:51:56', 78, '2027-08-16'),
-(23, 10023, 1, 'SEED-BATCH-023', '2026-09-16', NULL, 75.00, 20.00, 90.00, 50, '2026-09-16 15:10:31', '2026-09-17 02:25:14', 48, '2027-08-23'),
-(24, 10024, 1, 'SEED-BATCH-024', '2026-09-16', NULL, 18.00, 20.00, 21.60, 60, '2026-09-16 15:10:31', '2026-09-17 02:23:50', 59, '2027-08-30'),
-(25, 10025, 1, 'SEED-BATCH-025', '2026-09-16', NULL, 20.00, 20.00, 24.00, 50, '2026-09-16 15:10:31', '2026-09-16 15:11:26', 49, '2027-09-06'),
-(26, 10026, 1, 'SEED-BATCH-026', '2026-09-16', NULL, 8.00, 20.00, 9.60, 60, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 60, '2027-09-13'),
-(27, 10027, 1, 'SEED-BATCH-027', '2026-09-16', NULL, 16.00, 20.00, 19.20, 50, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 50, '2027-09-20'),
-(28, 10028, 1, 'SEED-BATCH-028', '2026-09-16', NULL, 65.00, 20.00, 78.00, 40, '2026-09-16 15:10:31', '2026-09-16 15:11:26', 39, '2027-09-27'),
-(29, 10029, 1, 'SEED-BATCH-029', '2026-09-16', NULL, 6.00, 20.00, 7.20, 100, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 100, '2027-10-04'),
-(30, 10030, 1, 'SEED-BATCH-030', '2026-09-16', NULL, 5.00, 20.00, 6.00, 100, '2026-09-16 15:10:31', '2026-09-17 15:41:03', 90, '2027-10-11'),
-(31, 10031, 1, 'SEED-BATCH-031', '2026-09-16', NULL, 4.00, 20.00, 4.80, 100, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 100, '2027-10-18'),
-(32, 10032, 1, 'SEED-BATCH-032', '2026-09-16', NULL, 8.00, 20.00, 9.60, 80, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 80, '2027-10-25'),
-(33, 10033, 1, 'SEED-BATCH-033', '2026-09-16', NULL, 18.00, 20.00, 21.60, 60, '2026-09-16 15:10:31', '2026-09-17 02:00:37', 58, '2027-11-01'),
-(34, 10034, 1, 'SEED-BATCH-034', '2026-09-16', NULL, 25.00, 20.00, 30.00, 50, '2026-09-16 15:10:31', '2026-09-16 15:11:26', 49, '2027-11-08'),
-(35, 10035, 1, 'SEED-BATCH-035', '2026-09-16', NULL, 10.00, 20.00, 12.00, 50, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 50, '2027-11-15'),
-(36, 10036, 1, 'SEED-BATCH-036', '2026-09-16', NULL, 320.00, 20.00, 384.00, 30, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 30, '2027-11-22'),
-(37, 10037, 1, 'SEED-BATCH-037', '2026-09-16', NULL, 450.00, 20.00, 540.00, 20, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 20, '2027-11-29'),
-(38, 10038, 1, 'SEED-BATCH-038', '2026-09-16', NULL, 950.00, 20.00, 1140.00, 20, '2026-09-16 15:10:31', '2026-09-16 15:11:26', 19, '2027-12-06'),
-(39, 10039, 1, 'SEED-BATCH-039', '2026-09-16', NULL, 125.00, 20.00, 150.00, 50, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 50, '2027-12-13'),
-(40, 10040, 1, 'SEED-BATCH-040', '2026-09-16', NULL, 180.00, 20.00, 216.00, 40, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 40, '2027-12-20'),
-(41, 10041, 1, 'SEED-BATCH-041', '2026-09-16', NULL, 12.00, 20.00, 14.40, 80, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 80, '2027-12-27'),
-(42, 10042, 1, 'SEED-BATCH-042', '2026-09-16', NULL, 9.00, 20.00, 10.80, 100, '2026-09-16 15:10:31', '2026-09-16 15:11:26', 99, '2028-01-03'),
-(43, 10043, 1, 'SEED-BATCH-043', '2026-09-16', NULL, 18.00, 20.00, 21.60, 80, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 80, '2028-01-10'),
-(44, 10044, 1, 'SEED-BATCH-044', '2026-09-16', NULL, 15.00, 20.00, 18.00, 70, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 70, '2028-01-17'),
-(45, 10045, 1, 'SEED-BATCH-045', '2026-09-16', NULL, 20.00, 20.00, 24.00, 60, '2026-09-16 15:10:31', '2026-09-16 15:11:26', 59, '2028-01-24'),
-(46, 10046, 1, 'SEED-BATCH-046', '2026-09-16', NULL, 12.00, 20.00, 14.40, 70, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 70, '2028-01-31'),
-(47, 10047, 1, 'SEED-BATCH-047', '2026-09-16', NULL, 10.00, 20.00, 12.00, 80, '2026-09-16 15:10:31', '2026-09-16 15:11:26', 79, '2028-02-07'),
-(48, 10048, 1, 'SEED-BATCH-048', '2026-09-16', NULL, 8.00, 20.00, 9.60, 40, '2026-09-16 15:10:31', '2026-09-16 15:11:26', 39, '2028-02-14'),
-(49, 10049, 1, 'SEED-BATCH-049', '2026-09-16', NULL, 7.00, 20.00, 8.40, 70, '2026-09-16 15:10:31', '2026-09-16 15:11:26', 69, '2028-02-21'),
-(50, 10050, 1, 'SEED-BATCH-050', '2026-09-16', NULL, 5.00, 20.00, 6.00, 70, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 70, '2028-02-28'),
-(51, 10051, 1, 'SEED-BATCH-051', '2026-09-16', NULL, 95.00, 20.00, 114.00, 60, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 60, '2028-03-06'),
-(52, 10052, 1, 'SEED-BATCH-052', '2026-09-16', NULL, 85.00, 20.00, 102.00, 80, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 80, '2028-03-13'),
-(53, 10053, 1, 'SEED-BATCH-053', '2026-09-16', NULL, 35.00, 20.00, 42.00, 60, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 60, '2028-03-20'),
-(54, 10054, 1, 'SEED-BATCH-054', '2026-09-16', NULL, 180.00, 20.00, 216.00, 40, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 40, '2028-03-27'),
-(55, 10055, 1, 'SEED-BATCH-055', '2026-09-16', NULL, 160.00, 20.00, 192.00, 40, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 40, '2028-04-03'),
-(56, 10056, 1, 'SEED-BATCH-056', '2026-09-16', NULL, 125.00, 20.00, 150.00, 40, '2026-09-16 15:10:31', '2026-09-16 15:11:26', 39, '2028-04-10'),
-(57, 10057, 1, 'SEED-BATCH-057', '2026-09-16', NULL, 12.00, 20.00, 14.40, 80, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 80, '2028-04-17'),
-(58, 10058, 1, 'SEED-BATCH-058', '2026-09-16', NULL, 2.00, 20.00, 2.40, 100, '2026-09-16 15:10:31', '2026-09-17 03:58:48', 95, '2028-04-24'),
-(59, 10059, 1, 'SEED-BATCH-059', '2026-09-16', NULL, 110.00, 20.00, 132.00, 40, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 40, '2028-05-01'),
-(60, 10060, 1, 'SEED-BATCH-060', '2026-09-16', NULL, 95.00, 20.00, 114.00, 50, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 50, '2028-05-08'),
-(61, 10061, 1, 'SEED-BATCH-061', '2026-09-16', NULL, 250.00, 20.00, 300.00, 40, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 40, '2028-05-15'),
-(62, 10062, 1, 'SEED-BATCH-062', '2026-09-16', NULL, 120.00, 20.00, 144.00, 50, '2026-09-16 15:10:31', '2026-09-16 15:11:26', 49, '2028-05-22'),
-(63, 10063, 1, 'SEED-BATCH-063', '2026-09-16', NULL, 350.00, 20.00, 420.00, 30, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 30, '2028-05-29'),
-(64, 10064, 1, 'SEED-BATCH-064', '2026-09-16', NULL, 250.00, 20.00, 300.00, 30, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 30, '2028-06-05'),
-(65, 10065, 1, 'SEED-BATCH-065', '2026-09-16', NULL, 220.00, 20.00, 264.00, 30, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 30, '2028-06-12'),
-(66, 10066, 1, 'SEED-BATCH-066', '2026-09-16', NULL, 45.00, 20.00, 54.00, 60, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 60, '2028-06-19'),
-(67, 10067, 1, 'SEED-BATCH-067', '2026-09-16', NULL, 75.00, 20.00, 90.00, 50, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 50, '2028-06-26'),
-(68, 10068, 1, 'SEED-BATCH-068', '2026-09-16', NULL, 65.00, 20.00, 78.00, 40, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 40, '2028-07-03'),
-(69, 10069, 1, 'SEED-BATCH-069', '2026-09-16', NULL, 180.00, 20.00, 216.00, 30, '2026-09-16 15:10:31', '2026-09-16 15:11:26', 29, '2028-07-10'),
-(70, 10070, 1, 'SEED-BATCH-070', '2026-09-16', NULL, 450.00, 20.00, 540.00, 25, '2026-09-16 15:10:31', '2026-09-16 15:11:26', 24, '2028-07-17'),
-(71, 10071, 1, 'SEED-BATCH-071', '2026-09-16', NULL, 35.00, 20.00, 42.00, 80, '2026-09-16 15:10:31', '2026-09-16 15:11:26', 79, '2028-07-24'),
-(72, 10072, 1, 'SEED-BATCH-072', '2026-09-16', NULL, 180.00, 20.00, 216.00, 40, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 40, '2028-07-31'),
-(73, 10073, 1, 'SEED-BATCH-073', '2026-09-16', NULL, 160.00, 20.00, 192.00, 40, '2026-09-16 15:10:31', '2026-09-16 15:11:26', 39, '2028-08-07'),
-(74, 10074, 1, 'SEED-BATCH-074', '2026-09-16', NULL, 180.00, 20.00, 216.00, 40, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 40, '2028-08-14'),
-(75, 10075, 1, 'SEED-BATCH-075', '2026-09-16', NULL, 45.00, 20.00, 54.00, 60, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 60, '2028-08-21'),
-(76, 10076, 1, 'SEED-BATCH-076', '2026-09-16', NULL, 350.00, 20.00, 420.00, 30, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 30, '2028-08-28'),
-(77, 10077, 1, 'SEED-BATCH-077', '2026-09-16', NULL, 220.00, 20.00, 264.00, 30, '2026-09-16 15:10:31', '2026-09-16 15:11:26', 29, '2028-09-04'),
-(78, 10078, 1, 'SEED-BATCH-078', '2026-09-16', NULL, 95.00, 20.00, 114.00, 60, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 60, '2028-09-11'),
-(79, 10079, 1, 'SEED-BATCH-079', '2026-09-16', NULL, 180.00, 20.00, 216.00, 40, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 40, '2028-09-18'),
-(80, 10080, 1, 'SEED-BATCH-080', '2026-09-16', NULL, 85.00, 20.00, 102.00, 40, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 40, '2028-09-25'),
-(81, 10081, 1, 'SEED-BATCH-081', '2026-09-16', NULL, 120.00, 20.00, 144.00, 40, '2026-09-16 15:10:31', '2026-09-16 15:11:26', 39, '2028-10-02'),
-(82, 10082, 1, 'SEED-BATCH-082', '2026-09-16', NULL, 280.00, 20.00, 336.00, 30, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 30, '2028-10-09'),
-(83, 10083, 1, 'SEED-BATCH-083', '2026-09-16', NULL, 300.00, 20.00, 360.00, 30, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 30, '2028-10-16'),
-(84, 10084, 1, 'SEED-BATCH-084', '2026-09-16', NULL, 310.00, 20.00, 372.00, 30, '2026-09-16 15:10:31', '2026-09-16 15:11:26', 29, '2028-10-23'),
-(85, 10085, 1, 'SEED-BATCH-085', '2026-09-16', NULL, 950.00, 20.00, 1140.00, 20, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 20, '2028-10-30'),
-(86, 10086, 1, 'SEED-BATCH-086', '2026-09-16', NULL, 900.00, 20.00, 1080.00, 20, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 20, '2028-11-06'),
-(87, 10087, 1, 'SEED-BATCH-087', '2026-09-16', NULL, 85.00, 20.00, 102.00, 50, '2026-09-16 15:10:31', '2026-09-16 15:11:26', 49, '2028-11-13'),
-(88, 10088, 1, 'SEED-BATCH-088', '2026-09-16', NULL, 150.00, 20.00, 180.00, 40, '2026-09-16 15:10:31', '2026-09-16 15:11:26', 39, '2028-11-20'),
-(89, 10089, 1, 'SEED-BATCH-089', '2026-09-16', NULL, 180.00, 20.00, 216.00, 40, '2026-09-16 15:10:31', '2026-09-16 15:11:26', 39, '2028-11-27'),
-(90, 10090, 1, 'SEED-BATCH-090', '2026-09-16', NULL, 220.00, 20.00, 264.00, 30, '2026-09-16 15:10:31', '2026-09-16 15:11:26', 29, '2028-12-04'),
-(91, 10091, 1, 'SEED-BATCH-091', '2026-09-16', NULL, 12.00, 20.00, 14.40, 100, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 100, '2028-12-11'),
-(92, 10092, 1, 'SEED-BATCH-092', '2026-09-16', NULL, 180.00, 20.00, 216.00, 40, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 40, '2028-12-18'),
-(93, 10093, 1, 'SEED-BATCH-093', '2026-09-16', NULL, 150.00, 20.00, 180.00, 40, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 40, '2028-12-25'),
-(94, 10094, 1, 'SEED-BATCH-094', '2026-09-16', NULL, 250.00, 20.00, 300.00, 30, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 30, '2029-01-01'),
-(95, 10095, 1, 'SEED-BATCH-095', '2026-09-16', NULL, 210.00, 20.00, 252.00, 30, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 30, '2029-01-08'),
-(96, 10096, 1, 'SEED-BATCH-096', '2026-09-16', NULL, 150.00, 20.00, 180.00, 40, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 40, '2029-01-15'),
-(97, 10097, 1, 'SEED-BATCH-097', '2026-09-16', NULL, 120.00, 20.00, 144.00, 40, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 40, '2029-01-22'),
-(98, 10098, 1, 'SEED-BATCH-098', '2026-09-16', NULL, 180.00, 20.00, 216.00, 30, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 30, '2029-01-29'),
-(99, 10099, 1, 'SEED-BATCH-099', '2026-09-16', NULL, 260.00, 20.00, 312.00, 30, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 30, '2029-02-05'),
-(100, 10100, 1, 'SEED-BATCH-100', '2026-09-16', NULL, 8.00, 20.00, 9.60, 70, '2026-09-16 15:10:31', '2026-09-16 15:10:31', 70, '2029-02-12'),
-(128, 10075, 1, 'Batch-1', '2026-09-16', NULL, 50.00, 5.00, 52.50, 1, '2026-09-16 15:26:39', '2026-09-16 15:26:39', 1, '2029-02-02'),
-(129, 10075, NULL, 'Batch-2', '2026-09-16', NULL, 50.00, 5.00, 52.50, 10, '2026-09-16 15:27:16', '2026-09-16 15:27:16', 10, '2020-02-02'),
-(130, 10101, 2, 'Batch-1', '2026-09-17', NULL, 50.00, 5.00, 52.50, 100, '2026-09-17 02:27:24', '2026-09-17 02:29:58', 97, '2030-02-02'),
-(131, 10102, 1, 'Batch-1', '2026-09-17', NULL, 10.00, 5.00, 10.50, 100, '2026-09-17 03:50:55', '2026-09-17 03:50:55', 100, '2029-01-02'),
-(132, 10103, 1, 'Batch-1', '2026-09-17', NULL, 10.00, 5.00, 10.50, 952, '2026-09-17 08:21:41', '2026-09-17 08:22:32', 0, '2029-02-02'),
-(133, 10104, 2, 'Batch-1', '2026-09-17', NULL, 243.00, 5.00, 255.15, 50, '2026-09-17 10:17:22', '2026-09-17 10:17:22', 50, '2026-09-20'),
-(134, 10103, 1, 'Batch-2', '2026-09-17', NULL, 50.00, 5.00, 52.50, 100, '2026-09-17 14:51:43', '2026-09-17 14:51:43', 100, '2030-02-02');
+(1, 1, NULL, 'Batch-1', '2026-09-21', NULL, 110.00, 5.00, 150.00, 100, '2026-09-21 08:17:37', '2026-09-21 09:17:55', 1, '2029-02-02'),
+(2, 2, NULL, 'Batch-1', '2026-09-21', NULL, 0.00, 5.00, 0.00, 100, '2026-09-21 08:38:13', '2026-09-21 08:52:59', 0, '0000-00-00'),
+(3, 2, NULL, 'Batch-2', '2026-09-21', NULL, 100.00, 5.00, 110.00, 100, '2026-09-21 08:38:51', '2026-09-21 08:44:06', 0, '2030-02-02'),
+(4, 2, NULL, 'Batch-3', '2026-09-21', NULL, 110.00, 5.00, 115.50, 100, '2026-09-21 08:41:19', '2026-09-21 08:44:06', 0, '2026-11-02'),
+(5, 2, NULL, 'Batch-4', '2026-09-21', NULL, 120.00, 5.00, 126.00, 1, '2026-09-21 08:45:15', '2026-09-21 08:45:15', 1, '2029-02-02'),
+(6, 2, NULL, 'Batch-5', '2026-09-21', NULL, 150.00, 5.00, 157.50, 1, '2026-09-21 08:46:05', '2026-09-21 08:46:05', 1, '2026-11-02');
 
 -- --------------------------------------------------------
 
@@ -578,9 +512,8 @@ CREATE TABLE `inventory_disposals` (
 -- Dumping data for table `inventory_disposals`
 --
 
-INSERT INTO `inventory_disposals` (`id`, `product_id`, `batch_number`, `quantity`, `expiry_date`, `reason`, `disposed_at`) VALUES
-(1, 10002, 'SEED-BATCH-002', 10, '2027-03-29', 'Expired', '2026-09-17 15:31:46'),
-(2, 10103, 'Batch-1', 952, '2029-02-02', 'damages', '2026-09-17 16:22:32');
+INSERT INTO `inventory_disposals` (`id`, `product_id`, `batch_number`, `quantity`, `expiry_date`, `reason`, `disposal_proof_filename`, `disposed_at`) VALUES
+(1, 2, 'Batch-1', 100, '0000-00-00', 'Expired', '98bc14064daa7c7fde35954710d398a5.jpg', '2026-09-21 16:52:59');
 
 -- --------------------------------------------------------
 
@@ -604,7 +537,9 @@ CREATE TABLE `inventory_no_stock` (
 --
 
 INSERT INTO `inventory_no_stock` (`id`, `product_id`, `batch_number`, `current_quantity`, `received_quantity`, `expiry_date`, `reason`, `moved_at`) VALUES
-(1, 10001, 'SEED-BATCH-001', 0, 100, '2027-03-22', 'No stock', '2026-09-17 15:27:17');
+(1, 2, 'Batch-2', 0, 100, '2030-02-02', 'No stock', '2026-09-21 16:52:18'),
+(2, 2, 'Batch-3', 0, 100, '2026-11-02', 'No stock', '2026-09-21 16:52:31'),
+(3, 2, 'Batch-1', 0, 100, '0000-00-00', 'No stock', '2026-09-21 17:34:52');
 
 -- --------------------------------------------------------
 
@@ -751,117 +686,8 @@ CREATE TABLE `products` (
 --
 
 INSERT INTO `products` (`id`, `branded_name`, `generic_name`, `strength`, `measurement_id`, `barcode`, `category_id`, `classification_id`, `units_per_package`, `imageproduct`, `is_basic_necessities`, `package_type`, `dosage_form`, `dosage_form_id`, `strength_per_quantity`, `strength_per_quantity_unit`, `is_hidden`) VALUES
-(10001, 'Biogesic', 'Paracetamol', 500.00, 2, '2999000000001', 18, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Tablet', 1, 10.00, 'pcs', 0),
-(10002, 'Tempra', 'Paracetamol', 250.00, 2, '2999000000002', 18, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Bottle', 'Syrup', 3, 5.00, 'mL', 0),
-(10003, 'Advil', 'Ibuprofen', 200.00, 2, '2999000000003', 18, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Capsule', 2, 10.00, 'pcs', 0),
-(10004, 'Alaxan FR', 'Ibuprofen + Paracetamol', 200.00, 2, '2999000000004', 18, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Capsule', 2, 10.00, 'pcs', 0),
-(10005, 'Mefinamic', 'Mefenamic Acid', 500.00, 2, '2999000000005', 18, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Capsule', 2, 10.00, 'pcs', 0),
-(10006, 'Kremil-S', 'Aluminum Hydroxide + Magnesium Hydroxide', 178.00, 2, '2999000000006', 18, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Tablet', 1, 10.00, 'pcs', 0),
-(10007, 'Buscopan', 'Hyoscine Butylbromide', 10.00, 2, '2999000000007', 18, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Tablet', 1, 10.00, 'pcs', 0),
-(10008, 'Diatabs', 'Loperamide', 2.00, 2, '2999000000008', 18, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Capsule', 2, 4.00, 'pcs', 0),
-(10009, 'Imodium', 'Loperamide', 2.00, 2, '2999000000009', 18, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Capsule', 2, 4.00, 'pcs', 0),
-(10010, 'Zyrtec', 'Cetirizine', 10.00, 2, '2999000000010', 18, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Tablet', 1, 10.00, 'pcs', 0),
-(10011, 'Claritin', 'Loratadine', 10.00, 2, '2999000000011', 18, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Tablet', 1, 10.00, 'pcs', 0),
-(10012, 'Neozep', 'Phenylephrine + Chlorphenamine + Paracetamol', 500.00, 2, '2999000000012', 18, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Tablet', 1, 10.00, 'pcs', 0),
-(10013, 'Bioflu', 'Phenylephrine + Chlorphenamine + Paracetamol', 500.00, 2, '2999000000013', 18, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Tablet', 1, 10.00, 'pcs', 0),
-(10014, 'Decolgen', 'Phenylephrine + Chlorphenamine + Paracetamol', 500.00, 2, '2999000000014', 18, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Tablet', 1, 10.00, 'pcs', 0),
-(10015, 'Solmux', 'Carbocisteine', 500.00, 2, '2999000000015', 18, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Capsule', 2, 10.00, 'pcs', 0),
-(10016, 'Ascof', 'Lagundi Leaf Extract', 600.00, 2, '2999000000016', 18, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Bottle', 'Syrup', 3, 60.00, 'mL', 0),
-(10017, 'Ventolin', 'Salbutamol', 2.00, 2, '2999000000017', 17, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Bottle', 'Syrup', 3, 60.00, 'mL', 0),
-(10018, 'Strepsils', 'Amylmetacresol + Dichlorobenzyl Alcohol', 1.00, 2, '2999000000018', 18, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Tablet', 1, 16.00, 'pcs', 0),
-(10019, 'Difflam', 'Benzydamine Hydrochloride', 3.00, 2, '2999000000019', 18, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Bottle', 'Solution', 11, 100.00, 'mL', 0),
-(10020, 'Gaviscon', 'Sodium Alginate + Sodium Bicarbonate', 500.00, 2, '2999000000020', 18, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Bottle', 'Suspension', 3, 150.00, 'mL', 0),
-(10021, 'Losec', 'Omeprazole', 20.00, 2, '2999000000021', 17, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Capsule', 2, 14.00, 'pcs', 0),
-(10022, 'Amoxil', 'Amoxicillin', 500.00, 2, '2999000000022', 17, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Capsule', 2, 20.00, 'pcs', 0),
-(10023, 'Augmentin', 'Amoxicillin + Clavulanic Acid', 625.00, 2, '2999000000023', 17, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Tablet', 1, 14.00, 'pcs', 0),
-(10024, 'Keflex', 'Cephalexin', 500.00, 2, '2999000000024', 17, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Capsule', 2, 20.00, 'pcs', 0),
-(10025, 'Cipro', 'Ciprofloxacin', 500.00, 2, '2999000000025', 17, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Tablet', 1, 10.00, 'pcs', 0),
-(10026, 'Flagyl', 'Metronidazole', 500.00, 2, '2999000000026', 17, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Tablet', 1, 20.00, 'pcs', 0),
-(10027, 'Bactrim', 'Sulfamethoxazole + Trimethoprim', 800.00, 2, '2999000000027', 17, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Tablet', 1, 10.00, 'pcs', 0),
-(10028, 'Diflucan', 'Fluconazole', 150.00, 2, '2999000000028', 17, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Capsule', 2, 1.00, 'pcs', 0),
-(10029, 'Losartan', 'Losartan Potassium', 50.00, 2, '2999000000029', 17, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Tablet', 1, 30.00, 'pcs', 0),
-(10030, 'Norvasc', 'Amlodipine', 5.00, 2, '2999000000030', 17, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Tablet', 1, 30.00, 'pcs', 0),
-(10031, 'Metformin', 'Metformin Hydrochloride', 500.00, 2, '2999000000031', 17, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Tablet', 1, 30.00, 'pcs', 0),
-(10032, 'Glucophage', 'Metformin Hydrochloride', 850.00, 2, '2999000000032', 17, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Tablet', 1, 30.00, 'pcs', 0),
-(10033, 'Lipitor', 'Atorvastatin', 20.00, 2, '2999000000033', 17, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Tablet', 1, 30.00, 'pcs', 0),
-(10034, 'Plavix', 'Clopidogrel', 75.00, 2, '2999000000034', 17, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Tablet', 1, 28.00, 'pcs', 0),
-(10035, 'Levothyroxine', 'Levothyroxine Sodium', 50.00, 2, '2999000000035', 17, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Tablet', 1, 30.00, 'pcs', 0),
-(10036, 'Ventolin', 'Salbutamol', 100.00, 2, '2999000000036', 17, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Inhaler', 16, 1.00, 'pc', 0),
-(10037, 'Insulin Pen', 'Human Insulin', 100.00, 12, '2999000000037', 17, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Injection', 8, 1.00, 'pc', 0),
-(10038, 'PediaSure', 'Complete Nutrition Formula', 850.00, 3, '2999000000038', 20, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Can', 'Powder', 9, 850.00, 'g', 0),
-(10039, 'Ceelin', 'Vitamin C', 30.00, 2, '2999000000039', 20, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Bottle', 'Drops', 7, 30.00, 'mL', 0),
-(10040, 'Cherifer', 'Multivitamins + Lysine', 500.00, 2, '2999000000040', 20, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Bottle', 'Syrup', 3, 60.00, 'mL', 0),
-(10041, 'Conzace', 'Vitamin A + C + E + Zinc', 500.00, 2, '2999000000041', 20, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Capsule', 2, 30.00, 'pcs', 0),
-(10042, 'Enervon', 'B-Complex + Vitamin C', 500.00, 2, '2999000000042', 20, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Tablet', 1, 30.00, 'pcs', 0),
-(10043, 'Stresstabs', 'Multivitamins + Minerals', 1.00, 15, '2999000000043', 20, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Tablet', 1, 30.00, 'pcs', 0),
-(10044, 'Immunomax', 'Vitamin C + Zinc', 500.00, 2, '2999000000044', 20, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Tablet', 1, 30.00, 'pcs', 0),
-(10045, 'Caltrate', 'Calcium Carbonate + Vitamin D3', 600.00, 2, '2999000000045', 20, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Tablet', 1, 30.00, 'pcs', 0),
-(10046, 'Fern-C', 'Ascorbic Acid + Zinc', 500.00, 2, '2999000000046', 20, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Tablet', 1, 30.00, 'pcs', 0),
-(10047, 'Potencee', 'Ascorbic Acid', 500.00, 2, '2999000000047', 20, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Tablet', 1, 30.00, 'pcs', 0),
-(10048, 'Kirkland', 'Fish Oil', 1000.00, 2, '2999000000048', 20, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Bottle', 'Capsule', 2, 100.00, 'pcs', 0),
-(10049, 'Iron Plus', 'Ferrous Sulfate', 325.00, 2, '2999000000049', 20, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Tablet', 1, 30.00, 'pcs', 0),
-(10050, 'Folart', 'Folic Acid', 5.00, 2, '2999000000050', 20, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Tablet', 1, 30.00, 'pcs', 0),
-(10051, 'Betadine', 'Povidone Iodine', 10.00, 11, '2999000000051', 21, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Bottle', 'Solution', 11, 60.00, 'mL', 0),
-(10052, 'Alcohol 70%', 'Ethyl Alcohol', 70.00, 11, '2999000000052', 21, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Bottle', 'Solution', 11, 500.00, 'mL', 0),
-(10053, 'Agua Oxigenada', 'Hydrogen Peroxide', 3.00, 11, '2999000000053', 21, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Bottle', 'Solution', 11, 120.00, 'mL', 0),
-(10054, 'Bactroban', 'Mupirocin', 2.00, 11, '2999000000054', 21, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Tube', 'Ointment', 6, 15.00, 'g', 0),
-(10055, 'Fucidin', 'Fusidic Acid', 2.00, 11, '2999000000055', 21, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Tube', 'Cream', 5, 15.00, 'g', 0),
-(10056, 'Caladryl', 'Calamine + Diphenhydramine', 8.00, 11, '2999000000056', 21, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Bottle', 'Lotion', 13, 60.00, 'mL', 0),
-(10057, 'Salonpas', 'Methyl Salicylate + Menthol', 1.00, 15, '2999000000057', 21, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Patch', 15, 20.00, 'pcs', 0),
-(10058, 'Omega Plaster', 'Adhesive Bandage', 1.00, 15, '2999000000058', 21, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Patch', 15, 100.00, 'pcs', 0),
-(10059, 'Betadine Gargle', 'Povidone Iodine', 1.00, 11, '2999000000059', 21, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Bottle', 'Solution', 11, 120.00, 'mL', 0),
-(10060, 'Efficascent Oil', 'Menthol + Methyl Salicylate', 1.00, 15, '2999000000060', 21, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Bottle', 'Solution', 11, 100.00, 'mL', 0),
-(10061, 'N95 Mask', 'Particulate Respirator', 1.00, 15, '2999000000061', 19, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Powder', 9, 20.00, 'pcs', 0),
-(10062, 'Surgical Mask', 'Disposable Face Mask', 1.00, 15, '2999000000062', 19, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Powder', 9, 50.00, 'pcs', 0),
-(10063, 'Latex Gloves', 'Examination Gloves', 1.00, 15, '2999000000063', 19, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Powder', 9, 100.00, 'pcs', 0),
-(10064, 'Syringe 5mL', 'Sterile Disposable Syringe', 1.00, 15, '2999000000064', 19, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Powder', 9, 100.00, 'pcs', 0),
-(10065, 'Syringe 10mL', 'Sterile Disposable Syringe', 1.00, 15, '2999000000065', 19, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Powder', 9, 50.00, 'pcs', 0),
-(10066, 'Cotton Balls', 'Sterile Cotton Balls', 1.00, 15, '2999000000066', 19, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Pack', 'Powder', 9, 100.00, 'pcs', 0),
-(10067, 'Gauze Pads', 'Sterile Gauze Pad', 1.00, 15, '2999000000067', 19, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Pack', 'Powder', 9, 25.00, 'pcs', 0),
-(10068, 'Elastic Bandage', 'Elastic Crepe Bandage', 1.00, 15, '2999000000068', 19, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Roll', 'Powder', 9, 1.00, 'pcs', 0),
-(10069, 'Digital Thermometer', 'Digital Clinical Thermometer', 1.00, 15, '2999000000069', 22, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Powder', 9, 1.00, 'pcs', 0),
-(10070, 'Blood Glucose Strips', 'Blood Glucose Test Strips', 1.00, 15, '2999000000070', 22, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Powder', 9, 50.00, 'pcs', 0),
-(10071, 'Safeguard', 'Antibacterial Soap', 90.00, 3, '2999000000071', 25, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Bar', 'Powder', 9, 1.00, 'pcs', 0),
-(10072, 'Cetaphil', 'Gentle Cleansing Bar', 127.00, 3, '2999000000072', 25, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Powder', 9, 1.00, 'pcs', 0),
-(10073, 'Lactacyd', 'Feminine Wash', 200.00, 6, '2999000000073', 25, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Bottle', 'Powder', 9, 1.00, 'pcs', 0),
-(10074, 'Nivea', 'Moisturizing Lotion', 250.00, 6, '2999000000074', 25, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Bottle', 'Powder', 9, 1.00, 'pcs', 0),
-(10075, 'Kojic', 'Kojic Acid Soap', 65.00, 3, '2999000000075', 25, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Bar', 'Powder', 9, 1.00, 'pcs', 0),
-(10076, 'Sunscreen SPF50', 'Broad Spectrum Sunscreen', 50.00, 11, '2999000000076', 25, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Tube', 'Powder', 9, 1.00, 'pcs', 0),
-(10077, 'Pond\'s', 'Facial Moisturizer', 50.00, 3, '2999000000077', 25, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Jar', 'Powder', 9, 1.00, 'pcs', 0),
-(10078, 'Colgate', 'Fluoride Toothpaste', 1450.00, 11, '2999000000078', 25, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Tube', 'Powder', 9, 100.00, 'pcs', 0),
-(10079, 'Listerine', 'Mouthwash', 250.00, 6, '2999000000079', 25, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Bottle', 'Powder', 9, 1.00, 'pcs', 0),
-(10080, 'Vaseline', 'Petroleum Jelly', 100.00, 3, '2999000000080', 25, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Jar', 'Powder', 9, 1.00, 'pcs', 0),
-(10081, 'Johnson\'s Baby', 'Baby Powder', 200.00, 3, '2999000000081', 26, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Bottle', 'Powder', 9, 1.00, 'pcs', 0),
-(10082, 'Huggies', 'Baby Diaper Small', 1.00, 15, '2999000000082', 26, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Pack', 'Powder', 9, 24.00, 'pcs', 0),
-(10083, 'Huggies', 'Baby Diaper Medium', 1.00, 15, '2999000000083', 26, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Pack', 'Powder', 9, 24.00, 'pcs', 0),
-(10084, 'Huggies', 'Baby Diaper Large', 1.00, 15, '2999000000084', 26, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Pack', 'Powder', 9, 20.00, 'pcs', 0),
-(10085, 'Enfamil', 'Infant Formula', 800.00, 3, '2999000000085', 26, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Can', 'Powder', 9, 1.00, 'pcs', 0),
-(10086, 'Similac', 'Infant Formula', 800.00, 3, '2999000000086', 26, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Can', 'Powder', 9, 1.00, 'pcs', 0),
-(10087, 'Nursicare', 'Baby Wipes', 80.00, 15, '2999000000087', 26, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Pack', 'Powder', 9, 1.00, 'pcs', 0),
-(10088, 'Johnson\'s Baby', 'Baby Shampoo', 200.00, 6, '2999000000088', 26, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Bottle', 'Powder', 9, 1.00, 'pcs', 0),
-(10089, 'Baby Dove', 'Baby Lotion', 200.00, 6, '2999000000089', 26, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Bottle', 'Powder', 9, 1.00, 'pcs', 0),
-(10090, 'Pigeon', 'Feeding Bottle', 240.00, 6, '2999000000090', 26, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Bottle', 'Powder', 9, 1.00, 'pcs', 0),
-(10091, 'ORS Hydrite', 'Oral Rehydration Salts', 1.00, 15, '2999000000091', 24, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Sachet', 'Powder', 9, 1.00, 'pcs', 0),
-(10092, 'Daktarin', 'Miconazole Nitrate', 2.00, 11, '2999000000092', 24, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Tube', 'Cream', 5, 15.00, 'g', 0),
-(10093, 'Canesten', 'Clotrimazole', 1.00, 11, '2999000000093', 24, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Tube', 'Cream', 5, 15.00, 'g', 0),
-(10094, 'Tears Naturale', 'Hypromellose', 3.00, 11, '2999000000094', 24, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Bottle', 'Drops', 7, 15.00, 'mL', 0),
-(10095, 'Nafcon-A', 'Naphazoline + Pheniramine', 1.00, 11, '2999000000095', 24, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Bottle', 'Drops', 7, 15.00, 'mL', 0),
-(10096, 'Vicks', 'Menthol + Camphor', 1.00, 15, '2999000000096', 24, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Jar', 'Ointment', 6, 50.00, 'g', 0),
-(10097, 'Tiger Balm', 'Camphor + Menthol', 1.00, 15, '2999000000097', 24, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Jar', 'Ointment', 6, 20.00, 'g', 0),
-(10098, 'Salonpas Gel', 'Methyl Salicylate + Menthol', 1.00, 15, '2999000000098', 24, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Tube', 'Gel', 12, 30.00, 'g', 0),
-(10099, 'Gaviscon Double Action', 'Sodium Alginate + Calcium Carbonate', 500.00, 2, '2999000000099', 18, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Bottle', 'Suspension', 3, 150.00, 'mL', 0),
-(10100, 'Pharex', 'Vitamin B Complex', 1.00, 15, '2999000000100', 20, NULL, 1, '6aa7a6fe8617a-1789372158IMG_4549.jpeg', 0, 'Box', 'Tablet', 1, 30.00, 'pcs', 0),
-(10101, '', 'boba', 100.00, 3, '170669953033', 17, NULL, 0, '6aab500c85da6-1789612044Screenshot 2026-07-23 144850.png', 0, '', '', NULL, 1.00, 'pack', 0),
-(10102, '', 'TEST', 100.00, 3, '102673930621', 17, NULL, 0, '6aab639f342b2-1789617055Screenshot 2026-07-23 150101.png', 0, '', '', NULL, NULL, '', 0),
-(10103, 'dsfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff', 'dsfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff', 1000.00, 3, '952347658942', 17, NULL, 0, '6aaba2f0533b7-1789633264Screenshot 2026-07-23 150101.png', 0, '', '', NULL, 1.00, 'pc', 0),
-(10104, '', 'brief', 1.00, 7, '1789639999241', 20, NULL, 0, '', 0, '', '', NULL, NULL, '', 0),
-(10105, '', 'Amoxicillindd', 1.00, 3, '530569427720', 26, NULL, 0, '', 0, '', '', NULL, NULL, '', 0),
-(10106, '', 'tut', 1.00, 7, '887476421576', 28, NULL, 0, '', 0, '', '', NULL, NULL, '', 0),
-(10107, '', 'Paracetamolddd', 1.00, 2, '1789640517401', 26, NULL, 0, '', 0, '', '', NULL, NULL, '', 0),
-(10108, '', 'dd', 1.00, 6, '1789640587339', 28, NULL, 0, '', 0, '', '', NULL, NULL, '', 0),
-(10109, '', 'ddd', 1.00, 8, '286125365552', 28, NULL, 0, '', 0, '', 'Lozenge', 17, 1.00, 'box', 0),
-(10110, '', 'dddddss', 1.00, 7, '278470884217', 28, NULL, 0, '', 0, '', '', NULL, NULL, '', 0),
-(10111, '', 'tiss', 266.00, 9, '008878145600', 25, NULL, 0, '', 0, '', '', NULL, NULL, '', 0);
+(1, 'Restime', 'Simeticone', 40.00, 2, '4807788523709', 17, NULL, 0, '6ab0e7f5ac1f5-1789978613IMG_4549.png', 0, '', 'Drops', 7, 10.00, 'mL', 0),
+(2, 'Fita', 'Crackers, Salted Crackers', 30.00, 3, '750515017429', 28, NULL, 0, '6ab0ecdebc371-1789979870images (5).jpg', 0, '', '', NULL, 1.00, 'pc', 0);
 
 -- --------------------------------------------------------
 
@@ -946,13 +772,6 @@ CREATE TABLE `pwd_customers` (
   `verified_by` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `pwd_customers`
---
-
-INSERT INTO `pwd_customers` (`id`, `customer_name`, `id_number`, `cashier_id`, `verified_at`, `verified_by`) VALUES
-(1, 'ANDREW PABLO', '12345678910', 1, '2026-09-17 08:56:01', 1);
-
 -- --------------------------------------------------------
 
 --
@@ -969,13 +788,6 @@ CREATE TABLE `register_closings` (
   `notes` varchar(255) DEFAULT NULL,
   `closed_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `register_closings`
---
-
-INSERT INTO `register_closings` (`id`, `user_id`, `business_date`, `system_cash`, `counted_cash`, `variance`, `notes`, `closed_at`) VALUES
-(1, 1, '2026-09-16', 5413.60, 5413.30, -0.30, 'no cents', '2026-09-16 15:47:04');
 
 -- --------------------------------------------------------
 
@@ -997,9 +809,9 @@ CREATE TABLE `register_openings` (
 --
 
 INSERT INTO `register_openings` (`id`, `user_id`, `business_date`, `opening_cash`, `notes`, `opened_at`) VALUES
-(1, 1, '2026-09-16', 1000.00, NULL, '2026-09-16 14:56:33'),
-(2, 1, '2026-09-17', 1000.00, NULL, '2026-09-17 00:52:04'),
-(3, 2, '2026-09-17', 100.00, NULL, '2026-09-17 15:27:07');
+(1, 1, '2026-09-21', 1000.00, NULL, '2026-09-21 08:17:44'),
+(2, 3, '2026-09-21', 100.00, NULL, '2026-09-21 10:13:42'),
+(3, 2, '2026-09-21', 100.00, NULL, '2026-09-21 10:21:48');
 
 -- --------------------------------------------------------
 
@@ -1053,13 +865,6 @@ CREATE TABLE `senior_customers` (
   `verified_at` datetime NOT NULL DEFAULT current_timestamp(),
   `verified_by` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `senior_customers`
---
-
-INSERT INTO `senior_customers` (`id`, `customer_name`, `id_number`, `cashier_id`, `verified_at`, `verified_by`) VALUES
-(1, 'ANDREW PABLO', '12345678910', 1, '2026-09-17 08:54:16', 1);
 
 -- --------------------------------------------------------
 
@@ -1128,14 +933,6 @@ CREATE TABLE `suppliers` (
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `suppliers`
---
-
-INSERT INTO `suppliers` (`id`, `supplier_name`, `contact_person`, `contact_number`, `email`, `address`, `supplier_type`, `is_active`, `created_at`, `updated_at`) VALUES
-(1, 'ABC PHARMA', NULL, '+639651800675', 'andrewpablo2005@gmail.com', 'Manila Philippines', 'Pharmaceutical Distributor', 1, '2026-09-16 14:54:43', '2026-09-16 14:54:43'),
-(2, 'Andrew Gonzales Pablo', NULL, '+639651800675', 'andrewpablo2005@gmail.com', 'N/A', NULL, 1, '2026-09-17 02:26:55', '2026-09-17 02:26:55');
-
 -- --------------------------------------------------------
 
 --
@@ -1160,30 +957,11 @@ CREATE TABLE `transactions` (
 --
 
 INSERT INTO `transactions` (`id`, `user_id`, `discount_id`, `customer_name`, `customer_id`, `customer_type`, `total_amount`, `created_at`, `discount_total`, `total_vat_exemption`) VALUES
-(1, 1, 1, 'Walk-in', NULL, '', 4413.60, '2026-09-16 15:11:26', 0.00, 0.00),
-(2, 1, 3, 'ANDREW PABLO', '1', 'pwd', 4.93, '2026-09-17 01:08:27', 1.07, 0.00),
-(3, 1, 1, 'Walk-in', NULL, '', 2.40, '2026-09-17 01:09:04', 0.00, 0.00),
-(4, 1, 2, 'ANDREW PABLO', '1', 'senior', 4.93, '2026-09-17 01:55:01', 1.07, 0.00),
-(5, 1, 2, 'ANDREW PABLO', '1', 'senior', 18.71, '2026-09-17 02:00:37', 2.89, 0.00),
-(6, 1, 2, 'ANDREW PABLO', '1', 'senior', 77.95, '2026-09-17 02:12:26', 12.05, 0.00),
-(7, 1, 2, 'ANDREW PABLO', '1', 'senior', 5.20, '2026-09-17 02:14:33', 0.80, 0.00),
-(8, 1, 2, 'ANDREW PABLO', '1', 'senior', 5.20, '2026-09-17 02:21:19', 0.80, 0.00),
-(9, 1, 2, 'ANDREW PABLO', '1', 'senior', 17.74, '2026-09-17 02:23:50', 3.86, 0.00),
-(10, 1, 2, 'ANDREW PABLO', '1', 'senior', 73.93, '2026-09-17 02:25:14', 16.07, 0.00),
-(11, 1, 1, 'Walk-in', NULL, '', 52.50, '2026-09-17 02:27:53', 0.00, 0.00),
-(12, 1, 2, 'ANDREW PABLO', '1', 'senior', 43.12, '2026-09-17 02:29:31', 9.38, 0.00),
-(13, 1, 3, 'ANDREW PABLO', '1', 'pwd', 43.12, '2026-09-17 02:29:58', 9.38, 0.00),
-(14, 1, 2, 'ANDREW PABLO', '1', 'senior', 18.58, '2026-09-17 02:44:45', 1.82, 0.00),
-(15, 1, 2, 'ANDREW PABLO', '1', 'senior', 5.46, '2026-09-17 02:46:59', 0.54, 0.00),
-(16, 1, 2, 'ANDREW PABLO', '1', 'senior', 12.96, '2026-09-17 02:51:56', 1.44, 0.00),
-(17, 1, 1, 'Walk-in', NULL, '', 13.20, '2026-09-17 03:45:19', 0.00, 0.00),
-(18, 1, 1, 'Walk-in', NULL, '', 2.40, '2026-09-17 03:58:24', 0.00, 0.00),
-(19, 1, 1, 'Walk-in', NULL, '', 2.40, '2026-09-17 03:58:48', 0.00, 0.00),
-(20, 1, 1, 'Walk-in', NULL, '', 960.00, '2026-09-17 07:06:55', 0.00, 0.00),
-(21, 2, 2, 'ANDREW PABLO', '1', 'senior', 6.00, '2026-09-17 15:27:42', 0.00, 0.00),
-(22, 2, 2, 'ANDREW PABLO', '1', 'senior', 4.80, '2026-09-17 15:31:24', 1.20, 0.00),
-(23, 2, 2, 'ANDREW PABLO', '1', 'senior', 6.00, '2026-09-17 15:40:24', 0.00, 0.00),
-(24, 2, 2, 'ANDREW PABLO', '1', 'senior', 4.80, '2026-09-17 15:41:03', 1.20, 0.00);
+(1, 1, 1, 'Walk-in', NULL, '', 10890.00, '2026-09-21 08:40:32', 0.00, 0.00),
+(2, 1, 1, 'Walk-in', NULL, '', 115.50, '2026-09-21 08:42:42', 0.00, 0.00),
+(3, 1, 1, 'Walk-in', NULL, '', 115.50, '2026-09-21 08:43:32', 0.00, 0.00),
+(4, 1, 1, 'Walk-in', NULL, '', 11434.50, '2026-09-21 08:44:06', 0.00, 0.00),
+(5, 1, 1, 'Walk-in', NULL, '', 14850.00, '2026-09-21 09:17:55', 0.00, 0.00);
 
 -- --------------------------------------------------------
 
@@ -1221,57 +999,11 @@ CREATE TABLE `transaction_items` (
 --
 
 INSERT INTO `transaction_items` (`id`, `transaction_id`, `product_id`, `batch_id`, `quantity`, `price`, `subtotal`) VALUES
-(1, 1, 10006, 6, 1, 10.80, 10.80),
-(2, 1, 10019, 19, 1, 216.00, 216.00),
-(3, 1, 10025, 25, 1, 24.00, 24.00),
-(4, 1, 10028, 28, 1, 78.00, 78.00),
-(5, 1, 10033, 33, 1, 21.60, 21.60),
-(6, 1, 10034, 34, 1, 30.00, 30.00),
-(7, 1, 10038, 38, 1, 1140.00, 1140.00),
-(8, 1, 10042, 42, 1, 10.80, 10.80),
-(9, 1, 10045, 45, 1, 24.00, 24.00),
-(10, 1, 10047, 47, 1, 12.00, 12.00),
-(11, 1, 10048, 48, 1, 9.60, 9.60),
-(12, 1, 10049, 49, 1, 8.40, 8.40),
-(13, 1, 10056, 56, 1, 150.00, 150.00),
-(14, 1, 10058, 58, 1, 2.40, 2.40),
-(15, 1, 10062, 62, 1, 144.00, 144.00),
-(16, 1, 10069, 69, 1, 216.00, 216.00),
-(17, 1, 10070, 70, 1, 540.00, 540.00),
-(18, 1, 10071, 71, 1, 42.00, 42.00),
-(19, 1, 10073, 73, 1, 192.00, 192.00),
-(20, 1, 10077, 77, 1, 264.00, 264.00),
-(21, 1, 10081, 81, 1, 144.00, 144.00),
-(22, 1, 10084, 84, 1, 372.00, 372.00),
-(23, 1, 10087, 87, 1, 102.00, 102.00),
-(24, 1, 10088, 88, 1, 180.00, 180.00),
-(25, 1, 10089, 89, 1, 216.00, 216.00),
-(26, 1, 10090, 90, 1, 264.00, 264.00),
-(27, 2, 10030, 30, 1, 6.00, 4.93),
-(28, 3, 10058, 58, 1, 2.40, 2.40),
-(29, 4, 10030, 30, 1, 6.00, 4.93),
-(30, 5, 10033, 33, 1, 21.60, 18.71),
-(31, 6, 10023, 23, 1, 90.00, 77.95),
-(32, 7, 10030, 30, 1, 6.00, 5.20),
-(33, 8, 10030, 30, 1, 6.00, 5.20),
-(34, 9, 10024, 24, 1, 21.60, 17.74),
-(35, 10, 10023, 23, 1, 90.00, 73.93),
-(36, 11, 10101, 130, 1, 52.50, 52.50),
-(37, 12, 10101, 130, 1, 52.50, 43.12),
-(38, 13, 10101, 130, 1, 52.50, 43.12),
-(39, 14, 10022, 22, 1, 14.40, 13.12),
-(40, 14, 10030, 30, 1, 6.00, 5.46),
-(41, 15, 10030, 30, 1, 6.00, 5.46),
-(42, 16, 10022, 22, 1, 14.40, 12.96),
-(43, 17, 10006, 6, 1, 10.80, 10.80),
-(44, 17, 10058, 58, 1, 2.40, 2.40),
-(45, 18, 10058, 58, 1, 2.40, 2.40),
-(46, 19, 10058, 58, 1, 2.40, 2.40),
-(47, 20, 10001, 1, 100, 9.60, 960.00),
-(48, 21, 10030, 30, 1, 6.00, 6.00),
-(49, 22, 10030, 30, 1, 6.00, 4.80),
-(50, 23, 10030, 30, 1, 6.00, 6.00),
-(51, 24, 10030, 30, 1, 6.00, 4.80);
+(1, 1, 2, 3, 99, 110.00, 10890.00),
+(2, 2, 2, 4, 1, 115.50, 115.50),
+(3, 3, 2, 4, 1, 115.50, 115.50),
+(4, 4, 2, NULL, 99, 115.50, 11434.50),
+(5, 5, 1, 1, 99, 150.00, 14850.00);
 
 -- --------------------------------------------------------
 
@@ -1293,57 +1025,12 @@ CREATE TABLE `transaction_item_batches` (
 --
 
 INSERT INTO `transaction_item_batches` (`id`, `transaction_item_id`, `inventory_id`, `quantity`, `purchase_cost`, `created_at`) VALUES
-(1, 1, 6, 1, 9.00, '2026-09-16 15:11:26'),
-(2, 2, 19, 1, 180.00, '2026-09-16 15:11:26'),
-(3, 3, 25, 1, 20.00, '2026-09-16 15:11:26'),
-(4, 4, 28, 1, 65.00, '2026-09-16 15:11:26'),
-(5, 5, 33, 1, 18.00, '2026-09-16 15:11:26'),
-(6, 6, 34, 1, 25.00, '2026-09-16 15:11:26'),
-(7, 7, 38, 1, 950.00, '2026-09-16 15:11:26'),
-(8, 8, 42, 1, 9.00, '2026-09-16 15:11:26'),
-(9, 9, 45, 1, 20.00, '2026-09-16 15:11:26'),
-(10, 10, 47, 1, 10.00, '2026-09-16 15:11:26'),
-(11, 11, 48, 1, 8.00, '2026-09-16 15:11:26'),
-(12, 12, 49, 1, 7.00, '2026-09-16 15:11:26'),
-(13, 13, 56, 1, 125.00, '2026-09-16 15:11:26'),
-(14, 14, 58, 1, 2.00, '2026-09-16 15:11:26'),
-(15, 15, 62, 1, 120.00, '2026-09-16 15:11:26'),
-(16, 16, 69, 1, 180.00, '2026-09-16 15:11:26'),
-(17, 17, 70, 1, 450.00, '2026-09-16 15:11:26'),
-(18, 18, 71, 1, 35.00, '2026-09-16 15:11:26'),
-(19, 19, 73, 1, 160.00, '2026-09-16 15:11:26'),
-(20, 20, 77, 1, 220.00, '2026-09-16 15:11:26'),
-(21, 21, 81, 1, 120.00, '2026-09-16 15:11:26'),
-(22, 22, 84, 1, 310.00, '2026-09-16 15:11:26'),
-(23, 23, 87, 1, 85.00, '2026-09-16 15:11:26'),
-(24, 24, 88, 1, 150.00, '2026-09-16 15:11:26'),
-(25, 25, 89, 1, 180.00, '2026-09-16 15:11:26'),
-(26, 26, 90, 1, 220.00, '2026-09-16 15:11:26'),
-(27, 27, 30, 1, 5.00, '2026-09-17 01:08:27'),
-(28, 28, 58, 1, 2.00, '2026-09-17 01:09:04'),
-(29, 29, 30, 1, 5.00, '2026-09-17 01:55:01'),
-(30, 30, 33, 1, 18.00, '2026-09-17 02:00:37'),
-(31, 31, 23, 1, 75.00, '2026-09-17 02:12:26'),
-(32, 32, 30, 1, 5.00, '2026-09-17 02:14:33'),
-(33, 33, 30, 1, 5.00, '2026-09-17 02:21:19'),
-(34, 34, 24, 1, 18.00, '2026-09-17 02:23:50'),
-(35, 35, 23, 1, 75.00, '2026-09-17 02:25:14'),
-(36, 36, 130, 1, 50.00, '2026-09-17 02:27:53'),
-(37, 37, 130, 1, 50.00, '2026-09-17 02:29:31'),
-(38, 38, 130, 1, 50.00, '2026-09-17 02:29:58'),
-(39, 39, 22, 1, 12.00, '2026-09-17 02:44:45'),
-(40, 40, 30, 1, 5.00, '2026-09-17 02:44:45'),
-(41, 41, 30, 1, 5.00, '2026-09-17 02:46:59'),
-(42, 42, 22, 1, 12.00, '2026-09-17 02:51:56'),
-(43, 43, 6, 1, 9.00, '2026-09-17 03:45:19'),
-(44, 44, 58, 1, 2.00, '2026-09-17 03:45:19'),
-(45, 45, 58, 1, 2.00, '2026-09-17 03:58:24'),
-(46, 46, 58, 1, 2.00, '2026-09-17 03:58:48'),
-(47, 47, 1, 100, 8.00, '2026-09-17 07:06:55'),
-(48, 48, 30, 1, 5.00, '2026-09-17 15:27:42'),
-(49, 49, 30, 1, 5.00, '2026-09-17 15:31:24'),
-(50, 50, 30, 1, 5.00, '2026-09-17 15:40:24'),
-(51, 51, 30, 1, 5.00, '2026-09-17 15:41:03');
+(1, 1, 3, 99, 100.00, '2026-09-21 08:40:32'),
+(2, 2, 4, 1, 110.00, '2026-09-21 08:42:42'),
+(3, 3, 4, 1, 110.00, '2026-09-21 08:43:32'),
+(4, 4, 4, 98, 110.00, '2026-09-21 08:44:06'),
+(5, 4, 3, 1, 100.00, '2026-09-21 08:44:06'),
+(6, 5, 1, 99, 110.00, '2026-09-21 09:17:55');
 
 -- --------------------------------------------------------
 
@@ -1709,7 +1396,7 @@ ALTER TABLE `users_info`
 -- AUTO_INCREMENT for table `activity_logs`
 --
 ALTER TABLE `activity_logs`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=266;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=301;
 
 --
 -- AUTO_INCREMENT for table `discounts`
@@ -1727,7 +1414,7 @@ ALTER TABLE `dosage_forms`
 -- AUTO_INCREMENT for table `inventory`
 --
 ALTER TABLE `inventory`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=135;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `inventory_alerts`
@@ -1739,13 +1426,13 @@ ALTER TABLE `inventory_alerts`
 -- AUTO_INCREMENT for table `inventory_disposals`
 --
 ALTER TABLE `inventory_disposals`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `inventory_no_stock`
 --
 ALTER TABLE `inventory_no_stock`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `inventory_transactions`
@@ -1757,7 +1444,7 @@ ALTER TABLE `inventory_transactions`
 -- AUTO_INCREMENT for table `login_attempts`
 --
 ALTER TABLE `login_attempts`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `override_log`
@@ -1787,7 +1474,7 @@ ALTER TABLE `pre_approved_users_info`
 -- AUTO_INCREMENT for table `products`
 --
 ALTER TABLE `products`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10112;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `product_categories`
@@ -1799,13 +1486,13 @@ ALTER TABLE `product_categories`
 -- AUTO_INCREMENT for table `pwd_customers`
 --
 ALTER TABLE `pwd_customers`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `register_closings`
 --
 ALTER TABLE `register_closings`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `register_openings`
@@ -1829,7 +1516,7 @@ ALTER TABLE `return_transactions`
 -- AUTO_INCREMENT for table `senior_customers`
 --
 ALTER TABLE `senior_customers`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `serving_unit`
@@ -1841,13 +1528,13 @@ ALTER TABLE `serving_unit`
 -- AUTO_INCREMENT for table `suppliers`
 --
 ALTER TABLE `suppliers`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `transactions`
 --
 ALTER TABLE `transactions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `transaction_batch_allocations`
@@ -1859,13 +1546,13 @@ ALTER TABLE `transaction_batch_allocations`
 -- AUTO_INCREMENT for table `transaction_items`
 --
 ALTER TABLE `transaction_items`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=52;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `transaction_item_batches`
 --
 ALTER TABLE `transaction_item_batches`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=52;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `unit_measurement`

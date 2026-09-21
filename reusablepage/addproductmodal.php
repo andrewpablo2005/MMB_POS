@@ -66,9 +66,27 @@ $dosageForms = $product->getDosageForms();
 
                     <div class="add-product-row add-product-row--single">
                         <div class="add-product-field">
-                            <label for="category_id" class="form-label">Category <span
+                            <label for="category_search" class="form-label">Category <span
                                     class="text-danger">*</span></label>
-                            <select id="category_id" name="category_id" class="form-select" required>
+                            <div class="batch-product-search-wrap">
+                                <input type="text" id="category_search" class="form-control"
+                                    placeholder="Search or select category" autocomplete="off" required>
+                                <button type="button" class="batch-product-toggle" aria-label="Show category list">
+                                    <i class="fas fa-chevron-down"></i>
+                                </button>
+                                <div id="category_dropdown" class="batch-product-dropdown" aria-live="polite">
+                                    <?php foreach ($categories as $cat): ?>
+                                        <button type="button" class="batch-product-option" data-id="<?= (int) ($cat['id'] ?? 0) ?>"
+                                            data-label="<?= htmlspecialchars($cat['category_name'] ?? '', ENT_QUOTES, 'UTF-8') ?>"
+                                            data-senior="<?= (int) ($cat['senior_discount'] ?? 0) ?>"
+                                            data-pwd="<?= (int) ($cat['pwd_discount'] ?? 0) ?>"
+                                            data-vat="<?= (int) ($cat['has_vat'] ?? 0) ?>">
+                                            <?= htmlspecialchars($cat['category_name'] ?? '') ?>
+                                        </button>
+                                    <?php endforeach; ?>
+                                </div>
+                            </div>
+                            <select id="category_id" name="category_id" class="form-select d-none" required>
                                 <option value="">— select category —</option>
                                 <?php foreach ($categories as $cat): ?>
                                     <option value="<?= (int) ($cat['id'] ?? 0) ?>"
@@ -105,10 +123,26 @@ $dosageForms = $product->getDosageForms();
                             </div>
                         </div>
                         <div class="add-product-field">
-                            <label for="unit_measurement" class="form-label">Serving Unit <span
+                            <label for="unit_measurement_search" class="form-label">Serving Unit <span
                                     class="text-danger">*</span></label>
-                            <div class="input-group">
-                                <select id="unit_measurement" name="unit_measurement" class="form-select" required>
+                            <div class="input-group batch-product-input-group">
+                                <div class="batch-product-search-wrap flex-grow-1">
+                                    <input type="text" id="unit_measurement_search" class="form-control"
+                                        placeholder="Search or select serving unit" autocomplete="off" required>
+                                    <button type="button" class="batch-product-toggle" aria-label="Show serving unit list">
+                                        <i class="fas fa-chevron-down"></i>
+                                    </button>
+                                    <div id="unit_measurement_dropdown" class="batch-product-dropdown" aria-live="polite">
+                                        <?php foreach ($servingUnits as $unit): ?>
+                                            <button type="button" class="batch-product-option"
+                                                data-id="<?= (int) ($unit['id'] ?? 0) ?>"
+                                                data-label="<?= htmlspecialchars($unit['name'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
+                                                <?= htmlspecialchars($unit['name'] ?? '') ?>
+                                            </button>
+                                        <?php endforeach; ?>
+                                    </div>
+                                </div>
+                                <select id="unit_measurement" name="unit_measurement" class="form-select d-none" required>
                                     <option value="">— none —</option>
                                     <?php foreach ($servingUnits as $unit): ?>
                                         <option value="<?= (int) ($unit['id'] ?? 0) ?>"
@@ -135,11 +169,30 @@ $dosageForms = $product->getDosageForms();
 
                     <div id="dosageFormContainer" class="add-product-row add-product-row--single">
                         <div class="add-product-field">
-                            <label for="dosage_form_id" class="form-label">Product Form <span class="text-muted">(if
+                            <label for="dosage_form_search" class="form-label">Product Form <span class="text-muted">(if
                                     applicable)</span></label>
                             <input type="hidden" id="dosage_form" name="dosage_form" value="">
-                            <div class="input-group">
-                                <select id="dosage_form_id" name="dosage_form_id" class="form-select">
+                            <div class="input-group batch-product-input-group">
+                                <div class="batch-product-search-wrap flex-grow-1">
+                                    <input type="text" id="dosage_form_search" class="form-control"
+                                        placeholder="Search or select product form" autocomplete="off">
+                                    <button type="button" class="batch-product-toggle" aria-label="Show product form list">
+                                        <i class="fas fa-chevron-down"></i>
+                                    </button>
+                                    <div id="dosage_form_dropdown" class="batch-product-dropdown" aria-live="polite">
+                                        <button type="button" class="batch-product-option" data-id="" data-label="— none —">
+                                            — none —
+                                        </button>
+                                        <?php foreach ($dosageForms as $form): ?>
+                                            <button type="button" class="batch-product-option"
+                                                data-id="<?= (int) ($form['id'] ?? 0) ?>"
+                                                data-label="<?= htmlspecialchars($form['name'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
+                                                <?= htmlspecialchars($form['name'] ?? '') ?>
+                                            </button>
+                                        <?php endforeach; ?>
+                                    </div>
+                                </div>
+                                <select id="dosage_form_id" name="dosage_form_id" class="form-select d-none">
                                     <option value="">— none —</option>
                                     <?php foreach ($dosageForms as $form): ?>
                                         <option value="<?= (int) ($form['id'] ?? 0) ?>"
@@ -177,16 +230,22 @@ $dosageForms = $product->getDosageForms();
                         <div class="add-product-field">
                             <label for="strength_per_quantity_unit" class="form-label">Unit<span class="text-muted">(if
                                     applicable)</span></label>
-                            <div class="input-group">
-                                <select id="strength_per_quantity_unit" name="strength_per_quantity_unit"
-                                    class="form-select">
-                                    <option value="">— none —</option>
-                                    <?php foreach ($unitMeasurements as $unit): ?>
-                                        <option value="<?= htmlspecialchars($unit['name'] ?? '') ?>"
-                                            data-measurement-id="<?= (int) ($unit['id'] ?? 0) ?>">
-                                            <?= htmlspecialchars($unit['name'] ?? '') ?></option>
-                                    <?php endforeach; ?>
-                                </select>
+                            <div class="input-group batch-product-input-group">
+                                <div class="batch-product-search-wrap flex-grow-1">
+                                    <input type="text" id="strength_per_quantity_unit" name="strength_per_quantity_unit"
+                                        class="form-control" placeholder="Search or select package unit" autocomplete="off">
+                                    <button type="button" class="batch-product-toggle" aria-label="Show package unit list">
+                                        <i class="fas fa-chevron-down"></i>
+                                    </button>
+                                    <div id="strength_per_quantity_unit_dropdown" class="batch-product-dropdown" aria-live="polite">
+                                        <?php foreach ($unitMeasurements as $unit): ?>
+                                            <button type="button" class="batch-product-option"
+                                                data-label="<?= htmlspecialchars($unit['name'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
+                                                <?= htmlspecialchars($unit['name'] ?? '') ?>
+                                            </button>
+                                        <?php endforeach; ?>
+                                    </div>
+                                </div>
                                 <button type="button" class="btn btn-primary" data-open-measurement-modal
                                     data-measurement-target="strength_per_quantity_unit" aria-label="Add package unit"
                                     title="Add package unit" data-bs-toggle="tooltip">
@@ -268,23 +327,53 @@ $dosageForms = $product->getDosageForms();
                                 </div>
                             </div>
                             <div class="add-product-field">
-                                <label for="batch_supplier_id" class="form-label">Supplier (optional)</label>
-                                <div class="d-flex gap-2">
-                                    <select id="batch_supplier_id" name="supplier_id" class="form-select">
-                                        <option value="">Select supplier or leave blank</option>
-                                    <?php
-                                    try {
-                                        $stmt = $db->prepare("SELECT id, supplier_name FROM suppliers ORDER BY supplier_name ASC");
-                                        $stmt->execute();
-                                        foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $supplier):
+                                <label for="batch_supplier_search" class="form-label">Supplier (optional)</label>
+                                <input type="hidden" id="batch_supplier_id_hidden" name="supplier_id" value="">
+                                <div class="d-flex gap-2 align-items-start">
+                                    <div class="batch-product-search-wrap flex-grow-1">
+                                        <input type="text" id="batch_supplier_search" class="form-control"
+                                            placeholder="Search or select supplier" autocomplete="off">
+                                        <button type="button" class="batch-product-toggle" aria-label="Show supplier list">
+                                            <i class="fas fa-chevron-down"></i>
+                                        </button>
+                                        <div id="batch_supplier_dropdown" class="batch-product-dropdown" aria-live="polite">
+                                            <button type="button" class="batch-product-option" data-id="" data-label="Select supplier or leave blank">
+                                                Select supplier or leave blank
+                                            </button>
+                                            <?php
+                                            try {
+                                                $stmt = $db->prepare("SELECT id, supplier_name FROM suppliers ORDER BY supplier_name ASC");
+                                                $stmt->execute();
+                                                foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $supplier):
+                                                    $supplierName = htmlspecialchars($supplier['supplier_name'] ?? '', ENT_QUOTES, 'UTF-8');
+                                                    ?>
+                                                    <button type="button" class="batch-product-option" data-id="<?= (int) ($supplier['id'] ?? 0) ?>"
+                                                        data-label="<?= $supplierName ?>">
+                                                        <?= $supplierName ?>
+                                                    </button>
+                                                    <?php
+                                                endforeach;
+                                            } catch (Exception $e) {
+                                            }
                                             ?>
-                                            <option value="<?= (int) ($supplier['id'] ?? 0) ?>">
-                                                <?= htmlspecialchars($supplier['supplier_name'] ?? '') ?>
+                                        </div>
+                                    </div>
+                                    <select id="batch_supplier_id" class="form-select d-none">
+                                        <option value="">Select supplier or leave blank</option>
+                                        <?php
+                                        try {
+                                            $stmt = $db->prepare("SELECT id, supplier_name FROM suppliers ORDER BY supplier_name ASC");
+                                            $stmt->execute();
+                                            foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $supplier):
+                                                ?>
+                                                <option value="<?= (int) ($supplier['id'] ?? 0) ?>">
+                                                    <?= htmlspecialchars($supplier['supplier_name'] ?? '') ?>
+                                                </option>
                                                 <?php
-                                        endforeach;
-                                    } catch (Exception $e) {
-                                    }
-                                    ?>
+                                            endforeach;
+                                        } catch (Exception $e) {
+                                        }
+                                        ?>
                                     </select>
                                     <button type="button" class="btn btn-danger btn-sm d-inline-flex align-items-center justify-content-center"
                                         data-bs-toggle="modal" data-bs-target="#addProductSupplierModal"
@@ -386,6 +475,105 @@ $dosageForms = $product->getDosageForms();
         </div>
     </div>
 </div>
+
+<style>
+    .batch-product-search-wrap {
+        position: relative;
+    }
+
+    .batch-product-toggle {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        border: none;
+        background: transparent;
+        color: #5a6471;
+        padding: 4px 8px;
+        border-radius: 6px;
+    }
+
+    .batch-product-toggle:hover {
+        background: #eef3f9;
+    }
+
+    .batch-product-input-group {
+        width: 100%;
+        display: flex;
+        align-items: stretch;
+        flex-wrap: nowrap;
+    }
+
+    .batch-product-input-group .batch-product-search-wrap {
+        width: 100%;
+        min-width: 0;
+        flex: 1 1 auto;
+    }
+
+    .batch-product-input-group > .btn {
+        flex: 0 0 auto;
+        width: 46px;
+        height: 46px;
+        padding: 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 0.65rem;
+        font-size: 1.2rem;
+        line-height: 1;
+    }
+
+    .batch-product-input-group > .btn + .btn {
+        margin-left: 0.5rem;
+    }
+
+    .batch-product-input-group > .form-select {
+        display: none;
+    }
+
+    #category_search,
+    #unit_measurement_search,
+    #strength_per_quantity_unit,
+    #batch_supplier_search,
+    #dosage_form_search {
+        padding-right: 38px;
+    }
+
+    .batch-product-dropdown {
+        position: absolute;
+        top: calc(100% + 6px);
+        left: 0;
+        right: 0;
+        z-index: 1060;
+        display: none;
+        max-height: 240px;
+        overflow-y: auto;
+        background: #ffffff;
+        border: 1px solid #dfe6ee;
+        border-radius: 12px;
+        box-shadow: 0 12px 28px rgba(15, 23, 42, 0.12);
+    }
+
+    .batch-product-dropdown.show {
+        display: block;
+    }
+
+    .batch-product-option {
+        display: block;
+        width: 100%;
+        border: none;
+        background: transparent;
+        text-align: left;
+        padding: 10px 12px;
+        font-size: 0.95rem;
+        color: #1f2d3d;
+    }
+
+    .batch-product-option:hover,
+    .batch-product-option.active {
+        background: #edf4ff;
+    }
+</style>
 
 <!-- ADD SUPPLIER MODAL FOR OPENING STOCK -->
 <div class="modal fade" id="addProductSupplierModal" tabindex="-1" aria-labelledby="addProductSupplierModalLabel"
@@ -534,10 +722,14 @@ $dosageForms = $product->getDosageForms();
 
         const syncFromInput = () => {
             const query = inputEl.value.trim();
-            const optionEl = Array.from(listEl.options).find((option) => option.value.trim() === query);
+            const optionEl = Array.from(listEl.options).find((option) => {
+                const matchValue = (option.value || '').trim().toLowerCase();
+                const matchText = (option.textContent || '').trim().toLowerCase();
+                return matchValue === query.toLowerCase() || matchText === query.toLowerCase();
+            });
 
             if (optionEl) {
-                valueEl.value = optionEl.getAttribute('data-id') || '';
+                valueEl.value = optionEl.getAttribute('data-id') || optionEl.value || '';
                 if (onSelect) {
                     onSelect(optionEl);
                 }
@@ -549,8 +741,183 @@ $dosageForms = $product->getDosageForms();
             }
         };
 
+        if (valueEl.value) {
+            const selectedOption = Array.from(listEl.options).find((option) => (option.getAttribute('data-id') || option.value) === valueEl.value || option.value === valueEl.value);
+            if (selectedOption) {
+                inputEl.value = selectedOption.value || selectedOption.textContent.trim();
+            }
+        }
+
         inputEl.addEventListener('input', syncFromInput);
         inputEl.addEventListener('change', syncFromInput);
+    }
+
+    function bindSearchableDropdown({ inputId, valueId, dropdownId, optionSelector, onSelect }) {
+        const inputEl = document.getElementById(inputId);
+        const valueEl = document.getElementById(valueId);
+        const dropdownEl = document.getElementById(dropdownId);
+        const options = dropdownEl ? Array.from(dropdownEl.querySelectorAll(optionSelector)) : [];
+
+        if (!inputEl || !dropdownEl || options.length === 0) {
+            return;
+        }
+
+        const applyDropdownState = () => {
+            const query = (inputEl.value || '').trim().toLowerCase();
+            let visibleCount = 0;
+
+            options.forEach((option) => {
+                const label = (option.dataset.label || option.textContent || '').trim().toLowerCase();
+                const shouldShow = !query || label.includes(query);
+                option.style.display = shouldShow ? 'block' : 'none';
+                if (shouldShow) {
+                    visibleCount++;
+                }
+            });
+
+            if (visibleCount > 0 || !inputEl.value.trim()) {
+                dropdownEl.classList.add('show');
+            }
+        };
+
+        const setSelectedOption = (selectedOption) => {
+            const selectedValue = selectedOption ? (selectedOption.dataset.id || '') : '';
+            const selectedLabel = selectedOption ? (selectedOption.dataset.label || selectedOption.textContent.trim()) : '';
+
+            if (inputEl) {
+                inputEl.value = selectedLabel === 'Select supplier or leave blank' ? '' : selectedLabel;
+            }
+
+            if (valueEl && valueEl !== inputEl) {
+                valueEl.value = selectedValue;
+            }
+
+            dropdownEl.classList.remove('show');
+            options.forEach((option) => option.classList.toggle('active', option === selectedOption));
+
+            if (onSelect) {
+                onSelect(selectedOption || null);
+            }
+        };
+
+        const toggleButton = inputEl.parentElement?.querySelector('.batch-product-toggle');
+        if (toggleButton) {
+            toggleButton.addEventListener('click', function () {
+                const isVisible = dropdownEl.classList.contains('show');
+                dropdownEl.classList.toggle('show', !isVisible);
+                if (!isVisible) {
+                    inputEl.focus();
+                }
+            });
+        }
+
+        inputEl.addEventListener('focus', () => {
+            applyDropdownState();
+            dropdownEl.classList.add('show');
+        });
+
+        const setInputWarning = (message) => {
+            const host = inputEl.parentElement || inputEl.closest('.batch-product-search-wrap');
+            const target = host || inputEl.closest('.add-product-field');
+            if (!target) return;
+
+            let warning = target.querySelector('.dropdown-validation-warning');
+            if (!warning) {
+                warning = document.createElement('div');
+                warning.className = 'dropdown-validation-warning alert alert-warning py-2 px-3 mb-0 mt-2 small';
+                warning.setAttribute('role', 'alert');
+                target.appendChild(warning);
+            }
+
+            warning.textContent = message || '';
+            if (message) {
+                warning.style.display = 'block';
+            } else {
+                warning.style.display = 'none';
+            }
+        };
+
+        const resetInvalidSelection = () => {
+            const typedValue = (inputEl.value || '').trim();
+            if (!typedValue) {
+                if (valueEl && valueEl !== inputEl) {
+                    valueEl.value = '';
+                }
+                setInputWarning('');
+                return;
+            }
+
+            const exactMatch = options.find((option) => {
+                const label = (option.dataset.label || option.textContent || '').trim().toLowerCase();
+                return label === typedValue.toLowerCase();
+            });
+
+            if (!exactMatch) {
+                if (valueEl && valueEl !== inputEl) {
+                    valueEl.value = '';
+                }
+                setInputWarning('Only values from the listed options are allowed. Please choose one from the dropdown.');
+                return;
+            }
+
+            if (valueEl && valueEl !== inputEl) {
+                valueEl.value = exactMatch.dataset.id || '';
+            }
+            inputEl.value = exactMatch.dataset.label || exactMatch.textContent.trim();
+            setInputWarning('');
+        };
+
+        inputEl.addEventListener('input', () => {
+            applyDropdownState();
+            dropdownEl.classList.add('show');
+
+            const typedValue = (inputEl.value || '').trim();
+            if (!typedValue) {
+                if (valueEl && valueEl !== inputEl) {
+                    valueEl.value = '';
+                }
+                setInputWarning('');
+                return;
+            }
+
+            const exactMatch = options.find((option) => {
+                const label = (option.dataset.label || option.textContent || '').trim().toLowerCase();
+                return label === typedValue.toLowerCase();
+            });
+
+            if (exactMatch) {
+                if (valueEl && valueEl !== inputEl) {
+                    valueEl.value = exactMatch.dataset.id || '';
+                }
+                inputEl.value = exactMatch.dataset.label || exactMatch.textContent.trim();
+                setInputWarning('');
+                return;
+            }
+
+            if (valueEl && valueEl !== inputEl) {
+                valueEl.value = '';
+            }
+            setInputWarning('Only values from the listed options are allowed. Please choose one from the dropdown.');
+        });
+
+        inputEl.addEventListener('blur', resetInvalidSelection);
+        inputEl.addEventListener('change', resetInvalidSelection);
+
+        options.forEach((option) => {
+            option.addEventListener('mousedown', (event) => {
+                event.preventDefault();
+                setSelectedOption(option);
+            });
+        });
+
+        document.addEventListener('click', function (event) {
+            const clickTarget = event.target;
+            const inputWrap = inputEl.closest('.batch-product-search-wrap');
+            if (!inputWrap || !inputWrap.contains(clickTarget)) {
+                dropdownEl.classList.remove('show');
+                resetInvalidSelection();
+            }
+        });
     }
 
     function normalizeCategoryName(name) {
@@ -568,6 +935,88 @@ $dosageForms = $product->getDosageForms();
     document.addEventListener('DOMContentLoaded', function () {
         document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach((element) => {
             bootstrap.Tooltip.getOrCreateInstance(element);
+        });
+
+        bindSearchableDropdown({
+            inputId: 'category_search',
+            valueId: 'category_id',
+            dropdownId: 'category_dropdown',
+            optionSelector: '.batch-product-option',
+            onSelect: (optionEl) => {
+                const option = optionEl || Array.from(document.querySelectorAll('#category_dropdown .batch-product-option')).find((item) => item.dataset.id === document.getElementById('category_id')?.value);
+                if (option) {
+                    updateCategoryRuleNote(option);
+                    toggleDosageFormVisibility(option.dataset.label || option.textContent || '');
+                } else {
+                    toggleDosageFormVisibility('');
+                }
+            }
+        });
+
+        bindSearchableDropdown({
+            inputId: 'unit_measurement_search',
+            valueId: 'unit_measurement',
+            dropdownId: 'unit_measurement_dropdown',
+            optionSelector: '.batch-product-option'
+        });
+
+        bindSearchableDropdown({
+            inputId: 'batch_supplier_search',
+            valueId: 'batch_supplier_id',
+            dropdownId: 'batch_supplier_dropdown',
+            optionSelector: '.batch-product-option',
+            onSelect: (selectedOption) => {
+                const hiddenInput = document.getElementById('batch_supplier_id_hidden');
+                const selectEl = document.getElementById('batch_supplier_id');
+                const selectedValue = selectedOption ? (selectedOption.dataset.id || '') : '';
+                if (hiddenInput) hiddenInput.value = selectedValue;
+                if (selectEl) selectEl.value = selectedValue;
+            }
+        });
+
+        const syncBatchSupplierHiddenValue = () => {
+            const selectEl = document.getElementById('batch_supplier_id');
+            const hiddenInput = document.getElementById('batch_supplier_id_hidden');
+            if (hiddenInput && selectEl) {
+                hiddenInput.value = selectEl.value || '';
+            }
+        };
+
+        const batchSupplierSelect = document.getElementById('batch_supplier_id');
+        if (batchSupplierSelect) {
+            batchSupplierSelect.addEventListener('change', syncBatchSupplierHiddenValue);
+        }
+
+        bindSearchableDropdown({
+            inputId: 'dosage_form_search',
+            valueId: 'dosage_form_id',
+            dropdownId: 'dosage_form_dropdown',
+            optionSelector: '.batch-product-option',
+            onSelect: (optionEl) => {
+                const selectedValue = optionEl ? (optionEl.dataset.id || '') : '';
+                const selectedLabel = optionEl ? (optionEl.dataset.label || optionEl.textContent.trim()) : '';
+                const dosageValueInput = document.getElementById('dosage_form');
+                if (dosageValueInput) {
+                    dosageValueInput.value = selectedLabel === '— none —' ? '' : selectedLabel;
+                }
+                const selectEl = document.getElementById('dosage_form_id');
+                if (selectEl) {
+                    selectEl.value = selectedValue;
+                    if (selectedValue && selectEl.selectedIndex >= 0) {
+                        const option = selectEl.options[selectEl.selectedIndex];
+                        if (option) {
+                            dosageValueInput.value = option.dataset.name || option.textContent.trim();
+                        }
+                    }
+                }
+            }
+        });
+
+        bindSearchableDropdown({
+            inputId: 'strength_per_quantity_unit',
+            valueId: 'strength_per_quantity_unit',
+            dropdownId: 'strength_per_quantity_unit_dropdown',
+            optionSelector: '.batch-product-option'
         });
 
         const measurementModal = document.getElementById('addMeasurementModal');
@@ -622,6 +1071,7 @@ $dosageForms = $product->getDosageForms();
                         }
 
                         const target = document.getElementById(measurementTargetId);
+                        const targetSearch = document.getElementById(measurementTargetId + '_search');
                         const id = data.id || data.existing_id;
                         const savedName = data.name || data.existing_name || name;
                         if (data.serving_amount !== null && data.serving_amount !== undefined) {
@@ -632,15 +1082,48 @@ $dosageForms = $product->getDosageForms();
                                 strengthInput.dispatchEvent(new Event('change', { bubbles: true }));
                             }
                         }
-                        if (target && !Array.from(target.options).some((option) => option.value === String(id) || option.value === savedName)) {
+                        if (target && target.tagName === 'SELECT' && !Array.from(target.options).some((option) => option.value === String(id) || option.value === savedName)) {
                             const newOption = new Option(savedName, target.id === 'unit_measurement' ? id : savedName);
                             newOption.dataset.measurementId = String(id);
                             target.add(newOption);
                         }
-                        if (target) {
+                        if (target && target.tagName === 'SELECT') {
                             target.value = target.id === 'unit_measurement' ? String(id) : savedName;
                             const selectedOption = target.options[target.selectedIndex];
                             if (selectedOption) selectedOption.dataset.measurementId = String(id);
+                        }
+                        if (targetSearch) {
+                            targetSearch.value = savedName;
+                        }
+                        if (targetSearch) {
+                            const dropdownId = measurementTargetId === 'unit_measurement'
+                                ? 'unit_measurement_dropdown'
+                                : measurementTargetId === 'strength_per_quantity_unit'
+                                    ? 'strength_per_quantity_unit_dropdown'
+                                    : null;
+                            const dropdownEl = dropdownId ? document.getElementById(dropdownId) : null;
+                            if (dropdownEl && !Array.from(dropdownEl.querySelectorAll('.batch-product-option')).some((option) => (option.dataset.label || option.textContent.trim()).toLowerCase() === savedName.toLowerCase())) {
+                                const newOption = document.createElement('button');
+                                newOption.type = 'button';
+                                newOption.className = 'batch-product-option';
+                                newOption.dataset.label = savedName;
+                                if (measurementTargetId === 'unit_measurement') {
+                                    newOption.dataset.id = String(id);
+                                }
+                                newOption.textContent = savedName;
+                                newOption.addEventListener('mousedown', (event) => {
+                                    event.preventDefault();
+                                    targetSearch.value = savedName;
+                                    if (measurementTargetId === 'unit_measurement') {
+                                        const hiddenSelect = document.getElementById('unit_measurement');
+                                        if (hiddenSelect) {
+                                            hiddenSelect.value = String(id);
+                                        }
+                                    }
+                                    dropdownEl.classList.remove('show');
+                                });
+                                dropdownEl.appendChild(newOption);
+                            }
                         }
 
                         mmbNotify({
@@ -831,6 +1314,10 @@ $dosageForms = $product->getDosageForms();
             const syncDosageForm = function () {
                 const selectedOption = dosageFormId.options[dosageFormId.selectedIndex];
                 dosageFormValue.value = this.value ? (selectedOption.getAttribute('data-name') || selectedOption.textContent.trim()) : '';
+                const dosageFormSearch = document.getElementById('dosage_form_search');
+                if (dosageFormSearch && selectedOption) {
+                    dosageFormSearch.value = selectedOption.textContent.trim();
+                }
                 toggleDosageAndStrengthFields();
             };
             dosageFormId.addEventListener('change', syncDosageForm);
@@ -900,14 +1387,48 @@ $dosageForms = $product->getDosageForms();
                         }
 
                         const supplierSelect = document.getElementById('batch_supplier_id');
+                        const supplierHiddenInput = document.getElementById('batch_supplier_id_hidden');
+                        const supplierSearchInput = document.getElementById('batch_supplier_search');
+                        const supplierDropdown = document.getElementById('batch_supplier_dropdown');
+                        const savedSupplierName = (status === 409 ? supplierName : (data.supplier_name || supplierName)).trim();
+
                         let option = Array.from(supplierSelect.options).find((item) => item.value === String(supplierId));
                         if (!option) {
                             option = document.createElement('option');
-                            option.value = supplierId;
-                            option.textContent = status === 409 ? supplierName : data.supplier_name;
+                            option.value = String(supplierId);
+                            option.textContent = savedSupplierName;
                             supplierSelect.appendChild(option);
+                        } else {
+                            option.textContent = savedSupplierName;
                         }
+
+                        if (supplierDropdown && !Array.from(supplierDropdown.querySelectorAll('.batch-product-option')).some((item) => (item.dataset.id || '').toString() === String(supplierId))) {
+                            const dropdownButton = document.createElement('button');
+                            dropdownButton.type = 'button';
+                            dropdownButton.className = 'batch-product-option';
+                            dropdownButton.dataset.id = String(supplierId);
+                            dropdownButton.dataset.label = savedSupplierName;
+                            dropdownButton.textContent = savedSupplierName;
+                            dropdownButton.addEventListener('mousedown', (event) => {
+                                event.preventDefault();
+                                if (supplierSearchInput) supplierSearchInput.value = savedSupplierName;
+                                supplierSelect.value = String(supplierId);
+                                supplierDropdown.classList.remove('show');
+                            });
+                            supplierDropdown.appendChild(dropdownButton);
+                        }
+
                         supplierSelect.value = String(supplierId);
+                        if (supplierHiddenInput) {
+                            supplierHiddenInput.value = String(supplierId);
+                        }
+                        if (supplierSearchInput) {
+                            supplierSearchInput.value = savedSupplierName;
+                        }
+                        if (supplierDropdown) {
+                            supplierDropdown.classList.remove('show');
+                        }
+
                         supplierForm.reset();
                         bootstrap.Modal.getOrCreateInstance(supplierModal).hide();
                         mmbNotify({

@@ -73,7 +73,7 @@ if ($product->addProduct()) {
                     <th data-priority="2">Image</th>
                     <th data-priority="3">Branded</th>
                     <th data-priority="4">Generic</th>
-                    <th data-priority="5">Serving</th>
+                    <th data-priority="5">Per Serving</th>
                     <th data-priority="6">Package Size</th>
                     <th data-priority="7">Category</th>
                     <th data-priority="1">Action</th>

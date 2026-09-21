@@ -1538,7 +1538,7 @@ table.dataTable.dtr-column > tbody > tr > td.dtr-control {
 .mmb-toast--info { border-left: 4px solid #2563eb; }
 
 /* Add-product modal: structured field rows and section separators */
-.add-product-dialog { max-width: 780px; }
+.add-product-dialog { max-width: 980px; }
 .add-product-modal { border: 0; overflow: hidden; }
 .add-product-body { padding: 1.5rem 1.75rem; }
 .add-product-section-head { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding-bottom: 0.7rem; border-bottom: 2px solid var(--mmb-line); }
