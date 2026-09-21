@@ -94,8 +94,10 @@ require_once __DIR__ . '/guard.php'; guard_require_roles(['owner','admin']);
                         </div>
 
                         <div class="mmb-view-batch-section mt-4">
-                            <h6 class="mmb-view-section-title">Batch details</h6>
-                            <?php $batchDetails = $prod['inventory_batches'] ?? []; ?>
+                            <h6 class="mmb-view-section-title">Active Batch details</h6>
+                            <?php $batchDetails = array_values(array_filter(($prod['inventory_batches'] ?? []), static function ($batch): bool {
+                                return (int) ($batch['current_quantity'] ?? 0) > 0;
+                            })); ?>
                             <?php if (!empty($batchDetails)): ?>
                                 <div class="table-responsive mmb-view-table-wrap mb-3">
                                     <table class="table table-sm table-bordered align-middle">
@@ -173,7 +175,7 @@ require_once __DIR__ . '/guard.php'; guard_require_roles(['owner','admin']);
                                     </table>
                                 </div>
                             <?php else: ?>
-                                <p class="text-muted mb-3">No batch details available for this product.</p>
+                                <p class="text-muted mb-3">No active batch details available for this product.</p>
                             <?php endif; ?>
                         </div>
                     </section>
