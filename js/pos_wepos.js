@@ -17,6 +17,7 @@ let weposLastReceiptData = null;  // stores last receipt data for printing
 let weposIdLookupTimer = null;    // debounce timer for the ID-number name lookup
 let weposIdLookupSeq = 0;         // guards against out-of-order lookup responses
 let weposIdNameAutoFilled = '';   // value last auto-filled by the lookup (so manual typing is never clobbered)
+const WEPOS_CART_STORAGE_KEY = 'wepos_cart_state';
 
 // XSS guard: product/customer names are user-editable data and must be
 // escaped before being interpolated into innerHTML templates.
@@ -29,9 +30,70 @@ function weposEscapeHtml(value) {
         .replaceAll("'", '&#039;');
 }
 
+function weposPersistCart() {
+    try {
+        const cartToSave = weposCart && typeof weposCart === 'object' ? weposCart : {};
+        const hasItems = Object.keys(cartToSave).length > 0;
+        if (!hasItems) {
+            localStorage.removeItem(WEPOS_CART_STORAGE_KEY);
+            return;
+        }
+        localStorage.setItem(WEPOS_CART_STORAGE_KEY, JSON.stringify(cartToSave));
+    } catch (error) {
+        console.warn('Unable to persist wePOS cart to localStorage:', error);
+    }
+}
+
+function weposRestoreCart() {
+    try {
+        const raw = localStorage.getItem(WEPOS_CART_STORAGE_KEY);
+        if (!raw) return;
+
+        const parsed = JSON.parse(raw);
+        if (!parsed || typeof parsed !== 'object') return;
+        if (Object.keys(parsed).length === 0) {
+            localStorage.removeItem(WEPOS_CART_STORAGE_KEY);
+            return;
+        }
+
+        const restored = {};
+        Object.entries(parsed).forEach(([id, item]) => {
+            if (!item || typeof item !== 'object') return;
+
+            const stock = Number(item.stock || 0);
+            const qty = Number(item.qty || 0);
+            if (!id || qty <= 0 || stock <= 0) return;
+
+            restored[id] = {
+                ...item,
+                id: String(id),
+                qty: Math.min(qty, stock),
+                stock: stock,
+                price: Number(item.price || 0),
+                net: Number(item.net || item.price || 0),
+                unitsPerPackage: Number(item.unitsPerPackage || 1)
+            };
+        });
+
+        weposCart = restored;
+    } catch (error) {
+        console.warn('Unable to restore wePOS cart from localStorage:', error);
+        localStorage.removeItem(WEPOS_CART_STORAGE_KEY);
+    }
+}
+
+function weposClearPersistedCart() {
+    try {
+        localStorage.removeItem(WEPOS_CART_STORAGE_KEY);
+    } catch (error) {
+        console.warn('Unable to clear wePOS cart from localStorage:', error);
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     try {
         console.log('DOMContentLoaded event firing, initializing wePOS...');
+        weposRestoreCart();
         weposSetupScanner();
         weposSetupSearch();
         weposSetupKeyboard();
@@ -43,6 +105,13 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('wePOS initialization complete');
     } catch (error) {
         console.error('Error during wePOS initialization:', error);
+    }
+});
+
+window.addEventListener('pageshow', () => {
+    if (document.readyState === 'complete') {
+        weposRestoreCart();
+        weposUpdateCart();
     }
 });
 
@@ -587,6 +656,7 @@ function weposUpdateCart() {
     const entries = Object.values(weposCart);
 
     if (entries.length === 0) {
+        weposClearPersistedCart();
         tbody.innerHTML = `
             <tr>
                 <td colspan="5" class="wepos-empty-cart">
@@ -599,6 +669,8 @@ function weposUpdateCart() {
         document.getElementById('weposPayBtn').disabled = true;
         return;
     }
+
+    weposPersistCart();
 
     // Get discount info
     const discountSelect = document.getElementById('weposDiscount');
@@ -690,6 +762,7 @@ function weposUpdateCart() {
     // If the payment modal is open (e.g. customer type just switched or a
     // Senior/PWD verification just completed), refresh its live totals too.
     weposSyncPayModal();
+    weposPersistCart();
 }
 
 function weposSetTotals(sub, disc, dRate, vatExempt, vat, total) {
@@ -1259,6 +1332,7 @@ async function weposSubmitTransaction() {
 
             // Reset state
             weposCart = {};
+            weposClearPersistedCart();
             weposVerified = false;
             weposCustomerType = null;
             weposCustomerName = null;
@@ -1367,6 +1441,7 @@ function weposCloseReceipt() {
     document.getElementById('weposReceiptModal').style.display = 'none';
     // Clear cart and reset totals instead of reloading
     weposCart = {};
+    weposClearPersistedCart();
     weposVerified = false;
     weposCustomerType = null;
     weposCustomerName = null;
