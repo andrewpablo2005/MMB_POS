@@ -94,7 +94,7 @@ require_once __DIR__ . '/guard.php'; guard_require_roles(['owner','admin']);
                         </div>
 
                         <div class="mmb-view-batch-section mt-4">
-                            <h6 class="mmb-view-section-title">Active Batch details</h6>
+                            <h6 class="mmb-view-section-title">Active Batch Details</h6>
                             <?php $batchDetails = array_values(array_filter(($prod['inventory_batches'] ?? []), static function ($batch): bool {
                                 return (int) ($batch['current_quantity'] ?? 0) > 0;
                             })); ?>
