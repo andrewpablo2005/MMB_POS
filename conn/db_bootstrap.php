@@ -71,18 +71,28 @@ if (!function_exists('db_ensure_core_schema')) {
                 "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = DATABASE() AND table_name = 'users'"
             )->fetchColumn();
             if ($userTableExists > 0) {
-                $validOwnerCount = (int)$db->query(
-                    "SELECT COUNT(*) FROM users WHERE username = 'owner' AND position = 'Owner' AND status = 'active'"
+                $activeUserCount = (int)$db->query(
+                    "SELECT COUNT(*) FROM users WHERE status = 'active'"
                 )->fetchColumn();
 
-                if ($validOwnerCount === 0) {
+                if ($activeUserCount === 0) {
                     $defaultUsername = 'owner';
                     $defaultPassword = 'admin123';
                     $defaultVoidPin = '1234567';
 
                     $existingUser = $db->prepare("SELECT id FROM users WHERE username = ? LIMIT 1");
                     $existingUser->execute([$defaultUsername]);
-                    if (!$existingUser->fetchColumn()) {
+                    $ownerId = (int)($existingUser->fetchColumn() ?: 0);
+                    if ($ownerId > 0) {
+                        $db->prepare(
+                            "UPDATE users SET password = ?, position = 'Owner', status = 'active', failed_attempts = 0,
+                             last_attempt = NULL, void_password = ? WHERE id = ?"
+                        )->execute([
+                            password_hash($defaultPassword, PASSWORD_BCRYPT),
+                            password_hash($defaultVoidPin, PASSWORD_BCRYPT),
+                            $ownerId,
+                        ]);
+                    } else {
                         $db->prepare(
                             "INSERT INTO users (username, password, position, status, failed_attempts, void_password, created_at)
                              VALUES (?, ?, 'Owner', 'active', 0, ?, NOW())"
@@ -92,11 +102,16 @@ if (!function_exists('db_ensure_core_schema')) {
                             password_hash($defaultVoidPin, PASSWORD_BCRYPT),
                         ]);
 
-                        $userId = (int)$db->lastInsertId();
+                        $ownerId = (int)$db->lastInsertId();
+                    }
+
+                    $profileExists = $db->prepare("SELECT 1 FROM users_info WHERE user_id = ? LIMIT 1");
+                    $profileExists->execute([$ownerId]);
+                    if (!$profileExists->fetchColumn()) {
                         $db->prepare(
                             "INSERT INTO users_info (user_id, firstname, middlename, lastname, age, street, barangay, city, province, country, email, contactnumber)
                              VALUES (?, 'System', '', 'Default', 0, '', '', '', '', 'Philippines', 'default@system.local', '00000000000')"
-                        )->execute([$userId]);
+                        )->execute([$ownerId]);
                     }
                 }
             }

@@ -383,10 +383,10 @@ class UserManagement
     public function ensureDefaultUser(): void
     {
         try {
-            $validOwnerCount = (int)$this->con->query(
-                "SELECT COUNT(*) FROM users WHERE username = 'owner' AND position = 'Owner' AND status = 'active'"
+            $activeUserCount = (int)$this->con->query(
+                "SELECT COUNT(*) FROM users WHERE status = 'active'"
             )->fetchColumn();
-            if ($validOwnerCount > 0) {
+            if ($activeUserCount > 0) {
                 return;
             }
 
@@ -395,28 +395,40 @@ class UserManagement
             $defaultVoidPin = '1234567';
             $now = date('Y-m-d H:i:s');
 
-            $existing = $this->con->prepare("SELECT 1 FROM users WHERE username = ? LIMIT 1");
+            $existing = $this->con->prepare("SELECT id FROM users WHERE username = ? LIMIT 1");
             $existing->execute([$defaultUsername]);
-            if ($existing->fetchColumn()) {
-                return;
+            $userId = (int)($existing->fetchColumn() ?: 0);
+            if ($userId > 0) {
+                $this->con->prepare(
+                    "UPDATE users SET password = ?, position = 'Owner', status = 'active', failed_attempts = 0,
+                     last_attempt = NULL, void_password = ? WHERE id = ?"
+                )->execute([
+                    password_hash($defaultPassword, PASSWORD_BCRYPT),
+                    password_hash($defaultVoidPin, PASSWORD_BCRYPT),
+                    $userId,
+                ]);
+            } else {
+                $insertUser = $this->con->prepare(
+                    "INSERT INTO users (username, password, position, status, failed_attempts, void_password, created_at)
+                     VALUES (?, ?, 'Owner', 'active', 0, ?, ? )"
+                );
+                $insertUser->execute([
+                    $defaultUsername,
+                    password_hash($defaultPassword, PASSWORD_BCRYPT),
+                    password_hash($defaultVoidPin, PASSWORD_BCRYPT),
+                    $now
+                ]);
+                $userId = (int)$this->con->lastInsertId();
             }
 
-            $insertUser = $this->con->prepare(
-                "INSERT INTO users (username, password, position, status, failed_attempts, void_password, created_at)
-                 VALUES (?, ?, 'Owner', 'active', 0, ?, ? )"
-            );
-            $insertUser->execute([
-                $defaultUsername,
-                password_hash($defaultPassword, PASSWORD_BCRYPT),
-                password_hash($defaultVoidPin, PASSWORD_BCRYPT),
-                $now
-            ]);
-
-            $userId = (int)$this->con->lastInsertId();
-            $this->con->prepare(
-                "INSERT INTO users_info (user_id, firstname, middlename, lastname, age, street, barangay, city, province, country, email, contactnumber)
-                 VALUES (?, 'System', '', 'Default', 0, '', '', '', '', 'Philippines', 'default@system.local', '00000000000')"
-            )->execute([$userId]);
+            $profileExists = $this->con->prepare("SELECT 1 FROM users_info WHERE user_id = ? LIMIT 1");
+            $profileExists->execute([$userId]);
+            if (!$profileExists->fetchColumn()) {
+                $this->con->prepare(
+                    "INSERT INTO users_info (user_id, firstname, middlename, lastname, age, street, barangay, city, province, country, email, contactnumber)
+                     VALUES (?, 'System', '', 'Default', 0, '', '', '', 'Philippines', 'default@system.local', '00000000000')"
+                )->execute([$userId]);
+            }
 
             mmb_log_activity($this->con, 'users', 'default_user_seed',
                 "Restored default owner account '{$defaultUsername}' after user list was cleared",

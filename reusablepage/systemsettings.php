@@ -37,7 +37,9 @@ $clearDataTables = [
     'transactions',
     'transaction_batch_allocations',
     'transaction_items',
-    'transaction_item_batches'
+    'transaction_item_batches',
+    'users_info',
+    'users'
 ];
 
 if (isset($_POST['clear_database_data'])) {
