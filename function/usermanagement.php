@@ -369,11 +369,61 @@ class UserManagement
             mmb_log_activity($this->con, 'users', 'user_delete',
                 "Deleted user account '{$targetUsername}' (ID {$userId})",
                 'user', $userId);
+
+            if ((int)$this->con->query("SELECT COUNT(*) FROM users")->fetchColumn() === 0) {
+                $this->ensureDefaultUser();
+            }
         }
 
         return $ok
             ? ['success' => true, 'message' => 'Deleted successfully']
             : ['success' => false, 'message' => 'Delete failed'];
+    }
+
+    public function ensureDefaultUser(): void
+    {
+        try {
+            $validOwnerCount = (int)$this->con->query(
+                "SELECT COUNT(*) FROM users WHERE username = 'owner' AND position = 'Owner' AND status = 'active'"
+            )->fetchColumn();
+            if ($validOwnerCount > 0) {
+                return;
+            }
+
+            $defaultUsername = 'owner';
+            $defaultPassword = 'admin123';
+            $defaultVoidPin = '1234567';
+            $now = date('Y-m-d H:i:s');
+
+            $existing = $this->con->prepare("SELECT 1 FROM users WHERE username = ? LIMIT 1");
+            $existing->execute([$defaultUsername]);
+            if ($existing->fetchColumn()) {
+                return;
+            }
+
+            $insertUser = $this->con->prepare(
+                "INSERT INTO users (username, password, position, status, failed_attempts, void_password, created_at)
+                 VALUES (?, ?, 'Owner', 'active', 0, ?, ? )"
+            );
+            $insertUser->execute([
+                $defaultUsername,
+                password_hash($defaultPassword, PASSWORD_BCRYPT),
+                password_hash($defaultVoidPin, PASSWORD_BCRYPT),
+                $now
+            ]);
+
+            $userId = (int)$this->con->lastInsertId();
+            $this->con->prepare(
+                "INSERT INTO users_info (user_id, firstname, middlename, lastname, age, street, barangay, city, province, country, email, contactnumber)
+                 VALUES (?, 'System', '', 'Default', 0, '', '', '', '', 'Philippines', 'default@system.local', '00000000000')"
+            )->execute([$userId]);
+
+            mmb_log_activity($this->con, 'users', 'default_user_seed',
+                "Restored default owner account '{$defaultUsername}' after user list was cleared",
+                'user', $userId);
+        } catch (\Throwable $e) {
+            error_log('ensureDefaultUser failed: ' . $e->getMessage());
+        }
     }
 
     public function setUserStatus(int $userId, string $status): array

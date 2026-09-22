@@ -56,15 +56,27 @@ if (isset($_POST['clear_database_data'])) {
             $clearedRows = 0;
 
             foreach ($clearDataTables as $table) {
-                $statement = $db->exec('DELETE FROM `' . $table . '`');
-                $clearedRows += $statement === false ? 0 : $statement;
-                // Task 35: resetting AUTO_INCREMENT is cosmetic — tables without
-                // an auto column (or InnoDB edge cases) must not abort the loop
-                // halfway through and leave the database half-cleared.
+                $tableExistsStmt = $db->prepare("SELECT 1 FROM information_schema.tables WHERE table_schema = DATABASE() AND table_name = ? LIMIT 1");
+                $tableExistsStmt->execute([$table]);
+                if (!$tableExistsStmt->fetchColumn()) {
+                    continue;
+                }
+
                 try {
-                    $db->exec('ALTER TABLE `' . $table . '` AUTO_INCREMENT = 1');
-                } catch (PDOException $alterError) {
-                    // intentionally ignored — the DELETE above already succeeded
+                    $statement = $db->exec('DELETE FROM `' . $table . '`');
+                    $clearedRows += $statement === false ? 0 : $statement;
+                    // Task 35: resetting AUTO_INCREMENT is cosmetic — tables without
+                    // an auto column (or InnoDB edge cases) must not abort the loop
+                    // halfway through and leave the database half-cleared.
+                    try {
+                        $db->exec('ALTER TABLE `' . $table . '` AUTO_INCREMENT = 1');
+                    } catch (PDOException $alterError) {
+                        // intentionally ignored — the DELETE above already succeeded
+                    }
+                } catch (PDOException $deleteError) {
+                    // Some legacy or optional tables may not exist in a given schema.
+                    // Keep clearing the rest of the database instead of aborting the reset.
+                    continue;
                 }
             }
 

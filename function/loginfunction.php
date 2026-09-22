@@ -26,7 +26,13 @@ class Project
     {
         $ip = $_SERVER['REMOTE_ADDR'];
 
-        // CHECK IP LOCK
+        // GET USER FIRST so a valid account can still recover after stale IP blocks.
+        $stmt = $this->con->prepare("SELECT * FROM users WHERE username = ? AND status = 'active'");
+        $stmt->execute([$username]);
+        $user = $stmt->fetch();
+
+        // CHECK IP LOCK AFTER verifying this is a real user; stale IP blocks
+        // should expire automatically and a legitimate login must still work.
         $stmt = $this->con->prepare("SELECT * FROM login_attempts WHERE ip_address = ?");
         $stmt->execute([$ip]);
         $attemptData = $stmt->fetch();
@@ -34,18 +40,16 @@ class Project
         if ($attemptData && $attemptData['attempts'] >= 5) {
             $lastAttempt = strtotime($attemptData['last_attempt']);
 
-            if ((time() - $lastAttempt) < 300) {
+            if ((time() - $lastAttempt) >= 300) {
+                $this->con->prepare("DELETE FROM login_attempts WHERE ip_address = ?")->execute([$ip]);
+                $attemptData = null;
+            } elseif (!$user || !password_verify($password, $user['password'])) {
                 mmb_log_activity($this->con, 'auth', 'login_blocked',
                     "Sign-in blocked (IP rate limit) for username '" . mb_substr($username, 0, 100) . "'",
                     '', null, ['user_id' => null, 'username' => $username, 'role' => 'guest']);
                 return "Too many attempts. Try again later.";
             }
         }
-
-        // GET USER
-        $stmt = $this->con->prepare("SELECT * FROM users WHERE username = ? AND status = 'active'");
-        $stmt->execute([$username]);
-        $user = $stmt->fetch();
 
         // =========================
         // USER EXISTS
@@ -56,7 +60,11 @@ class Project
             if ($user['failed_attempts'] >= 5) {
                 $lastAttempt = strtotime($user['last_attempt']);
 
-                if ((time() - $lastAttempt) < 300) {
+                if ((time() - $lastAttempt) >= 300) {
+                    $this->con->prepare("UPDATE users SET failed_attempts = 0, last_attempt = NULL WHERE id = ?")->execute([$user['id']]);
+                    $user['failed_attempts'] = 0;
+                    $user['last_attempt'] = null;
+                } elseif (!password_verify($password, $user['password'])) {
                     mmb_log_activity($this->con, 'auth', 'login_blocked',
                         "Sign-in blocked (account lock) for username '" . mb_substr($username, 0, 100) . "'",
                         '', null, ['user_id' => (int)$user['id'], 'username' => $user['username'], 'role' => strtolower($user['position'])]);
@@ -78,6 +86,9 @@ class Project
                 // RESET USER ATTEMPTS
                 $resetUser = $this->con->prepare("UPDATE users SET failed_attempts = 0 WHERE id = ?");
                 $resetUser->execute([$user['id']]);
+
+                $resetUserLastAttempt = $this->con->prepare("UPDATE users SET last_attempt = NULL WHERE id = ?");
+                $resetUserLastAttempt->execute([$user['id']]);
 
                 // RESET IP ATTEMPTS
                 $resetIP = $this->con->prepare("DELETE FROM login_attempts WHERE ip_address = ?");

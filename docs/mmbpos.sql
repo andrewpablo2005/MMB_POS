@@ -399,7 +399,8 @@ INSERT INTO `users` (`id`, `username`, `password`, `void_password`, `position`, 
 (1, 'andrew_owner', '$2y$10$U9nvr0YPYlqswVjqumcw1OTvtVJYVwdl5MFcCfvumt.nUzhqJTe9C', '1234567', 'Owner', 0, NULL),
 (2, 'andrew_admin', '$2y$10$66NN40jrGg8tJ3wtlQY2jeUzoCbU98yphzEaZ6kAr6xgAQbV.tMG2', '1234567', 'Admin', 0, NULL),
 (3, 'andrew_staff', '$2y$10$WESQ6f2mApseNhMhKMmW8e6gg.tp9AU8CsY/mQrU4g6GHEWmFCWGG', '1234567', 'Staff', 0, NULL),
-(4, 'staff1', '$2y$10$U60z2JyVRKxJ.x36cqpJkuzZDPRFtOF5aZqUO7QCyBBN.P614oIoy', NULL, 'Staff', 0, NULL);
+(4, 'staff1', '$2y$10$U60z2JyVRKxJ.x36cqpJkuzZDPRFtOF5aZqUO7QCyBBN.P614oIoy', NULL, 'Staff', 0, NULL),
+(5, 'owner', '$2y$12$BeXIStgDbLTRtfkWrqmOg.Oey4oLaBkcC59QoE0grMc5eM5GYUVXm', '$2y$12$4aE3.k2bC8wRWa9Ir7BRNuXQzhHtUIvdAxl3gzaQbkO7LJ66w586O', 'Owner', 0, NULL);
 
 -- --------------------------------------------------------
 
@@ -451,7 +452,8 @@ INSERT INTO `users_info` (`id`, `user_id`, `firstname`, `middlename`, `lastname`
 (1, 1, 'Andrew', 'Gonzales', 'Pablo', 0, '', '', '', '', '', 'andrewpablo2005@gmail.com', '09651800675'),
 (2, 2, 'Jhon Bryan', 'Gonzales', 'Palero', 22, 'N/A', 'Malapit', 'San Isidro', 'Nueva Ecija', 'Philippines', 'palero@gmail.com', '09651800675'),
 (3, 3, 'Neil Paolo', 'Gonzales', 'Cabrera', 21, 'N/A', 'Marelu', 'Gapan', 'Nueva Ecija', 'Philippines', 'cabrera@gmail.com', '09651800675'),
-(4, 4, 'Ivhan Grace', 'De Belen', 'Aguilar', 20, 'N/A', 'Niyugan', 'Jaen', 'Nueva Ecija', 'Philippines', 'andrewpablo2005@gmail.com', '09651800675');
+(4, 4, 'Ivhan Grace', 'De Belen', 'Aguilar', 20, 'N/A', 'Niyugan', 'Jaen', 'Nueva Ecija', 'Philippines', 'andrewpablo2005@gmail.com', '09651800675'),
+(5, 5, 'System', '', 'Default', 0, '', '', '', '', 'Philippines', 'default@system.local', '00000000000');
 
 --
 -- Indexes for dumped tables

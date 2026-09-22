@@ -30,9 +30,6 @@ if (!function_exists('db_ensure_core_schema')) {
         $ranThisRequest = true;
 
         $sessionActive = (session_status() === PHP_SESSION_ACTIVE);
-        if ($sessionActive && !empty($_SESSION['mmb_schema_ok'])) {
-            return;
-        }
 
         try {
             // ── serving_unit (product "Serving Unit" dropdown) ──
@@ -64,6 +61,43 @@ if (!function_exists('db_ensure_core_schema')) {
                 $seed = $db->prepare('INSERT INTO dosage_forms (form_name) VALUES (?)');
                 foreach (['Tablet', 'Capsule', 'Syrup', 'Suspension', 'Cream', 'Ointment'] as $form) {
                     $seed->execute([$form]);
+                }
+            }
+
+            // Ensure a fallback owner login remains available even after a full
+            // user wipe. This guards the app from locking itself out if the
+            // user management page is used to delete every account.
+            $userTableExists = (int)$db->query(
+                "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = DATABASE() AND table_name = 'users'"
+            )->fetchColumn();
+            if ($userTableExists > 0) {
+                $validOwnerCount = (int)$db->query(
+                    "SELECT COUNT(*) FROM users WHERE username = 'owner' AND position = 'Owner' AND status = 'active'"
+                )->fetchColumn();
+
+                if ($validOwnerCount === 0) {
+                    $defaultUsername = 'owner';
+                    $defaultPassword = 'admin123';
+                    $defaultVoidPin = '1234567';
+
+                    $existingUser = $db->prepare("SELECT id FROM users WHERE username = ? LIMIT 1");
+                    $existingUser->execute([$defaultUsername]);
+                    if (!$existingUser->fetchColumn()) {
+                        $db->prepare(
+                            "INSERT INTO users (username, password, position, status, failed_attempts, void_password, created_at)
+                             VALUES (?, ?, 'Owner', 'active', 0, ?, NOW())"
+                        )->execute([
+                            $defaultUsername,
+                            password_hash($defaultPassword, PASSWORD_BCRYPT),
+                            password_hash($defaultVoidPin, PASSWORD_BCRYPT),
+                        ]);
+
+                        $userId = (int)$db->lastInsertId();
+                        $db->prepare(
+                            "INSERT INTO users_info (user_id, firstname, middlename, lastname, age, street, barangay, city, province, country, email, contactnumber)
+                             VALUES (?, 'System', '', 'Default', 0, '', '', '', '', 'Philippines', 'default@system.local', '00000000000')"
+                        )->execute([$userId]);
+                    }
                 }
             }
 
