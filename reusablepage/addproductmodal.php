@@ -327,6 +327,17 @@ $dosageForms = $product->getDosageForms();
                                 </div>
                             </div>
                             <div class="add-product-field">
+                                <label for="batch_lot_number" class="form-label">Lot Number <span class="text-muted fw-normal">(optional)</span></label>
+                                <input type="text" id="batch_lot_number" name="lot_number" class="form-control"
+                                    placeholder="e.g. LOT-2026-01" maxlength="255">
+                                <div class="form-text text-muted mt-1">
+                                    Enter the supplier lot or batch reference when applicable.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="add-product-row">
+                            <div class="add-product-field add-product-field--full">
                                 <label for="batch_supplier_search" class="form-label">Supplier (optional)</label>
                                 <input type="hidden" id="batch_supplier_id_hidden" name="supplier_id" value="">
                                 <div class="d-flex gap-2 align-items-start">

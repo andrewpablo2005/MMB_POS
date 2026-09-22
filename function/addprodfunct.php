@@ -44,6 +44,7 @@ class ProductManagement
     // Batch/Inventory fields (no longer in products table)
     public string $expiry_date;
     public string $batch_number;
+    public string $lot_number;
     public int $supplier_id;
     public float $purchase_cost;
     public float $markup;
@@ -72,6 +73,20 @@ class ProductManagement
         $stmt = $this->con->prepare("SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ?");
         $stmt->execute([$tableName]);
         return (int) $stmt->fetchColumn() > 0;
+    }
+
+    private function ensureInventoryLotNumberColumn(): void
+    {
+        if (!$this->hasColumn('inventory', 'lot_number')) {
+            $this->con->exec("ALTER TABLE inventory ADD COLUMN lot_number VARCHAR(255) DEFAULT NULL COMMENT 'Lot or batch reference number'");
+        }
+    }
+
+    private function ensureInventoryDisposalLotNumberColumn(): void
+    {
+        if (!$this->hasColumn('inventory_disposals', 'lot_number')) {
+            $this->con->exec("ALTER TABLE inventory_disposals ADD COLUMN lot_number VARCHAR(255) DEFAULT NULL COMMENT 'Lot or batch reference number'");
+        }
     }
 
     private function generateBatchNumber(int $productId): string
@@ -325,6 +340,7 @@ class ProductManagement
             // Batch/Inventory fields (for inventory table)
             $this->expiry_date = $_POST['expiry_date'] ?? '';
             $this->batch_number = trim($_POST['batch_number'] ?? '');
+            $this->lot_number = trim((string) ($_POST['lot_number'] ?? ''));
             $selectedSupplierId = $_POST['supplier_id'] ?? $_POST['batch_supplier_id'] ?? 0;
             $this->supplier_id = (int) $selectedSupplierId;
             $this->purchase_cost = (float) ($_POST['purchase_cost'] ?? 0);
@@ -447,15 +463,18 @@ class ProductManagement
                 $this->batch_number = $this->generateBatchNumber((int) $productId);
                 $receivedDate = !empty($_POST['date_received']) ? $_POST['date_received'] : date('Y-m-d');
 
+                $this->ensureInventoryLotNumberColumn();
+
                 $stmt = $this->con->prepare("
-                    INSERT INTO inventory (product_id, supplier_id, batch_number, date_received, expiry_date, purchase_cost, markup, sale_price, received_quantity, current_quantity)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    INSERT INTO inventory (product_id, supplier_id, batch_number, lot_number, date_received, expiry_date, purchase_cost, markup, sale_price, received_quantity, current_quantity)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 ");
 
                 $stmt->execute([
                     $productId,
                     ($this->supplier_id > 0) ? $this->supplier_id : null,
                     $this->batch_number ?: null,
+                    $this->lot_number !== '' ? $this->lot_number : null,
                     $receivedDate,
                     $this->expiry_date ?: null,
                     $this->purchase_cost,
@@ -582,7 +601,7 @@ class ProductManagement
         if (!empty($productIds)) {
             $placeholders = implode(',', array_fill(0, count($productIds), '?'));
             $batchStmt = $this->con->prepare("
-                SELECT i.id, i.product_id, i.batch_number, i.current_quantity, i.received_quantity,
+                SELECT i.id, i.product_id, i.batch_number, i.lot_number, i.current_quantity, i.received_quantity,
                        i.expiry_date, i.purchase_cost, i.markup, i.sale_price, i.date_received,
                        COALESCE(s.supplier_name, 'N/A') AS supplier_name,
                        COALESCE(s.contact_number, 'N/A') AS supplier_contact,
@@ -670,11 +689,15 @@ class ProductManagement
     public function getAllInventoryBatches(): array
     {
         $this->ensureInventoryNoStockTable();
+        $this->ensureInventoryLotNumberColumn();
+
+        $lotNumberColumn = $this->hasColumn('inventory', 'lot_number') ? 'i.lot_number' : 'NULL AS lot_number';
 
         $sql = "
             SELECT 
                 i.id,
                 i.batch_number,
+                {$lotNumberColumn},
                 i.product_id,
                 p.generic_name,
                 p.branded_name,
@@ -788,6 +811,7 @@ class ProductManagement
                 id INT NOT NULL AUTO_INCREMENT,
                 product_id INT NOT NULL,
                 batch_number VARCHAR(100) DEFAULT NULL,
+                lot_number VARCHAR(255) DEFAULT NULL,
                 current_quantity INT NOT NULL DEFAULT 0,
                 received_quantity INT NOT NULL DEFAULT 0,
                 expiry_date DATE DEFAULT NULL,
@@ -796,6 +820,13 @@ class ProductManagement
                 PRIMARY KEY (id)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
         ");
+    }
+
+    private function ensureInventoryNoStockLotNumberColumn(): void
+    {
+        if (!$this->hasColumn('inventory_no_stock', 'lot_number')) {
+            $this->con->exec("ALTER TABLE inventory_no_stock ADD COLUMN lot_number VARCHAR(255) DEFAULT NULL COMMENT 'Lot or batch reference number'");
+        }
     }
 
     private function ensureInventoryDisposalProofColumn(): void
@@ -808,9 +839,10 @@ class ProductManagement
     public function moveZeroStockBatchesToNoStock(): int
     {
         $this->ensureInventoryNoStockTable();
+        $this->ensureInventoryNoStockLotNumberColumn();
 
         $selectStmt = $this->con->prepare(
-            "SELECT id, product_id, batch_number, current_quantity, received_quantity, expiry_date FROM inventory WHERE current_quantity <= 0 FOR UPDATE"
+            "SELECT id, product_id, batch_number, lot_number, current_quantity, received_quantity, expiry_date FROM inventory WHERE current_quantity <= 0 FOR UPDATE"
         );
         $selectStmt->execute();
         $zeroStockBatches = $selectStmt->fetchAll();
@@ -823,7 +855,7 @@ class ProductManagement
             "SELECT 1 FROM inventory_no_stock WHERE product_id = ? AND batch_number = ? AND expiry_date <=> ? LIMIT 1"
         );
         $insertStmt = $this->con->prepare(
-            "INSERT INTO inventory_no_stock (product_id, batch_number, current_quantity, received_quantity, expiry_date, reason, moved_at) VALUES (?, ?, ?, ?, ?, ?, NOW())"
+            "INSERT INTO inventory_no_stock (product_id, batch_number, lot_number, current_quantity, received_quantity, expiry_date, reason, moved_at) VALUES (?, ?, ?, ?, ?, ?, ?, NOW())"
         );
         $updateStmt = $this->con->prepare("UPDATE inventory SET current_quantity = 0 WHERE id = ?");
 
@@ -835,6 +867,7 @@ class ProductManagement
             $receivedQuantity = max((int) ($batch['received_quantity'] ?? 0), 0);
             $expiryDate = $batch['expiry_date'] ?? null;
             $batchNumber = $batch['batch_number'] ?? null;
+            $lotNumber = (!empty($batch['lot_number'])) ? $batch['lot_number'] : null;
 
             $checkStmt->execute([$productId, $batchNumber, $expiryDate]);
             if ($checkStmt->fetchColumn()) {
@@ -845,6 +878,7 @@ class ProductManagement
             $insertStmt->execute([
                 $productId,
                 $batchNumber,
+                $lotNumber,
                 $currentQuantity,
                 $receivedQuantity,
                 $expiryDate,
@@ -872,9 +906,10 @@ class ProductManagement
 
         try {
             $this->ensureInventoryNoStockTable();
+            $this->ensureInventoryNoStockLotNumberColumn();
             $this->con->beginTransaction();
 
-            $batchStmt = $this->con->prepare("SELECT id, product_id, batch_number, current_quantity, received_quantity, expiry_date FROM inventory WHERE id = ? FOR UPDATE");
+            $batchStmt = $this->con->prepare("SELECT id, product_id, batch_number, lot_number, current_quantity, received_quantity, expiry_date FROM inventory WHERE id = ? FOR UPDATE");
             $batchStmt->execute([$inventoryId]);
             $batch = $batchStmt->fetch();
 
@@ -894,10 +929,11 @@ class ProductManagement
             ]);
 
             if (!$checkStmt->fetchColumn()) {
-                $insertStmt = $this->con->prepare("INSERT INTO inventory_no_stock (product_id, batch_number, current_quantity, received_quantity, expiry_date, reason, moved_at) VALUES (?, ?, ?, ?, ?, ?, NOW())");
+                $insertStmt = $this->con->prepare("INSERT INTO inventory_no_stock (product_id, batch_number, lot_number, current_quantity, received_quantity, expiry_date, reason, moved_at) VALUES (?, ?, ?, ?, ?, ?, ?, NOW())");
                 $insertStmt->execute([
                     (int) ($batch['product_id'] ?? 0),
                     $batch['batch_number'] ?? null,
+                    !empty($batch['lot_number']) ? $batch['lot_number'] : null,
                     max((int) ($batch['current_quantity'] ?? 0), 0),
                     max((int) ($batch['received_quantity'] ?? 0), 0),
                     $batch['expiry_date'] ?? null,
@@ -921,11 +957,18 @@ class ProductManagement
     public function getDisposedBatches(): array
     {
         $this->ensureInventoryDisposalProofColumn();
+        $this->ensureInventoryDisposalLotNumberColumn();
+        $this->ensureInventoryLotNumberColumn();
+
+        $lotNumberExpr = $this->hasColumn('inventory_disposals', 'lot_number')
+            ? 'COALESCE(d.lot_number, i.lot_number) AS lot_number'
+            : 'NULL AS lot_number';
 
         $sql = "
             SELECT 
                 d.id,
                 d.batch_number,
+                {$lotNumberExpr},
                 d.product_id,
                 p.generic_name,
                 p.branded_name,
@@ -945,6 +988,9 @@ class ProductManagement
             LEFT JOIN products p ON p.id = d.product_id
             LEFT JOIN product_categories pc ON p.category_id = pc.id
             LEFT JOIN serving_unit um ON um.id = p.measurement_id
+            LEFT JOIN inventory i ON i.product_id = d.product_id
+                AND i.batch_number <=> d.batch_number
+                AND i.expiry_date <=> d.expiry_date
             ORDER BY d.id ASC, p.generic_name ASC
         ";
 
@@ -956,11 +1002,18 @@ class ProductManagement
     public function getNoStockBatches(): array
     {
         $this->ensureInventoryNoStockTable();
+        $this->ensureInventoryNoStockLotNumberColumn();
+        $this->ensureInventoryLotNumberColumn();
+
+        $lotNumberExpr = $this->hasColumn('inventory_no_stock', 'lot_number')
+            ? 'COALESCE(n.lot_number, i.lot_number) AS lot_number'
+            : 'NULL AS lot_number';
 
         $sql = "
             SELECT 
                 n.id,
                 n.batch_number,
+                {$lotNumberExpr},
                 n.product_id,
                 p.generic_name,
                 p.branded_name,
@@ -980,6 +1033,9 @@ class ProductManagement
             LEFT JOIN products p ON p.id = n.product_id
             LEFT JOIN product_categories pc ON p.category_id = pc.id
             LEFT JOIN serving_unit um ON um.id = p.measurement_id
+            LEFT JOIN inventory i ON i.product_id = n.product_id
+                AND i.batch_number <=> n.batch_number
+                AND i.expiry_date <=> n.expiry_date
             ORDER BY n.id ASC, p.generic_name ASC
         ";
 
@@ -1000,9 +1056,26 @@ class ProductManagement
                 rt.refund_method,
                 rt.created_at AS return_date,
                 ri.product_id,
+                (
+                    SELECT i.lot_number
+                    FROM transaction_items ti
+                    JOIN transaction_item_batches tib ON tib.transaction_item_id = ti.id
+                    JOIN inventory i ON i.id = tib.inventory_id
+                    WHERE ti.transaction_id = rt.original_transaction_id
+                      AND ti.product_id = ri.product_id
+                    ORDER BY tib.id ASC
+                    LIMIT 1
+                ) AS lot_number,
                 ri.quantity,
                 ri.price,
                 ri.subtotal,
+                ri.item_type,
+                ri.restocked,
+                CASE
+                    WHEN ri.restocked = 1 THEN 'Restocked'
+                    WHEN ri.restocked = 0 THEN 'Disposed'
+                    ELSE 'Returned'
+                END AS return_status,
                 p.generic_name,
                 p.branded_name,
                 p.imageproduct,
@@ -1157,17 +1230,21 @@ class ProductManagement
                     }
 
                     $this->batch_number = $this->generateBatchNumber($this->id);
+                    $this->lot_number = trim((string) ($_POST['lot_number'] ?? ''));
                     $receivedDate = !empty($_POST['date_received']) ? $_POST['date_received'] : date('Y-m-d');
 
+                    $this->ensureInventoryLotNumberColumn();
+
                     $batchStmt = $this->con->prepare("
-                        INSERT INTO inventory (product_id, supplier_id, batch_number, date_received, expiry_date, purchase_cost, markup, sale_price, received_quantity, current_quantity)
-                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                        INSERT INTO inventory (product_id, supplier_id, batch_number, lot_number, date_received, expiry_date, purchase_cost, markup, sale_price, received_quantity, current_quantity)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                     ");
 
                     $batchStmt->execute([
                         $this->id,
                         ((int) ($_POST['supplier_id'] ?? 0) > 0) ? (int) $_POST['supplier_id'] : null,
                         $this->batch_number,
+                        $this->lot_number !== '' ? $this->lot_number : null,
                         $receivedDate,
                         $_POST['expiry_date'] ?? null,
                         isset($_POST['purchase_cost']) && $_POST['purchase_cost'] !== '' ? (float) $_POST['purchase_cost'] : 0,
@@ -1281,6 +1358,7 @@ class ProductManagement
         $quantity = (int) ($_POST['quantity'] ?? 0);
         $expiryDate = $_POST['expiry_date'] ?? null;
         $supplierId = (int) ($_POST['supplier_id'] ?? 0);
+        $lotNumber = trim((string) ($_POST['lot_number'] ?? ''));
         $purchaseCost = isset($_POST['purchase_cost']) && $_POST['purchase_cost'] !== '' ? (float) $_POST['purchase_cost'] : 0;
         $markup = isset($_POST['markup']) && $_POST['markup'] !== '' ? (float) $_POST['markup'] : 0;
         $salePrice = isset($_POST['sale_price']) && $_POST['sale_price'] !== '' ? (float) $_POST['sale_price'] : 0;
@@ -1309,18 +1387,21 @@ class ProductManagement
         try {
             $this->con->beginTransaction();
 
+            $this->ensureInventoryLotNumberColumn();
+
             $batchNumber = $this->generateBatchNumber($productId);
 
             $stmt = $this->con->prepare("
                 INSERT INTO inventory 
-                (product_id, supplier_id, batch_number, date_received, expiry_date, 
+                (product_id, supplier_id, batch_number, lot_number, date_received, expiry_date, 
                  purchase_cost, markup, sale_price, received_quantity, current_quantity) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ");
             $stmt->execute([
                 $productId,
                 $supplierId > 0 ? $supplierId : null,
                 $batchNumber,
+                $lotNumber !== '' ? $lotNumber : null,
                 $receivedDate,
                 $expiryDate,
                 $purchaseCost,
@@ -1399,10 +1480,11 @@ class ProductManagement
             }
 
             $this->ensureInventoryDisposalProofColumn();
+            $this->ensureInventoryDisposalLotNumberColumn();
 
             $this->con->beginTransaction();
 
-            $batchStmt = $this->con->prepare("SELECT id, product_id, batch_number, current_quantity, expiry_date FROM inventory WHERE id = ? FOR UPDATE");
+            $batchStmt = $this->con->prepare("SELECT id, product_id, batch_number, lot_number, current_quantity, expiry_date FROM inventory WHERE id = ? FOR UPDATE");
             $batchStmt->execute([$inventoryId]);
             $batch = $batchStmt->fetch();
 
@@ -1436,10 +1518,11 @@ class ProductManagement
                 $this->con->prepare("UPDATE inventory SET current_quantity = current_quantity - ? WHERE id = ?")->execute([$quantity, $inventoryId]);
             }
 
-            $insertStmt = $this->con->prepare("INSERT INTO inventory_disposals (product_id, batch_number, quantity, expiry_date, reason, disposal_proof_filename, disposed_at) VALUES (?, ?, ?, ?, ?, ?, NOW())");
+            $insertStmt = $this->con->prepare("INSERT INTO inventory_disposals (product_id, batch_number, lot_number, quantity, expiry_date, reason, disposal_proof_filename, disposed_at) VALUES (?, ?, ?, ?, ?, ?, ?, NOW())");
             $insertStmt->execute([
                 (int) ($batch['product_id'] ?? 0),
                 $batch['batch_number'] ?? null,
+                !empty($batch['lot_number']) ? $batch['lot_number'] : null,
                 $quantity,
                 $batch['expiry_date'] ?? null,
                 $reason ?: 'Disposed',

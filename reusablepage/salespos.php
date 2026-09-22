@@ -774,6 +774,7 @@ if (!empty($_SESSION['user_id'])) {
             const closedBusinessDate = document.getElementById('closingBusinessDate').value;
             const today = new Date().toISOString().slice(0, 10);
             if (closedBusinessDate < today) {
+                sessionStorage.setItem('showOpenRegisterAfterReload', '1');
                 mmbNotify({ type: 'success', title: 'Previous register closed', message: 'Variance: ' + weposFormatClosingCurrency(result.variance) + '. Refreshing POS…', duration: 2500 });
                 setTimeout(function () { window.location.reload(); }, 1600);
             } else {
@@ -788,6 +789,7 @@ if (!empty($_SESSION['user_id'])) {
     }
 
     async function weposEnsureRegisterOpened() {
+        const shouldOpenRegisterAfterReload = sessionStorage.getItem('showOpenRegisterAfterReload') === '1';
         try {
             const response = await fetch('../function/close_register.php', {
                 method: 'POST',
@@ -802,9 +804,19 @@ if (!empty($_SESSION['user_id'])) {
             }
             weposRegisterClosed = Boolean(result.success && result.already_closed);
             weposRegisterOpened = Boolean(result.success && result.opening_exists === true && !weposRegisterClosed);
+            if (shouldOpenRegisterAfterReload) {
+                sessionStorage.removeItem('showOpenRegisterAfterReload');
+                weposRegisterOpened = false;
+                weposRegisterClosed = false;
+                weposOpenOpeningModal();
+                return;
+            }
             if (!weposRegisterOpened && !weposRegisterClosed) weposOpenOpeningModal();
         } catch (requestError) {
             weposRegisterOpened = false;
+            if (shouldOpenRegisterAfterReload) {
+                sessionStorage.removeItem('showOpenRegisterAfterReload');
+            }
             weposOpenOpeningModal();
         }
     }

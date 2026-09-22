@@ -104,6 +104,7 @@ require_once __DIR__ . '/guard.php'; guard_require_roles(['owner','admin']);
                                         <thead class="table-light">
                                             <tr>
                                                 <th>Batch No</th>
+                                                <th>Lot No</th>
                                                 <th>Date Received</th>
                                                 <th>Original Qty</th>
                                                 <th>Current Qty</th>
@@ -122,6 +123,7 @@ require_once __DIR__ . '/guard.php'; guard_require_roles(['owner','admin']);
                                                 <?php
                                                     $batchCurrentQuantity = (int) ($batch['current_quantity'] ?? 0);
                                                     $batchExpiryDate = trim((string) ($batch['expiry_date'] ?? ''));
+                                                    $batchLotNumber = trim((string) ($batch['lot_number'] ?? ''));
                                                     $today = new DateTime('today');
                                                     $nearExpiryDate = (clone $today)->modify('+90 days');
                                                     $batchStatus = [];
@@ -158,6 +160,7 @@ require_once __DIR__ . '/guard.php'; guard_require_roles(['owner','admin']);
                                                 ?>
                                                 <tr class="<?= $batchRowClass ?>">
                                                     <td><?= htmlspecialchars(trim((string) ($batch['batch_number'] ?? 'N/A'))) ?></td>
+                                                    <td><?= htmlspecialchars($batchLotNumber !== '' ? $batchLotNumber : 'N/A') ?></td>
                                                     <td><?= htmlspecialchars(($batch['date_received'] ?? 'N/A') ?: 'N/A') ?></td>
                                                     <td><?= htmlspecialchars((string) ($batch['received_quantity'] ?? 0)) ?></td>
                                                     <td><?= htmlspecialchars((string) $batchCurrentQuantity) ?></td>
