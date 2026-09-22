@@ -112,7 +112,7 @@ function dash_product_thumb(?string $image, string $sizeClass = 'mmb-thumb'): st
       <div class="stat-card">
         <div class="stat-icon wine"><i class="fas fa-money-bill-trend-up"></i></div>
         <div class="min-w-0">
-          <div class="stat-label">Real Revenue</div>
+          <div class="stat-label">Profit</div>
           <div class="stat-value" id="revenueValue">₱<?php echo number_format($realRevenueToday, 2); ?></div>
           <div class="stat-sub" id="revenueSub"></div>
         </div>
