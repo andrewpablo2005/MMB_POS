@@ -96,7 +96,7 @@ function dash_product_thumb(?string $image, string $sizeClass = 'mmb-thumb'): st
         <div class="stat-icon crimson"><i class="fas fa-peso-sign"></i></div>
         <div class="flex-grow-1 min-w-0">
           <div class="d-flex align-items-center justify-content-between">
-            <div class="stat-label">Sales</div>
+            <div class="stat-label">Net Sales</div>
             <select class="period-select" id="salesPeriod" aria-label="Sales period">
               <option value="today" selected>Today</option>
               <option value="month">This Month</option>
