@@ -147,6 +147,11 @@ class Product {
                            COALESCE(pc.senior_discount, 0) AS senior_eligible,
                            COALESCE(pc.pwd_discount, 0) AS pwd_eligible,
                            COALESCE(pc.has_vat, 0) AS has_vat,
+                           COALESCE((SELECT newest.purchase_cost
+                                     FROM inventory newest
+                                     WHERE newest.product_id = p.id
+                                     ORDER BY newest.date_received DESC, newest.id DESC
+                                     LIMIT 1), 0) AS cost_price,
                            COALESCE((SELECT newest.sale_price
                                      FROM inventory newest
                                      WHERE newest.product_id = p.id
@@ -162,6 +167,7 @@ class Product {
                 if ($row) {
                     $productData[$pid] = [
                         'base_price'         => (float)$row['base_price'],
+                        'cost_price'         => (float)$row['cost_price'],
                         'units_per_package'  => max(1, (int)$row['units_per_package']),
                         'senior_eligible'    => (bool)$row['senior_eligible'],
                         'pwd_eligible'       => (bool)$row['pwd_eligible'],
@@ -224,7 +230,8 @@ class Product {
                     $unitPrice = $data['base_price'];
                 } else {
                     foreach ($overrideRates[$pid] ?? [] as $rate) {
-                        $allowedOverride = round($data['base_price'] * (1 - $rate), 2);
+                        $margin = max(0.0, $data['base_price'] - $data['cost_price']);
+                        $allowedOverride = round(max($data['cost_price'], $data['base_price'] - ($margin * $rate)), 2);
                         if (abs($clientPrice - $allowedOverride) < 0.011) {
                             $unitPrice = $allowedOverride;
                             break;
@@ -234,12 +241,14 @@ class Product {
 
                 // pcs/units_per_package comes from the DB, never the client
                 $serverCart[] = [
-                    'id'    => $pid,
-                    'qty'   => $qty,
-                    'price' => $unitPrice,
-                    'pcs'   => $data['units_per_package'],
-                    'senior' => $data['senior_eligible'],
-                    'pwd'    => $data['pwd_eligible'],
+                    'id'         => $pid,
+                    'qty'        => $qty,
+                    'price'      => $unitPrice,
+                    'base_price' => $data['base_price'],
+                    'cost_price' => $data['cost_price'],
+                    'pcs'        => $data['units_per_package'],
+                    'senior'     => $data['senior_eligible'],
+                    'pwd'        => $data['pwd_eligible'],
                     'eligible_for_discount' => $data['senior_eligible'] || $data['pwd_eligible'],
                 ];
             }
@@ -358,11 +367,11 @@ class Product {
             // (c) manager override portion, mirroring the POS UI
             $overrideAllowed = 0.0;
             foreach ($cartItems as $item) {
+                $basePrice = (float)($item['base_price'] ?? $item['price'] ?? 0);
+                $costPrice = (float)($item['cost_price'] ?? 0);
+                $profitMargin = max(0.0, $basePrice - $costPrice);
                 foreach ($overrideRates[$item['id']] ?? [] as $rate) {
-                    $gross = (float)$item['price'] * (int)$item['qty'];
-                    $overrideAllowed += $item['has_vat'] && $vatRate > 0
-                        ? ($gross / (1 + $vatRate)) * $rate
-                        : $gross * $rate;
+                    $overrideAllowed += $profitMargin * $rate * (int)($item['qty'] ?? 0);
                 }
             }
             $allowedDiscount = round(max($allowedDiscount, $overrideAllowed), 2);

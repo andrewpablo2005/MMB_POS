@@ -367,6 +367,36 @@ if (!empty($_SESSION['user_id'])) {
     </div>
 </div>
 
+<!-- ═══════════════ MANAGER OVERRIDE MODAL ═══════════════ -->
+<div class="wepos-modal-overlay" id="overrideAuthModal" style="display:none;" onclick="event.stopPropagation()">
+    <div class="wepos-modal" onclick="event.stopPropagation()">
+        <div class="wepos-modal-head" style="background: #fef3c7; border-bottom: 1px solid #fcd34d;">
+            <h5 style="color: #92400e;">Manager Override</h5>
+            <button onclick="weposCloseOverrideModal()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="wepos-modal-body">
+            <div id="overrideItemPreview" style="background:#f8f9fa; border:1px solid #dcdcde; padding:10px 14px; border-radius:4px; font-size:13px; margin-bottom:14px;"></div>
+            <div style="margin-bottom:12px;">
+                <label style="font-weight:600; display:block; margin-bottom:4px;">Manager Void PIN</label>
+                <input type="password" id="overridePin" class="wepos-input-lg" placeholder="7-digit PIN" maxlength="7" autocomplete="off">
+            </div>
+            <div style="margin-bottom:12px;">
+                <label style="font-weight:600; display:block; margin-bottom:4px;">Discount percent</label>
+                <input type="number" id="overrideDiscountPercent" class="wepos-input-lg" min="1" max="99" step="0.01" value="10" placeholder="10">
+            </div>
+            <div style="margin-bottom:12px;">
+                <label style="font-weight:600; display:block; margin-bottom:4px;">Reason</label>
+                <textarea id="overrideReason" rows="2" class="form-control" placeholder="Explain why this item is discounted"></textarea>
+            </div>
+            <div id="overrideError" class="text-danger" style="font-size:0.85rem; display:none; margin-bottom:0.5rem; text-align:center;"></div>
+        </div>
+        <div class="wepos-modal-foot">
+            <button class="wepos-btn wepos-btn-outline" onclick="weposCloseOverrideModal()">Cancel</button>
+            <button class="wepos-btn wepos-btn-primary" id="overrideAuthBtn" onclick="weposSubmitOverride()"><i class="fas fa-user-shield"></i> Approve Override</button>
+        </div>
+    </div>
+</div>
+
 <!-- ═══════════════ PAYMENT MODAL ═══════════════ -->
 <div class="wepos-modal-overlay" id="weposPayModal" style="display:none;" onclick="weposClosePayModal(event)">
     <div class="wepos-modal" onclick="event.stopPropagation()">
@@ -537,6 +567,9 @@ if (!empty($_SESSION['user_id'])) {
                     </div>
                     <div style="display:flex; justify-content:space-between; margin-bottom:3px; color:#dc2626;" id="receiptDiscountRow">
                         <span>Discount (<span id="receiptDiscLabel"></span>)</span><span id="receiptDiscount"></span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; margin-bottom:3px; color:#b45309;" id="receiptOverrideDiscountRow">
+                        <span>Override Discount (<span id="receiptOverrideDiscLabel">Manager</span>)</span><span id="receiptOverrideDiscount"></span>
                     </div>
                     <div style="display:flex; justify-content:space-between; margin-bottom:3px; color:#64748b;" id="receiptVatExRow">
                         <span>VAT Exempt</span><span id="receiptVatEx"></span>

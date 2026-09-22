@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 21, 2026 at 12:38 PM
+-- Generation Time: Sep 22, 2026 at 06:22 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -347,7 +347,103 @@ INSERT INTO `activity_logs` (`id`, `user_id`, `username`, `role`, `module`, `act
 (297, 1, 'andrew_owner', 'owner', 'auth', 'login', 'user', 1, 'Signed in successfully (owner)', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-21 10:18:38'),
 (298, 1, 'andrew_owner', 'owner', 'auth', 'logout', NULL, NULL, 'Signed out', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-21 10:21:38'),
 (299, 2, 'andrew_admin', 'admin', 'auth', 'login', 'user', 2, 'Signed in successfully (admin)', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-21 10:21:42'),
-(300, 2, 'andrew_admin', 'admin', 'sales', 'register_open', 'register_opening', 3, 'Opened register with 100.00 PHP opening cash for 2026-09-21', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-21 10:21:48');
+(300, 2, 'andrew_admin', 'admin', 'sales', 'register_open', 'register_opening', 3, 'Opened register with 100.00 PHP opening cash for 2026-09-21', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-21 10:21:48'),
+(301, 2, 'andrew_admin', 'admin', 'auth', 'login', 'user', 2, 'Signed in successfully (admin)', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-21 14:34:45'),
+(302, 2, 'andrew_admin', 'admin', 'products', 'serving_unit_delete', 'serving_unit', 9, 'Deleted serving unit \'Liters\'', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-21 14:41:43'),
+(303, 2, 'andrew_admin', 'admin', 'auth', 'logout', NULL, NULL, 'Signed out', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-21 14:42:06'),
+(304, 1, 'andrew_owner', 'owner', 'auth', 'login', 'user', 1, 'Signed in successfully (owner)', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-21 14:42:19'),
+(305, 1, 'andrew_owner', 'owner', 'products', 'serving_unit_delete', 'serving_unit', 7, 'Deleted serving unit \'pc\'', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-21 14:43:18'),
+(306, 1, 'andrew_owner', 'owner', 'products', 'serving_unit_delete', 'serving_unit', 6, 'Deleted serving unit \'ML\'', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-21 14:43:23'),
+(307, 1, 'andrew_owner', 'owner', 'products', 'serving_unit_delete', 'serving_unit', 8, 'Deleted serving unit \'L\'', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-21 14:43:33'),
+(308, 1, 'andrew_owner', 'owner', 'products', 'serving_unit_delete', 'serving_unit', 2, 'Deleted serving unit \'mg\'', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-21 14:43:39'),
+(309, 1, 'andrew_owner', 'owner', 'products', 'serving_unit_delete', 'serving_unit', 3, 'Deleted serving unit \'grams\'', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-21 14:43:44'),
+(310, 1, 'andrew_owner', 'owner', 'products', 'serving_unit_add', 'serving_unit', 42, 'Added serving unit \'f\'', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-21 15:12:01'),
+(311, 1, 'andrew_owner', 'owner', 'products', 'serving_unit_delete', 'serving_unit', 42, 'Deleted serving unit \'f\'', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-21 15:12:04'),
+(312, 1, 'andrew_owner', 'owner', 'products', 'product_add', 'product', 4, 'Added product \'Amoxil\'', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-21 15:13:33'),
+(313, 1, 'andrew_owner', 'owner', 'products', 'product_add', 'product', 5, 'Added product \'tests\'', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-21 15:16:06'),
+(314, 1, 'andrew_owner', 'owner', 'products', 'product_add', 'product', 6, 'Added product \'tests\'', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-21 15:21:49'),
+(315, 1, 'andrew_owner', 'owner', 'products', 'product_add', 'product', 8, 'Added product \'ggd\'', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-21 15:28:49'),
+(316, 1, 'andrew_owner', 'owner', 'products', 'supplier_add', 'supplier', 1, 'Added supplier \'testttt\'', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-21 15:30:42'),
+(317, 1, 'andrew_owner', 'owner', 'products', 'supplier_add', 'supplier', 2, 'Added supplier \'testttttestttt\'', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-21 15:31:29'),
+(318, 1, 'andrew_owner', 'owner', 'products', 'supplier_add', 'supplier', 3, 'Added supplier \'Andrew Gonzales Pablo\'', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-21 15:34:00'),
+(319, 1, 'andrew_owner', 'owner', 'products', 'supplier_add', 'supplier', 4, 'Added supplier \'Dut Gonzales Pablo\'', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-21 15:34:40'),
+(320, 1, 'andrew_owner', 'owner', 'products', 'product_add', 'product', 9, 'Added product \'fdfs\' with initial batch \'Batch-1\' (1000 packs)', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-21 15:35:41'),
+(321, 1, 'andrew_owner', 'owner', 'inventory', 'batch_add', 'product', 9, 'Added batch \'Batch-2\' (152 packs) to fdfs', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-21 15:36:59'),
+(322, 1, 'andrew_owner', 'owner', 'products', 'product_add', 'product', 13, 'Added product \'fdfsfdfs\' with initial batch \'Batch-1\' (10 packs)', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-21 15:43:37'),
+(323, 1, 'andrew_owner', 'owner', 'products', 'supplier_add', 'supplier', 5, 'Added supplier \'Sample Gonzales Pablo\'', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-21 15:44:47'),
+(324, 1, 'andrew_owner', 'owner', 'products', 'product_add', 'product', 14, 'Added product \'Unilabd\' with initial batch \'Batch-1\' (520 packs)', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-21 15:45:13'),
+(325, 1, 'andrew_owner', 'owner', 'inventory', 'batch_add', 'product', 14, 'Added batch \'Batch-2\' (524 packs) to Unilabd', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-21 15:45:50'),
+(326, 1, 'andrew_owner', 'owner', 'products', 'supplier_add', 'supplier', 6, 'Added supplier \'coke\'', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-21 15:52:11'),
+(327, 1, 'andrew_owner', 'owner', 'products', 'product_add', 'product', 15, 'Added product \'Centrum\' with initial batch \'Batch-1\' (522 packs)', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-21 15:52:32'),
+(328, 1, 'andrew_owner', 'owner', 'sales', 'register_open', 'register_opening', 1, 'Opened register with 100.00 PHP opening cash for 2026-09-21', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-21 15:53:01'),
+(329, 1, 'andrew_owner', 'owner', 'products', 'supplier_add', 'supplier', 1, 'Added supplier \'Andrew Gonzales Pablo\'', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-21 15:55:01'),
+(330, 1, 'andrew_owner', 'owner', 'products', 'product_add', 'product', 1, 'Added product \'Restime\' with initial batch \'Batch-1\' (100 packs)', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-21 15:55:21'),
+(331, 1, 'andrew_owner', 'owner', 'sales', 'register_open', 'register_opening', 1, 'Opened register with 100.00 PHP opening cash for 2026-09-21', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-21 15:55:37'),
+(332, 1, 'andrew_owner', 'owner', 'inventory', 'batch_disposal', 'inventory', 1, 'Disposed 5 packs from batch \'Batch-1\' of Restime (reason: damages)', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-21 15:56:34'),
+(333, 1, 'andrew_owner', 'owner', 'sales', 'sale_completed', 'transaction', 1, 'Completed sale #000001 — 630.00 PHP, 6 items, customer: Walk-in', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-21 15:57:02'),
+(334, 1, 'andrew_owner', 'owner', 'auth', 'login', 'user', 1, 'Signed in successfully (owner)', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-21 15:59:14'),
+(335, 1, 'andrew_owner', 'owner', 'sales', 'register_close', 'register_closing', 1, 'Closed register for 2026-09-21 — system 730.00 PHP, counted 730.00 PHP, variance 0.00 PHP', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-21 16:04:29'),
+(336, 1, 'andrew_owner', 'owner', 'auth', 'logout', NULL, NULL, 'Signed out', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-21 16:04:31'),
+(337, 3, 'andrew_staff', 'staff', 'auth', 'login', 'user', 3, 'Signed in successfully (staff)', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-21 16:06:41'),
+(338, 3, 'andrew_staff', 'staff', 'auth', 'logout', NULL, NULL, 'Signed out', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-21 16:06:53'),
+(339, 1, 'andrew_owner', 'owner', 'auth', 'login', 'user', 1, 'Signed in successfully (owner)', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-21 16:11:14'),
+(340, 1, 'andrew_owner', 'owner', 'sales', 'register_open', 'register_opening', 2, 'Opened register with 1,000.00 PHP opening cash for 2026-09-22', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-21 16:11:21'),
+(341, 1, 'andrew_owner', 'owner', 'sales', 'sale_completed', 'transaction', 2, 'Completed sale #000002 — 1,470.00 PHP, 14 items, customer: Walk-in', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-21 16:11:31'),
+(342, 1, 'andrew_owner', 'owner', 'sales', 'register_close', 'register_closing', 2, 'Closed register for 2026-09-22 — system 2,470.00 PHP, counted 2,470.00 PHP, variance 0.00 PHP', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-21 16:11:48'),
+(343, 1, 'andrew_owner', 'owner', 'auth', 'logout', NULL, NULL, 'Signed out', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-21 16:11:50'),
+(344, 1, 'andrew_owner', 'owner', 'auth', 'login', 'user', 1, 'Signed in successfully (owner)', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-21 16:12:00'),
+(345, 1, 'andrew_owner', 'owner', 'auth', 'login', 'user', 1, 'Signed in successfully (owner)', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-22 02:31:23'),
+(346, 1, 'andrew_owner', 'owner', 'inventory', 'batch_add', 'product', 1, 'Added batch \'Batch-3\' (100 packs) to Restime', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-22 02:36:00'),
+(347, 1, 'andrew_owner', 'owner', 'inventory', 'batch_add', 'product', 1, 'Added batch \'Batch-4\' (155 packs) to Restime', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-22 02:36:34'),
+(348, 2, 'andrew_admin', 'admin', 'auth', 'login', 'user', 2, 'Signed in successfully (admin)', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-22 02:40:27'),
+(349, 1, 'andrew_owner', 'owner', 'auth', 'logout', NULL, NULL, 'Signed out', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-22 02:42:56'),
+(350, 1, 'andrew_owner', 'owner', 'auth', 'login', 'user', 1, 'Signed in successfully (owner)', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-22 02:43:08'),
+(351, 1, 'andrew_owner', 'owner', 'products', 'supplier_add', 'supplier', 1, 'Added supplier \'Dut Gonzales Pablo\'', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-22 02:44:12'),
+(352, 1, 'andrew_owner', 'owner', 'products', 'product_add', 'product', 1, 'Added product \'sad\' with initial batch \'Batch-1\' (100 packs)', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-22 02:44:34'),
+(353, 1, 'andrew_owner', 'owner', 'products', 'supplier_add', 'supplier', 2, 'Added supplier \'Andrew Gonzales Pablo\'', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-22 02:45:17');
+INSERT INTO `activity_logs` (`id`, `user_id`, `username`, `role`, `module`, `action`, `entity_type`, `entity_id`, `description`, `ip_address`, `user_agent`, `created_at`) VALUES
+(354, 1, 'andrew_owner', 'owner', 'products', 'product_add', 'product', 2, 'Added product \'test\' with initial batch \'Batch-1\' (100 packs)', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-22 02:45:39'),
+(355, 1, 'andrew_owner', 'owner', 'sales', 'register_open', 'register_opening', 1, 'Opened register with 100.00 PHP opening cash for 2026-09-22', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-22 02:46:01'),
+(356, 1, 'andrew_owner', 'owner', 'sales', 'sale_completed', 'transaction', 1, 'Completed sale #000001 — 54.60 PHP, 1 items, customer: Walk-in', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-22 02:46:10'),
+(357, 1, 'andrew_owner', 'owner', 'sales', 'sale_completed', 'transaction', 2, 'Completed sale #000002 — 54.60 PHP, 1 items, customer: Walk-in', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-22 02:46:16'),
+(358, 1, 'andrew_owner', 'owner', 'sales', 'return_processed', 'return', 1, 'Processed return #1 for sale #2 — refund 54.60 PHP via Cash (1 items)', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-22 02:47:38'),
+(359, 1, 'andrew_owner', 'owner', 'sales', 'return_processed', 'return', 2, 'Processed return #2 for sale #1 — refund 54.60 PHP via Cash (1 items)', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-22 02:50:17'),
+(360, 1, 'andrew_owner', 'owner', 'sales', 'sale_completed', 'transaction', 3, 'Completed sale #000003 — 54.60 PHP, 1 items, customer: Walk-in', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-22 02:50:23'),
+(361, 1, 'andrew_owner', 'owner', 'inventory', 'batch_add', 'product', 2, 'Added batch \'Batch-2\' (100 packs) to test', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-22 02:53:06'),
+(362, 1, 'andrew_owner', 'owner', 'sales', 'sale_completed', 'transaction', 4, 'Completed sale #000004 — 53,014.50 PHP, 198 items, customer: Walk-in', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-22 02:53:30'),
+(363, 1, 'andrew_owner', 'owner', 'sales', 'return_processed', 'return', 3, 'Processed return #3 for sale #4 — refund 267.75 PHP via Cash (1 items)', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-22 02:54:13'),
+(364, 1, 'andrew_owner', 'owner', 'sales', 'return_processed', 'return', 4, 'Processed return #4 for sale #4 — refund 40,162.50 PHP via Cash (150 items)', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-22 02:54:50'),
+(365, 1, 'andrew_owner', 'owner', 'sales', 'return_processed', 'return', 5, 'Processed return #5 for sale #4 — refund 12,584.25 PHP via Cash (47 items)', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-22 02:55:23'),
+(366, 1, 'andrew_owner', 'owner', 'sales', 'sale_completed', 'transaction', 5, 'Completed sale #000005 — 52,746.75 PHP, 197 items, customer: Walk-in', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-22 02:56:29'),
+(367, 1, 'andrew_owner', 'owner', 'sales', 'sale_completed', 'transaction', 9, 'Completed sale #000009 — 21,000.00 PHP, 100 items, customer: Walk-in', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-22 03:05:29'),
+(368, 1, 'andrew_owner', 'owner', 'inventory', 'batch_add', 'product', 2, 'Added batch \'Batch-3\' (1000 packs) to test', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-22 03:05:59'),
+(369, 1, 'andrew_owner', 'owner', 'sales', 'sale_completed', 'transaction', 10, 'Completed sale #000010 — 15,750.00 PHP, 3 items, customer: Walk-in', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-22 03:06:12'),
+(370, 1, 'andrew_owner', 'owner', 'sales', 'return_processed', 'return', 6, 'Processed return #6 for sale #10 — refund 15,750.00 PHP via Cash (3 items)', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-22 03:06:40'),
+(371, 1, 'andrew_owner', 'owner', 'inventory', 'batch_add', 'product', 1, 'Added batch \'Batch-2\' (100 packs) to sad', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-22 03:07:15'),
+(372, 1, 'andrew_owner', 'owner', 'sales', 'sale_completed', 'transaction', 11, 'Completed sale #000011 — 630.00 PHP, 3 items, customer: Walk-in', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-22 03:07:24'),
+(373, 1, 'andrew_owner', 'owner', 'sales', 'return_processed', 'return', 7, 'Processed return #7 for sale #11 — refund 210.00 PHP via Cash (1 items)', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-22 03:07:41'),
+(374, NULL, 'andrew_admin', 'guest', 'auth', 'login_failed', NULL, NULL, 'Failed sign-in (wrong password) for username \'andrew_admin\'', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Code/1.138.0 Chrome/148.0.7778.280 Electron/42.10.0 Safari/537.36', '2026-09-22 03:26:28'),
+(375, 2, 'andrew_admin', 'admin', 'auth', 'login', 'user', 2, 'Signed in successfully (admin)', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-22 03:26:44'),
+(376, 1, 'andrew_owner', 'owner', 'auth', 'login', 'user', 1, 'Signed in successfully (owner)', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Code/1.138.0 Chrome/148.0.7778.280 Electron/42.10.0 Safari/537.36', '2026-09-22 03:27:26'),
+(377, 2, 'andrew_admin', 'admin', 'auth', 'login', 'user', 2, 'Signed in successfully (admin)', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-22 03:28:02'),
+(378, NULL, 'andrew_admin', 'guest', 'auth', 'login_failed', NULL, NULL, 'Failed sign-in (wrong password) for username \'andrew_admin\'', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Code/1.138.0 Chrome/148.0.7778.280 Electron/42.10.0 Safari/537.36', '2026-09-22 03:30:11'),
+(379, 2, 'andrew_admin', 'admin', 'auth', 'login', 'user', 2, 'Signed in successfully (admin)', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Code/1.138.0 Chrome/148.0.7778.280 Electron/42.10.0 Safari/537.36', '2026-09-22 03:30:37'),
+(380, NULL, 'andrew_admin', 'guest', 'auth', 'login_failed', NULL, NULL, 'Failed sign-in (wrong password) for username \'andrew_admin\'', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-22 03:45:30'),
+(381, NULL, 'andrew_admin', 'guest', 'auth', 'login_failed', NULL, NULL, 'Failed sign-in (wrong password) for username \'andrew_admin\'', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-22 03:45:36'),
+(382, 1, 'andrew_owner', 'owner', 'auth', 'login', 'user', 1, 'Signed in successfully (owner)', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-22 03:45:57'),
+(383, 1, 'andrew_owner', 'owner', 'inventory', 'batch_add', 'product', 2, 'Added batch \'Batch-4\' (100 packs) to test', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-22 03:46:52'),
+(384, 1, 'andrew_owner', 'owner', 'sales', 'return_processed', 'return', 8, 'Processed return #8 for sale #5 — refund 267.75 PHP via Cash (1 items)', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-22 03:53:29'),
+(385, 1, 'andrew_owner', 'owner', 'products', 'supplier_add', 'supplier', 1, 'Added supplier \'Andrew Gonzales Pablo\'', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-22 03:56:29'),
+(386, 1, 'andrew_owner', 'owner', 'products', 'product_add', 'product', 1, 'Added product \'Biogesic\' with initial batch \'Batch-1\' (100 packs)', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-22 03:56:54'),
+(387, 1, 'andrew_owner', 'owner', 'products', 'supplier_add', 'supplier', 2, 'Added supplier \'Dut Gonzales Pablo\'', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-22 04:07:22'),
+(388, 1, 'andrew_owner', 'owner', 'products', 'product_add', 'product', 2, 'Added product \'Amoxil\' with initial batch \'Batch-1\' (100 packs)', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-22 04:07:46'),
+(389, 1, 'andrew_owner', 'owner', 'inventory', 'batch_add', 'product', 1, 'Added batch \'Batch-2\' (200 packs) to Biogesic', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-22 04:11:17'),
+(390, 1, 'andrew_owner', 'owner', 'inventory', 'batch_disposal', 'inventory', 3, 'Disposed 10 packs from batch \'Batch-2\' of Biogesic (reason: Expired)', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-22 04:11:43'),
+(391, 1, 'andrew_owner', 'owner', 'sales', 'register_open', 'register_opening', 1, 'Opened register with 100.00 PHP opening cash for 2026-09-22', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-22 04:11:58'),
+(392, 1, 'andrew_owner', 'owner', 'sales', 'sale_completed', 'transaction', 1, 'Completed sale #000001 — 525.00 PHP, 1 items, customer: Walk-in', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-22 04:12:02'),
+(393, 1, 'andrew_owner', 'owner', 'sales', 'return_processed', 'return', 1, 'Processed return #1 for sale #1 — refund 525.00 PHP via Cash (1 items)', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-22 04:12:20'),
+(394, 1, 'andrew_owner', 'owner', 'sales', 'sale_completed', 'transaction', 2, 'Completed sale #000002 — 420.00 PHP, 1 items, customer: ANDREW PABLO', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-22 04:15:50'),
+(395, 1, 'andrew_owner', 'owner', 'sales', 'return_processed', 'return', 2, 'Processed return #2 for sale #2 — refund 420.00 PHP via Cash (1 items)', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36', '2026-09-22 04:16:04');
 
 -- --------------------------------------------------------
 
@@ -431,20 +527,18 @@ CREATE TABLE `inventory` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `current_quantity` int(11) DEFAULT 0 COMMENT 'Current available quantity after sales/adjustments',
-  `expiry_date` date DEFAULT NULL COMMENT 'Expiry date (critical for FEFO)'
+  `expiry_date` date DEFAULT NULL COMMENT 'Expiry date (critical for FEFO)',
+  `lot_number` varchar(255) DEFAULT NULL COMMENT 'Lot or batch reference number'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `inventory`
 --
 
-INSERT INTO `inventory` (`id`, `product_id`, `supplier_id`, `batch_number`, `date_received`, `manufacture_date`, `purchase_cost`, `markup`, `sale_price`, `received_quantity`, `created_at`, `updated_at`, `current_quantity`, `expiry_date`) VALUES
-(1, 1, NULL, 'Batch-1', '2026-09-21', NULL, 110.00, 5.00, 150.00, 100, '2026-09-21 08:17:37', '2026-09-21 09:17:55', 1, '2029-02-02'),
-(2, 2, NULL, 'Batch-1', '2026-09-21', NULL, 0.00, 5.00, 0.00, 100, '2026-09-21 08:38:13', '2026-09-21 08:52:59', 0, '0000-00-00'),
-(3, 2, NULL, 'Batch-2', '2026-09-21', NULL, 100.00, 5.00, 110.00, 100, '2026-09-21 08:38:51', '2026-09-21 08:44:06', 0, '2030-02-02'),
-(4, 2, NULL, 'Batch-3', '2026-09-21', NULL, 110.00, 5.00, 115.50, 100, '2026-09-21 08:41:19', '2026-09-21 08:44:06', 0, '2026-11-02'),
-(5, 2, NULL, 'Batch-4', '2026-09-21', NULL, 120.00, 5.00, 126.00, 1, '2026-09-21 08:45:15', '2026-09-21 08:45:15', 1, '2029-02-02'),
-(6, 2, NULL, 'Batch-5', '2026-09-21', NULL, 150.00, 5.00, 157.50, 1, '2026-09-21 08:46:05', '2026-09-21 08:46:05', 1, '2026-11-02');
+INSERT INTO `inventory` (`id`, `product_id`, `supplier_id`, `batch_number`, `date_received`, `manufacture_date`, `purchase_cost`, `markup`, `sale_price`, `received_quantity`, `created_at`, `updated_at`, `current_quantity`, `expiry_date`, `lot_number`) VALUES
+(1, 1, 1, 'Batch-1', '2026-09-22', NULL, 20.00, 5.00, 21.00, 100, '2026-09-22 03:56:54', '2026-09-22 03:56:54', 100, '2029-02-02', NULL),
+(2, 2, 2, 'Batch-1', '2026-09-22', NULL, 500.00, 5.00, 525.00, 100, '2026-09-22 04:07:46', '2026-09-22 04:16:04', 99, '2030-02-02', '556'),
+(3, 1, 1, 'Batch-2', '2026-09-22', NULL, 200.00, 5.00, 210.00, 200, '2026-09-22 04:11:17', '2026-09-22 04:11:43', 190, '2030-02-02', '741');
 
 -- --------------------------------------------------------
 
@@ -505,15 +599,16 @@ CREATE TABLE `inventory_disposals` (
   `expiry_date` date DEFAULT NULL,
   `reason` varchar(100) NOT NULL DEFAULT 'Expired',
   `disposal_proof_filename` varchar(255) DEFAULT NULL,
-  `disposed_at` datetime NOT NULL DEFAULT current_timestamp()
+  `disposed_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `lot_number` varchar(255) DEFAULT NULL COMMENT 'Lot or batch reference number'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `inventory_disposals`
 --
 
-INSERT INTO `inventory_disposals` (`id`, `product_id`, `batch_number`, `quantity`, `expiry_date`, `reason`, `disposal_proof_filename`, `disposed_at`) VALUES
-(1, 2, 'Batch-1', 100, '0000-00-00', 'Expired', '98bc14064daa7c7fde35954710d398a5.jpg', '2026-09-21 16:52:59');
+INSERT INTO `inventory_disposals` (`id`, `product_id`, `batch_number`, `quantity`, `expiry_date`, `reason`, `disposal_proof_filename`, `disposed_at`, `lot_number`) VALUES
+(1, 1, 'Batch-2', 10, '2030-02-02', 'Expired', 'cd6437d7884a6db965448141bfd84d34.jpg', '2026-09-22 12:11:43', '741');
 
 -- --------------------------------------------------------
 
@@ -529,17 +624,9 @@ CREATE TABLE `inventory_no_stock` (
   `received_quantity` int(11) NOT NULL DEFAULT 0,
   `expiry_date` date DEFAULT NULL,
   `reason` varchar(100) NOT NULL DEFAULT 'No stock',
-  `moved_at` datetime NOT NULL DEFAULT current_timestamp()
+  `moved_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `lot_number` varchar(255) DEFAULT NULL COMMENT 'Lot or batch reference number'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `inventory_no_stock`
---
-
-INSERT INTO `inventory_no_stock` (`id`, `product_id`, `batch_number`, `current_quantity`, `received_quantity`, `expiry_date`, `reason`, `moved_at`) VALUES
-(1, 2, 'Batch-2', 0, 100, '2030-02-02', 'No stock', '2026-09-21 16:52:18'),
-(2, 2, 'Batch-3', 0, 100, '2026-11-02', 'No stock', '2026-09-21 16:52:31'),
-(3, 2, 'Batch-1', 0, 100, '0000-00-00', 'No stock', '2026-09-21 17:34:52');
 
 -- --------------------------------------------------------
 
@@ -686,8 +773,8 @@ CREATE TABLE `products` (
 --
 
 INSERT INTO `products` (`id`, `branded_name`, `generic_name`, `strength`, `measurement_id`, `barcode`, `category_id`, `classification_id`, `units_per_package`, `imageproduct`, `is_basic_necessities`, `package_type`, `dosage_form`, `dosage_form_id`, `strength_per_quantity`, `strength_per_quantity_unit`, `is_hidden`) VALUES
-(1, 'Restime', 'Simeticone', 40.00, 2, '4807788523709', 17, NULL, 0, '6ab0e7f5ac1f5-1789978613IMG_4549.png', 0, '', 'Drops', 7, 10.00, 'mL', 0),
-(2, 'Fita', 'Crackers, Salted Crackers', 30.00, 3, '750515017429', 28, NULL, 0, '6ab0ecdebc371-1789979870images (5).jpg', 0, '', '', NULL, 1.00, 'pc', 0);
+(1, 'Biogesic', 'Paracetamol', 500.00, 32, '245085540029', 18, NULL, 0, '6ab1fc86ec52a-1790049414images (5).jpg', 0, '', 'Tablet', 1, 10.00, 'Piece', 0),
+(2, 'Amoxil', 'tests', 250.00, 32, '030412972594', 18, NULL, 0, '6ab1ff12be335-1790050066IMG_4549.png', 0, '', 'Capsule', 2, 10.00, 'Piece', 0);
 
 -- --------------------------------------------------------
 
@@ -809,9 +896,7 @@ CREATE TABLE `register_openings` (
 --
 
 INSERT INTO `register_openings` (`id`, `user_id`, `business_date`, `opening_cash`, `notes`, `opened_at`) VALUES
-(1, 1, '2026-09-21', 1000.00, NULL, '2026-09-21 08:17:44'),
-(2, 3, '2026-09-21', 100.00, NULL, '2026-09-21 10:13:42'),
-(3, 2, '2026-09-21', 100.00, NULL, '2026-09-21 10:21:48');
+(1, 1, '2026-09-22', 100.00, NULL, '2026-09-22 04:11:58');
 
 -- --------------------------------------------------------
 
@@ -832,6 +917,14 @@ CREATE TABLE `return_items` (
   `cost_of_goods` decimal(10,2) NOT NULL DEFAULT 0.00
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `return_items`
+--
+
+INSERT INTO `return_items` (`id`, `return_transaction_id`, `product_id`, `quantity`, `price`, `subtotal`, `item_type`, `restocked`, `restockable`, `cost_of_goods`) VALUES
+(1, 1, 2, 1, 525.00, 525.00, 'returned', 0, 0, 0.00),
+(2, 2, 2, 1, 420.00, 420.00, 'returned', 1, 0, 0.00);
+
 -- --------------------------------------------------------
 
 --
@@ -851,6 +944,14 @@ CREATE TABLE `return_transactions` (
   `approver_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `return_transactions`
+--
+
+INSERT INTO `return_transactions` (`id`, `original_transaction_id`, `user_id`, `refund_amount`, `replacement_product_id`, `replacement_quantity`, `reason`, `refund_method`, `created_at`, `approver_id`) VALUES
+(1, 1, 1, 525.00, NULL, 0, 'Customer Request / Change of Mind', 'Cash', '2026-09-22 12:12:20', 1),
+(2, 2, 1, 420.00, NULL, 0, 'Customer Request / Change of Mind', 'Cash', '2026-09-22 12:16:04', 1);
+
 -- --------------------------------------------------------
 
 --
@@ -865,6 +966,13 @@ CREATE TABLE `senior_customers` (
   `verified_at` datetime NOT NULL DEFAULT current_timestamp(),
   `verified_by` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `senior_customers`
+--
+
+INSERT INTO `senior_customers` (`id`, `customer_name`, `id_number`, `cashier_id`, `verified_at`, `verified_by`) VALUES
+(1, 'ANDREW PABLO', '12345678910', 1, '2026-09-22 12:15:37', 1);
 
 -- --------------------------------------------------------
 
@@ -882,12 +990,38 @@ CREATE TABLE `serving_unit` (
 --
 
 INSERT INTO `serving_unit` (`id`, `serving_unit_name`) VALUES
-(2, 'mg'),
-(3, 'grams'),
-(6, 'ML'),
-(7, 'pc'),
-(8, 'L'),
-(9, 'Liters');
+(10, 'Piece'),
+(11, 'Tablet'),
+(12, 'Capsule'),
+(13, 'Softgel'),
+(14, 'Sachet'),
+(15, 'Bottle'),
+(16, 'Vial'),
+(17, 'Ampule'),
+(18, 'Tube'),
+(19, 'Box'),
+(20, 'Pack'),
+(21, 'Strip'),
+(22, 'Blister'),
+(23, 'Can'),
+(24, 'Jar'),
+(25, 'Pouch'),
+(26, 'Bag'),
+(27, 'Roll'),
+(28, 'Set'),
+(29, 'Pair'),
+(30, 'Bundle'),
+(31, 'Kit'),
+(32, 'Milligram'),
+(33, 'Microgram'),
+(34, 'Gram'),
+(35, 'Kilogram'),
+(36, 'Milliliter'),
+(37, 'Liter'),
+(38, 'Centimeter'),
+(39, 'Meter'),
+(40, 'Ounce'),
+(41, 'Pound');
 
 -- --------------------------------------------------------
 
@@ -933,6 +1067,14 @@ CREATE TABLE `suppliers` (
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `suppliers`
+--
+
+INSERT INTO `suppliers` (`id`, `supplier_name`, `contact_person`, `contact_number`, `email`, `address`, `supplier_type`, `is_active`, `created_at`, `updated_at`) VALUES
+(1, 'Andrew Gonzales Pablo', NULL, '+639651800675', 'andrewpablo2005@gmail.com', 'N/A', NULL, 1, '2026-09-22 03:56:29', '2026-09-22 03:56:29'),
+(2, 'Dut Gonzales Pablo', NULL, '+639651800675', 'andrewpablo2005@gmail.com', 'df', NULL, 1, '2026-09-22 04:07:22', '2026-09-22 04:07:22');
+
 -- --------------------------------------------------------
 
 --
@@ -957,11 +1099,8 @@ CREATE TABLE `transactions` (
 --
 
 INSERT INTO `transactions` (`id`, `user_id`, `discount_id`, `customer_name`, `customer_id`, `customer_type`, `total_amount`, `created_at`, `discount_total`, `total_vat_exemption`) VALUES
-(1, 1, 1, 'Walk-in', NULL, '', 10890.00, '2026-09-21 08:40:32', 0.00, 0.00),
-(2, 1, 1, 'Walk-in', NULL, '', 115.50, '2026-09-21 08:42:42', 0.00, 0.00),
-(3, 1, 1, 'Walk-in', NULL, '', 115.50, '2026-09-21 08:43:32', 0.00, 0.00),
-(4, 1, 1, 'Walk-in', NULL, '', 11434.50, '2026-09-21 08:44:06', 0.00, 0.00),
-(5, 1, 1, 'Walk-in', NULL, '', 14850.00, '2026-09-21 09:17:55', 0.00, 0.00);
+(1, 1, 1, 'Walk-in', NULL, '', 525.00, '2026-09-22 04:12:02', 0.00, 0.00),
+(2, 1, 2, 'ANDREW PABLO', '1', 'senior', 420.00, '2026-09-22 04:15:50', 105.00, 0.00);
 
 -- --------------------------------------------------------
 
@@ -999,11 +1138,8 @@ CREATE TABLE `transaction_items` (
 --
 
 INSERT INTO `transaction_items` (`id`, `transaction_id`, `product_id`, `batch_id`, `quantity`, `price`, `subtotal`) VALUES
-(1, 1, 2, 3, 99, 110.00, 10890.00),
-(2, 2, 2, 4, 1, 115.50, 115.50),
-(3, 3, 2, 4, 1, 115.50, 115.50),
-(4, 4, 2, NULL, 99, 115.50, 11434.50),
-(5, 5, 1, 1, 99, 150.00, 14850.00);
+(1, 1, 2, 2, 1, 525.00, 525.00),
+(2, 2, 2, 2, 1, 525.00, 420.00);
 
 -- --------------------------------------------------------
 
@@ -1025,12 +1161,8 @@ CREATE TABLE `transaction_item_batches` (
 --
 
 INSERT INTO `transaction_item_batches` (`id`, `transaction_item_id`, `inventory_id`, `quantity`, `purchase_cost`, `created_at`) VALUES
-(1, 1, 3, 99, 100.00, '2026-09-21 08:40:32'),
-(2, 2, 4, 1, 110.00, '2026-09-21 08:42:42'),
-(3, 3, 4, 1, 110.00, '2026-09-21 08:43:32'),
-(4, 4, 4, 98, 110.00, '2026-09-21 08:44:06'),
-(5, 4, 3, 1, 100.00, '2026-09-21 08:44:06'),
-(6, 5, 1, 99, 110.00, '2026-09-21 09:17:55');
+(1, 1, 2, 1, 500.00, '2026-09-22 04:12:02'),
+(2, 2, 2, 1, 500.00, '2026-09-22 04:15:50');
 
 -- --------------------------------------------------------
 
@@ -1048,28 +1180,38 @@ CREATE TABLE `unit_measurement` (
 --
 
 INSERT INTO `unit_measurement` (`unit_id`, `different_measurement`) VALUES
-(1, 'mcg'),
-(2, 'mg'),
-(3, 'g'),
-(4, 'kg'),
-(5, 'µL'),
-(6, 'mL'),
-(7, 'L'),
-(8, 'mm'),
-(9, 'cm'),
-(10, 'm'),
-(11, '%'),
-(12, 'IU'),
-(13, 'mEq'),
-(14, 'mmol'),
-(15, 'Units'),
-(16, 'pc'),
-(17, 'pcs'),
-(18, 'tbsp'),
-(19, 'tsp'),
-(20, 'box'),
-(21, 'mgg'),
-(25, 'pack');
+(26, 'Piece'),
+(27, 'Tablet'),
+(28, 'Capsule'),
+(29, 'Softgel'),
+(30, 'Sachet'),
+(31, 'Bottle'),
+(32, 'Vial'),
+(33, 'Ampule'),
+(34, 'Tube'),
+(35, 'Box'),
+(36, 'Pack'),
+(37, 'Strip'),
+(38, 'Blister'),
+(39, 'Can'),
+(40, 'Jar'),
+(41, 'Pouch'),
+(42, 'Bag'),
+(43, 'Roll'),
+(44, 'Set'),
+(45, 'Pair'),
+(46, 'Bundle'),
+(47, 'Kit'),
+(48, 'Milligram'),
+(49, 'Microgram'),
+(50, 'Gram'),
+(51, 'Kilogram'),
+(52, 'Milliliter'),
+(53, 'Liter'),
+(54, 'Centimeter'),
+(55, 'Meter'),
+(56, 'Ounce'),
+(57, 'Pound');
 
 -- --------------------------------------------------------
 
@@ -1095,7 +1237,7 @@ CREATE TABLE `users` (
 
 INSERT INTO `users` (`id`, `username`, `password`, `void_password`, `position`, `failed_attempts`, `last_attempt`, `status`, `created_at`) VALUES
 (1, 'andrew_owner', '$2y$10$2Rqa4Se609iFKRTnJpX3SuAIE7v1vZwwCtGK2WHBvnBxQ2.w9RBAS', '1234567', 'Owner', 0, '2026-09-17 07:11:32', 'active', '2026-09-05 08:53:02'),
-(2, 'andrew_admin', '$2y$10$.pMY78gCNdiWGwCw8DAIse7SS./j5d9T8pQ87YhhLoOum4yKzJL.m', '1234567', 'Admin', 0, '2026-08-20 01:56:58', 'active', '2026-09-05 08:53:02'),
+(2, 'andrew_admin', '$2y$12$vjlvsM6RkKHSeS.UFac2dez3pGedEsYlu7SgZe6kiticAcaPD6c7q', '1234567', 'Admin', 2, '2026-09-22 03:45:36', 'active', '2026-09-05 08:53:02'),
 (3, 'andrew_staff', '$2y$10$WESQ6f2mApseNhMhKMmW8e6gg.tp9AU8CsY/mQrU4g6GHEWmFCWGG', '1234567', 'Staff', 0, '2026-07-26 14:50:35', 'active', '2026-09-05 08:53:02'),
 (4, 'staff1', '$2y$10$U60z2JyVRKxJ.x36cqpJkuzZDPRFtOF5aZqUO7QCyBBN.P614oIoy', NULL, 'Staff', 0, NULL, 'active', '2026-09-05 08:53:02'),
 (5, 'sampleAccount', '$2y$10$G.IAWGX.MPWQ8E1bIvuykO7Ph//70zWAqxZdMdDVMFiZDu7qFtBLm', NULL, 'Staff', 0, NULL, 'active', '2026-09-05 08:53:02'),
@@ -1396,7 +1538,7 @@ ALTER TABLE `users_info`
 -- AUTO_INCREMENT for table `activity_logs`
 --
 ALTER TABLE `activity_logs`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=301;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=396;
 
 --
 -- AUTO_INCREMENT for table `discounts`
@@ -1414,7 +1556,7 @@ ALTER TABLE `dosage_forms`
 -- AUTO_INCREMENT for table `inventory`
 --
 ALTER TABLE `inventory`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `inventory_alerts`
@@ -1432,7 +1574,7 @@ ALTER TABLE `inventory_disposals`
 -- AUTO_INCREMENT for table `inventory_no_stock`
 --
 ALTER TABLE `inventory_no_stock`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `inventory_transactions`
@@ -1498,43 +1640,43 @@ ALTER TABLE `register_closings`
 -- AUTO_INCREMENT for table `register_openings`
 --
 ALTER TABLE `register_openings`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `return_items`
 --
 ALTER TABLE `return_items`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `return_transactions`
 --
 ALTER TABLE `return_transactions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `senior_customers`
 --
 ALTER TABLE `senior_customers`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `serving_unit`
 --
 ALTER TABLE `serving_unit`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=43;
 
 --
 -- AUTO_INCREMENT for table `suppliers`
 --
 ALTER TABLE `suppliers`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `transactions`
 --
 ALTER TABLE `transactions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `transaction_batch_allocations`
@@ -1546,19 +1688,19 @@ ALTER TABLE `transaction_batch_allocations`
 -- AUTO_INCREMENT for table `transaction_items`
 --
 ALTER TABLE `transaction_items`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `transaction_item_batches`
 --
 ALTER TABLE `transaction_item_batches`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `unit_measurement`
 --
 ALTER TABLE `unit_measurement`
-  MODIFY `unit_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+  MODIFY `unit_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=58;
 
 --
 -- AUTO_INCREMENT for table `users`
@@ -1609,7 +1751,7 @@ ALTER TABLE `pre_approved_users_info`
 --
 ALTER TABLE `products`
   ADD CONSTRAINT `fk_products_category` FOREIGN KEY (`category_id`) REFERENCES `product_categories` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_products_measurement` FOREIGN KEY (`measurement_id`) REFERENCES `unit_measurement` (`unit_id`) ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_products_measurement` FOREIGN KEY (`measurement_id`) REFERENCES `serving_unit` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 --
 -- Constraints for table `register_closings`
