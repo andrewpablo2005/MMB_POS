@@ -4,10 +4,15 @@
        require_once __DIR__ . '/basepath.php';
    }
 ?>
+<?php // Favicons + iOS homescreen icon (Task 44 — MMB Drugmart brand) ?>
+<link rel="icon" href="<?= mmbpos_base_path() ?>/assets/favicon.ico?v=1" sizes="48x48">
+<link rel="icon" type="image/png" sizes="96x96" href="<?= mmbpos_base_path() ?>/assets/favicon-96.png?v=1">
+<link rel="apple-touch-icon" sizes="180x180" href="<?= mmbpos_base_path() ?>/assets/apple-touch-icon.png?v=1">
+
 <?php //Bootstrap Links for CSS and JS ?>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
 <!-- MMB Brand Theme (design tokens + Bootstrap primary overrides) — keep AFTER bootstrap -->
-<link rel="stylesheet" href="<?= mmbpos_base_path() ?>/css/mmb-theme.css?v=3.20">
+<link rel="stylesheet" href="<?= mmbpos_base_path() ?>/css/mmb-theme.css?v=3.30">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 
 <!-- Font Awesome -->

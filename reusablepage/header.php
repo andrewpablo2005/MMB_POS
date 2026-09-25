@@ -141,7 +141,7 @@ if ($showAlertsAfterLogin && !empty($globalAlertItems)) {
 
     <!-- Brand -->
     <a class="navbar-brand app-brand" href="#">
-        <span class="brand-mark"><i class="fas fa-prescription-bottle-medical"></i></span>
+        <span class="brand-mark"><img src="<?= mmbpos_base_path() ?>/assets/logo-mark-white.png" alt="MMB"></span>
         <span class="brand-text">
             <span class="brand-name">MMB's Drugstore</span>
             <span class="brand-sub">Pharmacy POS</span>

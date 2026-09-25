@@ -61,7 +61,7 @@ if (isset($_GET['added'])) {
         <div class="offcanvas-lg offcanvas-start" tabindex="-1" id="sidebar" style="--bs-offcanvas-width: min(85vw, 320px);">
             <div class="offcanvas-header">
                 <a class="sidebar-brand" href="?tab=dashboard">
-                    <span class="brand-mark"><i class="fas fa-prescription-bottle-medical"></i></span>
+                    <span class="brand-mark"><img src="<?= mmbpos_base_path() ?>/assets/logo-mark-white.png" alt="MMB"></span>
                     <span class="brand-text">
                         <span class="brand-name">MMB's Drugstore</span>
                         <span class="brand-sub">Pharmacy POS</span>

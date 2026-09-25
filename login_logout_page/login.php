@@ -38,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pharmacy Management System - Login</title>
     <?php require_once __DIR__ . "/../conn/connection_links.php"; ?>
-    <link rel="stylesheet" href="<?= mmbpos_base_path() ?>/css/login.css?v=4">
+    <link rel="stylesheet" href="<?= mmbpos_base_path() ?>/css/login.css?v=5">
 </head>
 
 <body class="bg-light d-flex align-items-center justify-content-center" style="min-height: 100vh;">
@@ -52,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
                         <div class="hero-deco hero-deco-1"></div>
                         <div class="hero-deco hero-deco-2"></div>
                         <div class="hero-inner">
-                            <div class="hero-icon"><i class="fas fa-prescription-bottle-medical"></i></div>
+                            <div class="hero-icon"><img src="<?= mmbpos_base_path() ?>/assets/logo-emblem.png" alt="MMB Drugmart"></div>
                             <div class="hero-wordmark">MMB Drugstore</div>
                             <div class="hero-sub">Pharmacy Management System</div>
                         </div>
@@ -134,8 +134,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
                 <!-- Illustration Content -->
                 <div class="text-white text-center position-relative" style="z-index: 2; padding: 60px 40px;">
                     <div class="mb-5">
-                        <div style="font-size: 80px; margin-bottom: 30px; opacity: 0.95;">
-                            <i class="fas fa-prescription-bottle-medical"></i>
+                        <div class="brand-logo-tile">
+                            <img src="<?= mmbpos_base_path() ?>/assets/logo.png" alt="MMB Drugmart">
                         </div>
                     </div>
                     <h3 class="fw-bold mb-3" style="font-size: 28px;">Pharmacy Management</h3>
