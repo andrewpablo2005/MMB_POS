@@ -1571,13 +1571,16 @@ function weposShowReceipt(data) {
 
     const overrideRow = document.getElementById('receiptOverrideDiscountRow');
     if (overrideRow) {
-        if (overrideDiscount > 0) {
+        const hasOverrideDiscount = Number.isFinite(overrideDiscount) && overrideDiscount > 0;
+        if (hasOverrideDiscount) {
             overrideRow.style.display = 'flex';
+            overrideRow.setAttribute('aria-hidden', 'false');
             const overrideLabel = document.getElementById('receiptOverrideDiscLabel');
             if (overrideLabel) overrideLabel.textContent = overridePercent > 0 ? `${(overridePercent * 100).toFixed(0)}%` : 'Manager';
             document.getElementById('receiptOverrideDiscount').textContent = '-\u20b1' + overrideDiscount.toFixed(2);
         } else {
             overrideRow.style.display = 'none';
+            overrideRow.setAttribute('aria-hidden', 'true');
         }
     }
 

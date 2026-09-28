@@ -571,7 +571,7 @@ if (!empty($_SESSION['user_id'])) {
                     <div style="display:flex; justify-content:space-between; margin-bottom:3px; color:#dc2626;" id="receiptDiscountRow">
                         <span>Discount (<span id="receiptDiscLabel"></span>)</span><span id="receiptDiscount"></span>
                     </div>
-                    <div style="display:flex; justify-content:space-between; margin-bottom:3px; color:#b45309;" id="receiptOverrideDiscountRow">
+                    <div style="display:none; justify-content:space-between; margin-bottom:3px; color:#b45309;" id="receiptOverrideDiscountRow" aria-hidden="true">
                         <span>Override Discount (<span id="receiptOverrideDiscLabel">Manager</span>)</span><span id="receiptOverrideDiscount"></span>
                     </div>
                     <div style="display:flex; justify-content:space-between; margin-bottom:3px; color:#64748b;" id="receiptVatExRow">
