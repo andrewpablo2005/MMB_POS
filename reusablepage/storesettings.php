@@ -14,6 +14,7 @@ $vatRate = '0.00';
 $seniorDiscountRate = '20.00';
 $pwdDiscountRate = '20.00';
 $statutoryDiscountCap = '125.00';
+$weeklyDiscountEnabled = true;
 $lowStockThreshold = '15';
 $nearExpiryDays = '60';
 
@@ -24,7 +25,7 @@ try {
         updated_at DATETIME NULL DEFAULT NULL
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 
-    $settingsStmt = $db->query("SELECT setting_key, setting_value FROM store_settings WHERE setting_key IN ('receipt_paper', 'vat_rate', 'senior_discount_rate', 'pwd_discount_rate', 'statutory_discount_cap', 'low_stock_threshold', 'near_expiry_days')");
+    $settingsStmt = $db->query("SELECT setting_key, setting_value FROM store_settings WHERE setting_key IN ('receipt_paper', 'vat_rate', 'senior_discount_rate', 'pwd_discount_rate', 'statutory_discount_cap', 'weekly_discount_enabled', 'low_stock_threshold', 'near_expiry_days')");
     foreach ($settingsStmt->fetchAll(PDO::FETCH_ASSOC) as $setting) {
         if ($setting['setting_key'] === 'receipt_paper' && in_array($setting['setting_value'], ['58', '80'], true)) {
             $receiptPaper = $setting['setting_value'];
@@ -45,6 +46,9 @@ try {
             && is_numeric($setting['setting_value']) && (float)$setting['setting_value'] >= 0) {
             $statutoryDiscountCap = number_format((float)$setting['setting_value'], 2, '.', '');
         }
+        if ($setting['setting_key'] === 'weekly_discount_enabled') {
+            $weeklyDiscountEnabled = $setting['setting_value'] !== '0';
+        }
         if ($setting['setting_key'] === 'low_stock_threshold'
             && ctype_digit((string) $setting['setting_value']) && (int) $setting['setting_value'] >= 1 && (int) $setting['setting_value'] <= 100000) {
             $lowStockThreshold = (string) (int) $setting['setting_value'];
@@ -62,6 +66,7 @@ try {
         $postedSeniorRate = (float)($_POST['senior_discount_rate'] ?? -1);
         $postedPwdRate = (float)($_POST['pwd_discount_rate'] ?? -1);
         $postedCap = (float)($_POST['statutory_discount_cap'] ?? -1);
+        $postedWeeklyDiscountEnabled = isset($_POST['weekly_discount_enabled']) ? '1' : '0';
         $postedLowStock = filter_var($_POST['low_stock_threshold'] ?? null, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1, 'max_range' => 100000]]);
         $postedNearExpiry = filter_var($_POST['near_expiry_days'] ?? null, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1, 'max_range' => 3650]]);
 
@@ -90,6 +95,7 @@ try {
             $saveStmt->execute(['senior_discount_rate', number_format($postedSeniorRate, 2, '.', '')]);
             $saveStmt->execute(['pwd_discount_rate', number_format($postedPwdRate, 2, '.', '')]);
             $saveStmt->execute(['statutory_discount_cap', number_format($postedCap, 2, '.', '')]);
+            $saveStmt->execute(['weekly_discount_enabled', $postedWeeklyDiscountEnabled]);
             $saveStmt->execute(['low_stock_threshold', (string) $postedLowStock]);
             $saveStmt->execute(['near_expiry_days', (string) $postedNearExpiry]);
             $receiptPaper = $postedPaper;
@@ -97,12 +103,13 @@ try {
             $seniorDiscountRate = number_format($postedSeniorRate, 2, '.', '');
             $pwdDiscountRate = number_format($postedPwdRate, 2, '.', '');
             $statutoryDiscountCap = number_format($postedCap, 2, '.', '');
+            $weeklyDiscountEnabled = $postedWeeklyDiscountEnabled === '1';
             $lowStockThreshold = (string) $postedLowStock;
             $nearExpiryDays = (string) $postedNearExpiry;
 
             // AUDIT (Task 42)
             mmb_log_activity($db, 'settings', 'settings_update',
-                "Updated store settings — VAT: {$vatRate}%, Senior discount: {$seniorDiscountRate}%, PWD discount: {$pwdDiscountRate}%, receipt paper: {$postedPaper}mm, weekly discount limit: " . number_format($postedCap, 2) . " PHP, low stock: {$postedLowStock}, near expiry: {$postedNearExpiry} days");
+                "Updated store settings — VAT: {$vatRate}%, Senior discount: {$seniorDiscountRate}%, PWD discount: {$pwdDiscountRate}%, receipt paper: {$postedPaper}mm, weekly discount limit: " . number_format($postedCap, 2) . " PHP (" . ($weeklyDiscountEnabled ? 'enabled' : 'disabled') . "), low stock: {$postedLowStock}, near expiry: {$postedNearExpiry} days");
 
             $storeSettingsMessage = ['type' => 'success', 'text' => 'Store settings saved successfully.'];
         }
@@ -166,6 +173,13 @@ try {
                                     min="0" max="100000" step="0.01" value="<?= htmlspecialchars($statutoryDiscountCap, ENT_QUOTES, 'UTF-8') ?>" required>
                             </div>
                             <small class="text-muted">Maximum Senior/PWD discount amount per customer per week.</small>
+                        </div>
+                        <div class="col-md-6 d-flex align-items-center">
+                            <div class="form-check form-switch mt-3">
+                                <input type="checkbox" class="form-check-input" id="weeklyDiscountEnabled" name="weekly_discount_enabled" value="1" <?= $weeklyDiscountEnabled ? 'checked' : '' ?>>
+                                <label class="form-check-label" for="weeklyDiscountEnabled">Enforce weekly discount limit</label>
+                                <div class="form-text">When off, previous weekly totals are ignored. Statutory discount rates and the per-sale eligible-purchase limit still apply.</div>
+                            </div>
                         </div>
                     </div>
                 </div>

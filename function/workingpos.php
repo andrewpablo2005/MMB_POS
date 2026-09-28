@@ -72,7 +72,7 @@ class Product {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public static function calculateSpecialDiscount(array $cartItems, ?string $customerType, string $discountRule = 'regular', ?string $customerId = null, float $weekDiscountTotal = 0.0, float $weekEligibleSubtotal = 0.0, float $discountCap = 125.0, float $seniorRate = 0.20, float $pwdRate = 0.20, float $vatRate = 0.0): array {
+    public static function calculateSpecialDiscount(array $cartItems, ?string $customerType, string $discountRule = 'regular', ?string $customerId = null, float $weekDiscountTotal = 0.0, float $weekEligibleSubtotal = 0.0, float $discountCap = 125.0, float $seniorRate = 0.20, float $pwdRate = 0.20, float $vatRate = 0.0, bool $weeklyCapEnabled = true): array {
         $customerType = strtolower(trim((string)($customerType ?? '')));
         if (!in_array($customerType, ['senior', 'pwd'], true)) {
             return [
@@ -106,8 +106,12 @@ class Product {
         $rate = ($discountRule === 'statutory')
             ? ($customerType === 'senior' ? $seniorRate : $pwdRate)
             : 0.05;
-        $remainingDiscountCap = max(0.0, $discountCap - (float)$weekDiscountTotal);
-        $remainingPurchaseCap = max(0.0, 2500.0 - (float)$weekEligibleSubtotal);
+        $remainingDiscountCap = $weeklyCapEnabled
+            ? max(0.0, $discountCap - (float)$weekDiscountTotal)
+            : PHP_FLOAT_MAX;
+        $remainingPurchaseCap = $weeklyCapEnabled
+            ? max(0.0, 2500.0 - (float)$weekEligibleSubtotal)
+            : 2500.0;
         $discountableSubtotal = min($eligibleSubtotal, $remainingPurchaseCap);
         $discountTotal = round(min($discountableSubtotal * $rate, $remainingDiscountCap), 2);
 
@@ -259,11 +263,17 @@ class Product {
             foreach ($cartItems as $item) {
                 $grossTransactionAmount += (float)$item['price'] * (int)$item['qty']; // qty here is 'packs'
             }
+            $overrideDiscountTotal = 0.0;
+            foreach ($cartItems as $item) {
+                $overrideDiscountTotal += max(0.0, (float)$item['base_price'] - (float)$item['price']) * (int)$item['qty'];
+            }
+            $overrideDiscountTotal = round($overrideDiscountTotal, 2);
 
             $statutoryDiscountCap = 125.0;
             $seniorDiscountRate = 0.20;
             $pwdDiscountRate = 0.20;
             $vatRate = 0.0;
+            $weeklyDiscountEnabled = true;
             try {
                 $capStmt = $this->conn->prepare("SELECT setting_value FROM store_settings WHERE setting_key = 'statutory_discount_cap'");
                 $capStmt->execute();
@@ -288,6 +298,12 @@ class Product {
                 $storedVatRate = $vatStmt->fetchColumn();
                 if ($storedVatRate !== false && is_numeric($storedVatRate)) {
                     $vatRate = max(0, min(100, (float)$storedVatRate)) / 100;
+                }
+                $weeklyDiscountStmt = $this->conn->prepare("SELECT setting_value FROM store_settings WHERE setting_key = 'weekly_discount_enabled'");
+                $weeklyDiscountStmt->execute();
+                $storedWeeklyDiscountEnabled = $weeklyDiscountStmt->fetchColumn();
+                if ($storedWeeklyDiscountEnabled !== false) {
+                    $weeklyDiscountEnabled = $storedWeeklyDiscountEnabled !== '0';
                 }
             } catch (Throwable $ignore) {
                 // Keep the default cap when settings storage is unavailable.
@@ -317,7 +333,7 @@ class Product {
                 $weekEligibleRow = $weekEligibleStmt->fetch(PDO::FETCH_ASSOC);
                 $weekEligibleSubtotal = (float)($weekEligibleRow['week_eligible_subtotal'] ?? 0);
 
-                $discountDetails = self::calculateSpecialDiscount($cartItems, $customerType, $discountRule, $customerId, $weekDiscountTotal, $weekEligibleSubtotal, $statutoryDiscountCap, $seniorDiscountRate, $pwdDiscountRate, $vatRate);
+                $discountDetails = self::calculateSpecialDiscount($cartItems, $customerType, $discountRule, $customerId, $weekDiscountTotal, $weekEligibleSubtotal, $statutoryDiscountCap, $seniorDiscountRate, $pwdDiscountRate, $vatRate, $weeklyDiscountEnabled);
                 $appliedDiscount = (float)$discountDetails['discount_total'];
             }
 
@@ -337,7 +353,7 @@ class Product {
                 );
                 $weekCapStmt->execute([$customerTypeNorm, $customerId]);
                 $weekCapRow = $weekCapStmt->fetch(PDO::FETCH_ASSOC);
-                $statutory = self::calculateSpecialDiscount($cartItems, $customerType, 'statutory', $customerId, (float)($weekCapRow['week_discount_total'] ?? 0), 0.0, $statutoryDiscountCap, $seniorDiscountRate, $pwdDiscountRate, $vatRate);
+                $statutory = self::calculateSpecialDiscount($cartItems, $customerType, 'statutory', $customerId, (float)($weekCapRow['week_discount_total'] ?? 0), 0.0, $statutoryDiscountCap, $seniorDiscountRate, $pwdDiscountRate, $vatRate, $weeklyDiscountEnabled);
                 $allowedDiscount = max($allowedDiscount, (float)$statutory['discount_total']);
             }
 
@@ -385,8 +401,8 @@ class Product {
             $totalAmount = round(max(0.0, $grossTransactionAmount - $appliedDiscount - (float)$totalVatExemption), 2);
 
             // Insert transaction with discount_total, total_vat_exemption, and customer_type
-            $stmt = $this->conn->prepare("INSERT INTO transactions (user_id, discount_id, customer_name, customer_id, total_amount, discount_total, total_vat_exemption, customer_type) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-            $stmt->execute([$userId, $discountId ?: null, $customerName ?: null, $customerId ?: null, $totalAmount, $appliedDiscount, $totalVatExemption, $customerType]);
+            $stmt = $this->conn->prepare("INSERT INTO transactions (user_id, discount_id, customer_name, customer_id, total_amount, discount_total, total_vat_exemption, customer_type, override_discount_total) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            $stmt->execute([$userId, $discountId ?: null, $customerName ?: null, $customerId ?: null, $totalAmount, $appliedDiscount, $totalVatExemption, $customerType, $overrideDiscountTotal]);
             $transactionId = $this->conn->lastInsertId();
 
             // Insert transaction items and deduct inventory

@@ -23,10 +23,10 @@ return [
     // If a password was ever pushed to a public repo, Google auto-revokes
     // it — always generate a fresh one and keep it only in this file.
     'mail_host'       => 'smtp.gmail.com',
-    'mail_username'   => 'your.address@gmail.com',
-    'mail_password'   => 'GMAIL_APP_PASSWORD_HERE',
+    'mail_username'   => 'andrewpablo.neust.student@gmail.com',
+    'mail_password'   => 'tciupwqxbwiazldf',
     'mail_port'       => 587,
     'mail_encryption' => 'tls',              // tls (587) or ssl (465)
-    'mail_from'       => 'your.address@gmail.com',
+    'mail_from'       => 'andrewpablo.neust.student@gmail.com',
     'mail_from_name'  => "MMB's Drugstore",
 ];

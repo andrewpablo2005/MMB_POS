@@ -42,6 +42,7 @@ $storeSettings = [
     'senior_discount_rate' => ['default' => '20.00', 'min' => 0, 'max' => 100],
     'pwd_discount_rate' => ['default' => '20.00', 'min' => 0, 'max' => 100],
     'statutory_discount_cap' => ['default' => '125.00', 'min' => 0, 'max' => 100000],
+    'weekly_discount_enabled' => ['default' => '1', 'allowed' => ['0', '1']],
     'low_stock_threshold' => ['default' => '15', 'min' => 1, 'max' => 100000],
     'near_expiry_days' => ['default' => '60', 'min' => 1, 'max' => 3650],
 ];

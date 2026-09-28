@@ -64,6 +64,18 @@ if (!function_exists('db_ensure_core_schema')) {
                 }
             }
 
+            $transactionsTableExists = (int)$db->query(
+                "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = DATABASE() AND table_name = 'transactions'"
+            )->fetchColumn();
+            if ($transactionsTableExists > 0) {
+                $overrideTotalColumnExists = (int)$db->query(
+                    "SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = DATABASE() AND table_name = 'transactions' AND column_name = 'override_discount_total'"
+                )->fetchColumn();
+                if ($overrideTotalColumnExists === 0) {
+                    $db->exec("ALTER TABLE transactions ADD COLUMN override_discount_total DECIMAL(10,2) NOT NULL DEFAULT 0.00");
+                }
+            }
+
             // Ensure a fallback owner login remains available even after a full
             // user wipe. This guards the app from locking itself out if the
             // user management page is used to delete every account.

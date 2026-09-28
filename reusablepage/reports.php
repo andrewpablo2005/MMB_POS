@@ -100,12 +100,11 @@ function alog_badge(string $action): string
     return 'secondary';
 }
 $detailGrossTotal = 0.0;
+$detailOverrideDiscountTotal = 0.0;
 $detailDiscountTotal = 0.0;
 $detailVatTotal = 0.0;
 $detailNetTotal = 0.0;
 $detailRefundTotal = 0.0;
-$detailCogsReversedTotal = 0.0;
-$detailNetAfterRefundTotal = 0.0;
 $detailRealRevenueTotal = 0.0;
 function report_text($value): string
 {
@@ -115,12 +114,11 @@ function report_text($value): string
 
 foreach ($salesDetailRows as $detailRow) {
     $detailGrossTotal += (float)($detailRow['gross_subtotal'] ?? 0);
+    $detailOverrideDiscountTotal += (float)($detailRow['override_discount_total'] ?? 0);
     $detailDiscountTotal += (float)($detailRow['discount_total'] ?? 0);
     $detailVatTotal += (float)($detailRow['total_vat_exemption'] ?? 0);
     $detailNetTotal += (float)($detailRow['total_amount'] ?? 0);
     $detailRefundTotal += (float)($detailRow['refund_total'] ?? 0);
-    $detailCogsReversedTotal += (float)($detailRow['cogs_reversed'] ?? 0);
-    $detailNetAfterRefundTotal += (float)($detailRow['net_after_refund'] ?? 0);
     $detailRealRevenueTotal += (float)($detailRow['real_revenue'] ?? 0);
 }
 ?>
@@ -260,7 +258,7 @@ foreach ($salesDetailRows as $detailRow) {
                         </form>
                         <div class="table-responsive">
                             <table id="salesDetailTable" class="table table-striped table-hover table-sm align-middle myTableExport" data-empty="<?= !$salesDetailRows ? '1' : '0' ?>" data-no-responsive="1">
-                                <thead class="table-dark"><tr><th>Ref #</th><th>Date & Time</th><th>Cashier</th><th>Items</th><th>Before Discount/VAT</th><th>Discount</th><th>VAT Exempt</th><th>Total Amount</th><th>Refund / Return</th><th>COGS Return Status</th><th>Net After Refund</th><th>Real Profit</th></tr></thead>
+                                <thead class="table-dark"><tr><th>Ref #</th><th>Date & Time</th><th>Cashier</th><th>Items</th><th>Before Discount/VAT</th><th>Override Discount</th><th>Discount</th><th>VAT Exempt</th><th>Total Amount</th><th>Returned to Customer</th><th>Profit</th><th>Receipt</th></tr></thead>
                                 <tbody>
                                     <?php if (!$salesDetailRows): ?>
                                         <tr><td colspan="12" class="text-center text-muted">No sales found for this period.</td></tr>
@@ -268,32 +266,77 @@ foreach ($salesDetailRows as $detailRow) {
                                         <tr>
                                             <td>#<?= (int)$detailRow['id'] ?></td>
                                             <td><?= date('M d, Y h:i A', strtotime($detailRow['transaction_date'])) ?></td>
-                                            <td><?= htmlspecialchars($detailRow['username'] ?? 'N/A') ?></td>
+                                            <td><?= htmlspecialchars($detailRow['cashier_name'] ?? 'N/A') ?></td>
                                             <td><?= (int)($detailRow['items_count'] ?? 0) ?></td>
                                             <td>₱<?= number_format((float)$detailRow['gross_subtotal'], 2) ?></td>
+                                            <td class="text-warning">-₱<?= number_format((float)$detailRow['override_discount_total'], 2) ?></td>
                                             <td class="text-danger">-₱<?= number_format((float)$detailRow['discount_total'], 2) ?></td>
                                             <td class="text-danger">-₱<?= number_format((float)$detailRow['total_vat_exemption'], 2) ?></td>
                                             <td class="text-primary"><strong>₱<?= number_format((float)$detailRow['total_amount'], 2) ?></strong></td>
-                                            <td class="text-danger"><?= (float)$detailRow['refund_total'] > 0 ? '-₱' . number_format((float)$detailRow['refund_total'], 2) : '—' ?></td>
-                                            <td class="text-warning">
-                                                <?php if ((float)$detailRow['cogs_reversed'] > 0): ?>
-                                                    <strong>Restocked</strong><br>+₱<?= number_format((float)$detailRow['cogs_reversed'], 2) ?> reversed
-                                                <?php elseif ((float)$detailRow['refund_total'] > 0): ?>
-                                                    <strong>Disposed</strong><br>COGS retained
+                                            <td class="text-danger">
+                                                <?php if ((float)$detailRow['refund_total'] > 0): ?>
+                                                    <strong>-₱<?= number_format((float)$detailRow['refund_total'], 2) ?></strong><br>
+                                                    <?php if ((float)$detailRow['cogs_reversed'] > 0): ?>
+                                                        <span class="text-warning">Restocked</span>
+                                                    <?php else: ?>
+                                                        <span class="text-muted">Disposed</span>
+                                                    <?php endif; ?>
                                                 <?php else: ?>
-                                                    <span class="text-muted">No return</span>
+                                                    <span class="text-muted">—</span>
                                                 <?php endif; ?>
                                             </td>
-                                            <td class="text-primary">₱<?= number_format((float)$detailRow['net_after_refund'], 2) ?></td>
                                             <td class="text-primary"><strong>₱<?= number_format((float)$detailRow['real_revenue'], 2) ?></strong></td>
+                                            <td><button type="button" class="btn btn-sm btn-outline-primary" onclick="openSalesReceipt(<?= (int)$detailRow['id'] ?>)" aria-label="View receipt for transaction #<?= (int)$detailRow['id'] ?>"><i class="fas fa-receipt me-1" aria-hidden="true"></i>View</button></td>
                                         </tr>
                                     <?php endforeach; endif; ?>
                                 </tbody>
-                                <tfoot class="table-light fw-bold"><tr><td colspan="4">Period totals</td><td>₱<?= number_format($detailGrossTotal, 2) ?></td><td class="text-danger">-₱<?= number_format($detailDiscountTotal, 2) ?></td><td class="text-danger">-₱<?= number_format($detailVatTotal, 2) ?></td><td class="text-primary">₱<?= number_format($detailNetTotal, 2) ?></td><td class="text-danger">-₱<?= number_format($detailRefundTotal, 2) ?></td><td class="text-warning">Restocked: +₱<?= number_format($detailCogsReversedTotal, 2) ?></td><td class="text-primary">₱<?= number_format($detailNetAfterRefundTotal, 2) ?></td><td class="text-primary">₱<?= number_format($detailRealRevenueTotal, 2) ?></td></tr></tfoot>
+                                <tfoot class="table-light fw-bold"><tr><td colspan="4">Period totals</td><td>₱<?= number_format($detailGrossTotal, 2) ?></td><td class="text-warning">-₱<?= number_format($detailOverrideDiscountTotal, 2) ?></td><td class="text-danger">-₱<?= number_format($detailDiscountTotal, 2) ?></td><td class="text-danger">-₱<?= number_format($detailVatTotal, 2) ?></td><td class="text-primary">₱<?= number_format($detailNetTotal, 2) ?></td><td class="text-danger">-₱<?= number_format($detailRefundTotal, 2) ?></td><td class="text-primary">₱<?= number_format($detailRealRevenueTotal, 2) ?></td><td></td></tr></tfoot>
                             </table>
                         </div>
                         <div class="alert alert-light border mt-3 mb-0 small">
-                            <strong>Real Profit formula:</strong> Net After Refund − COGS + COGS Reversed. A restocked return reverses its cost; a disposed return keeps the cost as an expense.
+                            <strong>Profit formula:</strong> Sale Total − Customer Refund − COGS + COGS Reversed. A restocked return reverses its cost; a disposed return keeps the cost as an expense.
+                        </div>
+                    </div>
+                    <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="salesReceiptModal" tabindex="-1" aria-labelledby="salesReceiptModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="salesReceiptModalLabel">Sales Receipt</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="salesReceiptLoading" class="text-center text-muted py-4">Loading receipt...</div>
+                        <div id="salesReceiptError" class="alert alert-danger d-none" role="alert"></div>
+                        <div id="salesReceiptContent" class="d-none">
+                            <dl class="row mb-3">
+                                <dt class="col-sm-3">Receipt #</dt><dd class="col-sm-3" id="receiptTransactionId"></dd>
+                                <dt class="col-sm-3">Date</dt><dd class="col-sm-3" id="receiptTransactionDate"></dd>
+                                <dt class="col-sm-3">Customer</dt><dd class="col-sm-3" id="receiptCustomer"></dd>
+                                <dt class="col-sm-3">Cashier</dt><dd class="col-sm-3" id="receiptCashier"></dd>
+                            </dl>
+                            <div class="table-responsive">
+                                <table class="table table-sm table-bordered align-middle">
+                                    <thead class="table-light"><tr><th>Item</th><th class="text-end">Qty</th><th class="text-end">Unit Price</th><th class="text-end">Line Total</th></tr></thead>
+                                    <tbody id="salesReceiptItems"></tbody>
+                                </table>
+                            </div>
+                            <div class="row justify-content-end">
+                                <div class="col-sm-7 col-md-6">
+                                    <dl class="row mb-0">
+                                        <dt class="col-7">Before Discount/VAT</dt><dd class="col-5 text-end" id="receiptGross"></dd>
+                                        <dt class="col-7">Override Discount</dt><dd class="col-5 text-end" id="receiptOverrideDiscount"></dd>
+                                        <dt class="col-7">Discount</dt><dd class="col-5 text-end" id="receiptDiscount"></dd>
+                                        <dt class="col-7">VAT Exempt</dt><dd class="col-5 text-end" id="receiptVatExempt"></dd>
+                                        <dt class="col-7">Returned to Customer</dt><dd class="col-5 text-end" id="receiptRefund"></dd>
+                                        <dt class="col-7 border-top pt-2">Total Amount</dt><dd class="col-5 text-end fw-bold border-top pt-2" id="receiptTotal"></dd>
+                                    </dl>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button></div>

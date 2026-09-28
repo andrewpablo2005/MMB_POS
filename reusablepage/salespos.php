@@ -86,12 +86,15 @@ if (!empty($_SESSION['user_id'])) {
 
         <!-- Categories -->
         <div class="wepos-categories">
-            <button class="wepos-cat-btn active" onclick="weposFilterCat('All')">All</button>
-            <?php foreach ($categories as $cat): ?>
-                <button class="wepos-cat-btn" onclick="weposFilterCat('<?= htmlspecialchars($cat['category_name']) ?>')">
-                    <?= htmlspecialchars($cat['category_name']) ?>
-                </button>
-            <?php endforeach; ?>
+            <label for="weposCategoryFilter" class="visually-hidden">Filter products by category</label>
+            <select id="weposCategoryFilter" class="wepos-category-select" onchange="weposFilterCat(this.value)">
+                <option value="All">All categories</option>
+                <?php foreach ($categories as $cat): ?>
+                    <option value="<?= htmlspecialchars($cat['category_name'], ENT_QUOTES, 'UTF-8') ?>">
+                        <?= htmlspecialchars($cat['category_name'], ENT_QUOTES, 'UTF-8') ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
         </div>
 
         <!-- Products -->

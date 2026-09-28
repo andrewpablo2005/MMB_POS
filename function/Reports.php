@@ -489,8 +489,9 @@ class Reports
 
         $stmt = $this->db->prepare("SELECT t.id,
                    t.created_at transaction_date,
-                   u.username,
-                   COALESCE(SUM(ti.price * ti.quantity), 0) gross_subtotal,
+                   COALESCE(NULLIF(CONCAT_WS(' ', NULLIF(TRIM(ui.firstname), ''), NULLIF(TRIM(ui.lastname), '')), ''), 'N/A') cashier_name,
+                   COALESCE(SUM(ti.price * ti.quantity), 0) + COALESCE(t.override_discount_total, 0) gross_subtotal,
+                   COALESCE(t.override_discount_total, 0) override_discount_total,
                    COALESCE(MAX(t.discount_total), 0) discount_total,
                    COALESCE(MAX(t.total_vat_exemption), 0) total_vat_exemption,
                    t.total_amount,
@@ -541,6 +542,7 @@ class Reports
                    COUNT(DISTINCT ti.id) items_count
             FROM transactions t
             LEFT JOIN users u ON t.user_id = u.id
+            LEFT JOIN users_info ui ON ui.user_id = u.id
             LEFT JOIN transaction_items ti ON t.id = ti.transaction_id
             WHERE {$where}
             GROUP BY t.id

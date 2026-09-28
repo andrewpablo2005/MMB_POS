@@ -101,7 +101,6 @@ document.addEventListener('DOMContentLoaded', () => {
         weposSetupIdLookup();
         weposSetupVerifyInputs();     // issue #9 — name/ID format guards
         weposSetupCartResizer();     // issue #7.5 — draggable cart panel width
-        weposSetupCategoriesWheel(); // issue #7.6 — wheel scrolls the category strip
         weposUpdateCart();
         console.log('wePOS initialization complete');
     } catch (error) {
@@ -251,9 +250,6 @@ function weposSetupSearch() {
 }
 
 function weposFilterCat(category) {
-    document.querySelectorAll('.wepos-cat-btn').forEach(b => b.classList.remove('active'));
-    event.target.classList.add('active');
-
     document.querySelectorAll('.wepos-product-card').forEach(card => {
         if (category === 'All' || card.dataset.category === category) {
             card.style.display = '';
@@ -1278,20 +1274,6 @@ function weposSetupCartResizer() {
         applyWidth(w);
     }, { passive: true });
     document.addEventListener('touchend', endDrag);
-}
-
-// ═════ CATEGORY BAR WHEEL SCROLL (issue #7.6) ═════
-// A vertical wheel over the category strip scrolls it horizontally, so the
-// cashier never needs the horizontal-wheel gesture or a drag.
-function weposSetupCategoriesWheel() {
-    const bar = document.querySelector('.wepos-categories');
-    if (!bar) return;
-    bar.addEventListener('wheel', (e) => {
-        if (bar.scrollWidth <= bar.clientWidth) return;    // nothing to scroll
-        if (Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return; // native horizontal scroll wins
-        e.preventDefault();
-        bar.scrollLeft += e.deltaY;
-    }, { passive: false });
 }
 
 // ═════ CHECKOUT ITEMS WITH OVERRIDE ═════

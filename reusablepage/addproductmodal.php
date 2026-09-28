@@ -1500,12 +1500,27 @@ $dosageForms = $product->getDosageForms();
             salePriceInput.value = (purchaseCost * (1 + safeMarkup / 100)).toFixed(2);
         };
 
+        const updateBatchMarkup = () => {
+            if (!purchaseCostInput || !markupInput || !salePriceInput) {
+                return;
+            }
+
+            const purchaseCost = parseFloat(purchaseCostInput.value);
+            const salePrice = parseFloat(salePriceInput.value);
+            if (!Number.isFinite(purchaseCost) || purchaseCost <= 0 || !Number.isFinite(salePrice) || salePrice < 0) {
+                return;
+            }
+
+            markupInput.value = (((salePrice - purchaseCost) / purchaseCost) * 100).toFixed(2);
+        };
+
         if (purchaseCostInput && markupInput && salePriceInput) {
             if (!markupInput.value) {
                 markupInput.value = '5';
             }
             purchaseCostInput.oninput = updateBatchSalePrice;
             markupInput.oninput = updateBatchSalePrice;
+            salePriceInput.oninput = updateBatchMarkup;
         }
 
         const clearBatchFields = () => {

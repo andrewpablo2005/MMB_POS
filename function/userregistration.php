@@ -313,7 +313,7 @@ public function pre_addUser()
             'pre_user', (int) $id);
     }
 
-    public function sendEmail($to, $subject, $body)
+    public function sendEmail($to, $subject, $body): bool
     {
         require __DIR__ . '/../phpmailer/src/PHPMailer.php';
         require __DIR__ . '/../phpmailer/src/SMTP.php';
@@ -321,38 +321,53 @@ public function pre_addUser()
 
         $mail = new \PHPMailer\PHPMailer\PHPMailer(true);
 
-        // SMTP credentials are read from the environment (never commit
-        // real passwords to the repo). Define these in Apache config / .env:
-        // MMBPOS_SMTP_USER, MMBPOS_SMTP_PASS, MMBPOS_SMTP_FROM
-        $smtpUser = getenv('MMBPOS_SMTP_USER');
-        $smtpPass = getenv('MMBPOS_SMTP_PASS');
-        $smtpFrom = getenv('MMBPOS_SMTP_FROM') ?: $smtpUser;
+        $config = [];
+        $configFile = __DIR__ . '/../conn/config.local.php';
+        if (is_readable($configFile)) {
+            $loadedConfig = include $configFile;
+            if (is_array($loadedConfig)) {
+                $config = $loadedConfig;
+            }
+        }
+
+        // Keep credentials in ignored local config or Apache environment, never source.
+        $smtpUser = trim((string)($config['mail_username'] ?? getenv('MMB_MAIL_USERNAME') ?: getenv('MMBPOS_SMTP_USER') ?: ''));
+        $smtpPass = preg_replace('/\s+/', '', (string)($config['mail_password'] ?? getenv('MMB_MAIL_PASSWORD') ?: getenv('MMBPOS_SMTP_PASS') ?: ''));
+        $smtpFrom = trim((string)($config['mail_from'] ?? getenv('MMBPOS_SMTP_FROM') ?: $smtpUser));
+        $smtpHost = trim((string)($config['mail_host'] ?? getenv('MMB_MAIL_HOST') ?: 'smtp.gmail.com'));
+        $smtpPort = (int)($config['mail_port'] ?? getenv('MMB_MAIL_PORT') ?: 587);
+        $smtpEncryption = strtolower(trim((string)($config['mail_encryption'] ?? getenv('MMB_MAIL_ENCRYPTION') ?: 'tls')));
 
         if (!$smtpUser || !$smtpPass) {
-            // Email notifications are optional — skip silently when not configured.
-            return;
+            error_log('Account notification email is not configured. Set SMTP environment variables or conn/config.local.php.');
+            return false;
         }
 
         try {
             $mail->isSMTP();
-            $mail->Host = 'smtp.gmail.com';
+            $mail->Host = $smtpHost;
             $mail->SMTPAuth = true;
             $mail->Username = $smtpUser;
             $mail->Password = $smtpPass;
-            $mail->SMTPSecure = 'tls';
-            $mail->Port = 587;
+            $mail->SMTPSecure = in_array($smtpEncryption, ['ssl', 'smtps'], true)
+                ? \PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_SMTPS
+                : \PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
+            $mail->Port = $smtpPort;
 
+            $mail->CharSet = 'UTF-8';
             $mail->setFrom($smtpFrom, 'MMBPOS Admin');
             $mail->addAddress($to);
 
             $mail->isHTML(true);
             $mail->Subject = $subject;
             $mail->Body = '<p>' . nl2br(htmlspecialchars($body, ENT_QUOTES, 'UTF-8')) . '</p>';
+            $mail->AltBody = $body;
 
-            $mail->send();
+            return $mail->send();
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('sendEmail failed: ' . $e->getMessage());
+            return false;
         }
     }
 }

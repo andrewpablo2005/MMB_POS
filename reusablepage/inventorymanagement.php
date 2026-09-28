@@ -908,13 +908,7 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
             return;
         }
 
-        let salePriceLockedToMarkup = true;
-
         const updateSalePrice = () => {
-            if (!salePriceLockedToMarkup) {
-                return;
-            }
-
             const purchaseCost = parseFloat(purchaseCostInput.value);
             const markup = parseFloat(markupInput.value);
 
@@ -928,37 +922,23 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
             salePriceInput.value = computedSalePrice.toFixed(2);
         };
 
-        salePriceInput.addEventListener('input', function () {
-            salePriceLockedToMarkup = false;
-        });
-
-        salePriceInput.addEventListener('focus', function () {
-            if (!this.value) {
-                salePriceLockedToMarkup = true;
+        const updateMarkup = () => {
+            const purchaseCost = parseFloat(purchaseCostInput.value);
+            const salePrice = parseFloat(salePriceInput.value);
+            if (!Number.isFinite(purchaseCost) || purchaseCost <= 0 || !Number.isFinite(salePrice) || salePrice < 0) {
+                return;
             }
-        });
+
+            markupInput.value = (((salePrice - purchaseCost) / purchaseCost) * 100).toFixed(2);
+        };
 
         if (!markupInput.value) {
             markupInput.value = '5';
         }
 
-        purchaseCostInput.oninput = function () {
-            if (salePriceLockedToMarkup) {
-                updateSalePrice();
-            }
-        };
-
-        markupInput.oninput = function () {
-            if (salePriceLockedToMarkup) {
-                updateSalePrice();
-            }
-        };
-
-        salePriceInput.addEventListener('keydown', function (event) {
-            if (event.key === 'Enter') {
-                salePriceLockedToMarkup = false;
-            }
-        });
+        purchaseCostInput.oninput = updateSalePrice;
+        markupInput.oninput = updateSalePrice;
+        salePriceInput.oninput = updateMarkup;
 
         updateSalePrice();
     }

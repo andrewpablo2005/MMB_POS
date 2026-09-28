@@ -94,54 +94,18 @@
 .wepos-categories {
     background: #f6f7f7;
     padding: 10px 20px;
-    display: flex;
-    gap: 8px;
-    overflow-x: auto;
     border-bottom: 1px solid var(--wp-border);
-    /* issue #7.6 — visible thin scrollbar instead of a hidden one */
-    scrollbar-width: thin;
-    scrollbar-color: #c9c9cd transparent;
-    position: relative;
-    -webkit-overflow-scrolling: touch;
 }
-.wepos-categories::-webkit-scrollbar { display: block; height: 6px; }
-.wepos-categories::-webkit-scrollbar-thumb { background: #c9c9cd; border-radius: 3px; }
-.wepos-categories::-webkit-scrollbar-track { background: transparent; }
-/* right-edge fade = "this row scrolls" affordance */
-.wepos-categories::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    width: 36px;
-    background: linear-gradient(to right, rgba(246, 247, 247, 0), #f6f7f7);
-    pointer-events: none;
-}
-
-.wepos-cat-btn {
+.wepos-category-select {
+    width: min(360px, 100%);
+    min-height: 40px;
+    padding: 8px 36px 8px 12px;
     background: var(--wp-card);
     border: 1px solid var(--wp-border);
-    border-radius: 999px;
-    padding: 7px 16px;
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--wp-text-light);
-    cursor: pointer;
-    white-space: nowrap;
-    transition: all 0.15s;
-}
-
-.wepos-cat-btn:hover {
-    border-color: #8c8f94;
+    border-radius: 6px;
     color: var(--wp-text);
-}
-
-.wepos-cat-btn.active {
-    background: var(--wp-primary);
-    border-color: var(--wp-primary);
-    color: #fff;
-    box-shadow: 0 2px 8px rgba(220, 38, 38, 0.25);
+    font: inherit;
+    cursor: pointer;
 }
 
 /* Product Grid */
@@ -784,7 +748,6 @@ body.wepos-resizing .wepos-products-grid { pointer-events: none; }
 @media (max-width: 575.98px) {
     .wepos-header { padding: 10px 12px; }
     .wepos-categories { padding: 8px 12px; }
-    .wepos-categories::after { width: 28px; }
     .wepos-search-container input { font-size: 14px; padding: 9px 36px; }
     .wepos-search-container kbd { display: none; }
 }

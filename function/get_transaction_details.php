@@ -32,9 +32,18 @@ if ($txId <= 0) {
 try {
     // 1. Fetch transaction header
     $stmtTx = $db->prepare("
-        SELECT t.id, t.customer_name, t.total_amount, t.created_at, u.username AS cashier_name
+           SELECT t.id, t.customer_name, t.total_amount, t.created_at,
+               COALESCE(NULLIF(CONCAT_WS(' ', NULLIF(TRIM(ui.firstname), ''), NULLIF(TRIM(ui.lastname), '')), ''), 'N/A') AS cashier_name
+             , t.discount_total, t.total_vat_exemption, t.override_discount_total
+             , COALESCE((SELECT SUM(ti_gross.price * ti_gross.quantity)
+                         FROM transaction_items ti_gross
+                         WHERE ti_gross.transaction_id = t.id), 0) + COALESCE(t.override_discount_total, 0) AS gross_subtotal
+             , COALESCE((SELECT SUM(rt.refund_amount)
+                         FROM return_transactions rt
+                         WHERE rt.original_transaction_id = t.id), 0) AS refund_total
         FROM transactions t
         LEFT JOIN users u ON t.user_id = u.id
+        LEFT JOIN users_info ui ON ui.user_id = u.id
         WHERE t.id = ?
     ");
     $stmtTx->execute([$txId]);
