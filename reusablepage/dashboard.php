@@ -63,7 +63,7 @@ function dash_product_thumb(?string $image, string $sizeClass = 'mmb-thumb'): st
       },
       month: {
         sales:   <?php echo json_encode('₱' . number_format($totalSalesMonth, 2)); ?>,
-        sub:     <?php echo json_encode(date('F Y') . ' · gross'); ?>,
+        sub:     <?php echo json_encode(date('F Y') . ' · net'); ?>,
         revenue: <?php echo json_encode('₱' . number_format($realRevenueMonth, 2)); ?>,
         revSub:  'After refunds & product costs',
         transactions: <?php echo json_encode(number_format((float)$transactionsMonth)); ?>,
@@ -71,7 +71,7 @@ function dash_product_thumb(?string $image, string $sizeClass = 'mmb-thumb'): st
       },
       year: {
         sales:   <?php echo json_encode('₱' . number_format($totalSalesYear, 2)); ?>,
-        sub:     <?php echo json_encode(date('Y') . ' · gross'); ?>,
+        sub:     <?php echo json_encode(date('Y') . ' · net'); ?>,
         revenue: <?php echo json_encode('₱' . number_format($realRevenueYear, 2)); ?>,
         revSub:  'After refunds & product costs',
         transactions: <?php echo json_encode(number_format((float)$transactionsYear)); ?>,

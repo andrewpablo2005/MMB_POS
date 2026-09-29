@@ -106,7 +106,7 @@
                     <!-- Security Section -->
                     <h6 class="mb-3 text-secondary fw-bold">Security PIN</h6>
                     <div class="mb-3">
-                        <label for="void_password" class="form-label">Void PIN (7 digits) <span class="text-danger">*</span></label>
+                        <label for="void_password" class="form-label">Manager PIN (7 digits) Owner/Admin Only <span class="text-danger">*</span></label>
                         <input id="void_password" name="void_password" class="form-control" minlength="7" maxlength="7" placeholder="e.g., 1234567">
                     </div>
                 </div>
