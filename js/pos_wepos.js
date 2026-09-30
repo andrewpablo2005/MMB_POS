@@ -1461,6 +1461,7 @@ async function weposSubmitTransaction() {
 
             // Show receipt
             weposShowReceipt(weposLastReceiptData);
+            setTimeout(() => weposPrintReceipt(), 300);
 
             // Reset state
             weposCart = {};
@@ -1669,16 +1670,6 @@ function weposRefreshInventory() {
 async function weposPrintReceipt() {
     const content = document.getElementById('weposReceiptPrint').innerHTML;
 
-    // Open the print window synchronously inside the click gesture so popup
-    // blockers never interfere, then fill it in.
-    const win = window.open('', '_blank', 'width=320,height=600');
-    if (!win) {
-        mmbNotify({ type: 'warning', title: 'Pop-up blocked', message: 'Allow pop-ups for this site to print receipts.' });
-        return;
-    }
-    win.document.write('<html><head><title>Receipt</title></head><body style="font-family:\'Courier New\',monospace; padding:20px; color:#64748b;">Preparing receipt...</body></html>');
-    win.document.close();
-
     // Paper size comes from Settings → Receipt Printing (store-wide).
     // Falls back to 80mm when the setting cannot be read.
     let paper = '80';
@@ -1698,17 +1689,29 @@ async function weposPrintReceipt() {
         : `body { font-family: 'Courier New', monospace; font-size: 13px; width: 72mm; margin: 0 auto; padding: 8px 2mm; }
            @page { size: 80mm auto; margin: 0; }`;
 
-    win.document.open();
-    win.document.write(`
+    const frame = document.createElement('iframe');
+    frame.style.position = 'fixed';
+    frame.style.width = '0';
+    frame.style.height = '0';
+    frame.style.border = '0';
+    frame.setAttribute('aria-hidden', 'true');
+    document.body.appendChild(frame);
+
+    const printWindow = frame.contentWindow;
+    printWindow.document.open();
+    printWindow.document.write(`
         <html><head><title>Receipt</title>
         <style>${css}
             @media print { body { margin: 0; } }
         </style></head>
         <body><div id="rc">${content}</div></body></html>
     `);
-    win.document.close();
-    win.focus();
-    setTimeout(() => { win.print(); win.close(); }, 300);
+    printWindow.document.close();
+    printWindow.addEventListener('afterprint', () => frame.remove(), { once: true });
+    setTimeout(() => {
+        printWindow.focus();
+        printWindow.print();
+    }, 100);
 }
 // ═════ ID-NUMBER → NAME AUTO-FETCH ═════
 // As the cashier types (or scans) the Senior/PWD ID number, the POS queries
