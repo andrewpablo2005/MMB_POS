@@ -1,3 +1,43 @@
+.report-top-selling-view-button,
+.report-sales-detail-view-button,
+.report-view-button {
+    background: #2563EB;
+    border-color: #2563EB;
+    color: #ffffff;
+}
+
+.report-top-selling-view-button:hover,
+.report-top-selling-view-button:focus,
+.report-sales-detail-view-button:hover,
+.report-sales-detail-view-button:focus,
+.report-view-button:hover,
+.report-view-button:focus {
+    background: #1D4ED8;
+    border-color: #1D4ED8;
+    color: #ffffff;
+}
+
+#salesDetailTable .sales-detail-negative {
+    color: #DC2626 !important;
+}
+
+#salesDetailTable .sales-detail-positive {
+    color: #16A34A !important;
+}
+
+.sales-detail-view-button {
+    background: #2563EB;
+    border-color: #2563EB;
+    color: #ffffff;
+}
+
+.sales-detail-view-button:hover,
+.sales-detail-view-button:focus {
+    background: #1D4ED8;
+    border-color: #1D4ED8;
+    color: #ffffff;
+}
+
 /* ─── Reports Page Styles (v3 — dashboard design language) ─── */
 
 .report-page { font-family: 'Inter', sans-serif; }

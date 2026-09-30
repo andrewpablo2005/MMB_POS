@@ -110,7 +110,8 @@ include("../conn/connection_links.php");
 
                 <!-- ACTION BUTTONS -->
                 <div class="d-flex justify-content-between mt-4">
-                    <button type="submit" name="pre_addUser" class="btn btn-primary px-4">
+                    <button type="submit" name="pre_addUser" class="btn user-save-button px-4">
+                        <i class="fas fa-save me-1" aria-hidden="true"></i>
                         Save User
                     </button>
                 </div>

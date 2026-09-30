@@ -476,7 +476,7 @@ $dosageForms = $product->getDosageForms();
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" title="Cancel and close"
                         data-bs-toggle="tooltip">Cancel</button>
-                    <button type="submit" name="addProduct" class="btn btn-primary" title="Save product"
+                    <button type="submit" name="addProduct" class="btn product-add-save-button" title="Save product"
                         data-bs-toggle="tooltip">
                         <i class="fas fa-save"></i> Save Product
                     </button>

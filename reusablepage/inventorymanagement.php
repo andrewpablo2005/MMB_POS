@@ -158,7 +158,8 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
                 <p class="page-sub">Manage current stock batches and review disposed or expired inventory.</p>
             </div>
             <div class="d-flex gap-2 flex-wrap">
-                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addBatchModal">
+                <button class="btn inventory-add-button" data-bs-toggle="modal" data-bs-target="#addBatchModal">
+                    <i class="fas fa-plus me-1" aria-hidden="true"></i>
                     Add Batch
                 </button>
             </div>
@@ -272,6 +273,7 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
                                                 data-product-name="<?= htmlspecialchars(trim(($batch['branded_name'] ?? '') . ' ' . ($batch['generic_name'] ?? '') . ' ' . ($batch['strength'] ?? '') . ' ' . ($batch['measurement_name'] ?? '')), ENT_QUOTES, 'UTF-8') ?>"
                                                 data-current-quantity="<?= (int)($batch['current_quantity'] ?? 0) ?>"
                                                 onclick="(function(){var select=document.getElementById('move_no_stock_inventory_id'); var batchId='<?= (int)($batch['id'] ?? 0) ?>'; var batchNumber='<?= htmlspecialchars((string)($batchNumber !== '' ? $batchNumber : 'N/A'), ENT_QUOTES, 'UTF-8') ?>'; var productName='<?= htmlspecialchars(trim(($batch['branded_name'] ?? '') . ' ' . ($batch['generic_name'] ?? '') . ' ' . ($batch['strength'] ?? '') . ' ' . ($batch['measurement_name'] ?? '')), ENT_QUOTES, 'UTF-8') ?>'; var currentQty = Number('<?= (int)($batch['current_quantity'] ?? 0) ?>'); var form=document.querySelector('#moveNoStockModal form'); var batchLabel = batchNumber ? batchNumber : (productName || 'the selected batch'); var isEmptyBatch = currentQty <= 0; if(select){ var match=null; for(var i=0;i<select.options.length;i++){var option=select.options[i]; var optionText=(option.textContent||'').trim().toLowerCase(); if(option.value === String(batchId)) { match=option; break; } if(batchNumber && productName && optionText.indexOf(batchNumber.toLowerCase()) !== -1 && optionText.indexOf(productName.toLowerCase()) !== -1) { match=option; break; } } if(match){ select.value = match.value; if(typeof select.dispatchEvent === 'function'){ select.dispatchEvent(new Event('change', { bubbles: true })); } } } if(!isEmptyBatch){ mmbNotify({ type: 'warning', title: 'Batch still has stock', message: 'Cannot move ' + batchLabel + ' to No Stock because it still has ' + currentQty + ' unit(s) in stock.' }); return; } var message = 'You are manually archiving ' + batchLabel + ' as a zero-stock batch.\n\nThis batch is empty and will be moved to No Stock history. It will no longer appear in active inventory and should only be used when the product has no remaining stock.'; mmbConfirm({ title: 'Move empty batch to No Stock history?', message: message, okLabel: 'Yes, move to No Stock', danger: false }).then(function (yes) { if (!yes) return; if (form) { form.dataset.confirmed = '1'; form.submit(); } });})();">
+                                            <i class="fas fa-archive me-1" aria-hidden="true"></i>
                                             Move No Stock
                                         </button>
                                         <button type="button"
@@ -280,6 +282,7 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
                                                 data-batch-number="<?= htmlspecialchars((string)($batchNumber !== '' ? $batchNumber : 'N/A'), ENT_QUOTES, 'UTF-8') ?>"
                                                 data-product-name="<?= htmlspecialchars(trim(($batch['branded_name'] ?? '') . ' ' . ($batch['generic_name'] ?? '') . ' ' . ($batch['strength'] ?? '') . ' ' . ($batch['measurement_name'] ?? '')), ENT_QUOTES, 'UTF-8') ?>"
                                                 onclick="(function(){var select=document.getElementById('dispose_inventory_id'); var batchId='<?= (int)($batch['id'] ?? 0) ?>'; var batchNumber='<?= htmlspecialchars((string)($batchNumber !== '' ? $batchNumber : 'N/A'), ENT_QUOTES, 'UTF-8') ?>'; var productName='<?= htmlspecialchars(trim(($batch['branded_name'] ?? '') . ' ' . ($batch['generic_name'] ?? '') . ' ' . ($batch['strength'] ?? '') . ' ' . ($batch['measurement_name'] ?? '')), ENT_QUOTES, 'UTF-8') ?>'; if(select){ var match=null; for(var i=0;i<select.options.length;i++){var option=select.options[i]; var optionText=(option.textContent||'').trim().toLowerCase(); if(option.value === String(batchId)) { match=option; break; } if(batchNumber && productName && optionText.indexOf(batchNumber.toLowerCase()) !== -1 && optionText.indexOf(productName.toLowerCase()) !== -1) { match=option; break; } } if(match){ select.value = match.value; if(typeof select.dispatchEvent === 'function'){ select.dispatchEvent(new Event('change', { bubbles: true })); } } } var modalEl=document.getElementById('disposeBatchModal'); if(modalEl && window.bootstrap && bootstrap.Modal){ bootstrap.Modal.getOrCreateInstance(modalEl).show(); }})();">
+                                            <i class="fas fa-trash me-1" aria-hidden="true"></i>
                                             Dispose Batch
                                         </button>
                                     </div>
@@ -827,7 +830,10 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Save Batch</button>
+                    <button type="submit" class="btn inventory-save-button">
+                        <i class="fas fa-save me-1" aria-hidden="true"></i>
+                        Save Batch
+                    </button>
                 </div>
             </form>
         </div>

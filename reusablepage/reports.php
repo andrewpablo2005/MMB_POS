@@ -253,7 +253,7 @@ foreach ($salesDetailRows as $detailRow) {
                                 <input id="detail_value" name="detail_value" class="form-control" value="<?= htmlspecialchars($salesDetail['value']) ?>" required>
                             </div>
                             <div class="col-md-2">
-                                <button type="submit" class="btn btn-primary w-100">View Report</button>
+                                <button type="submit" class="btn report-sales-detail-view-button w-100">View Report</button>
                             </div>
                         </form>
                         <div class="table-responsive">
@@ -268,12 +268,12 @@ foreach ($salesDetailRows as $detailRow) {
                                             <td><?= date('M d, Y h:i A', strtotime($detailRow['transaction_date'])) ?></td>
                                             <td><?= htmlspecialchars($detailRow['cashier_name'] ?? 'N/A') ?></td>
                                             <td><?= (int)($detailRow['items_count'] ?? 0) ?></td>
-                                            <td>₱<?= number_format((float)$detailRow['gross_subtotal'], 2) ?></td>
-                                            <td class="text-warning">-₱<?= number_format((float)$detailRow['override_discount_total'], 2) ?></td>
-                                            <td class="text-danger">-₱<?= number_format((float)$detailRow['discount_total'], 2) ?></td>
-                                            <td class="text-danger">-₱<?= number_format((float)$detailRow['total_vat_exemption'], 2) ?></td>
-                                            <td class="text-primary"><strong>₱<?= number_format((float)$detailRow['total_amount'], 2) ?></strong></td>
-                                            <td class="text-danger">
+                                            <td class="sales-detail-positive">₱<?= number_format((float)$detailRow['gross_subtotal'], 2) ?></td>
+                                            <td class="sales-detail-negative">-₱<?= number_format((float)$detailRow['override_discount_total'], 2) ?></td>
+                                            <td class="sales-detail-negative">-₱<?= number_format((float)$detailRow['discount_total'], 2) ?></td>
+                                            <td class="sales-detail-negative">-₱<?= number_format((float)$detailRow['total_vat_exemption'], 2) ?></td>
+                                            <td class="sales-detail-positive"><strong>₱<?= number_format((float)$detailRow['total_amount'], 2) ?></strong></td>
+                                            <td class="sales-detail-negative">
                                                 <?php if ((float)$detailRow['refund_total'] > 0): ?>
                                                     <strong>-₱<?= number_format((float)$detailRow['refund_total'], 2) ?></strong><br>
                                                     <?php if ((float)$detailRow['cogs_reversed'] > 0): ?>
@@ -285,12 +285,12 @@ foreach ($salesDetailRows as $detailRow) {
                                                     <span class="text-muted">—</span>
                                                 <?php endif; ?>
                                             </td>
-                                            <td class="text-primary"><strong>₱<?= number_format((float)$detailRow['real_revenue'], 2) ?></strong></td>
-                                            <td><button type="button" class="btn btn-sm btn-outline-primary" onclick="openSalesReceipt(<?= (int)$detailRow['id'] ?>)" aria-label="View receipt for transaction #<?= (int)$detailRow['id'] ?>"><i class="fas fa-receipt me-1" aria-hidden="true"></i>View</button></td>
+                                            <td class="sales-detail-positive"><strong>₱<?= number_format((float)$detailRow['real_revenue'], 2) ?></strong></td>
+                                            <td><button type="button" class="btn btn-sm sales-detail-view-button" onclick="openSalesReceipt(<?= (int)$detailRow['id'] ?>)" aria-label="View receipt for transaction #<?= (int)$detailRow['id'] ?>"><i class="fas fa-receipt me-1" aria-hidden="true"></i>View</button></td>
                                         </tr>
                                     <?php endforeach; endif; ?>
                                 </tbody>
-                                <tfoot class="table-light fw-bold"><tr><td colspan="4">Period totals</td><td>₱<?= number_format($detailGrossTotal, 2) ?></td><td class="text-warning">-₱<?= number_format($detailOverrideDiscountTotal, 2) ?></td><td class="text-danger">-₱<?= number_format($detailDiscountTotal, 2) ?></td><td class="text-danger">-₱<?= number_format($detailVatTotal, 2) ?></td><td class="text-primary">₱<?= number_format($detailNetTotal, 2) ?></td><td class="text-danger">-₱<?= number_format($detailRefundTotal, 2) ?></td><td class="text-primary">₱<?= number_format($detailRealRevenueTotal, 2) ?></td><td></td></tr></tfoot>
+                                <tfoot class="table-light fw-bold"><tr><td colspan="4">Period totals</td><td class="sales-detail-positive">₱<?= number_format($detailGrossTotal, 2) ?></td><td class="sales-detail-negative">-₱<?= number_format($detailOverrideDiscountTotal, 2) ?></td><td class="sales-detail-negative">-₱<?= number_format($detailDiscountTotal, 2) ?></td><td class="sales-detail-negative">-₱<?= number_format($detailVatTotal, 2) ?></td><td class="sales-detail-positive">₱<?= number_format($detailNetTotal, 2) ?></td><td class="sales-detail-negative">-₱<?= number_format($detailRefundTotal, 2) ?></td><td class="sales-detail-positive">₱<?= number_format($detailRealRevenueTotal, 2) ?></td><td></td></tr></tfoot>
                             </table>
                         </div>
                         <div class="alert alert-light border mt-3 mb-0 small">
@@ -379,7 +379,7 @@ foreach ($salesDetailRows as $detailRow) {
                                 <input id="register_value" name="register_value" class="form-control" value="<?= htmlspecialchars($registerValue) ?>" required>
                             </div>
                             <div class="col-md-2">
-                                <button type="submit" class="btn btn-primary w-100">View Report</button>
+                                <button type="submit" class="btn report-view-button w-100">View Report</button>
                             </div>
                         </form>
                         <div class="table-responsive">
@@ -647,7 +647,7 @@ foreach ($salesDetailRows as $detailRow) {
                             <input id="selling_value" name="selling_value" class="form-control" value="<?= htmlspecialchars($sellingReport['value']) ?>" required>
                         </div>
                         <div class="col-md-2">
-                            <button type="submit" class="btn btn-primary w-100">View Report</button>
+                            <button type="submit" class="btn report-top-selling-view-button w-100">View Report</button>
                         </div>
                     </form>
                     <div class="table-responsive">
@@ -765,7 +765,7 @@ foreach ($salesDetailRows as $detailRow) {
                             <input id="account_value" name="account_value" class="form-control" value="<?= htmlspecialchars($accountReport['value']) ?>" required>
                         </div>
                         <div class="col-md-3">
-                            <button type="submit" class="btn btn-primary w-100">View Report</button>
+                            <button type="submit" class="btn report-view-button w-100">View Report</button>
                         </div>
                     </form>
                     <div class="table-responsive">
@@ -946,7 +946,7 @@ foreach ($salesDetailRows as $detailRow) {
                             <input id="vat_value" name="vat_value" class="form-control" value="<?= htmlspecialchars($vatReport['value']) ?>" required>
                         </div>
                         <div class="col-md-2">
-                            <button type="submit" class="btn btn-primary w-100">View Report</button>
+                            <button type="submit" class="btn report-view-button w-100">View Report</button>
                         </div>
                     </form>
                     <div class="table-responsive">

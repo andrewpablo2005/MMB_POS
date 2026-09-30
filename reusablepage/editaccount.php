@@ -248,7 +248,8 @@ foreach ($modalUsers as $u): ?>
                     <button
                         type="submit"
                         name="updateUser"
-                        class="btn btn-primary">
+                        class="btn user-save-button">
+                        <i class="fas fa-save me-1" aria-hidden="true"></i>
                         Save Changes
                     </button>
                 </div>

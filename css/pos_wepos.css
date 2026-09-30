@@ -27,6 +27,45 @@
     box-sizing: border-box;
 }
 
+.wepos-btn-process-return {
+    background: #0D9488;
+    border-color: #0D9488;
+    color: #ffffff;
+}
+
+.wepos-btn-process-return:hover,
+.wepos-btn-process-return:focus {
+    background: #0f766e;
+    border-color: #0f766e;
+    color: #ffffff;
+}
+
+.wepos-btn-refresh {
+    background: #64748B;
+    border-color: #64748B;
+    color: #ffffff;
+}
+
+.wepos-btn-refresh:hover,
+.wepos-btn-refresh:focus {
+    background: #475569;
+    border-color: #475569;
+    color: #ffffff;
+}
+
+.wepos-btn-close-register {
+    background: #DC2626;
+    border-color: #DC2626;
+    color: #ffffff;
+}
+
+.wepos-btn-close-register:hover,
+.wepos-btn-close-register:focus {
+    background: #B91C1C;
+    border-color: #B91C1C;
+    color: #ffffff;
+}
+
 /* ═════ LEFT PANEL (PRODUCTS) ═════ */
 .wepos-left {
     flex: 1;

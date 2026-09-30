@@ -60,7 +60,8 @@ if ($product->addProduct()) {
                 <p class="page-sub">Manage the medicine catalog — brands, generics, strengths and pricing.</p>
             </div>
             <div class="d-flex gap-2">
-                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addProductModal">
+                <button class="btn product-add-button" data-bs-toggle="modal" data-bs-target="#addProductModal">
+                    <i class="fas fa-plus me-1" aria-hidden="true"></i>
                     Add Item
                 </button>
             </div>
@@ -76,6 +77,7 @@ if ($product->addProduct()) {
                     <th data-priority="5">Per Serving</th>
                     <th data-priority="6">Package Size</th>
                     <th data-priority="7">Category</th>
+                    <th data-priority="2">Status</th>
                     <th data-priority="1">Action</th>
                 </tr>
             </thead>
@@ -96,6 +98,7 @@ if ($product->addProduct()) {
                             ? (string) $quantity . ($quantityUnit !== '' ? ' ' . $quantityUnit : '')
                             : 'N/A';
                         $categoryName = trim((string) ($prod['category_name'] ?? ''));
+                        $isProductDeactivated = (int) ($prod['is_hidden'] ?? 0) === 1;
                     ?>
                     <tr>
                         <td><?= htmlspecialchars((string)($prod['id']), ENT_QUOTES, 'UTF-8') ?></td>
@@ -113,28 +116,37 @@ if ($product->addProduct()) {
                         <td><?= htmlspecialchars($servingSize, ENT_QUOTES, 'UTF-8') ?></td>
                         <td><?= htmlspecialchars($packageQuantity, ENT_QUOTES, 'UTF-8') ?></td>
                         <td><?= htmlspecialchars($categoryName !== '' ? $categoryName : 'N/A', ENT_QUOTES, 'UTF-8') ?></td>
+                        <td>
+                            <span class="user-status <?= $isProductDeactivated ? 'is-disabled' : 'is-active' ?>">
+                                <span class="status-dot" aria-hidden="true"></span>
+                                <?= $isProductDeactivated ? 'Deactivated' : 'Active' ?>
+                            </span>
+                        </td>
                        
                         <td>
                            
                             <!-- VIEW -->
                             <button class="btn btn-info btn-sm" data-bs-toggle="modal"
                                 data-bs-target="#viewProduct<?= htmlspecialchars((string)($prod['id']), ENT_QUOTES, 'UTF-8') ?>">
+                                <i class="fas fa-eye me-1" aria-hidden="true"></i>
                                 View
                             </button>
                             <!-- EDIT -->
                             <button class="btn btn-warning btn-sm" data-bs-toggle="modal"
                                 data-bs-target="#editProduct<?= htmlspecialchars((string)($prod['id']), ENT_QUOTES, 'UTF-8') ?>">
+                                <i class="fas fa-pen me-1" aria-hidden="true"></i>
                                 Edit
                             </button>
-                            <!-- ENABLE / DISABLE -->
+                            <!-- Activate / Deactivate -->
                             <form method="post" class="d-inline">
                                 <input type="hidden" name="toggleProductStatus" value="1">
                                 <input type="hidden" name="product_id" value="<?= (int) $prod['id'] ?>">
                                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
-                                <button type="submit" class="btn btn-sm <?= !empty($prod['is_hidden']) ? 'btn-success' : 'btn-danger' ?>"
-                                    data-mmb-confirm="<?= !empty($prod['is_hidden']) ? 'Enable this product for POS?' : 'Disable this product from POS?' ?>"
-                                    data-mmb-ok="<?= !empty($prod['is_hidden']) ? 'Yes, enable' : 'Yes, disable' ?>">
-                                    <?= !empty($prod['is_hidden']) ? 'Enable' : 'Disable' ?>
+                                <button type="submit" class="btn btn-sm <?= $isProductDeactivated ? 'btn-success' : 'btn-danger' ?>"
+                                    data-mmb-confirm="<?= $isProductDeactivated ? 'Activate this product for POS?' : 'Deactivate this product from POS?' ?>"
+                                    data-mmb-ok="<?= $isProductDeactivated ? 'Yes, Activate' : 'Yes, Deactivate' ?>">
+                                    <i class="fas <?= $isProductDeactivated ? 'fa-check-circle' : 'fa-ban' ?> me-1" aria-hidden="true"></i>
+                                    <?= $isProductDeactivated ? 'Activate' : 'Deactivate' ?>
                                 </button>
                             </form>
                         </td>

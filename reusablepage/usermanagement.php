@@ -65,7 +65,8 @@ $users = $usersmanagement->getAllUsers();
                     <p class="page-sub">Accounts, roles and access status for the whole team.</p>
                 </div>
 
-                <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#adduser">
+                <button class="btn user-add-button btn-sm" data-bs-toggle="modal" data-bs-target="#adduser">
+                    <i class="fas fa-plus me-1" aria-hidden="true"></i>
                     Add User
                 </button>
             </div>
@@ -140,13 +141,15 @@ $users = $usersmanagement->getAllUsers();
                                     <button type="button" class="btn btn-info btn-sm"
                                         onclick="mmbOpenUserModal(this)"
                                         data-bs-target="#view<?= htmlspecialchars((string)($u['id']), ENT_QUOTES, 'UTF-8') ?>">
+                                        <i class="fas fa-eye me-1" aria-hidden="true"></i>
                                         View
                                     </button>
 
                                     <!-- EDIT -->
-                                    <button type="button" class="btn btn-primary btn-sm"
+                                    <button type="button" class="btn btn-warning btn-sm"
                                         onclick="mmbOpenUserModal(this)"
                                         data-bs-target="#edit<?= htmlspecialchars((string)($u['id']), ENT_QUOTES, 'UTF-8') ?>">
+                                        <i class="fas fa-pen me-1" aria-hidden="true"></i>
                                         Edit
                                     </button>
 
@@ -154,8 +157,9 @@ $users = $usersmanagement->getAllUsers();
                                     <form method="POST" class="d-inline">
                                         <input type="hidden" name="id" value="<?= htmlspecialchars((string)($u['id']), ENT_QUOTES, 'UTF-8') ?>">
                                         <input type="hidden" name="status" value="<?= ($u['status'] ?? 'active') === 'active' ? 'disabled' : 'active' ?>">
-                                        <button type="submit" name="toggleUserStatus" class="btn <?= ($u['status'] ?? 'active') === 'active' ? 'btn-outline-secondary' : 'btn-primary' ?> btn-sm"
+                                        <button type="submit" name="toggleUserStatus" class="btn <?= ($u['status'] ?? 'active') === 'active' ? 'btn-danger' : 'btn-success' ?> btn-sm"
                                             data-mmb-confirm="<?= ($u['status'] ?? 'active') === 'active' ? 'Disable' : 'Enable' ?> this account?">
+                                            <i class="fas <?= ($u['status'] ?? 'active') === 'active' ? 'fa-ban' : 'fa-check-circle' ?> me-1" aria-hidden="true"></i>
                                             <?= ($u['status'] ?? 'active') === 'active' ? 'Disable' : 'Enable' ?>
                                         </button>
                                     </form>
@@ -164,6 +168,7 @@ $users = $usersmanagement->getAllUsers();
                                         <input type="hidden" name="id" value="<?= htmlspecialchars((string)($u['id']), ENT_QUOTES, 'UTF-8') ?>">
                                         <button type="submit" name="deleteUser" class="btn btn-danger btn-sm"
                                             data-mmb-confirm="Delete this user? This cannot be undone." data-mmb-ok="Yes, delete">
+                                            <i class="fas fa-trash me-1" aria-hidden="true"></i>
                                             Delete
                                         </button>
                                     </form>

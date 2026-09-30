@@ -73,13 +73,16 @@ if (!empty($_SESSION['user_id'])) {
                 <input type="text" id="weposSearch" placeholder="Scan barcode or search products..." autocomplete="off">
                 <kbd>F2</kbd>
             </div>
-            <button type="button" class="wepos-btn wepos-btn-outline text-danger" style="border-color: #e74c3c; color: #c0392b;" onclick="openReturnModal()">
+            <button type="button" class="wepos-btn wepos-btn-process-return" onclick="openReturnModal()">
+                    <i class="fas fa-undo-alt me-1" aria-hidden="true"></i>
                     Process Return <kbd style="font-size: 10px; background: #fee2e2; color: #c0392b; border: none; margin-left: 2px;">F9</kbd>
                 </button>
-            <button class="wepos-btn wepos-btn-outline" onclick="location.reload()">
+            <button class="wepos-btn wepos-btn-refresh" onclick="location.reload()">
+                <i class="fas fa-sync-alt me-1" aria-hidden="true"></i>
                 Refresh <kbd style="font-size: 10px; background: #fee2e2; color: #c0392b; border: none; margin-left: 2px;">F5</kbd>
             </button>
-            <button class="wepos-btn wepos-btn-outline text-primary" onclick="weposOpenClosingModal()">
+            <button class="wepos-btn wepos-btn-close-register" onclick="weposOpenClosingModal()">
+                <i class="fas fa-lock me-1" aria-hidden="true"></i>
                 Close Register <kbd style="font-size: 10px; background: #fee2e2; color: #c0392b; border: none; margin-left: 2px;">F10</kbd>
             </button>
         </div>

@@ -235,7 +235,10 @@ try {
                 </div>
 
                 <div class="d-flex justify-content-end">
-                    <button type="submit" name="saveStoreSettings" class="btn btn-primary px-4">Save Store Settings</button>
+                    <button type="submit" name="saveStoreSettings" class="btn user-save-button px-4">
+                        <i class="fas fa-save me-1" aria-hidden="true"></i>
+                        Save Store Settings
+                    </button>
                 </div>
             </form>
         </div>

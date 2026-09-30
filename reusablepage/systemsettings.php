@@ -224,7 +224,8 @@ $currentUser = $usersmanagement->getUserById($userId);
                 </div>
 
                 <div class="d-flex justify-content-end">
-                    <button type="submit" name="updateUserSystem" class="btn btn-primary px-4">
+                    <button type="submit" name="updateUserSystem" class="btn user-save-button px-4">
+                        <i class="fas fa-save me-1" aria-hidden="true"></i>
                         Save Changes
                     </button>
                 </div>

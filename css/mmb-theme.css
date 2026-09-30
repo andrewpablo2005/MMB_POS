@@ -883,49 +883,50 @@ div.dt-buttons .dt-button:focus {
    Scoped to tables so modal & standalone buttons keep solid styles.
    ═══════════════════════════════════════════════════════════════ */
 .table .btn-info {
-    --bs-btn-bg: #f1f5f9;
-    --bs-btn-color: #334155;
+    --bs-btn-bg: #2563eb;
+    --bs-btn-color: #ffffff;
     --bs-btn-border-color: transparent;
-    --bs-btn-hover-bg: #e2e8f0;
-    --bs-btn-hover-color: #1e293b;
+    --bs-btn-hover-bg: #1d4ed8;
+    --bs-btn-hover-color: #ffffff;
     --bs-btn-hover-border-color: transparent;
-    --bs-btn-active-bg: #cbd5e1;
-    --bs-btn-active-color: #0f172a;
+    --bs-btn-active-bg: #1e40af;
+    --bs-btn-active-color: #ffffff;
     --bs-btn-active-border-color: transparent;
-    --bs-btn-focus-shadow-rgb: 51, 65, 85;
+    --bs-btn-focus-shadow-rgb: 37, 99, 235;
     font-weight: 600;
 }
 
 .table .btn-warning {
-    --bs-btn-bg: #fffbeb;
-    --bs-btn-color: #b45309;
+    --bs-btn-bg: #d97706;
+    --bs-btn-color: #ffffff;
     --bs-btn-border-color: transparent;
-    --bs-btn-hover-bg: #fef3c7;
-    --bs-btn-hover-color: #92400e;
+    --bs-btn-hover-bg: #b45309;
+    --bs-btn-hover-color: #ffffff;
     --bs-btn-hover-border-color: transparent;
-    --bs-btn-active-bg: #fde68a;
-    --bs-btn-active-color: #92400e;
+    --bs-btn-active-bg: #92400e;
+    --bs-btn-active-color: #ffffff;
     --bs-btn-active-border-color: transparent;
-    --bs-btn-focus-shadow-rgb: 180, 83, 9;
+    --bs-btn-focus-shadow-rgb: 217, 119, 6;
     font-weight: 600;
 }
 
 .table .btn-danger {
-    --bs-btn-bg: #fef2f2;
-    --bs-btn-color: #b91c1c;
+    --bs-btn-bg: #dc2626;
+    --bs-btn-color: #ffffff;
     --bs-btn-border-color: transparent;
-    --bs-btn-hover-bg: #fee2e2;
-    --bs-btn-hover-color: #991b1b;
+    --bs-btn-hover-bg: #b91c1c;
+    --bs-btn-hover-color: #ffffff;
     --bs-btn-hover-border-color: transparent;
-    --bs-btn-active-bg: #fecaca;
-    --bs-btn-active-color: #991b1b;
+    --bs-btn-active-bg: #991b1b;
+    --bs-btn-active-color: #ffffff;
     --bs-btn-active-border-color: transparent;
-    --bs-btn-focus-shadow-rgb: 185, 28, 28;
+    --bs-btn-focus-shadow-rgb: 220, 38, 38;
     font-weight: 600;
 }
 
 .table .btn-info:hover,
 .table .btn-warning:hover,
+.table .btn-success:hover,
 .table .btn-danger:hover {
     transform: translateY(-1px);
 }
@@ -1035,16 +1036,16 @@ thead.table-dark th,
 }
 
 .table .btn-success {
-    --bs-btn-bg: #f1f5f9;
-    --bs-btn-color: #334155;
-    --bs-btn-border-color: #e2e8f0;
-    --bs-btn-hover-bg: #e2e8f0;
-    --bs-btn-hover-color: #1e293b;
-    --bs-btn-hover-border-color: #cbd5e1;
-    --bs-btn-active-bg: #cbd5e1;
-    --bs-btn-active-color: #0f172a;
-    --bs-btn-active-border-color: #cbd5e1;
-    --bs-btn-focus-shadow-rgb: 51, 65, 85;
+    --bs-btn-bg: #16a34a;
+    --bs-btn-color: #ffffff;
+    --bs-btn-border-color: transparent;
+    --bs-btn-hover-bg: #15803d;
+    --bs-btn-hover-color: #ffffff;
+    --bs-btn-hover-border-color: transparent;
+    --bs-btn-active-bg: #166534;
+    --bs-btn-active-color: #ffffff;
+    --bs-btn-active-border-color: transparent;
+    --bs-btn-focus-shadow-rgb: 22, 163, 74;
     font-weight: 600;
 }
 
@@ -1090,11 +1091,90 @@ thead.table-dark th,
     box-shadow: 0 0 0 3px rgba(148, 163, 184, 0.18);
 }
 .user-status.is-active .status-dot {
-    background: var(--mmb-primary);
-    box-shadow: 0 0 0 3px rgba(var(--mmb-primary-rgb), 0.15);
+    background: #16a34a;
+    box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.15);
+}
+.user-status.is-active {
+    color: #16a34a;
 }
 .user-status.is-disabled {
-    color: #94a3b8;
+    color: #dc2626;
+}
+.user-status.is-disabled .status-dot {
+    background: #dc2626;
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15);
+}
+
+.product-add-button {
+    --bs-btn-bg: #16a34a;
+    --bs-btn-color: #ffffff;
+    --bs-btn-border-color: transparent;
+    --bs-btn-hover-bg: #15803d;
+    --bs-btn-hover-color: #ffffff;
+    --bs-btn-hover-border-color: transparent;
+    --bs-btn-active-bg: #166534;
+    --bs-btn-active-color: #ffffff;
+    --bs-btn-active-border-color: transparent;
+    --bs-btn-focus-shadow-rgb: 22, 163, 74;
+    font-weight: 600;
+}
+
+.product-add-save-button {
+    --bs-btn-bg: #16a34a;
+    --bs-btn-color: #ffffff;
+    --bs-btn-border-color: transparent;
+    --bs-btn-hover-bg: #15803d;
+    --bs-btn-hover-color: #ffffff;
+    --bs-btn-hover-border-color: transparent;
+    --bs-btn-active-bg: #166534;
+    --bs-btn-active-color: #ffffff;
+    --bs-btn-active-border-color: transparent;
+    --bs-btn-focus-shadow-rgb: 22, 163, 74;
+    font-weight: 600;
+}
+
+.product-save-button {
+    --bs-btn-bg: #2563eb;
+    --bs-btn-color: #ffffff;
+    --bs-btn-border-color: transparent;
+    --bs-btn-hover-bg: #1d4ed8;
+    --bs-btn-hover-color: #ffffff;
+    --bs-btn-hover-border-color: transparent;
+    --bs-btn-active-bg: #1e40af;
+    --bs-btn-active-color: #ffffff;
+    --bs-btn-active-border-color: transparent;
+    --bs-btn-focus-shadow-rgb: 37, 99, 235;
+    font-weight: 600;
+}
+
+.inventory-add-button,
+.inventory-save-button {
+    --bs-btn-bg: #16a34a;
+    --bs-btn-color: #ffffff;
+    --bs-btn-border-color: transparent;
+    --bs-btn-hover-bg: #15803d;
+    --bs-btn-hover-color: #ffffff;
+    --bs-btn-hover-border-color: transparent;
+    --bs-btn-active-bg: #166534;
+    --bs-btn-active-color: #ffffff;
+    --bs-btn-active-border-color: transparent;
+    --bs-btn-focus-shadow-rgb: 22, 163, 74;
+    font-weight: 600;
+}
+
+.user-add-button,
+.user-save-button {
+    --bs-btn-bg: #16a34a;
+    --bs-btn-color: #ffffff;
+    --bs-btn-border-color: transparent;
+    --bs-btn-hover-bg: #15803d;
+    --bs-btn-hover-color: #ffffff;
+    --bs-btn-hover-border-color: transparent;
+    --bs-btn-active-bg: #166534;
+    --bs-btn-active-color: #ffffff;
+    --bs-btn-active-border-color: transparent;
+    --bs-btn-focus-shadow-rgb: 22, 163, 74;
+    font-weight: 600;
 }
 
 /* ── 8. Settings form sections ── */
@@ -1353,6 +1433,10 @@ tr.mmb-top1-row:hover > td { background: rgba(251, 191, 36, 0.18) !important; }
     letter-spacing: 0.7px;
     color: #64748b;
     white-space: nowrap;
+}
+#productManagementTable > thead > tr > th {
+    text-align: center;
+    vertical-align: middle;
 }
 .table > thead.table-secondary > tr > th {
     font-size: 0.7rem;

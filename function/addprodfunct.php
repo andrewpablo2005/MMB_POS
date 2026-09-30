@@ -1117,7 +1117,7 @@ class ProductManagement
 
             $newState = ((int) $currentState) === 1 ? 0 : 1;
             $this->con->prepare("UPDATE products SET is_hidden = ? WHERE id = ?")->execute([$newState, $productId]);
-            $status = $newState === 1 ? 'disabled' : 'enabled';
+            $status = $newState === 1 ? 'deactivate' : 'activate';
             mmb_log_activity($this->con, 'products', 'product_status',
                 ucfirst($status) . " product " . mmb_audit_product_name($this->con, (int) $productId),
                 'product', (int) $productId);

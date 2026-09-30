@@ -113,7 +113,10 @@
 
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" name="addUser" class="btn btn-primary">Save User</button>
+                    <button type="submit" name="addUser" class="btn user-save-button">
+                        <i class="fas fa-save me-1" aria-hidden="true"></i>
+                        Save User
+                    </button>
                 </div>
             </form>
 
