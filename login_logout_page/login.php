@@ -132,14 +132,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
                 <div style="position: absolute; bottom: -150px; left: -150px; width: 500px; height: 500px; background: rgba(255, 255, 255, 0.05); border-radius: 50%; animation: float 8s ease-in-out infinite 2s;"></div>
 
                 <!-- Illustration Content -->
-                <div class="text-white text-center position-relative" style="z-index: 2; padding: 60px 40px;">
+                <div class="login-hero-copy text-white text-center position-relative" style="z-index: 2; padding: 60px 40px;">
                     <div class="mb-5">
                         <div class="brand-logo-tile">
                             <img src="<?= mmbpos_base_path() ?>/assets/logo.png" alt="MMB Drugmart">
                         </div>
                     </div>
                     <h3 class="fw-bold mb-3" style="font-size: 28px;">Pharmacy Management</h3>
-                    <p class="mb-5" style="font-size: 16px; line-height: 1.6; max-width: 300px; opacity: 0.95;">
+                    <p class="mb-5" style="font-size: 16px; line-height: 1.6; max-width: 300px; opacity: 0.95; margin-left: auto; margin-right: auto; text-align: center;">
                         Streamline your pharmacy operations with our comprehensive management system designed for modern healthcare
                     </p>
                     

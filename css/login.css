@@ -83,6 +83,18 @@
     margin-bottom: 0;
 }
 
+.login-hero-copy {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.login-hero-copy > * {
+    width: 100%;
+}
+
 /* Alert Styling */
 .alert-danger {
     border-radius: 8px !important;
