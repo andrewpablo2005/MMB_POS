@@ -383,7 +383,7 @@ if (!empty($_SESSION['user_id'])) {
         <div class="wepos-modal-body">
             <div id="overrideItemPreview" style="background:#f8f9fa; border:1px solid #dcdcde; padding:10px 14px; border-radius:4px; font-size:13px; margin-bottom:14px;"></div>
             <div style="margin-bottom:12px;">
-                <label style="font-weight:600; display:block; margin-bottom:4px;">Manager Void PIN</label>
+                <label style="font-weight:600; display:block; margin-bottom:4px;">Manager PIN</label>
                 <input type="password" id="overridePin" class="wepos-input-lg" placeholder="7-digit PIN" maxlength="7" autocomplete="off">
             </div>
             <div style="margin-bottom:12px;">

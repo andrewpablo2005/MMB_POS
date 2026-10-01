@@ -232,6 +232,9 @@ function dash_product_thumb(?string $image, string $sizeClass = 'mmb-thumb'): st
       <div class="dash-card">
         <div class="dash-card-header">
           <h6>Top Selling Products</h6>
+          <?php if (in_array(strtolower(trim((string)($_SESSION['position'] ?? ''))), ['owner', 'admin'], true)): ?>
+            <a class="btn btn-sm btn-outline-primary" href="?tab=reports&amp;open_top_products=1">See All</a>
+          <?php endif; ?>
         </div>
         <div class="dash-card-body">
           <?php if (empty($topProducts)): ?>

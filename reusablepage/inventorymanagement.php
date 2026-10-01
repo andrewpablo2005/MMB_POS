@@ -5,6 +5,7 @@ require_once __DIR__ . "/../function/addprodfunct.php";
 use Classes\ProductManagement;
 
 $inventoryManager = new ProductManagement($db);
+$nearExpiryDays = $inventoryManager->getNearExpiryDays();
 $inventoryBatches = $inventoryManager->getAllInventoryBatches();
 $inventoryBatchSequence = $inventoryManager->getAllInventoryBatchNumbersForSequence();
 $disposedBatches = $inventoryManager->getDisposedBatches();
@@ -105,6 +106,68 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
                 min-width: 0 !important;
                 table-layout: fixed;
             }
+            #currentInventoryTable tbody td.inventory-status-expired {
+                --bs-table-bg: #DC2626 !important;
+                --bs-table-color: #FFFFFF !important;
+                --bs-table-accent-bg: transparent !important;
+                background-color: #DC2626 !important;
+                color: #FFFFFF !important;
+            }
+            #currentInventoryTable tbody td.inventory-status-near-expiry {
+                --bs-table-bg: #FF6D00 !important;
+                --bs-table-color: #111827 !important;
+                --bs-table-accent-bg: transparent !important;
+                background-color: #FF6D00 !important;
+                color: #111827 !important;
+            }
+            #currentInventoryTable tbody td.inventory-status-low-stock {
+                --bs-table-bg: #FFEB3B !important;
+                --bs-table-color: #111827 !important;
+                --bs-table-accent-bg: transparent !important;
+                background-color: #FFEB3B !important;
+                color: #111827 !important;
+            }
+            #currentInventoryTable tbody td.inventory-status-no-stock {
+                --bs-table-bg: #6B7280 !important;
+                --bs-table-color: #FFFFFF !important;
+                --bs-table-accent-bg: transparent !important;
+                background-color: #6B7280 !important;
+                color: #FFFFFF !important;
+            }
+            #noStockTable tbody tr.inventory-status-no-stock > * {
+                --bs-table-bg: #6B7280 !important;
+                --bs-table-color: #FFFFFF !important;
+                --bs-table-accent-bg: transparent !important;
+                background-color: #6B7280 !important;
+                color: #FFFFFF !important;
+            }
+            .inventory-status-legend-item {
+                display: inline-flex;
+                align-items: center;
+                gap: 0.4rem;
+                font-size: 0.875rem;
+            }
+            .inventory-status-filter.active {
+                background-color: #E5E7EB;
+                border-color: #6B7280;
+                color: #111827;
+            }
+            .inventory-status-filter {
+                display: inline-flex;
+                align-items: center;
+                gap: 0.4rem;
+            }
+            .inventory-status-swatch {
+                display: inline-block;
+                width: 0.9rem;
+                height: 0.9rem;
+                flex: 0 0 0.9rem;
+                border-radius: 2px;
+            }
+            .inventory-status-swatch-expired { background-color: #DC2626; }
+            .inventory-status-swatch-near-expiry { background-color: #FF6D00; }
+            .inventory-status-swatch-low-stock { background-color: #FFEB3B; }
+            .inventory-status-swatch-no-stock { background-color: #6B7280; }
             #currentInventoryTable col:nth-child(1) { width: 10% !important; }
             #currentInventoryTable col:nth-child(2) { width: 12% !important; }
             #currentInventoryTable col:nth-child(3) { width: 24% !important; }
@@ -190,6 +253,13 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
 
         <div class="tab-content" id="inventoryTabContent">
             <div class="tab-pane fade <?= $requestedInventoryTab === 'current' ? 'show active' : '' ?>" id="current-inventory-pane" role="tabpanel" aria-labelledby="current-inventory-tab" tabindex="0">
+            <div id="inventoryStatusFilters" class="d-flex flex-wrap align-items-center gap-2 mb-3" role="group" aria-label="Filter inventory by status">
+                <button type="button" class="btn btn-sm btn-outline-secondary inventory-status-filter active" data-status-filter="all" aria-pressed="true">All</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary inventory-status-filter" data-status-filter="expired" aria-pressed="false"><span class="inventory-status-swatch inventory-status-swatch-expired" aria-hidden="true"></span>Expired</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary inventory-status-filter" data-status-filter="near-expiry" title="Warning: Product is approaching its expiry date." aria-pressed="false"><span class="inventory-status-swatch inventory-status-swatch-near-expiry" aria-hidden="true"></span>Near Expiry</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary inventory-status-filter" data-status-filter="low-stock" title="Attention: Quantity has reached the minimum stock threshold." aria-pressed="false"><span class="inventory-status-swatch inventory-status-swatch-low-stock" aria-hidden="true"></span>Low Stock</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary inventory-status-filter" data-status-filter="no-stock" aria-pressed="false"><span class="inventory-status-swatch inventory-status-swatch-no-stock" aria-hidden="true"></span>No Stock</button>
+            </div>
             <div class="inventory-report-toolbar d-flex flex-wrap align-items-center gap-2 mb-2" data-table-target="currentInventoryTable">
                 <label class="mb-0" for="currentInventorySearch">Search:</label>
                 <input type="search" id="currentInventorySearch" class="form-control form-control-sm inventory-search" placeholder="Search current inventory..." style="max-width:260px;">
@@ -222,30 +292,31 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
                                 $lotNumber = trim((string) ($batch['lot_number'] ?? ''));
                                 $batchCurrentQuantity = (int) ($batch['current_quantity'] ?? 0);
                                 $batchExpiryDate = trim((string) ($batch['expiry_date'] ?? ''));
-                                $rowWarningClass = '';
+                                $stockStatusClass = '';
+                                $expiryStatusClass = '';
                                 $today = new DateTime('today');
-                                $nearExpiryDate = (clone $today)->modify('+90 days');
+                                $nearExpiryDate = (clone $today)->modify('+' . $nearExpiryDays . ' days');
 
                                 if ($batchCurrentQuantity <= 0) {
-                                    $rowWarningClass = 'table-secondary';
+                                    $stockStatusClass = 'inventory-status-no-stock';
                                 } elseif ($batchCurrentQuantity <= 15) {
-                                    $rowWarningClass = 'table-warning';
+                                    $stockStatusClass = 'inventory-status-low-stock';
                                 }
 
                                 if ($batchExpiryDate !== '') {
                                     try {
                                         $batchExpiry = new DateTime($batchExpiryDate);
                                         if ($batchExpiry < $today) {
-                                            $rowWarningClass = 'table-danger';
-                                        } elseif ($batchExpiry <= $nearExpiryDate && $rowWarningClass === '') {
-                                            $rowWarningClass = 'table-warning';
+                                            $expiryStatusClass = 'inventory-status-expired';
+                                        } elseif ($batchExpiry <= $nearExpiryDate) {
+                                            $expiryStatusClass = 'inventory-status-near-expiry';
                                         }
                                     } catch (Exception $e) {
                                         // Ignore invalid expiry input and allow the stock status to dictate the row color.
                                     }
                                 }
                             ?>
-                            <tr class="<?= $rowWarningClass ?>" data-product-id="<?= (int)($batch['product_id'] ?? 0) ?>" data-batch-id="<?= (int)($batch['id'] ?? 0) ?>">
+                            <tr data-product-id="<?= (int)($batch['product_id'] ?? 0) ?>" data-batch-id="<?= (int)($batch['id'] ?? 0) ?>">
                                 <td data-label="Batch No."><?= htmlspecialchars($batchNumber !== '' ? $batchNumber : 'N/A') ?></td>
                                 <td data-label="Lot No."><?= htmlspecialchars($lotNumber !== '' ? $lotNumber : 'N/A') ?></td>
                                 <td data-label="Product">
@@ -262,8 +333,8 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
                                 </td>
                                 <td data-label="Date Received"><?= htmlspecialchars($batch['date_received'] ?: 'N/A') ?></td>
                                 <td data-label="Original Qty"><?= htmlspecialchars((string) ($batch['received_quantity'] ?? 0)) ?></td>
-                                <td data-label="Current Qty"><?= htmlspecialchars((string) ($batch['current_quantity'] ?? 0)) ?></td>
-                                <td data-label="Expiry"><?= htmlspecialchars($batch['expiry_date'] ?: 'N/A') ?></td>
+                                <td data-label="Current Qty" class="<?= $stockStatusClass ?>"><?= htmlspecialchars((string) ($batch['current_quantity'] ?? 0)) ?></td>
+                                <td data-label="Expiry" class="<?= $expiryStatusClass ?>"><?= htmlspecialchars($batch['expiry_date'] ?: 'N/A') ?></td>
                                 <td data-label="Action" class="inventory-action-cell">
                                     <div class="inventory-action-stack">
                                         <button type="button"
@@ -391,7 +462,7 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
             </div>
             <div class="table-responsive mmb-table-scroll">
             <table id="noStockTable" class="table table-sm table-bordered align-middle w-100 mmb-stack inventory-data-table">
-                <thead class="table-warning">
+                <thead class="table-secondary">
                     <tr>
                         <th>ID</th>
                         <th>Batch No.</th>
@@ -412,7 +483,7 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
                     <?php else: ?>
                         <?php foreach ($noStockBatches as $batch): ?>
                             <?php $noStockLotNumber = trim((string) ($batch['lot_number'] ?? '')); ?>
-                            <tr>
+                            <tr class="inventory-status-no-stock">
                                 <td data-label="ID"><?= htmlspecialchars($batch['id']) ?></td>
                                 <td data-label="Batch No."><?= htmlspecialchars($batch['batch_number'] ?: 'N/A') ?></td>
                                 <td data-label="Lot No."><?= htmlspecialchars($noStockLotNumber !== '' ? $noStockLotNumber : 'N/A') ?></td>
@@ -562,6 +633,26 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
             URL.revokeObjectURL(link.href);
         }
 
+        let currentInventoryStatusFilter = 'all';
+        const currentInventoryTable = document.getElementById('currentInventoryTable');
+        const currentInventorySearch = document.getElementById('currentInventorySearch');
+        const inventoryStatusFilters = document.getElementById('inventoryStatusFilters');
+
+        function inventoryRowMatchesStatus(row) {
+            return currentInventoryStatusFilter === 'all'
+                || Boolean(row.querySelector('.inventory-status-' + currentInventoryStatusFilter));
+        }
+
+        if (window.jQuery && $.fn.dataTable) {
+            $.fn.dataTable.ext.search.push(function (settings, searchData, dataIndex) {
+                if (!settings.nTable || settings.nTable.id !== 'currentInventoryTable' || currentInventoryStatusFilter === 'all') {
+                    return true;
+                }
+                const row = settings.aoData[dataIndex] && settings.aoData[dataIndex].nTr;
+                return row ? inventoryRowMatchesStatus(row) : true;
+            });
+        }
+
         document.querySelectorAll('.inventory-report-toolbar').forEach(function (toolbar) {
             const table = getInventoryTable(toolbar);
             const search = toolbar.querySelector('.inventory-search');
@@ -592,7 +683,8 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
                     $(table).DataTable().search(query).draw();
                 } else {
                     table.querySelectorAll('tbody tr').forEach(function (row) {
-                        row.style.display = !query || row.innerText.toLowerCase().includes(query) ? '' : 'none';
+                        const matchesSearch = !query || row.innerText.toLowerCase().includes(query);
+                        row.style.display = matchesSearch && (table.id !== 'currentInventoryTable' || inventoryRowMatchesStatus(row)) ? '' : 'none';
                     });
                 }
             });
@@ -609,6 +701,30 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
                 printInventoryTable(table, toolbar.dataset.tableTarget + ' Report');
             });
         });
+
+        if (inventoryStatusFilters && currentInventoryTable) {
+            inventoryStatusFilters.addEventListener('click', function (event) {
+                const filterButton = event.target.closest('[data-status-filter]');
+                if (!filterButton) return;
+
+                currentInventoryStatusFilter = filterButton.dataset.statusFilter;
+                inventoryStatusFilters.querySelectorAll('[data-status-filter]').forEach(function (button) {
+                    const isActive = button === filterButton;
+                    button.classList.toggle('active', isActive);
+                    button.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+                });
+
+                if (window.jQuery && $.fn.DataTable.isDataTable(currentInventoryTable)) {
+                    $(currentInventoryTable).DataTable().draw();
+                } else {
+                    const query = currentInventorySearch ? currentInventorySearch.value.trim().toLowerCase() : '';
+                    currentInventoryTable.querySelectorAll('tbody tr').forEach(function (row) {
+                        const matchesSearch = !query || row.innerText.toLowerCase().includes(query);
+                        row.style.display = matchesSearch && inventoryRowMatchesStatus(row) ? '' : 'none';
+                    });
+                }
+            });
+        }
 
         const inventoryTabs = document.getElementById('inventoryTabs');
         const inventoryTabTargets = {

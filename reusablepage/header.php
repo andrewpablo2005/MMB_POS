@@ -60,7 +60,8 @@ foreach ($lowStockItems as $item) {
             'title' => 'No Stock',
             'message' => htmlspecialchars($item['product_name']) . ' has no stock in ' . $noStockBatchLabel . '.',
             'icon' => 'fas fa-exclamation-triangle',
-            'bg' => '#dc2626',
+            'icon_color' => 'text-white',
+            'bg' => '#6B7280',
             'href' => 'dashboard.php?tab=inventory&alert_product_id=' . (int)$item['id'] . '&alert_batch_id=' . (int)($firstNoStockBatch['batch_id'] ?? 0) . '&alert_type=low-stock',
             'batches' => $noStockBatches
         ];
@@ -79,7 +80,8 @@ foreach ($lowStockItems as $item) {
             'title' => 'Low Stock',
             'message' => htmlspecialchars($item['product_name']) . ' has only ' . $lowStockTotal . ' unit(s) left.',
             'icon' => 'fas fa-circle-exclamation',
-            'bg' => '#d97706',
+            'icon_color' => 'text-dark',
+            'bg' => '#FFEB3B',
             'href' => 'dashboard.php?tab=inventory&alert_product_id=' . (int)$item['id'] . '&alert_batch_id=' . (int)($firstLowStockBatch['batch_id'] ?? 0) . '&alert_type=low-stock',
             'batches' => $lowStockBatches
         ];
@@ -97,7 +99,8 @@ foreach ($expiryItems as $item) {
             'product_name' => $item['product_name'] ?? $item['name'],
             'status' => $item['status'],
             'icon' => $item['status'] === 'Expired' ? 'fas fa-exclamation-triangle' : 'fas fa-clock',
-            'bg' => $item['status'] === 'Expired' ? '#f59e0b' : '#2563eb',
+            'icon_color' => $item['status'] === 'Expired' ? 'text-white' : 'text-dark',
+            'bg' => $item['status'] === 'Expired' ? '#DC2626' : '#FF6D00',
             'batches' => []
         ];
     }
@@ -116,6 +119,7 @@ foreach ($expiryGroups as $group) {
         'title' => $group['title'],
         'message' => $message,
         'icon' => $group['icon'],
+        'icon_color' => $group['icon_color'],
         'bg' => $group['bg'],
         'href' => 'dashboard.php?tab=inventory&alert_product_id=' . (int)$firstBatch['product_id'] . '&alert_batch_id=' . (int)($firstBatch['batch_id'] ?? 0) . '&alert_type=expiry',
         'batches' => $group['batches']
@@ -224,7 +228,7 @@ if ($showAlertsAfterLogin && !empty($globalAlertItems)) {
                 <?php foreach ($globalAlertItems as $alertIndex => $alert): ?>
                     <div class="alert-item border-bottom bg-white" data-alert-category="<?= htmlspecialchars($alert['category'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
                     <a href="<?= htmlspecialchars($alert['href'], ENT_QUOTES, 'UTF-8') ?>" class="d-flex align-items-start gap-2 px-3 py-3 text-decoration-none">
-                        <span class="d-inline-flex align-items-center justify-content-center rounded-circle text-white"
+                        <span class="d-inline-flex align-items-center justify-content-center rounded-circle <?= htmlspecialchars($alert['icon_color'] ?? 'text-white', ENT_QUOTES, 'UTF-8') ?>"
                               style="width: 28px; height: 28px; background: <?= $alert['bg'] ?>; font-size: 0.72rem; flex-shrink: 0;">
                             <i class="<?= $alert['icon'] ?>"></i>
                         </span>

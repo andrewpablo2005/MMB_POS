@@ -1433,6 +1433,12 @@ foreach ($salesDetailRows as $detailRow) {
                     bootstrap.Modal.getOrCreateInstance(sellingProductsModal).show();
                 }
             }
+            if (reportUrl.searchParams.has('open_top_products')) {
+                const sellingProductsModal = document.getElementById('topProductsModal');
+                if (sellingProductsModal && window.bootstrap) {
+                    bootstrap.Modal.getOrCreateInstance(sellingProductsModal).show();
+                }
+            }
             if (reportUrl.searchParams.has('vat_period') && reportUrl.searchParams.has('vat_value')) {
                 const vatDiscountModal = document.getElementById('vatDiscountModal');
                 if (vatDiscountModal && window.bootstrap) {

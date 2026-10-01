@@ -1693,9 +1693,14 @@ class ProductManagement
         return $html;
     }
 
+    public function getNearExpiryDays(): int
+    {
+        return $this->getInventoryAlertSetting('near_expiry_days', 60, 1, 3650);
+    }
+
     public function getExpiryAlertItems()
     {
-        $nearExpiryDays = $this->getInventoryAlertSetting('near_expiry_days', 60, 1, 3650);
+        $nearExpiryDays = $this->getNearExpiryDays();
         if (!$this->hasColumn('inventory', 'batch_number')) {
             $this->con->exec("ALTER TABLE inventory ADD COLUMN batch_number VARCHAR(100) DEFAULT NULL");
         }
@@ -1733,7 +1738,6 @@ class ProductManagement
             LEFT JOIN products p ON p.id = i.product_id
             WHERE i.expiry_date IS NOT NULL
               AND TRIM(i.expiry_date) <> ''
-                            AND i.current_quantity > 0
                             AND NOT EXISTS (
                                 SELECT 1
                                 FROM inventory_no_stock n
