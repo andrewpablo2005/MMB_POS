@@ -25,33 +25,14 @@ $dosageForms = $product->getDosageForms(); ?>
                             <div class="add-product-field">
                                 <label for="edit_branded_name_<?= $prod['id'] ?>" class="form-label">Brand Name (if applicable)</label>
                                 <input type="text" id="edit_branded_name_<?= $prod['id'] ?>" name="branded_name" class="form-control"
-                                    value="<?= htmlspecialchars($prod['branded_name'] ?? '') ?>" placeholder="e.g., Tylenol">
-                                <div class="form-text text-muted mt-1">Enter the brand printed on the package, or leave blank if there is no brand.</div>
+                                    value="<?= htmlspecialchars($prod['branded_name'] ?? '') ?>" placeholder="e.g., Tylenol" maxlength="100">
+                                <div class="form-text text-muted mt-1">Enter the brand printed on the package, or leave blank if there is no brand. Maximum 100 characters.</div>
                             </div>
                             <div class="add-product-field">
                                 <label for="edit_generic_name_<?= $prod['id'] ?>" class="form-label">Generic/Product Name</label>
                                 <input type="text" id="edit_generic_name_<?= $prod['id'] ?>" name="generic_name" class="form-control"
-                                    value="<?= htmlspecialchars($prod['generic_name'] ?? '') ?>" placeholder="e.g., Paracetamol or Potato Chips" required>
-                                <div class="form-text text-muted mt-1">Enter the name customers will recognize.</div>
-                            </div>
-                        </div>
-
-                        <div class="add-product-row add-product-row--single">
-                            <div class="add-product-field">
-                                <label for="edit_category_search_<?= $prod['id'] ?>" class="form-label">Category <span class="text-danger">*</span></label>
-                                <input type="text" id="edit_category_search_<?= $prod['id'] ?>" class="form-control" list="edit_category_list_<?= $prod['id'] ?>" placeholder="Select Category" autocomplete="off"
-                                    value="<?= htmlspecialchars($prod['category_name'] ?? '') ?>" required>
-                                <input type="hidden" id="edit_category_id_<?= $prod['id'] ?>" name="category_id" value="<?= (int) ($prod['category_id'] ?? 0) ?>">
-                                <datalist id="edit_category_list_<?= $prod['id'] ?>">
-                                    <?php foreach ($categories as $cat): ?>
-                                        <option value="<?= htmlspecialchars($cat['category_name'] ?? '') ?>"
-                                            data-id="<?= (int) ($cat['id'] ?? 0) ?>"
-                                            data-senior="<?= (int) ($cat['senior_discount'] ?? 0) ?>"
-                                            data-pwd="<?= (int) ($cat['pwd_discount'] ?? 0) ?>"
-                                            data-vat="<?= (int) ($cat['has_vat'] ?? 0) ?>">
-                                    <?php endforeach; ?>
-                                </datalist>
-                                <div id="edit_categoryRuleNote_<?= $prod['id'] ?>" class="form-text text-muted mt-1">Category controls pricing and discount rules.</div>
+                                    value="<?= htmlspecialchars($prod['generic_name'] ?? '') ?>" placeholder="e.g., Paracetamol or Potato Chips" maxlength="100" required>
+                                <div class="form-text text-muted mt-1">Enter the name customers will recognize. Maximum 100 characters.</div>
                             </div>
                         </div>
 
@@ -127,8 +108,33 @@ $dosageForms = $product->getDosageForms(); ?>
                         </div>
 
                         <div class="add-product-section-head add-product-section-head--spaced">
-                            <div><span class="add-product-section-kicker">03</span><h6>Product code</h6></div>
-                            <span>Barcode and scanning</span>
+                            <div><span class="add-product-section-kicker">03</span><h6>Product code &amp; category</h6></div>
+                            <span>Barcode, category, and staff guidance</span>
+                        </div>
+
+                        <div class="add-product-row">
+                            <div class="add-product-field">
+                                <label for="edit_category_search_<?= $prod['id'] ?>" class="form-label">Category <span class="text-danger">*</span></label>
+                                <input type="text" id="edit_category_search_<?= $prod['id'] ?>" class="form-control" list="edit_category_list_<?= $prod['id'] ?>" placeholder="Select Category" autocomplete="off"
+                                    value="<?= htmlspecialchars($prod['category_name'] ?? '') ?>" required>
+                                <input type="hidden" id="edit_category_id_<?= $prod['id'] ?>" name="category_id" value="<?= (int) ($prod['category_id'] ?? 0) ?>">
+                                <datalist id="edit_category_list_<?= $prod['id'] ?>">
+                                    <?php foreach ($categories as $cat): ?>
+                                        <option value="<?= htmlspecialchars($cat['category_name'] ?? '') ?>"
+                                            data-id="<?= (int) ($cat['id'] ?? 0) ?>"
+                                            data-senior="<?= (int) ($cat['senior_discount'] ?? 0) ?>"
+                                            data-pwd="<?= (int) ($cat['pwd_discount'] ?? 0) ?>"
+                                            data-vat="<?= (int) ($cat['has_vat'] ?? 0) ?>">
+                                    <?php endforeach; ?>
+                                </datalist>
+                                <div id="edit_categoryRuleNote_<?= $prod['id'] ?>" class="form-text text-muted mt-1">Category controls pricing and discount rules.</div>
+                            </div>
+
+                            <div class="add-product-field">
+                                <label for="edit_product_description_<?= $prod['id'] ?>" class="form-label">Product Description / Purpose</label>
+                                <textarea id="edit_product_description_<?= $prod['id'] ?>" name="product_description" class="form-control" rows="3" maxlength="150" placeholder="Describe what this product is for, who it is for, or how staff should identify it."><?= htmlspecialchars((string) ($prod['product_description'] ?? '')) ?></textarea>
+                                <div class="form-text text-muted mt-1">This helps staff identify what the item is used for when helping customers. Maximum 150 characters.</div>
+                            </div>
                         </div>
 
                         <div class="add-product-row add-product-row--single">

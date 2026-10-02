@@ -38,6 +38,7 @@ class ProductManagement
     public string $package_type;
     public string $dosage_form;
     public int $dosage_form_id;
+    public string $product_description;
     public float $strength_per_quantity;
     public ?float $strength_per_quantity_normalized = null;
     public string $strength_per_quantity_unit;
@@ -137,6 +138,26 @@ class ProductManagement
         if (!$isNullable) {
             $this->con->exec("ALTER TABLE products MODIFY measurement_id INT NULL");
         }
+    }
+
+    private function ensureStrengthColumnOptional(): void
+    {
+        $stmt = $this->con->prepare("SELECT IS_NULLABLE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'products' AND COLUMN_NAME = 'strength'");
+        $stmt->execute();
+        $isNullable = strtoupper((string) ($stmt->fetchColumn() ?? 'YES')) === 'YES';
+
+        if (!$isNullable) {
+            $this->con->exec("ALTER TABLE products MODIFY strength DECIMAL(10,2) NULL DEFAULT NULL COMMENT 'Main strength value (e.g., 500mg)'");
+        }
+    }
+
+    private function ensureProductDescriptionColumn(): void
+    {
+        if ($this->hasColumn('products', 'product_description')) {
+            return;
+        }
+
+        $this->con->exec("ALTER TABLE products ADD COLUMN product_description TEXT NULL COMMENT 'Staff-facing description of what the product is for'");
     }
 
     private function ensureServingUnitForeignKey(): void
@@ -292,8 +313,16 @@ class ProductManagement
     public function getPost()
     {
         if (!empty($_POST)) {
-            $this->generic_name = $_POST['generic_name'] ?? '';
-            $this->branded_name = $_POST['branded_name'] ?? '';
+            $genericName = (string) ($_POST['generic_name'] ?? '');
+            $brandedName = (string) ($_POST['branded_name'] ?? '');
+            preg_match('/\\A.{0,100}/us', $genericName, $genericNameMatches);
+            preg_match('/\\A.{0,100}/us', $brandedName, $brandedNameMatches);
+            $this->generic_name = function_exists('mb_substr')
+                ? mb_substr($genericName, 0, 100, 'UTF-8')
+                : ($genericNameMatches[0] ?? '');
+            $this->branded_name = function_exists('mb_substr')
+                ? mb_substr($brandedName, 0, 100, 'UTF-8')
+                : ($brandedNameMatches[0] ?? '');
             $this->strength = $_POST['strength'] ?? '';
             $this->unit_measurement = (int) ($_POST['unit_measurement'] ?? 0);
             $this->barcode = $_POST['barcode'] ?? '';
@@ -303,6 +332,13 @@ class ProductManagement
             $this->package_type = trim($_POST['package_type'] ?? '');
             $this->dosage_form = trim($_POST['dosage_form'] ?? '');
             $this->dosage_form_id = (int) ($_POST['dosage_form_id'] ?? 0);
+            $productDescription = trim((string) ($_POST['product_description'] ?? ''));
+            if (function_exists('mb_substr')) {
+                $this->product_description = mb_substr($productDescription, 0, 150, 'UTF-8');
+            } else {
+                preg_match('/\\A.{0,150}/us', $productDescription, $descriptionMatches);
+                $this->product_description = $descriptionMatches[0] ?? '';
+            }
 
             if ($this->dosage_form_id <= 0 && $this->dosage_form !== '') {
                 try {
@@ -376,32 +412,32 @@ class ProductManagement
     if (isset($_POST['addProduct'])) {
         $this->getPost();
         // VALIDATE REQUIRED FIELDS WITH FK CONSTRAINTS
+        if (trim((string) $this->generic_name) === '') {
+            $this->response = "Generic/Product Name is required.";
+            return false;
+        }
         if ($this->category_id <= 0) {
             $this->response = "Category is required. Please select a valid category.";
             return false;
         }
+        if (trim((string) $this->barcode) === '') {
+            $this->response = "Product Code is required.";
+            return false;
+        }
         try {
             $this->ensureMeasurementColumnOptional();
+            $this->ensureStrengthColumnOptional();
+            $this->ensureProductDescriptionColumn();
             $this->ensureServingUnitForeignKey();
             $this->con->beginTransaction();
 
             // INSERT THIS BLOCK HERE
-            if (empty($this->barcode)) {
-                do {
-                    $this->barcode = time() . rand(100, 999);
+            $check = $this->con->prepare("SELECT id FROM products WHERE barcode = ?");
+            $check->execute([$this->barcode]);
 
-                    $check = $this->con->prepare("SELECT id FROM products WHERE barcode = ?");
-                    $check->execute([$this->barcode]);
-
-                } while ($check->fetch());
-            } else {
-                $check = $this->con->prepare("SELECT id FROM products WHERE barcode = ?");
-                $check->execute([$this->barcode]);
-
-                if ($check->fetch()) {
-                    $this->response = "Barcode already exists!";
-                    return false;
-                }
+            if ($check->fetch()) {
+                $this->response = "Barcode already exists!";
+                return false;
             }
 
             $imagePath = $this->handleImageUpload();
@@ -424,7 +460,7 @@ class ProductManagement
             $insertValues = [
                 $this->generic_name,
                 $this->branded_name,
-                $this->strength,
+                trim((string) $this->strength) !== '' ? $this->strength : null,
                 $this->unit_measurement > 0 ? $this->unit_measurement : null,
                 $this->barcode,
                 $this->category_id,
@@ -436,6 +472,11 @@ class ProductManagement
                 $imagePath,
                 $this->is_basic_necessities
             ];
+
+            if ($this->hasColumn('products', 'product_description')) {
+                $insertFields[] = 'product_description';
+                $insertValues[] = $this->product_description !== '' ? $this->product_description : null;
+            }
 
             if ($this->hasColumn('products', 'dosage_form_id')) {
                 $insertFields[] = 'dosage_form_id';
@@ -451,15 +492,11 @@ class ProductManagement
 
             $productId = $this->con->lastInsertId();
 
-            $addBatch = isset($_POST['add_batch_prompt']) && strtolower((string) $_POST['add_batch_prompt']) === 'yes';
+            $addBatch = isset($_POST['add_batch_prompt'])
+                && strtolower((string) $_POST['add_batch_prompt']) === 'yes'
+                && $this->received_quantity > 0;
 
             if ($addBatch) {
-                if ($this->received_quantity <= 0) {
-                    $this->con->rollBack();
-                    $this->response = "Quantity received must be greater than zero when adding a batch.";
-                    return false;
-                }
-
                 $this->batch_number = $this->generateBatchNumber((int) $productId);
                 $receivedDate = !empty($_POST['date_received']) ? $_POST['date_received'] : date('Y-m-d');
 
@@ -519,6 +556,8 @@ class ProductManagement
         $hasStrength = $this->hasColumn('products', 'strength');
         $hasPackageType = $this->hasColumn('products', 'package_type');
         $hasDosageForm = $this->hasColumn('products', 'dosage_form');
+        $hasDosageFormId = $this->hasColumn('products', 'dosage_form_id');
+        $hasProductDescription = $this->hasColumn('products', 'product_description');
         $hasStrengthPerQuantity = $this->hasColumn('products', 'strength_per_quantity');
         $hasBarcode     = $this->hasColumn('products', 'barcode');
         $hasMeasurement = $this->hasColumn('products', 'measurement_id');
@@ -536,9 +575,11 @@ class ProductManagement
             $nameFields .= "'' AS generic_name, '' AS branded_name, '' AS product_name, ";
         }
 
-        $strengthField    = $hasStrength    ? "p.strength," : "'' AS strength,";
+        $strengthField    = $hasStrength    ? "NULLIF(p.strength, 0) AS strength," : "'' AS strength,";
         $packageTypeField = $hasPackageType ? "p.package_type," : "'' AS package_type,";
         $dosageFormField  = $hasDosageForm ? "p.dosage_form," : "'' AS dosage_form,";
+        $dosageFormIdField = $hasDosageFormId ? "p.dosage_form_id," : "0 AS dosage_form_id,";
+        $productDescriptionField = $hasProductDescription ? "p.product_description," : "'' AS product_description,";
         $strengthPerQuantityField = $hasStrengthPerQuantity ? "p.strength_per_quantity," : "0.00 AS strength_per_quantity,";
         $barcodeField     = $hasBarcode     ? "p.barcode,"  : "'' AS barcode,";
         $measurementField = $hasMeasurement ? "p.measurement_id," : "0 AS measurement_id,";
@@ -556,6 +597,8 @@ class ProductManagement
                 {$strengthField}
                 {$packageTypeField}
                 {$dosageFormField}
+                {$dosageFormIdField}
+                {$productDescriptionField}
                 {$strengthPerQuantityField}
                 p.strength_per_quantity_unit,
                 {$measurementField}
@@ -1148,6 +1191,8 @@ class ProductManagement
             $oldImage = $_POST['old_image'] ?? '';
 
             try {
+                $this->ensureProductDescriptionColumn();
+                $this->ensureStrengthColumnOptional();
                 $this->con->beginTransaction();
 
                 // CHECK BARCODE (exclude current product)
@@ -1193,7 +1238,7 @@ class ProductManagement
                 $values = [
                     $this->generic_name,
                     $this->branded_name,
-                    $this->strength,
+                    trim((string) $this->strength) !== '' ? $this->strength : null,
                     $this->unit_measurement,
                     $this->barcode,
                     $this->category_id,
@@ -1204,6 +1249,11 @@ class ProductManagement
                     $this->strength_per_quantity_unit,
                     $this->is_basic_necessities
                 ];
+
+                if ($this->hasColumn('products', 'product_description')) {
+                    $setClauses[] = 'product_description = ?';
+                    $values[] = $this->product_description !== '' ? $this->product_description : null;
+                }
 
                 if ($this->hasColumn('products', 'dosage_form_id')) {
                     $setClauses[] = 'dosage_form_id = ?';
@@ -1232,6 +1282,8 @@ class ProductManagement
                     $this->batch_number = $this->generateBatchNumber($this->id);
                     $this->lot_number = trim((string) ($_POST['lot_number'] ?? ''));
                     $receivedDate = !empty($_POST['date_received']) ? $_POST['date_received'] : date('Y-m-d');
+                    $expiryDateInput = trim((string) ($_POST['expiry_date'] ?? ''));
+                    $expiryDate = $expiryDateInput !== '' ? $expiryDateInput : null;
 
                     $this->ensureInventoryLotNumberColumn();
 
@@ -1246,7 +1298,7 @@ class ProductManagement
                         $this->batch_number,
                         $this->lot_number !== '' ? $this->lot_number : null,
                         $receivedDate,
-                        $_POST['expiry_date'] ?? null,
+                        $expiryDate,
                         isset($_POST['purchase_cost']) && $_POST['purchase_cost'] !== '' ? (float) $_POST['purchase_cost'] : 0,
                         isset($_POST['markup']) && $_POST['markup'] !== '' ? (float) $_POST['markup'] : 0,
                         isset($_POST['sale_price']) && $_POST['sale_price'] !== '' ? (float) $_POST['sale_price'] : 0,
@@ -1356,7 +1408,8 @@ class ProductManagement
 
         $productId = (int) ($_POST['product_id'] ?? 0);
         $quantity = (int) ($_POST['quantity'] ?? 0);
-        $expiryDate = $_POST['expiry_date'] ?? null;
+        $expiryDateInput = trim((string) ($_POST['expiry_date'] ?? ''));
+        $expiryDate = $expiryDateInput !== '' ? $expiryDateInput : null;
         $supplierId = (int) ($_POST['supplier_id'] ?? 0);
         $lotNumber = trim((string) ($_POST['lot_number'] ?? ''));
         $purchaseCost = isset($_POST['purchase_cost']) && $_POST['purchase_cost'] !== '' ? (float) $_POST['purchase_cost'] : 0;
@@ -1441,8 +1494,12 @@ class ProductManagement
         $proofFile = $_FILES['disposal_proof'] ?? null;
         $storedProofFilename = null;
 
-        if ($inventoryId <= 0 || $quantity < 0) {
-            $this->response = "Invalid inventory batch or quantity";
+        if ($inventoryId <= 0) {
+            $this->response = "Invalid inventory batch.";
+            return false;
+        }
+        if ($quantity <= 0) {
+            $this->response = "Disposal quantity must be greater than zero.";
             return false;
         }
 
@@ -1496,6 +1553,12 @@ class ProductManagement
             }
 
             $availableQty = (int) ($batch['current_quantity'] ?? 0);
+            if ($availableQty <= 0) {
+                $this->con->rollBack();
+                @unlink($proofDirectory . '/' . $storedProofFilename);
+                $this->response = "This batch has no stock to dispose. Use Move No Stock instead.";
+                return false;
+            }
             if ($availableQty > 0 && $quantity > $availableQty) {
                 $this->con->rollBack();
                 @unlink($proofDirectory . '/' . $storedProofFilename);
@@ -1503,16 +1566,7 @@ class ProductManagement
                 return false;
             }
 
-            if ($availableQty <= 0 && $quantity > 0) {
-                $this->con->rollBack();
-                @unlink($proofDirectory . '/' . $storedProofFilename);
-                $this->response = "This batch has no current stock available to dispose. Use 0 quantity to record an empty-batch disposal.";
-                return false;
-            }
-
-            if ($availableQty <= 0) {
-                $this->con->prepare("UPDATE inventory SET current_quantity = 0 WHERE id = ?")->execute([$inventoryId]);
-            } elseif ($quantity === $availableQty) {
+            if ($quantity === $availableQty) {
                 $this->con->prepare("UPDATE inventory SET current_quantity = 0 WHERE id = ?")->execute([$inventoryId]);
             } elseif ($quantity > 0) {
                 $this->con->prepare("UPDATE inventory SET current_quantity = current_quantity - ? WHERE id = ?")->execute([$quantity, $inventoryId]);

@@ -67,7 +67,7 @@ if ($product->addProduct()) {
             </div>
         </div>
 
-        <div class="table-responsive mmb-table-scroll"><table id="productManagementTable" class="table table-striped table-hover align-middle w-100 myTable">
+        <div class="table-responsive mmb-table-scroll"><table id="productManagementTable" class="table table-striped table-hover align-middle w-100 myTable mmb-stack">
             <thead class="table-dark">
                 <tr>
                     <th data-priority="6">ID</th>
@@ -91,7 +91,7 @@ if ($product->addProduct()) {
                         $measurementName = trim((string) ($prod['measurement_name'] ?? ''));
                         $servingSize = $strength !== ''
                             ? $strength . ($measurementName !== '' ? ' ' . $measurementName : '')
-                            : 'N/A';
+                            : '';
                         $quantity = $prod['strength_per_quantity'] ?? null;
                         $quantityUnit = trim((string) ($prod['strength_per_quantity_unit'] ?? ''));
                         $packageQuantity = isset($quantity) && $quantity !== '' && (float) $quantity > 0
@@ -101,8 +101,8 @@ if ($product->addProduct()) {
                         $isProductDeactivated = (int) ($prod['is_hidden'] ?? 0) === 1;
                     ?>
                     <tr>
-                        <td><?= htmlspecialchars((string)($prod['id']), ENT_QUOTES, 'UTF-8') ?></td>
-                        <td>
+                        <td data-label="ID"><?= htmlspecialchars((string)($prod['id']), ENT_QUOTES, 'UTF-8') ?></td>
+                        <td data-label="Image">
                             <?php if (!empty(trim((string)($prod['imageproduct'] ?? '')))): ?>
                                 <span class="mmb-thumb mmb-thumb--md">
                                     <img src="../img/<?= htmlspecialchars($prod['imageproduct'], ENT_QUOTES, 'UTF-8') ?>" alt="<?= htmlspecialchars((string)($prod['generic_name'] ?? 'Product'), ENT_QUOTES, 'UTF-8') ?>" loading="lazy">
@@ -111,19 +111,19 @@ if ($product->addProduct()) {
                                 <span class="mmb-thumb mmb-thumb--md mmb-thumb--empty"><i class="fas fa-capsules"></i></span>
                             <?php endif; ?>
                         </td>
-                        <td><?= htmlspecialchars($brandName !== '' ? $brandName : 'N/A', ENT_QUOTES, 'UTF-8') ?></td>
-                        <td><?= htmlspecialchars($itemName !== '' ? $itemName : 'N/A', ENT_QUOTES, 'UTF-8') ?></td>
-                        <td><?= htmlspecialchars($servingSize, ENT_QUOTES, 'UTF-8') ?></td>
-                        <td><?= htmlspecialchars($packageQuantity, ENT_QUOTES, 'UTF-8') ?></td>
-                        <td><?= htmlspecialchars($categoryName !== '' ? $categoryName : 'N/A', ENT_QUOTES, 'UTF-8') ?></td>
-                        <td>
+                        <td data-label="Branded" class="product-name-cell"><?= htmlspecialchars($brandName !== '' ? $brandName : 'N/A', ENT_QUOTES, 'UTF-8') ?></td>
+                        <td data-label="Generic" class="product-name-cell"><?= htmlspecialchars($itemName !== '' ? $itemName : 'N/A', ENT_QUOTES, 'UTF-8') ?></td>
+                        <td data-label="Per Serving"><?= htmlspecialchars($servingSize, ENT_QUOTES, 'UTF-8') ?></td>
+                        <td data-label="Package Size"><?= htmlspecialchars($packageQuantity, ENT_QUOTES, 'UTF-8') ?></td>
+                        <td data-label="Category"><?= htmlspecialchars($categoryName !== '' ? $categoryName : 'N/A', ENT_QUOTES, 'UTF-8') ?></td>
+                        <td data-label="Status">
                             <span class="user-status <?= $isProductDeactivated ? 'is-disabled' : 'is-active' ?>">
                                 <span class="status-dot" aria-hidden="true"></span>
                                 <?= $isProductDeactivated ? 'Deactivated' : 'Active' ?>
                             </span>
                         </td>
                        
-                        <td>
+                        <td data-label="Action">
                            
                             <!-- VIEW -->
                             <button class="btn btn-info btn-sm" data-bs-toggle="modal"

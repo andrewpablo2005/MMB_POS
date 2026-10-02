@@ -37,18 +37,18 @@ $dosageForms = $product->getDosageForms();
                             <span class="add-product-section-kicker">01</span>
                             <h6>Product identity</h6>
                         </div>
-                        <span>Names and classification</span>
+                        <span>Names</span>
                     </div>
 
                     <div class="add-product-row">
                         <div class="add-product-field">
                             <label for="branded_name" class="form-label">Brand Name (if applicable)</label>
                             <input type="text" id="branded_name" name="branded_name" class="form-control"
-                                placeholder="e.g., Tylenol">
+                                placeholder="e.g., Tylenol" maxlength="100">
 
                             <div class="form-text text-muted mt-1">
                                 Enter the brand printed on the package, such as Coca-Cola or Tylenol. Leave blank if
-                                there is no brand.
+                                there is no brand. Maximum 100 characters.
                             </div>
                         </div>
 
@@ -56,48 +56,10 @@ $dosageForms = $product->getDosageForms();
                             <label for="generic_name" class="form-label">Generic/Product Name <span
                                     class="text-danger">*</span></label>
                             <input type="text" id="generic_name" name="generic_name" class="form-control"
-                                placeholder="e.g., Paracetamol or Potato Chips" required>
+                                placeholder="e.g., Paracetamol or Potato Chips" maxlength="100" required>
                             <div class="form-text text-muted mt-1">
                                 Enter the name customers will recognize, such as Paracetamol, Potato Chips, or Bottled
-                                Water.
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="add-product-row add-product-row--single">
-                        <div class="add-product-field">
-                            <label for="category_search" class="form-label">Category <span
-                                    class="text-danger">*</span></label>
-                            <div class="batch-product-search-wrap">
-                                <input type="text" id="category_search" class="form-control"
-                                    placeholder="Search or select category" autocomplete="off" required>
-                                <button type="button" class="batch-product-toggle" aria-label="Show category list">
-                                    <i class="fas fa-chevron-down"></i>
-                                </button>
-                                <div id="category_dropdown" class="batch-product-dropdown" aria-live="polite">
-                                    <?php foreach ($categories as $cat): ?>
-                                        <button type="button" class="batch-product-option" data-id="<?= (int) ($cat['id'] ?? 0) ?>"
-                                            data-label="<?= htmlspecialchars($cat['category_name'] ?? '', ENT_QUOTES, 'UTF-8') ?>"
-                                            data-senior="<?= (int) ($cat['senior_discount'] ?? 0) ?>"
-                                            data-pwd="<?= (int) ($cat['pwd_discount'] ?? 0) ?>"
-                                            data-vat="<?= (int) ($cat['has_vat'] ?? 0) ?>">
-                                            <?= htmlspecialchars($cat['category_name'] ?? '') ?>
-                                        </button>
-                                    <?php endforeach; ?>
-                                </div>
-                            </div>
-                            <select id="category_id" name="category_id" class="form-select d-none" required>
-                                <option value="">— select category —</option>
-                                <?php foreach ($categories as $cat): ?>
-                                    <option value="<?= (int) ($cat['id'] ?? 0) ?>"
-                                        data-senior="<?= (int) ($cat['senior_discount'] ?? 0) ?>"
-                                        data-pwd="<?= (int) ($cat['pwd_discount'] ?? 0) ?>"
-                                        data-vat="<?= (int) ($cat['has_vat'] ?? 0) ?>">
-                                        <?= htmlspecialchars($cat['category_name'] ?? '') ?></option>
-                                <?php endforeach; ?>
-                            </select>
-                            <div id="categoryRuleNote" class="form-text text-muted mt-1">
-                                Select a category to see whether senior/PWD discounts apply.
+                                Water. Maximum 100 characters.
                             </div>
                         </div>
                     </div>
@@ -112,23 +74,23 @@ $dosageForms = $product->getDosageForms();
 
                     <div class="add-product-row">
                         <div class="add-product-field">
-                            <label for="strength" class="form-label">Serving Size / Quantity Per Serving <span
-                                    class="text-danger">*</span></label>
+                                <label for="strength" class="form-label">Serving Size / Quantity Per Serving <span
+                                    class="text-muted">(optional)</span></label>
                             <div class="input-group">
                                 <input type="number" id="strength" name="strength" class="form-control"
-                                    placeholder="e.g., 250" min="0" required>
+                                    placeholder="e.g., 250" min="0">
                             </div>
                             <div class="form-text text-muted">Use this for a measured serving or portion, such as 250
                                 mg, 30 g, or 1 piece.
                             </div>
                         </div>
                         <div class="add-product-field">
-                            <label for="unit_measurement_search" class="form-label">Serving Unit <span
-                                    class="text-danger">*</span></label>
+                                <label for="unit_measurement_search" class="form-label">Serving Unit <span
+                                    class="text-muted">(optional)</span></label>
                             <div class="input-group batch-product-input-group">
                                 <div class="batch-product-search-wrap flex-grow-1">
                                     <input type="text" id="unit_measurement_search" class="form-control"
-                                        placeholder="Search or select serving unit" autocomplete="off" required>
+                                        placeholder="Search or select serving unit" autocomplete="off">
                                     <button type="button" class="batch-product-toggle" aria-label="Show serving unit list">
                                         <i class="fas fa-chevron-down"></i>
                                     </button>
@@ -142,7 +104,7 @@ $dosageForms = $product->getDosageForms();
                                         <?php endforeach; ?>
                                     </div>
                                 </div>
-                                <select id="unit_measurement" name="unit_measurement" class="form-select d-none" required>
+                                <select id="unit_measurement" name="unit_measurement" class="form-select d-none">
                                     <option value="">— none —</option>
                                     <?php foreach ($servingUnits as $unit): ?>
                                         <option value="<?= (int) ($unit['id'] ?? 0) ?>"
@@ -150,7 +112,7 @@ $dosageForms = $product->getDosageForms();
                                             <?= htmlspecialchars($unit['name'] ?? '') ?></option>
                                     <?php endforeach; ?>
                                 </select>
-                                <button type="button" class="btn btn-primary" data-open-measurement-modal
+                                <button type="button" class="btn mmb-add-item-button" data-open-measurement-modal
                                     data-measurement-target="unit_measurement" aria-label="Add serving unit"
                                     title="Add serving unit" data-bs-toggle="tooltip">
                                     <i class="fas fa-plus"></i>
@@ -200,7 +162,7 @@ $dosageForms = $product->getDosageForms();
                                             <?= htmlspecialchars($form['name'] ?? '') ?></option>
                                     <?php endforeach; ?>
                                 </select>
-                                <button type="button" class="btn btn-primary" data-open-dosage-form-modal
+                                <button type="button" class="btn mmb-add-item-button" data-open-dosage-form-modal
                                     aria-label="Add product form" title="Add product form" data-bs-toggle="tooltip">
                                     <i class="fas fa-plus"></i>
                                 </button>
@@ -240,13 +202,14 @@ $dosageForms = $product->getDosageForms();
                                     <div id="strength_per_quantity_unit_dropdown" class="batch-product-dropdown" aria-live="polite">
                                         <?php foreach ($unitMeasurements as $unit): ?>
                                             <button type="button" class="batch-product-option"
+                                                data-id="<?= (int) ($unit['id'] ?? 0) ?>"
                                                 data-label="<?= htmlspecialchars($unit['name'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
                                                 <?= htmlspecialchars($unit['name'] ?? '') ?>
                                             </button>
                                         <?php endforeach; ?>
                                     </div>
                                 </div>
-                                <button type="button" class="btn btn-primary" data-open-measurement-modal
+                                <button type="button" class="btn mmb-add-item-button" data-open-measurement-modal
                                     data-measurement-target="strength_per_quantity_unit" aria-label="Add package unit"
                                     title="Add package unit" data-bs-toggle="tooltip">
                                     <i class="fas fa-plus"></i>
@@ -267,17 +230,63 @@ $dosageForms = $product->getDosageForms();
                     <div class="add-product-section-head add-product-section-head--spaced">
                         <div>
                             <span class="add-product-section-kicker">03</span>
-                            <h6>Product code</h6>
+                            <h6>Product Classification & Identification</h6>
                         </div>
-                        <span>Barcode and scanning</span>
+                        <span>Category, description, barcode, and product image</span>
                     </div>
 
                     <div class="add-product-row">
-                        <div class="add-product-field add-product-field--full">
-                            <label for="barcode" class="form-label">Product Code</label>
+                        <div class="add-product-field">
+                            <label for="category_search" class="form-label">Category <span class="text-danger">*</span></label>
+                            <div class="batch-product-search-wrap">
+                                <input type="text" id="category_search" class="form-control"
+                                    placeholder="Search or select category" autocomplete="off" required>
+                                <button type="button" class="batch-product-toggle" aria-label="Show category list">
+                                    <i class="fas fa-chevron-down"></i>
+                                </button>
+                                <div id="category_dropdown" class="batch-product-dropdown" aria-live="polite">
+                                    <?php foreach ($categories as $cat): ?>
+                                        <button type="button" class="batch-product-option" data-id="<?= (int) ($cat['id'] ?? 0) ?>"
+                                            data-label="<?= htmlspecialchars($cat['category_name'] ?? '', ENT_QUOTES, 'UTF-8') ?>"
+                                            data-senior="<?= (int) ($cat['senior_discount'] ?? 0) ?>"
+                                            data-pwd="<?= (int) ($cat['pwd_discount'] ?? 0) ?>"
+                                            data-vat="<?= (int) ($cat['has_vat'] ?? 0) ?>">
+                                            <?= htmlspecialchars($cat['category_name'] ?? '') ?>
+                                        </button>
+                                    <?php endforeach; ?>
+                                </div>
+                            </div>
+                            <select id="category_id" name="category_id" class="form-select d-none">
+                                <option value="">— select category —</option>
+                                <?php foreach ($categories as $cat): ?>
+                                    <option value="<?= (int) ($cat['id'] ?? 0) ?>"
+                                        data-senior="<?= (int) ($cat['senior_discount'] ?? 0) ?>"
+                                        data-pwd="<?= (int) ($cat['pwd_discount'] ?? 0) ?>"
+                                        data-vat="<?= (int) ($cat['has_vat'] ?? 0) ?>">
+                                        <?= htmlspecialchars($cat['category_name'] ?? '') ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                            <div id="categoryRuleNote" class="form-text text-muted mt-1">
+                                Select a category to see whether senior/PWD discounts apply.
+                            </div>
+                        </div>
+
+                        <div class="add-product-field">
+                            <label for="product_description" class="form-label">Product Description / Purpose</label>
+                            <textarea id="product_description" name="product_description" class="form-control" rows="3" maxlength="150"
+                                placeholder="Describe what this product is for, who it is for, or how staff should know it. e.g. For fever and body aches."></textarea>
+                            <div class="form-text text-muted mt-1">
+                                This helps staff identify what the item is used for when helping customers. Maximum 150 characters.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="add-product-row">
+                        <div class="add-product-field">
+                            <label for="barcode" class="form-label">Product Code <span class="text-danger">*</span></label>
                             <div class="input-group">
                                 <input type="text" id="barcode" name="barcode" class="form-control"
-                                    placeholder="e.g., 123456789012">
+                                    placeholder="e.g., 123456789012" required>
                                 <button type="button" class="btn btn-outline-secondary" onclick="generateBarcode()"
                                     title="Generate barcode" aria-label="Generate barcode" data-bs-toggle="tooltip">
                                     <i class="fas fa-barcode"></i> Auto
@@ -291,6 +300,22 @@ $dosageForms = $product->getDosageForms();
                                 This code renders a scannable Code 128 barcode — preview it here and download the label
                                 PNG from the product list.
                             </div>
+                        </div>
+
+                        <div class="add-product-field">
+                            <label for="product_image_input" class="form-label">Upload Image</label>
+                            <input type="file" id="product_image_input" name="product_image"
+                                class="form-control required-file-input" accept="image/*"
+                                onchange="previewImage(event)">
+                            <small class="text-muted d-block mt-2"><i class="fas fa-info-circle"></i> Recommended:
+                                500x500px, JPG/PNG, max 5MB</small>
+                        </div>
+                    </div>
+
+                    <div id="image_preview_container" style="display: none;">
+                        <div class="text-center">
+                            <img id="image_preview" src="" alt="Image Preview"
+                                style="max-width: 100%; max-height: 300px; border: 1px solid #ddd; border-radius: 8px; padding: 10px; background-color: #f8f9fa;">
                         </div>
                     </div>
 
@@ -441,33 +466,6 @@ $dosageForms = $product->getDosageForms();
                                     Enter the product expiry date when applicable.
                                 </div>
                             </div>
-                        </div>
-                    </div>
-
-                    <!-- IMAGE SECTION -->
-                    <div class="add-product-section-head add-product-section-head--spaced">
-                        <div>
-                            <span class="add-product-section-kicker">05</span>
-                            <h6>Product image</h6>
-                        </div>
-                        <span>Catalog display image</span>
-                    </div>
-                    <div class="add-product-row add-product-row--single">
-                        <div class="add-product-field add-product-field--full">
-                            <label for="product_image_input" class="form-label">Upload Image</label>
-                            <input type="file" id="product_image_input" name="product_image"
-                                class="form-control required-file-input" accept="image/*"
-                                onchange="previewImage(event)">
-                            <small class="text-muted d-block mt-2"><i class="fas fa-info-circle"></i> Recommended:
-                                500x500px, JPG/PNG, max 5MB</small>
-                        </div>
-                    </div>
-
-                    <!-- IMAGE PREVIEW -->
-                    <div id="image_preview_container" style="display: none;">
-                        <div class="text-center">
-                            <img id="image_preview" src="" alt="Image Preview"
-                                style="max-width: 100%; max-height: 300px; border: 1px solid #ddd; border-radius: 8px; padding: 10px; background-color: #f8f9fa;">
                         </div>
                     </div>
 
@@ -1036,9 +1034,27 @@ $dosageForms = $product->getDosageForms();
         let measurementTargetId = '';
         let returnToProductModal = false;
 
-        const closeMeasurementAndReturn = () => {
-            if (!measurementModal) return;
-            bootstrap.Modal.getOrCreateInstance(measurementModal).hide();
+        const productModalRefreshStateKey = 'mmbAddProductRefreshState';
+        const refreshProductModalAfterCatalogChange = (notice) => {
+            const productForm = document.querySelector('#addProductModal form');
+            const fields = productForm
+                ? Array.from(productForm.querySelectorAll('input, select, textarea')).map((field) => ({
+                    type: field.type || field.tagName.toLowerCase(),
+                    value: field.type === 'checkbox' || field.type === 'radio' ? null : field.value,
+                    checked: field.type === 'checkbox' || field.type === 'radio' ? field.checked : null
+                }))
+                : [];
+
+            try {
+                sessionStorage.setItem(productModalRefreshStateKey, JSON.stringify({
+                    fields,
+                    imageSelected: Boolean(productForm?.querySelector('input[type="file"]')?.files?.length),
+                    notice
+                }));
+            } catch (error) {
+                console.warn('Could not preserve the product form draft before refresh.', error);
+            }
+            window.location.reload();
         };
 
         document.querySelectorAll('[data-open-measurement-modal]').forEach((button) => {
@@ -1102,6 +1118,8 @@ $dosageForms = $product->getDosageForms();
                             target.value = target.id === 'unit_measurement' ? String(id) : savedName;
                             const selectedOption = target.options[target.selectedIndex];
                             if (selectedOption) selectedOption.dataset.measurementId = String(id);
+                        } else if (target && target.tagName === 'INPUT') {
+                            target.value = savedName;
                         }
                         if (targetSearch) {
                             targetSearch.value = savedName;
@@ -1137,13 +1155,13 @@ $dosageForms = $product->getDosageForms();
                             }
                         }
 
-                        mmbNotify({
+                        const notice = {
                             type: data.success ? 'success' : 'warning',
                             title: data.success ? 'Measurement added' : 'Measurement already exists',
                             message: data.message || 'The measurement is ready to use.'
-                        });
+                        };
                         measurementForm.reset();
-                        closeMeasurementAndReturn();
+                        refreshProductModalAfterCatalogChange(notice);
                     })
                     .catch((error) => {
                         mmbNotify({ type: 'danger', title: 'Could not add measurement', message: error.message });
@@ -1218,13 +1236,15 @@ $dosageForms = $product->getDosageForms();
                         option.setAttribute('data-name', savedName);
                         dosageFormSelect.value = String(id);
                         dosageFormValue.value = savedName;
-                        mmbNotify({
+                        const dosageFormSearch = document.getElementById('dosage_form_search');
+                        if (dosageFormSearch) dosageFormSearch.value = savedName;
+                        const notice = {
                             type: data.success ? 'success' : 'warning',
                             title: data.success ? 'Product form added' : 'Product form already exists',
                             message: data.message || 'The product form is ready to use.'
-                        });
+                        };
                         dosageFormForm.reset();
-                        bootstrap.Modal.getOrCreateInstance(dosageFormModal).hide();
+                        refreshProductModalAfterCatalogChange(notice);
                     })
                     .catch((error) => {
                         mmbNotify({ type: 'danger', title: 'Could not add product form', message: error.message });
@@ -1253,11 +1273,18 @@ $dosageForms = $product->getDosageForms();
                 ? measurementDeleteButton.dataset.deleteMeasurement
                 : 'dosage_form_id';
             const select = document.getElementById(selectId);
-            const option = select?.options[select.selectedIndex];
+            const packageUnitDropdown = selectId === 'strength_per_quantity_unit'
+                ? document.getElementById('strength_per_quantity_unit_dropdown')
+                : null;
+            const option = select?.tagName === 'SELECT'
+                ? select.options[select.selectedIndex]
+                : Array.from(packageUnitDropdown?.querySelectorAll('.batch-product-option') || []).find((item) =>
+                    (item.dataset.label || item.textContent.trim()).toLowerCase() === (select?.value || '').trim().toLowerCase()
+                );
             const id = measurementDeleteButton
-                ? option?.dataset.measurementId
+                ? (selectId === 'strength_per_quantity_unit' ? option?.dataset.id : option?.dataset.measurementId)
                 : option?.value;
-            const name = option?.textContent.trim();
+            const name = option?.dataset.label || option?.textContent.trim();
             if (!select || !id || !name) {
                 mmbNotify({ type: 'warning', title: 'Select an item first' });
                 return;
@@ -1284,7 +1311,11 @@ $dosageForms = $product->getDosageForms();
                     if (selectId === 'dosage_form_id') {
                         dosageFormValue.value = '';
                     }
-                    mmbNotify({ type: 'success', title: 'Deleted successfully', message: data.message });
+                    refreshProductModalAfterCatalogChange({
+                        type: 'success',
+                        title: 'Deleted successfully',
+                        message: data.message
+                    });
                 })
                 .catch((error) => {
                     mmbNotify({ type: 'danger', title: 'Could not delete item', message: error.message });
@@ -1562,24 +1593,18 @@ $dosageForms = $product->getDosageForms();
     // ADD FORM VALIDATION BEFORE SUBMIT
     function validateAddProductForm(event) {
         const categoryValue = document.getElementById('category_id');
-        const brandedName = document.getElementById('branded_name');
         const genericName = document.getElementById('generic_name');
         const strength = document.getElementById('strength');
         const barcodeInput = document.getElementById('barcode');
-        const imageInput = document.getElementById('product_image_input');
-        const addBatchPrompt = document.getElementById('add_batch_prompt');
-        const receivedQuantity = document.getElementById('batch_quantity');
 
         let errors = [];
 
         if (!genericName.value.trim()) errors.push('Generic Name is required');
         if (!categoryValue.value) errors.push('Category is required - Please select a category');
-        if (!strength || strength.value === '') errors.push('Amount per Serving is required');
+        if (!barcodeInput || !barcodeInput.value.trim()) errors.push('Product Code is required');
         if (strength && strength.value !== '' && Number(strength.value) < 0) {
             errors.push('Amount per Serving cannot be negative');
         }
-        const servingUnit = document.getElementById('unit_measurement');
-        if (!servingUnit || !servingUnit.value) errors.push('Serving Unit is required');
 
         // ISSUE #6 (1): Package Size — whole number >= 1, no negatives/decimals
         const spqField = document.getElementById('strength_per_quantity');
@@ -1589,12 +1614,6 @@ $dosageForms = $product->getDosageForms();
                 errors.push('Package Size must be a whole number of at least 1 (no decimals or negatives)');
             }
         }
-        if (addBatchPrompt && addBatchPrompt.value === 'yes') {
-            if (receivedQuantity && (!receivedQuantity.value || Number(receivedQuantity.value) <= 0)) {
-                errors.push('Quantity Received must be greater than zero when adding a batch');
-            }
-        }
-
         if (errors.length > 0) {
             mmbAlert({
                 type: 'warning',
@@ -1653,4 +1672,56 @@ $dosageForms = $product->getDosageForms();
         });
         renderPreview();
     });
+
+    const restoreProductModalAfterCatalogRefresh = () => {
+        let savedState;
+        try {
+            const serializedState = sessionStorage.getItem('mmbAddProductRefreshState');
+            if (!serializedState) return;
+            sessionStorage.removeItem('mmbAddProductRefreshState');
+            savedState = JSON.parse(serializedState);
+        } catch (error) {
+            sessionStorage.removeItem('mmbAddProductRefreshState');
+            return;
+        }
+
+        const productModal = document.getElementById('addProductModal');
+        const productForm = productModal?.querySelector('form');
+        if (!productModal || !productForm) return;
+
+        const fields = Array.from(productForm.querySelectorAll('input, select, textarea'));
+        fields.forEach((field, index) => {
+            const savedField = savedState.fields?.[index];
+            if (!savedField || field.type === 'file') return;
+
+            if (field.type === 'checkbox' || field.type === 'radio') {
+                field.checked = Boolean(savedField.checked);
+            } else {
+                field.value = savedField.value ?? '';
+            }
+            field.dispatchEvent(new Event('input', { bubbles: true }));
+            field.dispatchEvent(new Event('change', { bubbles: true }));
+        });
+
+        const batchChoice = productForm.querySelector(`[data-batch-option="${productForm.querySelector('#add_batch_prompt')?.value || 'no'}"]`);
+        if (batchChoice) batchChoice.click();
+
+        bootstrap.Modal.getOrCreateInstance(productModal).show();
+        if (savedState.notice && typeof window.mmbNotify === 'function') {
+            window.mmbNotify(savedState.notice);
+        }
+        if (savedState.imageSelected && typeof window.mmbNotify === 'function') {
+            window.mmbNotify({
+                type: 'warning',
+                title: 'Reselect product image',
+                message: 'The form was restored after refreshing, but the image must be selected again.'
+            });
+        }
+    };
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', restoreProductModalAfterCatalogRefresh, { once: true });
+    } else {
+        window.setTimeout(restoreProductModalAfterCatalogRefresh, 0);
+    }
 </script>

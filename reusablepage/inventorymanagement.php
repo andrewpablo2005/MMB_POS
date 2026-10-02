@@ -85,21 +85,22 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
         <?php endif; ?>
         <style>
             .inventory-action-column {
-                width: 230px;
-                min-width: 230px;
+                width: 18%;
+                min-width: 190px;
             }
             .inventory-action-stack {
                 display: flex;
-                flex-direction: column;
-                gap: 0.5rem;
-                min-width: 180px;
+                flex-direction: row;
+                gap: 0.35rem;
+                min-width: 0;
             }
             .inventory-action-stack .btn {
-                width: 100%;
-                white-space: normal;
-                overflow-wrap: anywhere;
+                flex: 1 1 0;
+                min-width: 0;
+                padding: 0.3rem 0.4rem;
+                white-space: nowrap;
                 font-weight: 600;
-                letter-spacing: 0.01em;
+                font-size: 0.78rem;
             }
             #currentInventoryTable {
                 width: 100% !important;
@@ -157,6 +158,20 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
                 align-items: center;
                 gap: 0.4rem;
             }
+            .inventory-status-count {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                min-width: 1.25rem;
+                height: 1.25rem;
+                padding: 0 0.3rem;
+                border-radius: 999px;
+                background: rgba(100, 116, 139, 0.14);
+                color: inherit;
+                font-size: 0.72rem;
+                font-weight: 700;
+                line-height: 1;
+            }
             .inventory-status-swatch {
                 display: inline-block;
                 width: 0.9rem;
@@ -168,42 +183,52 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
             .inventory-status-swatch-near-expiry { background-color: #FF6D00; }
             .inventory-status-swatch-low-stock { background-color: #FFEB3B; }
             .inventory-status-swatch-no-stock { background-color: #6B7280; }
-            #currentInventoryTable col:nth-child(1) { width: 10% !important; }
-            #currentInventoryTable col:nth-child(2) { width: 12% !important; }
-            #currentInventoryTable col:nth-child(3) { width: 24% !important; }
-            #currentInventoryTable col:nth-child(4) { width: 12% !important; }
+            #currentInventoryTable col:nth-child(1) { width: 9% !important; }
+            #currentInventoryTable col:nth-child(2) { width: 9% !important; }
+            #currentInventoryTable col:nth-child(3) { width: 22% !important; }
+            #currentInventoryTable col:nth-child(4) { width: 11% !important; }
             #currentInventoryTable col:nth-child(5),
-            #currentInventoryTable col:nth-child(6) { width: 12% !important; }
-            #currentInventoryTable col:nth-child(7) { width: 12% !important; }
-            #currentInventoryTable col:nth-child(8) { width: 12% !important; }
+            #currentInventoryTable col:nth-child(6) { width: 10% !important; }
+            #currentInventoryTable col:nth-child(7) { width: 11% !important; }
+            #currentInventoryTable col:nth-child(8) { width: 18% !important; }
             #currentInventoryTable th:nth-child(1),
-            #currentInventoryTable td:nth-child(1) { width: 10% !important; }
+            #currentInventoryTable td:nth-child(1) { width: 9% !important; }
             #currentInventoryTable th:nth-child(2),
-            #currentInventoryTable td:nth-child(2) { width: 12% !important; }
+            #currentInventoryTable td:nth-child(2) { width: 9% !important; }
             #currentInventoryTable th:nth-child(3),
-            #currentInventoryTable td:nth-child(3) { width: 24% !important; }
+            #currentInventoryTable td:nth-child(3) { width: 22% !important; }
             #currentInventoryTable th:nth-child(4),
-            #currentInventoryTable td:nth-child(4),
+            #currentInventoryTable td:nth-child(4) { width: 11% !important; }
             #currentInventoryTable th:nth-child(5),
-            #currentInventoryTable td:nth-child(5),
+            #currentInventoryTable td:nth-child(5) { width: 10% !important; }
             #currentInventoryTable th:nth-child(6),
-            #currentInventoryTable td:nth-child(6),
+            #currentInventoryTable td:nth-child(6) { width: 10% !important; }
             #currentInventoryTable th:nth-child(7),
-            #currentInventoryTable td:nth-child(7),
+            #currentInventoryTable td:nth-child(7) { width: 11% !important; }
             #currentInventoryTable th:nth-child(8),
-            #currentInventoryTable td:nth-child(8) { width: 12% !important; }
+            #currentInventoryTable td:nth-child(8) { width: 18% !important; }
             #currentInventoryTable th,
             #currentInventoryTable td {
                 white-space: normal !important;
                 overflow-wrap: anywhere;
                 word-break: break-word;
             }
+            #currentInventoryTable td {
+                padding: 0.4rem 0.45rem;
+                vertical-align: middle;
+            }
             #currentInventoryTable th {
                 line-height: 1.25;
             }
             #currentInventoryTable td > .d-flex {
-                align-items: flex-start !important;
+                align-items: center !important;
+                gap: 0.45rem;
                 min-width: 0;
+            }
+            #currentInventoryTable .mmb-thumb--md {
+                width: 34px;
+                height: 34px;
+                flex: 0 0 34px;
             }
             #currentInventoryTable td > .d-flex > span:last-child {
                 min-width: 0;
@@ -213,6 +238,14 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
             #currentInventoryTable .inventory-action-cell,
             #currentInventoryTable .inventory-action-stack {
                 min-width: 0;
+            }
+            @media (max-width: 767.98px) {
+                #currentInventoryTable .inventory-action-stack {
+                    flex-direction: column;
+                }
+                #currentInventoryTable .inventory-action-stack .btn {
+                    width: 100%;
+                }
             }
         </style>
         <div class="page-head">
@@ -254,11 +287,11 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
         <div class="tab-content" id="inventoryTabContent">
             <div class="tab-pane fade <?= $requestedInventoryTab === 'current' ? 'show active' : '' ?>" id="current-inventory-pane" role="tabpanel" aria-labelledby="current-inventory-tab" tabindex="0">
             <div id="inventoryStatusFilters" class="d-flex flex-wrap align-items-center gap-2 mb-3" role="group" aria-label="Filter inventory by status">
-                <button type="button" class="btn btn-sm btn-outline-secondary inventory-status-filter active" data-status-filter="all" aria-pressed="true">All</button>
-                <button type="button" class="btn btn-sm btn-outline-secondary inventory-status-filter" data-status-filter="expired" aria-pressed="false"><span class="inventory-status-swatch inventory-status-swatch-expired" aria-hidden="true"></span>Expired</button>
-                <button type="button" class="btn btn-sm btn-outline-secondary inventory-status-filter" data-status-filter="near-expiry" title="Warning: Product is approaching its expiry date." aria-pressed="false"><span class="inventory-status-swatch inventory-status-swatch-near-expiry" aria-hidden="true"></span>Near Expiry</button>
-                <button type="button" class="btn btn-sm btn-outline-secondary inventory-status-filter" data-status-filter="low-stock" title="Attention: Quantity has reached the minimum stock threshold." aria-pressed="false"><span class="inventory-status-swatch inventory-status-swatch-low-stock" aria-hidden="true"></span>Low Stock</button>
-                <button type="button" class="btn btn-sm btn-outline-secondary inventory-status-filter" data-status-filter="no-stock" aria-pressed="false"><span class="inventory-status-swatch inventory-status-swatch-no-stock" aria-hidden="true"></span>No Stock</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary inventory-status-filter active" data-status-filter="all" aria-pressed="true">All <span class="inventory-status-count" data-status-count="all">0</span></button>
+                <button type="button" class="btn btn-sm btn-outline-secondary inventory-status-filter" data-status-filter="expired" aria-pressed="false"><span class="inventory-status-swatch inventory-status-swatch-expired" aria-hidden="true"></span>Expired <span class="inventory-status-count" data-status-count="expired">0</span></button>
+                <button type="button" class="btn btn-sm btn-outline-secondary inventory-status-filter" data-status-filter="near-expiry" title="Warning: Product is approaching its expiry date." aria-pressed="false"><span class="inventory-status-swatch inventory-status-swatch-near-expiry" aria-hidden="true"></span>Near Expiry <span class="inventory-status-count" data-status-count="near-expiry">0</span></button>
+                <button type="button" class="btn btn-sm btn-outline-secondary inventory-status-filter" data-status-filter="low-stock" title="Attention: Quantity has reached the minimum stock threshold." aria-pressed="false"><span class="inventory-status-swatch inventory-status-swatch-low-stock" aria-hidden="true"></span>Low Stock <span class="inventory-status-count" data-status-count="low-stock">0</span></button>
+                <button type="button" class="btn btn-sm btn-outline-secondary inventory-status-filter" data-status-filter="no-stock" aria-pressed="false"><span class="inventory-status-swatch inventory-status-swatch-no-stock" aria-hidden="true"></span>No Stock <span class="inventory-status-count" data-status-count="no-stock">0</span></button>
             </div>
             <div class="inventory-report-toolbar d-flex flex-wrap align-items-center gap-2 mb-2" data-table-target="currentInventoryTable">
                 <label class="mb-0" for="currentInventorySearch">Search:</label>
@@ -339,22 +372,27 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
                                     <div class="inventory-action-stack">
                                         <button type="button"
                                                 class="btn btn-sm btn-warning inventory-move-no-stock-btn"
+                                            title="Move batch to No Stock"
+                                            aria-label="Move batch to No Stock"
                                                 data-batch-id="<?= (int)($batch['id'] ?? 0) ?>"
                                                 data-batch-number="<?= htmlspecialchars((string)($batchNumber !== '' ? $batchNumber : 'N/A'), ENT_QUOTES, 'UTF-8') ?>"
                                                 data-product-name="<?= htmlspecialchars(trim(($batch['branded_name'] ?? '') . ' ' . ($batch['generic_name'] ?? '') . ' ' . ($batch['strength'] ?? '') . ' ' . ($batch['measurement_name'] ?? '')), ENT_QUOTES, 'UTF-8') ?>"
                                                 data-current-quantity="<?= (int)($batch['current_quantity'] ?? 0) ?>"
                                                 onclick="(function(){var select=document.getElementById('move_no_stock_inventory_id'); var batchId='<?= (int)($batch['id'] ?? 0) ?>'; var batchNumber='<?= htmlspecialchars((string)($batchNumber !== '' ? $batchNumber : 'N/A'), ENT_QUOTES, 'UTF-8') ?>'; var productName='<?= htmlspecialchars(trim(($batch['branded_name'] ?? '') . ' ' . ($batch['generic_name'] ?? '') . ' ' . ($batch['strength'] ?? '') . ' ' . ($batch['measurement_name'] ?? '')), ENT_QUOTES, 'UTF-8') ?>'; var currentQty = Number('<?= (int)($batch['current_quantity'] ?? 0) ?>'); var form=document.querySelector('#moveNoStockModal form'); var batchLabel = batchNumber ? batchNumber : (productName || 'the selected batch'); var isEmptyBatch = currentQty <= 0; if(select){ var match=null; for(var i=0;i<select.options.length;i++){var option=select.options[i]; var optionText=(option.textContent||'').trim().toLowerCase(); if(option.value === String(batchId)) { match=option; break; } if(batchNumber && productName && optionText.indexOf(batchNumber.toLowerCase()) !== -1 && optionText.indexOf(productName.toLowerCase()) !== -1) { match=option; break; } } if(match){ select.value = match.value; if(typeof select.dispatchEvent === 'function'){ select.dispatchEvent(new Event('change', { bubbles: true })); } } } if(!isEmptyBatch){ mmbNotify({ type: 'warning', title: 'Batch still has stock', message: 'Cannot move ' + batchLabel + ' to No Stock because it still has ' + currentQty + ' unit(s) in stock.' }); return; } var message = 'You are manually archiving ' + batchLabel + ' as a zero-stock batch.\n\nThis batch is empty and will be moved to No Stock history. It will no longer appear in active inventory and should only be used when the product has no remaining stock.'; mmbConfirm({ title: 'Move empty batch to No Stock history?', message: message, okLabel: 'Yes, move to No Stock', danger: false }).then(function (yes) { if (!yes) return; if (form) { form.dataset.confirmed = '1'; form.submit(); } });})();">
                                             <i class="fas fa-archive me-1" aria-hidden="true"></i>
-                                            Move No Stock
+                                            No Stock
                                         </button>
                                         <button type="button"
                                                 class="btn btn-sm btn-danger inventory-dispose-batch-btn"
+                                            title="Dispose batch"
+                                            aria-label="Dispose batch"
                                                 data-batch-id="<?= (int)($batch['id'] ?? 0) ?>"
+                                                data-current-quantity="<?= $batchCurrentQuantity ?>"
                                                 data-batch-number="<?= htmlspecialchars((string)($batchNumber !== '' ? $batchNumber : 'N/A'), ENT_QUOTES, 'UTF-8') ?>"
                                                 data-product-name="<?= htmlspecialchars(trim(($batch['branded_name'] ?? '') . ' ' . ($batch['generic_name'] ?? '') . ' ' . ($batch['strength'] ?? '') . ' ' . ($batch['measurement_name'] ?? '')), ENT_QUOTES, 'UTF-8') ?>"
                                                 onclick="(function(){var select=document.getElementById('dispose_inventory_id'); var batchId='<?= (int)($batch['id'] ?? 0) ?>'; var batchNumber='<?= htmlspecialchars((string)($batchNumber !== '' ? $batchNumber : 'N/A'), ENT_QUOTES, 'UTF-8') ?>'; var productName='<?= htmlspecialchars(trim(($batch['branded_name'] ?? '') . ' ' . ($batch['generic_name'] ?? '') . ' ' . ($batch['strength'] ?? '') . ' ' . ($batch['measurement_name'] ?? '')), ENT_QUOTES, 'UTF-8') ?>'; if(select){ var match=null; for(var i=0;i<select.options.length;i++){var option=select.options[i]; var optionText=(option.textContent||'').trim().toLowerCase(); if(option.value === String(batchId)) { match=option; break; } if(batchNumber && productName && optionText.indexOf(batchNumber.toLowerCase()) !== -1 && optionText.indexOf(productName.toLowerCase()) !== -1) { match=option; break; } } if(match){ select.value = match.value; if(typeof select.dispatchEvent === 'function'){ select.dispatchEvent(new Event('change', { bubbles: true })); } } } var modalEl=document.getElementById('disposeBatchModal'); if(modalEl && window.bootstrap && bootstrap.Modal){ bootstrap.Modal.getOrCreateInstance(modalEl).show(); }})();">
                                             <i class="fas fa-trash me-1" aria-hidden="true"></i>
-                                            Dispose Batch
+                                            Dispose
                                         </button>
                                     </div>
                                 </td>
@@ -638,6 +676,30 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
         const currentInventorySearch = document.getElementById('currentInventorySearch');
         const inventoryStatusFilters = document.getElementById('inventoryStatusFilters');
 
+        function updateInventoryStatusCounts() {
+            if (!currentInventoryTable || !inventoryStatusFilters) return;
+
+            const rows = window.jQuery && $.fn.DataTable && $.fn.DataTable.isDataTable(currentInventoryTable)
+                ? $(currentInventoryTable).DataTable().rows().nodes().toArray()
+                : Array.from(currentInventoryTable.querySelectorAll('tbody tr[data-batch-id]'));
+            const statuses = ['all', 'expired', 'near-expiry', 'low-stock', 'no-stock'];
+
+            statuses.forEach(function (status) {
+                const count = status === 'all'
+                    ? rows.length
+                    : rows.filter(function (row) {
+                        return Boolean(row.querySelector('.inventory-status-' + status));
+                    }).length;
+                const countElement = inventoryStatusFilters.querySelector('[data-status-count="' + status + '"]');
+                if (countElement) countElement.textContent = String(count);
+            });
+        }
+
+        updateInventoryStatusCounts();
+        if (window.jQuery && currentInventoryTable) {
+            $(currentInventoryTable).on('draw.dt', updateInventoryStatusCounts);
+        }
+
         function inventoryRowMatchesStatus(row) {
             return currentInventoryStatusFilter === 'all'
                 || Boolean(row.querySelector('.inventory-status-' + currentInventoryStatusFilter));
@@ -824,7 +886,14 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
                             </button>
                             <div id="batch_product_dropdown" class="batch-product-dropdown" aria-live="polite">
                                 <?php foreach ($products as $product): ?>
-                                    <?php $productLabel = trim(($product['branded_name'] ?? '') . ' ' . ($product['generic_name'] ?? '')); ?>
+                                    <?php
+                                        $dosageFormName = trim((string) ($product['dosage_form'] ?? ''));
+                                        $productLabel = trim(implode(' ', array_filter([
+                                            $product['branded_name'] ?? '',
+                                            $product['generic_name'] ?? '',
+                                            $dosageFormName,
+                                        ], static fn($value) => trim((string) $value) !== '')));
+                                    ?>
                                     <button type="button" class="batch-product-option" data-id="<?= (int)($product['id'] ?? 0) ?>" data-label="<?= htmlspecialchars($productLabel, ENT_QUOTES, 'UTF-8') ?>">
                                         <?= htmlspecialchars($productLabel) ?>
                                     </button>
@@ -1097,34 +1166,61 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
         const disposeBatchSelect = document.getElementById('dispose_inventory_id');
         const disposeQuantityInput = document.getElementById('dispose_quantity');
         const disposeQuantityHelp = document.getElementById('dispose_quantity_help');
+        const disposeSubmitButton = document.querySelector('#disposeBatchModal button[type="submit"]');
 
         if (disposeBatchSelect && disposeQuantityInput) {
             disposeBatchSelect.addEventListener('change', function () {
                 const selectedOption = this.options[this.selectedIndex];
                 const availableQuantity = parseInt(selectedOption?.dataset.currentQuantity || '0', 10);
                 const safeQuantity = Number.isFinite(availableQuantity) ? Math.max(0, availableQuantity) : 0;
+                const hasSelection = this.selectedIndex > 0;
+                const canDispose = hasSelection && safeQuantity > 0;
 
-                disposeQuantityInput.value = String(safeQuantity);
+                disposeQuantityInput.value = canDispose ? String(safeQuantity) : '';
+                disposeQuantityInput.min = '1';
                 disposeQuantityInput.max = String(safeQuantity);
-                disposeQuantityInput.disabled = false;
+                disposeQuantityInput.disabled = !canDispose;
                 disposeQuantityInput.setCustomValidity('');
+                if (disposeSubmitButton) disposeSubmitButton.disabled = !canDispose;
 
                 if (disposeQuantityHelp) {
-                    disposeQuantityHelp.textContent = safeQuantity > 0
+                    disposeQuantityHelp.textContent = !hasSelection
+                        ? 'Select a batch first.'
+                        : canDispose
                         ? `Maximum quantity to dispose: ${safeQuantity}`
-                        : 'This batch has no available stock. You can still record a 0-unit disposal for this empty batch.';
+                        : 'This batch has no stock. Use Move No Stock instead.';
                 }
             });
 
             disposeQuantityInput.addEventListener('input', function () {
                 const maximum = parseInt(this.max || '0', 10);
-                const enteredQuantity = parseInt(this.value || '0', 10);
+                const enteredQuantity = this.value === '' ? 0 : parseInt(this.value, 10);
                 const safeMax = Number.isFinite(maximum) ? maximum : 0;
-                this.setCustomValidity(enteredQuantity > safeMax ? `Quantity cannot exceed ${safeMax}.` : '');
+                const isValidQuantity = Number.isInteger(enteredQuantity) && enteredQuantity > 0 && enteredQuantity <= safeMax;
+                this.setCustomValidity(enteredQuantity <= 0
+                    ? 'Quantity to dispose must be greater than zero.'
+                    : enteredQuantity > safeMax
+                        ? `Quantity cannot exceed ${safeMax}.`
+                        : '');
+                if (disposeSubmitButton) disposeSubmitButton.disabled = !isValidQuantity;
             });
         }
 
         // Dispose confirmation — manual archive action for expired or unusable stock.
+        document.querySelectorAll('.inventory-dispose-batch-btn').forEach(function (button) {
+            button.addEventListener('click', function (event) {
+                if (Number(button.dataset.currentQuantity || 0) > 0) return;
+
+                event.preventDefault();
+                event.stopImmediatePropagation();
+                mmbNotify({
+                    type: 'danger',
+                    title: 'No stock to dispose',
+                    message: 'This batch has no stock. Use Move No Stock instead.'
+                });
+            }, true);
+        });
+
         const disposeForm = document.querySelector('#disposeBatchModal form');
         if (disposeForm) {
             disposeForm.addEventListener('submit', function (event) {
@@ -1134,9 +1230,35 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
                 const select = document.getElementById('dispose_inventory_id');
                 const qtyInput = document.getElementById('dispose_quantity');
                 const qty = qtyInput ? qtyInput.value : '?';
-                const batchLabel = (select && select.selectedIndex > 0)
+                const selectedOption = select && select.selectedIndex > 0 ? select.options[select.selectedIndex] : null;
+                const batchLabel = selectedOption
                     ? select.options[select.selectedIndex].text
                     : 'the selected batch';
+                const availableQuantity = Number(selectedOption?.dataset.currentQuantity || 0);
+
+                if (!selectedOption) {
+                    event.preventDefault();
+                    mmbNotify({ type: 'warning', title: 'Select a batch first' });
+                    return;
+                }
+                if (availableQuantity <= 0) {
+                    event.preventDefault();
+                    mmbNotify({
+                        type: 'warning',
+                        title: 'No stock to dispose',
+                        message: 'This batch has no stock. Use Move No Stock instead.'
+                    });
+                    return;
+                }
+                if (!Number.isInteger(Number(qty)) || Number(qty) <= 0 || Number(qty) > availableQuantity) {
+                    event.preventDefault();
+                    mmbNotify({
+                        type: 'warning',
+                        title: 'Invalid disposal quantity',
+                        message: `Enter a quantity from 1 to ${availableQuantity}.`
+                    });
+                    return;
+                }
                 const reasonInput = document.getElementById('dispose_reason');
                 const reason = reasonInput && reasonInput.value.trim() ? reasonInput.value.trim() : 'Disposed';
 
@@ -1472,7 +1594,7 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
                     const purchaseCost = (document.getElementById('batch_purchase_cost')?.value || '').trim() || '0.00';
                     const markup = (document.getElementById('batch_markup')?.value || '').trim() || '0';
                     const salePrice = (document.getElementById('batch_sale_price')?.value || '').trim() || '0.00';
-                    const expiryDate = (document.getElementById('batch_expiry_date')?.value || '').trim() || 'None';
+                    const expiryDate = (document.getElementById('batch_expiry_date')?.value || '').trim() || 'N/A';
 
                     const summary = [
                         'Product: ' + selectedProduct,
@@ -1708,7 +1830,7 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
                     </div>
                     <div class="mb-3">
                         <label for="dispose_quantity" class="form-label">Quantity to Dispose</label>
-                        <input type="number" id="dispose_quantity" name="quantity" class="form-control" min="0" step="1" value="0" required>
+                        <input type="number" id="dispose_quantity" name="quantity" class="form-control" min="1" step="1" value="" required disabled>
                         <div id="dispose_quantity_help" class="form-text">Select a batch first.</div>
                     </div>
                     <div class="mb-3">
@@ -1726,7 +1848,7 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-danger">Dispose</button>
+                    <button type="submit" class="btn btn-danger" disabled>Dispose</button>
                 </div>
             </form>
         </div>

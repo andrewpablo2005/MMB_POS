@@ -95,6 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
         console.log('DOMContentLoaded event firing, initializing wePOS...');
         weposRestoreCart();
+        weposSetupProductNameToggles();
         weposSetupScanner();
         weposSetupSearch();
         weposSetupKeyboard();
@@ -107,6 +108,27 @@ document.addEventListener('DOMContentLoaded', () => {
         console.error('Error during wePOS initialization:', error);
     }
 });
+
+function weposSetupProductNameToggles() {
+    document.querySelectorAll('.wepos-card-name').forEach(name => {
+        if (name.scrollHeight <= name.clientHeight + 1) return;
+
+        const toggle = document.createElement('button');
+        toggle.type = 'button';
+        toggle.className = 'wepos-card-name-toggle';
+        toggle.textContent = 'See more';
+        toggle.setAttribute('aria-expanded', 'false');
+        name.after(toggle);
+
+        toggle.addEventListener('click', event => {
+            event.preventDefault();
+            event.stopPropagation();
+            const expanded = name.classList.toggle('is-expanded');
+            toggle.textContent = expanded ? 'See less' : 'See more';
+            toggle.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+        });
+    });
+}
 
 window.addEventListener('pageshow', () => {
     if (document.readyState === 'complete') {
@@ -1461,6 +1483,7 @@ async function weposSubmitTransaction() {
 
             // Show receipt
             weposShowReceipt(weposLastReceiptData);
+            weposRefreshInventory();
             setTimeout(() => weposPrintReceipt(), 300);
 
             // Reset state
@@ -1616,8 +1639,6 @@ function weposCloseReceipt() {
     weposCustomerName = null;
     weposCustomerId = null;
     weposUpdateCart();
-    // Refresh inventory from server
-    weposRefreshInventory();
     // Focus on search for next transaction
     setTimeout(() => document.getElementById('weposSearch')?.focus(), 100);
 }
@@ -1626,19 +1647,31 @@ function weposCloseReceipt() {
 function weposRefreshInventory() {
     fetch('../function/workingpos.php?action=getProducts', {
         method: 'GET',
-        headers: { 'Content-Type': 'application/json' }
+        headers: { 'Content-Type': 'application/json' },
+        cache: 'no-store'
     })
     .then(res => res.json())
     .then(products => {
         if (!products || !Array.isArray(products)) return;
+        const refreshedProductIds = new Set();
         
         // Update each product card with new inventory
         products.forEach(newProduct => {
             const card = document.querySelector(`.wepos-product-card[data-id="${newProduct.id}"]`);
             if (!card) return;
+            refreshedProductIds.add(String(newProduct.id));
             
             const stock = parseInt(newProduct.stock || 0);
-            const isExpired = newProduct.earliest_expiry_date && new Date(newProduct.earliest_expiry_date) < new Date();
+            if (stock <= 0) {
+                card.remove();
+                return;
+            }
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const expiryDate = newProduct.earliest_expiry_date
+                ? new Date(`${newProduct.earliest_expiry_date}T00:00:00`)
+                : null;
+            const isExpired = expiryDate && expiryDate < today;
             
             // Update classes
             card.classList.toggle('out-of-stock', stock <= 0);
@@ -1663,6 +1696,22 @@ function weposRefreshInventory() {
             card.setAttribute('data-stock', stock);
             card.setAttribute('data-expired', isExpired ? '1' : '0');
         });
+
+        document.querySelectorAll('.wepos-product-card').forEach(card => {
+            if (refreshedProductIds.has(String(card.dataset.id))) return;
+            card.remove();
+        });
+
+        const productGrid = document.getElementById('weposGrid');
+        if (productGrid && !productGrid.querySelector('.wepos-product-card')) {
+            let emptyState = productGrid.querySelector('.wepos-empty-inventory-state');
+            if (!emptyState) {
+                emptyState = document.createElement('div');
+                emptyState.className = 'wepos-empty-inventory-state w-100 text-center text-muted py-5 px-3';
+                emptyState.innerHTML = '<i class="fas fa-box-open d-block mb-3" style="font-size:2.5rem;color:#cbd5e1"></i><h5 class="mb-2">No products available</h5><p class="mb-0">Add a product and inventory batch before starting a sale.</p>';
+                productGrid.appendChild(emptyState);
+            }
+        }
     })
     .catch(err => console.log('Inventory refresh:', err));
 }

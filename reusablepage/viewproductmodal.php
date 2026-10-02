@@ -30,18 +30,19 @@ require_once __DIR__ . '/guard.php'; guard_require_roles(['owner','admin']);
                     </div>
 
                     <section class="mmb-view-section mmb-view-section--spaced">
+                        <h6 class="mmb-view-section-title">Product Information</h6>
                         <div class="mmb-view-grid">
                             <div class="mmb-view-item">
                                 <strong>Brand Name</strong>
                                 <span><?= !empty(trim($prod['branded_name'] ?? '')) ? htmlspecialchars(trim($prod['branded_name'])) : 'No brand' ?></span>
                             </div>
                             <div class="mmb-view-item">
-                                <strong>Product Name</strong>
+                                <strong>Product/Generic Name</strong>
                                 <span><?= htmlspecialchars($prod['generic_name'] ?? 'N/A') ?></span>
                             </div>
                             <div class="mmb-view-item">
                                 <strong>Amount per Serving</strong>
-                                <span><?= !empty(trim((string) ($prod['strength'] ?? ''))) ? htmlspecialchars((string) $prod['strength']) . (!empty(trim($prod['measurement_name'] ?? '')) ? ' ' . htmlspecialchars(trim($prod['measurement_name'])) : '') : 'N/A' ?></span>
+                                <span><?= !empty(trim((string) ($prod['strength'] ?? ''))) ? htmlspecialchars((string) $prod['strength']) . (!empty(trim($prod['measurement_name'] ?? '')) ? ' ' . htmlspecialchars(trim($prod['measurement_name'])) : '') : '' ?></span>
                             </div>
                             <div class="mmb-view-item">
                                 <strong>Product Form</strong>
@@ -67,34 +68,40 @@ require_once __DIR__ . '/guard.php'; guard_require_roles(['owner','admin']);
                                 <strong>Product Code</strong>
                                 <span><?= htmlspecialchars($prod['barcode'] ?? 'N/A') ?></span>
                             </div>
-                            <div class="mmb-view-item">
-                                <strong>Price</strong>
+                            <div class="mmb-view-item mmb-view-description">
+                                <strong>Product Description / Purpose</strong>
+                                <span><?= !empty(trim((string) ($prod['product_description'] ?? ''))) ? nl2br(htmlspecialchars(trim((string) ($prod['product_description'] ?? '')))) : 'No description added' ?></span>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="mmb-view-section mmb-view-section--spaced">
+                        <h6 class="mmb-view-section-title">Stock &amp; Pricing</h6>
+                        <div class="mmb-view-metrics">
+                            <div class="mmb-view-metric">
+                                <strong>Sale Price</strong>
                                 <span>₱ <?= number_format((float) ($prod['display_price'] ?? $prod['total_price'] ?? 0), 2) ?></span>
                             </div>
-                            <div class="mmb-view-item">
-                                <strong>Original Stock</strong>
-                                <span><?= htmlspecialchars((string) ($prod['received_quantity'] ?? 0)) ?></span>
-                            </div>
-                            <div class="mmb-view-item">
-                                <strong>Current Stock</strong>
-                                <span><?= htmlspecialchars((string) ($prod['current_quantity'] ?? 0)) ?></span>
-                            </div>
-                            <div class="mmb-view-item">
+                            <div class="mmb-view-metric">
                                 <strong>Net Price</strong>
                                 <span>₱ <?= number_format((float) ($prod['net_price'] ?? 0), 2) ?></span>
                             </div>
-                            <div class="mmb-view-item">
-                                <strong>Sale Price</strong>
-                                <span>₱ <?= number_format((float) ($prod['total_price'] ?? 0), 2) ?></span>
+                            <div class="mmb-view-metric">
+                                <strong>Current Stock</strong>
+                                <span><?= htmlspecialchars((string) ($prod['current_quantity'] ?? 0)) ?></span>
                             </div>
-                            <div class="mmb-view-item">
+                            <div class="mmb-view-metric">
+                                <strong>Original Stock</strong>
+                                <span><?= htmlspecialchars((string) ($prod['received_quantity'] ?? 0)) ?></span>
+                            </div>
+                            <div class="mmb-view-metric">
                                 <strong>Expiry Date</strong>
-                                <span><?= !empty($prod['expiry_date']) ? htmlspecialchars($prod['expiry_date']) : 'No expiry date' ?></span>
+                                <span><?= !empty($prod['expiry_date']) ? htmlspecialchars($prod['expiry_date']) : 'N/A' ?></span>
                             </div>
                         </div>
 
                         <div class="mmb-view-batch-section mt-4">
-                            <h6 class="mmb-view-section-title">Active Batch Details</h6>
+                            <h6 class="mmb-view-section-title">Active Inventory Batches</h6>
                             <?php $batchDetails = array_values(array_filter(($prod['inventory_batches'] ?? []), static function ($batch): bool {
                                 return (int) ($batch['current_quantity'] ?? 0) > 0;
                             })); ?>

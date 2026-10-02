@@ -59,7 +59,7 @@ if (!empty($_SESSION['user_id'])) {
 ?>
 
 <!-- wePOS Inspired CSS -->
-<link rel="stylesheet" href="../css/pos_wepos.css?v=1.10">
+<link rel="stylesheet" href="../css/pos_wepos.css?v=1.11">
 
 <div class="wepos-wrapper" id="weposApp">
     
@@ -104,7 +104,7 @@ if (!empty($_SESSION['user_id'])) {
         <div class="wepos-products-area">
             <div class="wepos-products-grid" id="weposGrid">
                 <?php if (empty($products)): ?>
-                    <div class="w-100 text-center text-muted py-5 px-3">
+                    <div class="wepos-empty-inventory-state w-100 text-center text-muted py-5 px-3">
                         <i class="fas fa-box-open d-block mb-3" style="font-size: 2.5rem; color: #cbd5e1;"></i>
                         <h5 class="mb-2">No products available</h5>
                         <p class="mb-0">Add a product and inventory batch before starting a sale.</p>
@@ -119,6 +119,7 @@ if (!empty($_SESSION['user_id'])) {
                         $image = !empty($row['imageproduct']) ? "../img/" . $row['imageproduct'] : "";
                         $salePrice = (float)($row['total_price'] ?? $row['sale_price'] ?? 0);
                         $costPrice = (float)($row['net_price'] ?? $row['purchase_cost'] ?? $salePrice);
+                        $productDescription = trim((string) ($row['product_description'] ?? ''));
                     ?>
                     <div class="wepos-product-card <?= $isOut ? 'out-of-stock' : '' ?><?= $isExpired ? ' expired' : '' ?>"
                          data-id="<?= $row['id'] ?>"
@@ -167,6 +168,12 @@ if (!empty($_SESSION['user_id'])) {
                             <div class="wepos-card-name">
                                 <?= htmlspecialchars($row['branded_name']) ?> <?= htmlspecialchars($row['generic_name']) ?> <?= htmlspecialchars($row['strength'] ?? '') ?> <?= htmlspecialchars($row['measurement_name'] ?? '') ?><?= !empty(trim($row['dosage_form'] ?? '')) ? ' ' . htmlspecialchars(trim($row['dosage_form'])) : '' ?><?= isset($row['strength_per_quantity']) && $row['strength_per_quantity'] > 0 ? ' (' . htmlspecialchars((string)$row['strength_per_quantity']) . ' ' . htmlspecialchars(trim($row['strength_per_quantity_unit'] ?? '')) . ' per unit)' : '' ?>
                             </div>
+                            <?php if ($productDescription !== ''): ?>
+                                <details class="wepos-card-description">
+                                    <summary onclick="event.stopPropagation()">See purpose</summary>
+                                    <div class="wepos-card-description-text"><?= nl2br(htmlspecialchars($productDescription, ENT_QUOTES, 'UTF-8')) ?></div>
+                                </details>
+                            <?php endif; ?>
                         </div>
                     </div>
                 <?php endforeach; ?>

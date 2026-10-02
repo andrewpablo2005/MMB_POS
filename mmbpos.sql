@@ -790,7 +790,7 @@ CREATE TABLE `products` (
   `id` int(11) NOT NULL,
   `branded_name` varchar(255) NOT NULL COMMENT 'Brand name (e.g., Amoxil)',
   `generic_name` varchar(255) NOT NULL COMMENT 'Generic/active ingredient (e.g., Amoxicillin)',
-  `strength` decimal(10,2) NOT NULL DEFAULT 0.00 COMMENT 'Main strength value (e.g., 500mg)',
+  `strength` decimal(10,2) DEFAULT NULL COMMENT 'Main strength value (e.g., 500mg)',
   `measurement_id` int(11) DEFAULT NULL,
   `barcode` varchar(100) DEFAULT NULL COMMENT 'Barcode for POS scanning',
   `category_id` int(11) DEFAULT NULL,
@@ -801,6 +801,7 @@ CREATE TABLE `products` (
   `package_type` varchar(100) DEFAULT NULL COMMENT 'Blister, Bottle, Strip, Box, Jar, etc.',
   `dosage_form` varchar(100) DEFAULT NULL COMMENT 'Tablet, Capsule, Syrup, Suspension, Cream, Drops',
   `dosage_form_id` int(11) DEFAULT NULL,
+  `product_description` text DEFAULT NULL COMMENT 'Staff-facing description of what the product is for',
   `strength_per_quantity` decimal(10,2) DEFAULT NULL COMMENT 'Qty for strength (e.g., 5 for 5mL in syrup)',
   `strength_per_quantity_unit` varchar(50) DEFAULT NULL COMMENT 'Unit for strength_per_quantity (e.g., mL, g)',
   `is_hidden` tinyint(1) NOT NULL DEFAULT 0
