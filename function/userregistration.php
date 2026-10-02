@@ -315,60 +315,14 @@ public function pre_addUser()
 
     public function sendEmail($to, $subject, $body): bool
     {
-        require __DIR__ . '/../phpmailer/src/PHPMailer.php';
-        require __DIR__ . '/../phpmailer/src/SMTP.php';
-        require __DIR__ . '/../phpmailer/src/Exception.php';
+        // Resend HTTPS API (Task 45) — InfinityFree blocks outbound SMTP,
+        // so PHPMailer/SMTP can never deliver from the live host.
+        require_once __DIR__ . '/../conn/mailer.php';
 
-        $mail = new \PHPMailer\PHPMailer\PHPMailer(true);
+        $safe = nl2br(htmlspecialchars($body, ENT_QUOTES, 'UTF-8'));
+        $html = mmb_email_template($subject, '<p>' . $safe . '</p>');
 
-        $config = [];
-        $configFile = __DIR__ . '/../conn/config.local.php';
-        if (is_readable($configFile)) {
-            $loadedConfig = include $configFile;
-            if (is_array($loadedConfig)) {
-                $config = $loadedConfig;
-            }
-        }
-
-        // Keep credentials in ignored local config or Apache environment, never source.
-        $smtpUser = trim((string)($config['mail_username'] ?? getenv('MMB_MAIL_USERNAME') ?: getenv('MMBPOS_SMTP_USER') ?: ''));
-        $smtpPass = preg_replace('/\s+/', '', (string)($config['mail_password'] ?? getenv('MMB_MAIL_PASSWORD') ?: getenv('MMBPOS_SMTP_PASS') ?: ''));
-        $smtpFrom = trim((string)($config['mail_from'] ?? getenv('MMBPOS_SMTP_FROM') ?: $smtpUser));
-        $smtpHost = trim((string)($config['mail_host'] ?? getenv('MMB_MAIL_HOST') ?: 'smtp.gmail.com'));
-        $smtpPort = (int)($config['mail_port'] ?? getenv('MMB_MAIL_PORT') ?: 587);
-        $smtpEncryption = strtolower(trim((string)($config['mail_encryption'] ?? getenv('MMB_MAIL_ENCRYPTION') ?: 'tls')));
-
-        if (!$smtpUser || !$smtpPass) {
-            error_log('Account notification email is not configured. Set SMTP environment variables or conn/config.local.php.');
-            return false;
-        }
-
-        try {
-            $mail->isSMTP();
-            $mail->Host = $smtpHost;
-            $mail->SMTPAuth = true;
-            $mail->Username = $smtpUser;
-            $mail->Password = $smtpPass;
-            $mail->SMTPSecure = in_array($smtpEncryption, ['ssl', 'smtps'], true)
-                ? \PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_SMTPS
-                : \PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
-            $mail->Port = $smtpPort;
-
-            $mail->CharSet = 'UTF-8';
-            $mail->setFrom($smtpFrom, 'MMBPOS Admin');
-            $mail->addAddress($to);
-
-            $mail->isHTML(true);
-            $mail->Subject = $subject;
-            $mail->Body = '<p>' . nl2br(htmlspecialchars($body, ENT_QUOTES, 'UTF-8')) . '</p>';
-            $mail->AltBody = $body;
-
-            return $mail->send();
-
-        } catch (\Throwable $e) {
-            error_log('sendEmail failed: ' . $e->getMessage());
-            return false;
-        }
+        return mmb_send_email($to, 'MMB POS: ' . $subject, $html, $body);
     }
 }
 ?>
