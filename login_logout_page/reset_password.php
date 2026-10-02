@@ -69,7 +69,7 @@ try {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reset Password - MMB Drugstore</title>
     <?php require_once __DIR__ . '/../conn/connection_links.php'; ?>
-    <link rel="stylesheet" href="<?= mmbpos_base_path() ?>/css/login.css?v=4">
+    <link rel="stylesheet" href="<?= mmbpos_base_path() ?>/css/login.css?v=5">
 </head>
 <body class="bg-light d-flex align-items-center justify-content-center" style="min-height: 100vh;">
     <main class="login-card p-4" style="width:100%;max-width:420px;">
