@@ -109,6 +109,14 @@
     word-break: break-word;
 }
 
+.summary-value--product-name {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    overflow: hidden;
+    overflow-wrap: anywhere;
+}
+
 .summary-card small { color: #94a3b8; font-size: .73rem; }
 
 #reportContent > .row { margin-bottom: 0 !important; }

@@ -123,7 +123,7 @@ foreach ($salesDetailRows as $detailRow) {
 }
 ?>
 
-<link rel="stylesheet" href="../css/report.css?v=5">
+<link rel="stylesheet" href="../css/report.css?v=6">
 
 <div class="report-page">
 
@@ -143,8 +143,9 @@ foreach ($salesDetailRows as $detailRow) {
                 <div class="col-md-4">
                     <div class="card shadow-sm summary-card" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#topProductsModal">
                         <div>Top Selling Product</div>
-                        <div class="summary-value">
-                            <?= htmlspecialchars($topProducts[0]['product_name'] ?? 'N/A') ?>
+                        <div class="summary-value summary-value--product-name"
+                             title="<?= htmlspecialchars($topProducts[0]['product_name'] ?? 'N/A', ENT_QUOTES, 'UTF-8') ?>">
+                            <?= htmlspecialchars($topProducts[0]['product_name'] ?? 'N/A', ENT_QUOTES, 'UTF-8') ?>
                         </div>
                         <small class="text-muted"><?= $topProducts[0]['total_sold'] ?? 0 ?> units sold</small>
                     </div>
