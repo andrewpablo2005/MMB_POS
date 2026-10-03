@@ -155,7 +155,7 @@ $currentUserId = (int) ($_SESSION['user_id'] ?? 0);
                                         Edit
                                     </button>
 
-                                    <!-- DELETE -->
+                                    <!-- ACCOUNT STATUS -->
                                     <form method="POST" class="d-inline">
                                         <input type="hidden" name="id" value="<?= htmlspecialchars((string)($u['id']), ENT_QUOTES, 'UTF-8') ?>">
                                         <input type="hidden" name="status" value="<?= ($u['status'] ?? 'active') === 'active' ? 'disabled' : 'active' ?>">
@@ -163,15 +163,6 @@ $currentUserId = (int) ($_SESSION['user_id'] ?? 0);
                                             data-mmb-confirm="<?= ($u['status'] ?? 'active') === 'active' ? 'Disable' : 'Enable' ?> this account?">
                                             <i class="fas <?= ($u['status'] ?? 'active') === 'active' ? 'fa-ban' : 'fa-check-circle' ?> me-1" aria-hidden="true"></i>
                                             <?= ($u['status'] ?? 'active') === 'active' ? 'Disable' : 'Enable' ?>
-                                        </button>
-                                    </form>
-
-                                    <form method="POST" class="d-inline">
-                                        <input type="hidden" name="id" value="<?= htmlspecialchars((string)($u['id']), ENT_QUOTES, 'UTF-8') ?>">
-                                        <button type="submit" name="deleteUser" class="btn btn-danger btn-sm"
-                                            data-mmb-confirm="Delete this user? This cannot be undone." data-mmb-ok="Yes, delete">
-                                            <i class="fas fa-trash me-1" aria-hidden="true"></i>
-                                            Delete
                                         </button>
                                     </form>
 
