@@ -1750,6 +1750,30 @@ table.dataTable.dtr-column > tbody > tr > td.dtr-control {
     transform: translateY(10px) scale(0.98);
     transition: transform 0.18s ease;
 }
+.mmb-modal--wide { max-width: 760px; }
+.mmb-modal-details {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.35rem 1rem;
+    max-height: min(48vh, 380px);
+    margin-top: 0.8rem;
+    overflow-y: auto;
+    text-align: left;
+}
+.mmb-modal-detail {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 0.1rem;
+    padding: 0.35rem 0;
+    border-bottom: 1px solid var(--mmb-line);
+}
+.mmb-modal-detail span { color: var(--mmb-text-muted); font-size: 0.72rem; }
+.mmb-modal-detail strong { color: var(--mmb-heading); font-size: 0.84rem; font-weight: 600; overflow-wrap: anywhere; }
+@media (max-width: 600px) {
+    .mmb-modal--wide { max-width: 100%; padding: 1.2rem 1rem 1rem; }
+    .mmb-modal-details { grid-template-columns: minmax(0, 1fr); max-height: 42vh; }
+}
 .mmb-modal-backdrop--in .mmb-modal { transform: none; }
 .mmb-modal-icon {
     width: 52px;

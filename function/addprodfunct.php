@@ -1428,13 +1428,38 @@ class ProductManagement
             return false;
         }
 
-        if ($supplierId > 0) {
-            $supplierCheck = $this->con->prepare("SELECT id FROM suppliers WHERE id = ?");
-            $supplierCheck->execute([$supplierId]);
-            if (!$supplierCheck->fetch()) {
-                $this->response = "Selected supplier is invalid. Please choose a valid supplier or leave it blank.";
+        if ($supplierId <= 0) {
+            $this->response = "Please select a supplier before adding a batch.";
+            return false;
+        }
+
+        if ($lotNumber === '') {
+            $this->response = "Lot number is required.";
+            return false;
+        }
+
+        if ($expiryDate === null) {
+            $this->response = "Expiry date is required.";
+            return false;
+        }
+
+        foreach ([
+            'purchase_cost' => 'Purchase cost per unit',
+            'markup' => 'Markup',
+            'sale_price' => 'Sale price per unit'
+        ] as $field => $label) {
+            $value = $_POST[$field] ?? null;
+            if (!is_scalar($value) || trim((string) $value) === '' || !is_numeric($value) || (float) $value < 0) {
+                $this->response = $label . " is required and must be a valid non-negative number.";
                 return false;
             }
+        }
+
+        $supplierCheck = $this->con->prepare("SELECT id FROM suppliers WHERE id = ?");
+        $supplierCheck->execute([$supplierId]);
+        if (!$supplierCheck->fetch()) {
+            $this->response = "Selected supplier is invalid. Please choose a valid supplier.";
+            return false;
         }
 
         try {

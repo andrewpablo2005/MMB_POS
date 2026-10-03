@@ -1598,6 +1598,16 @@ $dosageForms = $product->getDosageForms();
 
     // ADD FORM VALIDATION BEFORE SUBMIT
     function validateAddProductForm(event) {
+        const form = event.currentTarget;
+        if (form.dataset.confirmed === '1') {
+            delete form.dataset.confirmed;
+            return true;
+        }
+        if (form.dataset.confirmationPending === '1') {
+            event.preventDefault();
+            return false;
+        }
+
         const categoryValue = document.getElementById('category_id');
         const genericName = document.getElementById('generic_name');
         const strength = document.getElementById('strength');
@@ -1631,7 +1641,64 @@ $dosageForms = $product->getDosageForms();
             return false;
         }
 
-        return true;
+        const value = (id) => (document.getElementById(id)?.value || '').trim();
+        const display = (text) => text || 'Not provided';
+        const addOpeningBatch = value('add_batch_prompt') === 'yes';
+        const summary = [
+            { label: 'Brand Name', value: display(value('branded_name')) },
+            { label: 'Generic/Product Name', value: display(value('generic_name')) },
+            { label: 'Category', value: display(value('category_search')) },
+            { label: 'Product Code', value: display(value('barcode')) },
+            { label: 'Serving Size', value: display([value('strength'), value('unit_measurement_search')].filter(Boolean).join(' ')) },
+            { label: 'Product Form', value: display(value('dosage_form_search')) },
+            { label: 'Package Size', value: display([value('strength_per_quantity'), value('strength_per_quantity_unit')].filter(Boolean).join(' ')) },
+            { label: 'Description', value: display(value('product_description')) },
+            { label: 'Image', value: display(document.getElementById('product_image_input')?.files?.[0]?.name || '') },
+            { label: 'Add Opening Stock', value: addOpeningBatch ? 'Yes' : 'No' }
+        ];
+
+        if (addOpeningBatch) {
+            summary.push(
+                { label: 'Supplier', value: display(value('batch_supplier_search')) },
+                { label: 'Batch No.', value: display(value('batch_number')) },
+                { label: 'Lot No.', value: display(value('batch_lot_number')) },
+                { label: 'Quantity Received', value: display(value('batch_quantity')) },
+                { label: 'Purchase Cost', value: display(value('batch_purchase_cost')) },
+                { label: 'Markup', value: display(value('batch_markup')) + '%' },
+                { label: 'Sale Price', value: display(value('batch_sale_price')) },
+                { label: 'Expiry Date', value: display(value('batch_expiry_date')) }
+            );
+        }
+
+        event.preventDefault();
+        const submitter = event.submitter || form.querySelector('button[name="addProduct"]');
+        form.dataset.confirmationPending = '1';
+        mmbConfirm({
+            title: 'Review product details before adding?',
+            message: 'Please confirm the following product information is correct:',
+            details: summary,
+            wide: true,
+            okLabel: 'Yes, add product',
+            danger: false
+        }).then(function (confirmed) {
+            delete form.dataset.confirmationPending;
+            if (!confirmed) return;
+
+            form.dataset.confirmed = '1';
+            if (typeof form.requestSubmit === 'function' && submitter) {
+                form.requestSubmit(submitter);
+                return;
+            }
+
+            const submitFlag = document.createElement('input');
+            submitFlag.type = 'hidden';
+            submitFlag.name = 'addProduct';
+            submitFlag.value = '1';
+            form.appendChild(submitFlag);
+            HTMLFormElement.prototype.submit.call(form);
+        });
+
+        return false;
     }
 
     // ── LIVE BARCODE PREVIEW (issue #4) ──────────────────────────

@@ -109,14 +109,22 @@
         var icon = opts.icon || ICONS[type];
 
         var backdrop = el('div', 'mmb-modal-backdrop');
-        var dialog = el('div', 'mmb-modal mmb-modal--' + type);
+        var dialog = el('div', 'mmb-modal mmb-modal--' + type + (opts.wide ? ' mmb-modal--wide' : ''));
         dialog.setAttribute('role', 'dialog');
         dialog.setAttribute('aria-modal', 'true');
+
+        var details = Array.isArray(opts.details) && opts.details.length
+            ? '<div class="mmb-modal-details">' + opts.details.map(function (item) {
+                return '<div class="mmb-modal-detail"><span>' + esc(item.label || '') + '</span>' +
+                    '<strong>' + esc(item.value || '') + '</strong></div>';
+            }).join('') + '</div>'
+            : '';
 
         dialog.innerHTML =
             '<div class="mmb-modal-icon"><i class="' + icon + '"></i></div>' +
             '<div class="mmb-modal-title">' + esc(opts.title || (kind === 'confirm' ? 'Please confirm' : 'Notice')) + '</div>' +
             (opts.message ? '<div class="mmb-modal-message">' + esc(opts.message) + '</div>' : '') +
+            details +
             '<div class="mmb-modal-actions">' +
                 (kind === 'confirm'
                     ? '<button type="button" class="mmb-modal-btn mmb-modal-btn--cancel">' + esc(opts.cancelLabel || 'Cancel') + '</button>'

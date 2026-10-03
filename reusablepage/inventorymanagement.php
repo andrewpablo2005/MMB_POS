@@ -964,7 +964,7 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
                     
                     <div class="add-product-row">
                     <div class="add-product-field">
-                        <label for="batch_product_search" class="form-label">Product</label>
+                        <label for="batch_product_search" class="form-label">Product <span class="text-danger">*</span></label>
                         <div class="batch-product-search-wrap">
                             <input type="text" id="batch_product_search" class="form-control" placeholder="Search product..." autocomplete="off" required>
                             <button type="button" class="batch-product-toggle" aria-label="Show product list">
@@ -989,10 +989,10 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
                         <input type="hidden" id="batch_product_id" name="product_id">
                     </div>
                     <div class="add-product-field">
-                        <label for="batch_supplier_search" class="form-label">Supplier <span class="text-muted fw-normal">(optional)</span></label>
+                        <label for="batch_supplier_search" class="form-label">Supplier <span class="text-danger">*</span></label>
                         <div class="d-flex gap-2 align-items-start">
                             <div class="batch-product-search-wrap flex-grow-1">
-                                <input type="text" id="batch_supplier_search" class="form-control" placeholder="Search supplier..." autocomplete="off">
+                                <input type="text" id="batch_supplier_search" class="form-control" placeholder="Search supplier..." autocomplete="off" required>
                                 <button type="button" class="batch-product-toggle batch-supplier-toggle" aria-label="Show supplier list">
                                     <i class="fas fa-chevron-down"></i>
                                 </button>
@@ -1058,13 +1058,13 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
                         <div class="form-text text-muted mt-1">The system will automatically assign the next batch number for this item.</div>
                     </div>
                     <div class="add-product-field">
-                        <label for="batch_lot_number" class="form-label">Lot Number <span class="text-muted fw-normal">(optional)</span></label>
-                        <input type="text" id="batch_lot_number" name="lot_number" class="form-control" placeholder="e.g. LOT-2026-01" maxlength="255">
+                        <label for="batch_lot_number" class="form-label">Lot Number <span class="text-danger">*</span></label>
+                        <input type="text" id="batch_lot_number" name="lot_number" class="form-control" placeholder="e.g. LOT-2026-01" maxlength="255" required>
                     </div>
                     </div>
                     <div class="add-product-row">
                     <div class="add-product-field">
-                        <label for="batch_quantity" class="form-label">Quantity Received</label>
+                        <label for="batch_quantity" class="form-label">Quantity Received <span class="text-danger">*</span></label>
                         <input type="number" id="batch_quantity" name="quantity" class="form-control" min="1" required>
                     </div>
                     </div>
@@ -1075,16 +1075,16 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
                     </div>
                     <div class="add-product-row add-product-row--three">
                         <div class="add-product-field">
-                            <label for="batch_purchase_cost" class="form-label">Purchase Cost per Unit (optional)</label>
-                            <input type="number" id="batch_purchase_cost" name="purchase_cost" class="form-control" step="0.01" min="0" placeholder="e.g. 50.00">
+                            <label for="batch_purchase_cost" class="form-label">Purchase Cost per Unit <span class="text-danger">*</span></label>
+                            <input type="number" id="batch_purchase_cost" name="purchase_cost" class="form-control" step="0.01" min="0" placeholder="e.g. 50.00" required>
                         </div>
                         <div class="add-product-field">
-                            <label for="batch_markup" class="form-label">Markup % (optional)</label>
-                            <input type="number" id="batch_markup" name="markup" class="form-control" step="0.01" min="0" value="5" placeholder="e.g. 20">
+                            <label for="batch_markup" class="form-label">Markup % <span class="text-danger">*</span></label>
+                            <input type="number" id="batch_markup" name="markup" class="form-control" step="0.01" min="0" value="5" placeholder="e.g. 20" required>
                         </div>
                         <div class="add-product-field">
-                            <label for="batch_sale_price" class="form-label">Sale Price per Unit (optional)</label>
-                            <input type="number" id="batch_sale_price" name="sale_price" class="form-control" step="0.01" min="0" placeholder="e.g. 75.00">
+                            <label for="batch_sale_price" class="form-label">Sale Price per Unit <span class="text-danger">*</span></label>
+                            <input type="number" id="batch_sale_price" name="sale_price" class="form-control" step="0.01" min="0" placeholder="e.g. 75.00" required>
                         </div>
                     </div>
 
@@ -1094,8 +1094,8 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
                     </div>
                     <div class="add-product-row add-product-row--single">
                     <div class="add-product-field add-product-field--full">
-                        <label for="batch_expiry_date" class="form-label">Expiry Date</label>
-                        <input type="date" id="batch_expiry_date" name="expiry_date" class="form-control">
+                        <label for="batch_expiry_date" class="form-label">Expiry Date <span class="text-danger">*</span></label>
+                        <input type="date" id="batch_expiry_date" name="expiry_date" class="form-control" required>
                     </div>
                     </div>
                 </div>
