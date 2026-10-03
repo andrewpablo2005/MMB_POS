@@ -21,6 +21,7 @@ $clearDataTables = [
     'inventory_disposals',
     'inventory_no_stock',
     'inventory_transactions',
+    'activity_logs',
     'login_attempts',
     'override_log',
     'pre_approved_users',
