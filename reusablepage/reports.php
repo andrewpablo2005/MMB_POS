@@ -66,8 +66,8 @@ $activityLogFilters = [
     'username'  => trim((string)($_GET['alog_user'] ?? '')),
     'action'    => trim((string)($_GET['alog_action'] ?? '')),
     'module'    => trim((string)($_GET['alog_module'] ?? '')),
-    'date_from' => trim((string)($_GET['alog_from'] ?? '')),
-    'date_to'   => trim((string)($_GET['alog_to'] ?? '')),
+    'date_from' => trim((string)($_GET['alog_from'] ?? date('Y-m-d'))),
+    'date_to'   => trim((string)($_GET['alog_to'] ?? date('Y-m-d'))),
 ];
 $activityLogPage = isset($_GET['alog_page']) ? max(1, (int)$_GET['alog_page']) : 1;
 $activityLogsData = $report->getActivityLogs($activityLogFilters, $activityLogPage, 50);
@@ -1174,11 +1174,7 @@ foreach ($salesDetailRows as $detailRow) {
                                         <tr>
                                             <td style="white-space: nowrap;"><small><?= date('M j, Y g:i:s A', strtotime((string)($alogRow['created_at'] ?? ''))) ?></small></td>
                                             <td>
-                                                <?php if (!empty($alogRow['username'])): ?>
-                                                    <strong><?= htmlspecialchars((string)$alogRow['username'], ENT_QUOTES, 'UTF-8') ?></strong>
-                                                <?php else: ?>
-                                                    <span class="text-muted">system / guest</span>
-                                                <?php endif; ?>
+                                                <strong><?= htmlspecialchars((string)($alogRow['display_name'] ?? $alogRow['username'] ?? 'system / guest'), ENT_QUOTES, 'UTF-8') ?></strong>
                                             </td>
                                             <td>
                                                 <?php if (!empty($alogRow['role'])): ?>

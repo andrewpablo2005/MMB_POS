@@ -729,11 +729,11 @@ class Reports
         $params = [];
 
         if (!empty($filters['user_id'])) {
-            $where[] = 'user_id = ?';
+            $where[] = 'al.user_id = ?';
             $params[] = (int) $filters['user_id'];
         }
         if (!empty($filters['username'])) {
-            $where[] = 'username = ?';
+            $where[] = 'al.username = ?';
             $params[] = (string) $filters['username'];
         }
         $allowedActions = [
@@ -755,20 +755,20 @@ class Reports
             $requested = array_filter(array_map('trim', explode(',', (string) $filters['action'])));
             $valid = array_values(array_intersect($requested, $allowedActions));
             if ($valid) {
-                $where[] = 'action IN (' . implode(',', array_fill(0, count($valid), '?')) . ')';
+                $where[] = 'al.action IN (' . implode(',', array_fill(0, count($valid), '?')) . ')';
                 array_push($params, ...$valid);
             }
         }
         if (!empty($filters['module']) && in_array($filters['module'], ['auth', 'products', 'inventory', 'sales', 'users', 'settings', 'system'], true)) {
-            $where[] = 'module = ?';
+            $where[] = 'al.module = ?';
             $params[] = $filters['module'];
         }
         if (!empty($filters['date_from']) && preg_match('/^\d{4}-\d{2}-\d{2}$/', (string) $filters['date_from'])) {
-            $where[] = 'created_at >= ?';
+            $where[] = 'al.created_at >= ?';
             $params[] = $filters['date_from'] . ' 00:00:00';
         }
         if (!empty($filters['date_to']) && preg_match('/^\d{4}-\d{2}-\d{2}$/', (string) $filters['date_to'])) {
-            $where[] = 'created_at <= ?';
+            $where[] = 'al.created_at <= ?';
             $params[] = $filters['date_to'] . ' 23:59:59';
         }
 
@@ -776,18 +776,21 @@ class Reports
 
         try {
             // Total row count for pagination
-            $countStmt = $this->db->prepare("SELECT COUNT(*) FROM activity_logs {$whereSql}");
+            $countStmt = $this->db->prepare("SELECT COUNT(*) FROM activity_logs al {$whereSql}");
             $countStmt->execute($params);
             $total = (int) $countStmt->fetchColumn();
             $pages = max(1, (int) ceil($total / $perPage));
             $page = min($page, $pages);
             $offset = ($page - 1) * $perPage;
 
-            $stmt = $this->db->prepare("SELECT id, user_id, username, role, module, action, entity_type, entity_id,
-                                               description, ip_address, created_at
-                                        FROM activity_logs
+                 $stmt = $this->db->prepare("SELECT al.id, al.user_id, al.username,
+                                     COALESCE(NULLIF(TRIM(CONCAT_WS(' ', ui.firstname, ui.lastname)), ''), NULLIF(al.username, ''), 'system / guest') AS display_name,
+                                     al.role, al.module, al.action, al.entity_type, al.entity_id,
+                                     al.description, al.ip_address, al.created_at
+                                 FROM activity_logs al
+                                 LEFT JOIN users_info ui ON ui.user_id = al.user_id
                                         {$whereSql}
-                                        ORDER BY created_at DESC, id DESC
+                                 ORDER BY al.created_at DESC, al.id DESC
                                         LIMIT {$perPage} OFFSET {$offset}");
             $stmt->execute($params);
 
