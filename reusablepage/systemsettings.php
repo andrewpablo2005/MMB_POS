@@ -235,7 +235,7 @@ $currentUser = $usersmanagement->getUserById($userId);
         </div>
     </div>
 
-    <?php if (in_array(strtolower(trim((string) ($_SESSION['position'] ?? ''))), ['owner', 'admin'], true)): ?>
+    <!-- <?php if (in_array(strtolower(trim((string) ($_SESSION['position'] ?? ''))), ['owner', 'admin'], true)): ?>
         <div class="card mt-4 border-danger">
             <div class="card-body p-4">
                 <div class="settings-section mb-0">
@@ -253,7 +253,7 @@ $currentUser = $usersmanagement->getUserById($userId);
                 </div>
             </div>
         </div> 
-    <?php endif; ?> 
+    <?php endif; ?>  -->
 
     
 </div>
