@@ -83,6 +83,39 @@ if (isset($_POST['clear_database_data'])) {
                 }
             }
 
+            $defaultUnitData = [
+                ['table' => 'serving_unit', 'column' => 'serving_unit_name', 'values' => [
+                    'pc', 'tab', 'cap', 'sg', 'sach', 'btl', 'vial', 'amp', 'tube', 'box', 'pk', 'strip',
+                    'blist', 'can', 'jar', 'pouch', 'bag', 'roll', 'set', 'pr', 'bndl', 'kit', 'mg', 'mcg',
+                    'g', 'kg', 'mL', 'L', 'cm', 'm', 'oz', 'lb'
+                ]],
+                ['table' => 'unit_measurement', 'column' => 'different_measurement', 'values' => [
+                    'pc', 'tab', 'cap', 'sg', 'sach', 'btl', 'vial', 'amp', 'tube', 'box', 'pk', 'strip',
+                    'blist', 'can', 'jar', 'pouch', 'bag', 'roll', 'set', 'pr', 'bndl', 'kit', 'mg', 'mcg', 'g'
+                ]],
+            ];
+
+            foreach ($defaultUnitData as $unitSet) {
+                $tableExistsStmt->execute([$unitSet['table']]);
+                if (!$tableExistsStmt->fetchColumn()) {
+                    continue;
+                }
+
+                $unitExistsStmt = $db->prepare(
+                    'SELECT 1 FROM `' . $unitSet['table'] . '` WHERE LOWER(TRIM(`' . $unitSet['column'] . '`)) = LOWER(?) LIMIT 1'
+                );
+                $insertUnitStmt = $db->prepare(
+                    'INSERT INTO `' . $unitSet['table'] . '` (`' . $unitSet['column'] . '`) VALUES (?)'
+                );
+
+                foreach ($unitSet['values'] as $unitName) {
+                    $unitExistsStmt->execute([$unitName]);
+                    if (!$unitExistsStmt->fetchColumn()) {
+                        $insertUnitStmt->execute([$unitName]);
+                    }
+                }
+            }
+
             $clearDataResult = [
                 'success' => true,
                 'message' => 'Database data cleared successfully (' . $clearedRows . ' row(s) removed).'
