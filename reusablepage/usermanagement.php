@@ -33,6 +33,7 @@ if (isset($_POST['toggleUserStatus'])) {
 
 // FETCH
 $users = $usersmanagement->getAllUsers();
+$currentUserId = (int) ($_SESSION['user_id'] ?? 0);
 ?>
 
 <!-- ALERT + REDIRECT -->
@@ -102,6 +103,7 @@ $users = $usersmanagement->getAllUsers();
 
                     <tbody>
                         <?php foreach ($users as $u): ?>
+                            <?php if ((int) ($u['id'] ?? 0) === $currentUserId) continue; ?>
                             <tr>
                                 <td class="col-id"><?= htmlspecialchars((string)($u['id']), ENT_QUOTES, 'UTF-8') ?></td>
 
