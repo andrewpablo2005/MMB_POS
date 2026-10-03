@@ -765,9 +765,9 @@ $dosageForms = $product->getDosageForms();
         const inputEl = document.getElementById(inputId);
         const valueEl = document.getElementById(valueId);
         const dropdownEl = document.getElementById(dropdownId);
-        const options = dropdownEl ? Array.from(dropdownEl.querySelectorAll(optionSelector)) : [];
+        const getOptions = () => dropdownEl ? Array.from(dropdownEl.querySelectorAll(optionSelector)) : [];
 
-        if (!inputEl || !dropdownEl || options.length === 0) {
+        if (!inputEl || !dropdownEl || getOptions().length === 0) {
             return;
         }
 
@@ -775,7 +775,7 @@ $dosageForms = $product->getDosageForms();
             const query = (inputEl.value || '').trim().toLowerCase();
             let visibleCount = 0;
 
-            options.forEach((option) => {
+            getOptions().forEach((option) => {
                 const label = (option.dataset.label || option.textContent || '').trim().toLowerCase();
                 const shouldShow = !query || label.includes(query);
                 option.style.display = shouldShow ? 'block' : 'none';
@@ -802,7 +802,7 @@ $dosageForms = $product->getDosageForms();
             }
 
             dropdownEl.classList.remove('show');
-            options.forEach((option) => option.classList.toggle('active', option === selectedOption));
+            getOptions().forEach((option) => option.classList.toggle('active', option === selectedOption));
 
             if (onSelect) {
                 onSelect(selectedOption || null);
@@ -856,7 +856,7 @@ $dosageForms = $product->getDosageForms();
                 return;
             }
 
-            const exactMatch = options.find((option) => {
+            const exactMatch = getOptions().find((option) => {
                 const label = (option.dataset.label || option.textContent || '').trim().toLowerCase();
                 return label === typedValue.toLowerCase();
             });
@@ -873,6 +873,9 @@ $dosageForms = $product->getDosageForms();
                 valueEl.value = exactMatch.dataset.id || '';
             }
             inputEl.value = exactMatch.dataset.label || exactMatch.textContent.trim();
+            if (onSelect) {
+                onSelect(exactMatch);
+            }
             setInputWarning('');
         };
 
@@ -889,7 +892,7 @@ $dosageForms = $product->getDosageForms();
                 return;
             }
 
-            const exactMatch = options.find((option) => {
+            const exactMatch = getOptions().find((option) => {
                 const label = (option.dataset.label || option.textContent || '').trim().toLowerCase();
                 return label === typedValue.toLowerCase();
             });
@@ -899,6 +902,9 @@ $dosageForms = $product->getDosageForms();
                     valueEl.value = exactMatch.dataset.id || '';
                 }
                 inputEl.value = exactMatch.dataset.label || exactMatch.textContent.trim();
+                if (onSelect) {
+                    onSelect(exactMatch);
+                }
                 setInputWarning('');
                 return;
             }
@@ -912,7 +918,7 @@ $dosageForms = $product->getDosageForms();
         inputEl.addEventListener('blur', resetInvalidSelection);
         inputEl.addEventListener('change', resetInvalidSelection);
 
-        options.forEach((option) => {
+        getOptions().forEach((option) => {
             option.addEventListener('mousedown', (event) => {
                 event.preventDefault();
                 setSelectedOption(option);

@@ -645,28 +645,114 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
             }).join('\n');
         }
 
-        function tableCsv(table) {
-            return getVisibleRows(table).map(function (row) {
+        function escapeSpreadsheetXml(value) {
+            return String(value).replace(/[&<>"']/g, function (character) {
+                return {
+                    '&': '&amp;',
+                    '<': '&lt;',
+                    '>': '&gt;',
+                    '"': '&quot;',
+                    "'": '&apos;'
+                }[character];
+            });
+        }
+
+        function inventorySpreadsheetXml(table) {
+            const rows = getVisibleRows(table).map(function (row) {
                 return Array.from(row.cells).map(function (cell) {
-                    return '"' + cell.innerText.trim().replace(/"/g, '""') + '"';
-                }).join(',');
-            }).join('\n');
+                    return cell.innerText.trim();
+                });
+            });
+            const columnCount = Math.max(0, ...rows.map(function (row) { return row.length; }));
+            const columns = Array.from({ length: columnCount }, function (_, index) {
+                const longestValue = Math.max(0, ...rows.map(function (row) {
+                    return (row[index] || '').length;
+                }));
+                const width = Math.max(70, Math.min(320, longestValue * 7 + 18));
+                return '<Column ss:AutoFitWidth="0" ss:Width="' + width + '"/>';
+            }).join('');
+            const worksheetRows = rows.map(function (row, rowIndex) {
+                const style = rowIndex === 0 ? ' ss:StyleID="Header"' : ' ss:StyleID="Cell"';
+                const cells = row.map(function (value) {
+                    return '<Cell><Data ss:Type="String">' + escapeSpreadsheetXml(value) + '</Data></Cell>';
+                }).join('');
+                return '<Row' + style + '>' + cells + '</Row>';
+            }).join('');
+
+            return '<' + '?xml version="1.0"?>' +
+                '<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" ' +
+                    'xmlns:o="urn:schemas-microsoft-com:office:office" ' +
+                    'xmlns:x="urn:schemas-microsoft-com:office:excel" ' +
+                    'xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">' +
+                    '<Styles>' +
+                        '<Style ss:ID="Header"><Font ss:Bold="1" ss:Color="#FFFFFF"/>' +
+                            '<Interior ss:Color="#343A40" ss:Pattern="Solid"/>' +
+                            '<Alignment ss:Vertical="Center" ss:WrapText="1"/></Style>' +
+                        '<Style ss:ID="Cell"><Alignment ss:Vertical="Center" ss:WrapText="1"/></Style>' +
+                    '</Styles>' +
+                    '<Worksheet ss:Name="Inventory"><Table>' + columns + worksheetRows + '</Table>' +
+                    '<WorksheetOptions xmlns="urn:schemas-microsoft-com:office:excel">' +
+                        '<FreezePanes/><FrozenNoSplit/><SplitHorizontal>1</SplitHorizontal><TopRowBottomPane>1</TopRowBottomPane>' +
+                    '</WorksheetOptions></Worksheet>' +
+                '</Workbook>';
         }
 
         function printInventoryTable(table, title) {
             const printWindow = window.open('', '_blank', 'width=1100,height=700');
             if (!printWindow) return;
-            printWindow.document.write('<!doctype html><html><head><title>' + title + '</title><style>body{font-family:Arial,sans-serif;padding:20px}h2{text-align:center}table{border-collapse:collapse;width:100%}th,td{border:1px solid #999;padding:6px;text-align:left}th{background:#e5e7eb}</style></head><body><h2>' + title + '</h2>' + table.outerHTML + '</body></html>');
+            printWindow.document.write('<!doctype html><html><head><meta charset="utf-8"><title></title></head><body></body></html>');
             printWindow.document.close();
+
+            const printDocument = printWindow.document;
+            printDocument.title = title;
+
+            const style = printDocument.createElement('style');
+            style.textContent = '@page{size:landscape;margin:12mm}body{font-family:Arial,sans-serif;color:#111;margin:0}h1{font-size:16pt;text-align:center;margin:0 0 12px}.inventory-print-table{border-collapse:collapse;table-layout:fixed;width:100%;font-size:9pt}.inventory-print-table th,.inventory-print-table td{border:1px solid #777;padding:5px;text-align:left;vertical-align:top;overflow-wrap:anywhere;word-break:normal}.inventory-print-table th{background:#e5e7eb;font-weight:700}.inventory-print-table thead{display:table-header-group}.inventory-print-table tr{break-inside:avoid;page-break-inside:avoid}';
+            printDocument.head.appendChild(style);
+
+            const heading = printDocument.createElement('h1');
+            heading.textContent = title;
+            printDocument.body.appendChild(heading);
+
+            const printableTable = printDocument.createElement('table');
+            printableTable.className = 'inventory-print-table';
+            const printableHead = printDocument.createElement('thead');
+            const printableBody = printDocument.createElement('tbody');
+
+            getVisibleRows(table).forEach(function (sourceRow) {
+                const targetRow = printDocument.createElement('tr');
+                Array.from(sourceRow.cells).forEach(function (sourceCell) {
+                    if (sourceCell.classList.contains('inventory-action-column') || sourceCell.classList.contains('inventory-action-cell')) {
+                        return;
+                    }
+
+                    const targetCell = printDocument.createElement(sourceCell.tagName.toLowerCase());
+                    targetCell.textContent = sourceCell.innerText.trim();
+                    if (sourceCell.colSpan > 1) {
+                        targetCell.colSpan = sourceCell.colSpan;
+                    }
+                    targetRow.appendChild(targetCell);
+                });
+
+                if (sourceRow.closest('thead')) {
+                    printableHead.appendChild(targetRow);
+                } else {
+                    printableBody.appendChild(targetRow);
+                }
+            });
+
+            printableTable.appendChild(printableHead);
+            printableTable.appendChild(printableBody);
+            printDocument.body.appendChild(printableTable);
             printWindow.focus();
             printWindow.print();
         }
 
-        function downloadInventoryCsv(table, filename) {
-            const blob = new Blob([tableCsv(table)], { type: 'text/csv;charset=utf-8;' });
+        function downloadInventoryExcel(table, filename) {
+            const blob = new Blob([inventorySpreadsheetXml(table)], { type: 'application/vnd.ms-excel' });
             const link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
-            link.download = filename + '.csv';
+            link.download = filename + '.xls';
             link.click();
             URL.revokeObjectURL(link.href);
         }
@@ -754,7 +840,7 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
                 navigator.clipboard.writeText(tableText(table));
             });
             toolbar.querySelector('.inventory-excel').addEventListener('click', function () {
-                downloadInventoryCsv(table, toolbar.dataset.tableTarget);
+                downloadInventoryExcel(table, toolbar.dataset.tableTarget);
             });
             toolbar.querySelector('.inventory-pdf').addEventListener('click', function () {
                 printInventoryTable(table, toolbar.dataset.tableTarget + ' Report');

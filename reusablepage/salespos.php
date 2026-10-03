@@ -102,7 +102,7 @@ if (!empty($_SESSION['user_id'])) {
 
         <!-- Products -->
         <div class="wepos-products-area">
-            <div class="wepos-products-grid" id="weposGrid">
+            <div class="wepos-products-grid<?= empty($products) ? ' wepos-products-grid--empty' : '' ?>" id="weposGrid">
                 <?php if (empty($products)): ?>
                     <div class="wepos-empty-inventory-state w-100 text-center text-muted py-5 px-3">
                         <i class="fas fa-box-open d-block mb-3" style="font-size: 2.5rem; color: #cbd5e1;"></i>

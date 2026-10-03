@@ -163,6 +163,15 @@
     width: 100%;
 }
 
+.wepos-products-grid--empty {
+    min-height: 100%;
+    align-content: center;
+}
+
+.wepos-products-grid--empty .wepos-empty-inventory-state {
+    grid-column: 1 / -1;
+}
+
 .wepos-product-card {
     background: var(--wp-card);
     border: 1px solid var(--wp-border);
