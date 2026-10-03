@@ -12,6 +12,8 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
+require_once __DIR__ . '/../reusablepage/guard.php';
+
 // CHECK ROLE — Owner dashboard must only be accessible to the Owner
 if (strtolower(trim((string)($_SESSION['position'] ?? ''))) !== 'owner') {
     http_response_code(403);

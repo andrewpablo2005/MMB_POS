@@ -11,6 +11,8 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
+require_once __DIR__ . '/../reusablepage/guard.php';
+
 if (strtolower($_SESSION['position']) !== 'admin') {
     http_response_code(403);
     echo "Access denied";

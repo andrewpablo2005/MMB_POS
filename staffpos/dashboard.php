@@ -8,6 +8,8 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
+require_once __DIR__ . '/../reusablepage/guard.php';
+
 // CHECK ROLE (case-insensitive)
 if (strtolower($_SESSION['position']) !== 'staff') {
     http_response_code(403);

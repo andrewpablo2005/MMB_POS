@@ -24,6 +24,28 @@ if (!function_exists('guard_require_login')) {
             http_response_code(403);
             exit('Forbidden: please log in first.');
         }
+
+        global $db;
+        require_once __DIR__ . '/../conn/database.php';
+
+        $accountStmt = $db->prepare('SELECT status FROM users WHERE id = ? LIMIT 1');
+        $accountStmt->execute([(int) $_SESSION['user_id']]);
+        $accountStatus = $accountStmt->fetchColumn();
+
+        if (strtolower(trim((string) $accountStatus)) === 'active') {
+            return;
+        }
+
+        $_SESSION = [];
+        if (ini_get('session.use_cookies')) {
+            $cookie = session_get_cookie_params();
+            setcookie(session_name(), '', time() - 42000, $cookie['path'], $cookie['domain'], $cookie['secure'], $cookie['httponly']);
+        }
+        session_destroy();
+
+        require_once __DIR__ . '/../conn/basepath.php';
+        header('Location: ' . mmbpos_base_path() . '/login_logout_page/login.php?account_disabled=1');
+        exit;
     }
 }
 
