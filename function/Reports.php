@@ -233,7 +233,7 @@ class Reports
 
         $createdWhere = $period === 'date' ? 'DATE(u.created_at) = ?' : ($period === 'month' ? "DATE_FORMAT(u.created_at, '%Y-%m') = ?" : 'YEAR(u.created_at) = ?');
         $parameters = [$period === 'year' ? (int) $value : $value];
-        $userWhere = "WHERE {$createdWhere}";
+        $userWhere = "WHERE {$createdWhere} AND LOWER(u.username) <> 'owner'";
         if ($cashierId > 0) {
             $userWhere .= $userWhere === '' ? 'WHERE u.id = ?' : ' AND u.id = ?';
             $parameters[] = $cashierId;
@@ -728,6 +728,8 @@ class Reports
         $where = [];
         $params = [];
 
+        $where[] = "LOWER(COALESCE(u.username, al.username, '')) <> 'owner'";
+
         if (!empty($filters['user_id'])) {
             $where[] = 'al.user_id = ?';
             $params[] = (int) $filters['user_id'];
@@ -776,7 +778,7 @@ class Reports
 
         try {
             // Total row count for pagination
-            $countStmt = $this->db->prepare("SELECT COUNT(*) FROM activity_logs al {$whereSql}");
+            $countStmt = $this->db->prepare("SELECT COUNT(*) FROM activity_logs al LEFT JOIN users u ON u.id = al.user_id {$whereSql}");
             $countStmt->execute($params);
             $total = (int) $countStmt->fetchColumn();
             $pages = max(1, (int) ceil($total / $perPage));
@@ -788,6 +790,7 @@ class Reports
                                      al.role, al.module, al.action, al.entity_type, al.entity_id,
                                      al.description, al.ip_address, al.created_at
                                  FROM activity_logs al
+                                 LEFT JOIN users u ON u.id = al.user_id
                                  LEFT JOIN users_info ui ON ui.user_id = al.user_id
                                         {$whereSql}
                                  ORDER BY al.created_at DESC, al.id DESC
@@ -814,7 +817,7 @@ class Reports
     {
         try {
             $stmt = $this->db->query("SELECT DISTINCT username FROM activity_logs
-                                      WHERE username IS NOT NULL AND username <> ''
+                                      WHERE username IS NOT NULL AND username <> '' AND LOWER(username) <> 'owner'
                                       ORDER BY username ASC LIMIT 200");
             return $stmt->fetchAll(PDO::FETCH_COLUMN);
         } catch (\Throwable $e) {
@@ -829,8 +832,15 @@ class Reports
     {
         try {
             $stmt = $this->db->query("SELECT
-                (SELECT COUNT(*) FROM activity_logs WHERE DATE(created_at) = CURDATE()) AS today_count,
-                (SELECT MAX(created_at) FROM activity_logs) AS last_activity");
+                                (SELECT COUNT(*)
+                                 FROM activity_logs al
+                                 LEFT JOIN users u ON u.id = al.user_id
+                                 WHERE DATE(al.created_at) = CURDATE()
+                                     AND LOWER(COALESCE(u.username, al.username, '')) <> 'owner') AS today_count,
+                                (SELECT MAX(al.created_at)
+                                 FROM activity_logs al
+                                 LEFT JOIN users u ON u.id = al.user_id
+                                 WHERE LOWER(COALESCE(u.username, al.username, '')) <> 'owner') AS last_activity");
             $row = $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
             return [
                 'today_count' => (int) ($row['today_count'] ?? 0),
