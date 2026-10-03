@@ -139,10 +139,42 @@ class UserManagement
 }
 
     // UPDATE USER (MERGED VERSION - no duplicate methods)
+    private function isProtectedOwner(int $userId): bool
+    {
+        $stmt = $this->con->prepare('SELECT username, position FROM users WHERE id = ? LIMIT 1');
+        $stmt->execute([$userId]);
+        $account = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+        return $account
+            && strtolower(trim((string) ($account['position'] ?? ''))) === 'owner'
+            && strtolower(trim((string) ($account['username'] ?? ''))) !== 'owner';
+    }
+
+    private function isDefaultOwnerActor(): bool
+    {
+        $currentUserId = (int) ($_SESSION['user_id'] ?? 0);
+        if ($currentUserId <= 0) {
+            return false;
+        }
+
+        $stmt = $this->con->prepare('SELECT username, position, status FROM users WHERE id = ? LIMIT 1');
+        $stmt->execute([$currentUserId]);
+        $account = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+        return $account
+            && strtolower(trim((string) ($account['username'] ?? ''))) === 'owner'
+            && strtolower(trim((string) ($account['position'] ?? ''))) === 'owner'
+            && strtolower(trim((string) ($account['status'] ?? ''))) === 'active';
+    }
+
     public function updateUser(int $userId, array $data): array
 {
     if (!$userId) {
         return ['success' => false, 'message' => 'Invalid user ID'];
+    }
+
+    if ($this->isProtectedOwner($userId) && !$this->isDefaultOwnerActor()) {
+        return ['success' => false, 'message' => 'You cannot edit another Owner account.'];
     }
 
     $d = $this->input($data);
@@ -264,6 +296,17 @@ class UserManagement
 
         $d = $this->input($data);
 
+        $accountStmt = $this->con->prepare('SELECT username, position FROM users WHERE id = ? LIMIT 1');
+        $accountStmt->execute([$userId]);
+        $currentAccount = $accountStmt->fetch(\PDO::FETCH_ASSOC);
+        if (
+            $currentAccount
+            && strtolower(trim((string) ($currentAccount['username'] ?? ''))) === 'owner'
+            && strtolower(trim((string) ($currentAccount['position'] ?? ''))) === 'owner'
+        ) {
+            $d['username'] = $currentAccount['username'];
+        }
+
         if (!$d['firstname'] || !$d['lastname'] || !$d['email']) {
             return ['success' => false, 'message' => 'Required fields missing'];
         }
@@ -347,6 +390,10 @@ class UserManagement
         $currentUserId = (int)($_SESSION['user_id'] ?? 0);
         if ($userId === $currentUserId) {
             return ['success' => false, 'message' => 'You cannot delete your own account'];
+        }
+
+        if ($this->isProtectedOwner($userId) && !$this->isDefaultOwnerActor()) {
+            return ['success' => false, 'message' => 'You cannot delete another Owner account.'];
         }
 
         $stmt = $this->con->prepare("SELECT username, position FROM users WHERE id = ?");
@@ -442,6 +489,10 @@ class UserManagement
     {
         if (!$userId || !in_array($status, ['active', 'disabled'], true)) {
             return ['success' => false, 'message' => 'Invalid account status request'];
+        }
+
+        if ($status === 'disabled' && $this->isProtectedOwner($userId) && !$this->isDefaultOwnerActor()) {
+            return ['success' => false, 'message' => 'You cannot disable another Owner account.'];
         }
 
         $stmt = $this->con->prepare("UPDATE users SET status = ? WHERE id = ?");

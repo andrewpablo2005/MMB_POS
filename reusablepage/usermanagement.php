@@ -34,6 +34,7 @@ if (isset($_POST['toggleUserStatus'])) {
 // FETCH
 $users = $usersmanagement->getAllUsers();
 $currentUserId = (int) ($_SESSION['user_id'] ?? 0);
+$isDefaultOwnerActor = strtolower(trim((string) ($_SESSION['username'] ?? ''))) === 'owner';
 ?>
 
 <!-- ALERT + REDIRECT -->
@@ -103,7 +104,13 @@ $currentUserId = (int) ($_SESSION['user_id'] ?? 0);
 
                     <tbody>
                         <?php foreach ($users as $u): ?>
-                            <?php if ((int) ($u['id'] ?? 0) === $currentUserId) continue; ?>
+                            <?php if ((int) ($u['id'] ?? 0) === $currentUserId || strtolower(trim((string) ($u['username'] ?? ''))) === 'owner') continue; ?>
+                            <?php
+                                $isProtectedOwner = strtolower(trim((string) ($u['position'] ?? ''))) === 'owner'
+                                    && strtolower(trim((string) ($u['username'] ?? ''))) !== 'owner';
+                                $showOwnerRestriction = $isProtectedOwner && !$isDefaultOwnerActor;
+                                $isActive = ($u['status'] ?? 'active') === 'active';
+                            ?>
                             <tr>
                                 <td class="col-id"><?= htmlspecialchars((string)($u['id']), ENT_QUOTES, 'UTF-8') ?></td>
 
@@ -148,14 +155,29 @@ $currentUserId = (int) ($_SESSION['user_id'] ?? 0);
                                     </button>
 
                                     <!-- EDIT -->
+                                    <?php if ($showOwnerRestriction): ?>
+                                        <button type="button" class="btn btn-warning btn-sm"
+                                            onclick="mmbNotify({type:'warning', title:'Owner account protected', message:'You cannot edit another Owner account.'})">
+                                            <i class="fas fa-pen me-1" aria-hidden="true"></i>
+                                            Edit
+                                        </button>
+                                    <?php else: ?>
                                     <button type="button" class="btn btn-warning btn-sm"
                                         onclick="mmbOpenUserModal(this)"
                                         data-bs-target="#edit<?= htmlspecialchars((string)($u['id']), ENT_QUOTES, 'UTF-8') ?>">
                                         <i class="fas fa-pen me-1" aria-hidden="true"></i>
                                         Edit
                                     </button>
+                                    <?php endif; ?>
 
                                     <!-- ACCOUNT STATUS -->
+                                    <?php if ($isProtectedOwner && $isActive && !$isDefaultOwnerActor): ?>
+                                        <button type="button" class="btn btn-danger btn-sm"
+                                            onclick="mmbNotify({type:'warning', title:'Owner account protected', message:'You cannot disable another Owner account.'})">
+                                            <i class="fas fa-ban me-1" aria-hidden="true"></i>
+                                            Disable
+                                        </button>
+                                    <?php else: ?>
                                     <form method="POST" class="d-inline">
                                         <input type="hidden" name="id" value="<?= htmlspecialchars((string)($u['id']), ENT_QUOTES, 'UTF-8') ?>">
                                         <input type="hidden" name="status" value="<?= ($u['status'] ?? 'active') === 'active' ? 'disabled' : 'active' ?>">
@@ -165,6 +187,18 @@ $currentUserId = (int) ($_SESSION['user_id'] ?? 0);
                                             <?= ($u['status'] ?? 'active') === 'active' ? 'Disable' : 'Enable' ?>
                                         </button>
                                     </form>
+                                    <?php endif; ?>
+
+                                    <?php if ($isDefaultOwnerActor): ?>
+                                        <form method="POST" class="d-inline">
+                                            <input type="hidden" name="id" value="<?= htmlspecialchars((string)($u['id']), ENT_QUOTES, 'UTF-8') ?>">
+                                            <button type="submit" name="deleteUser" class="btn btn-danger btn-sm"
+                                                data-mmb-confirm="Delete this user? This cannot be undone." data-mmb-ok="Yes, delete">
+                                                <i class="fas fa-trash me-1" aria-hidden="true"></i>
+                                                Delete
+                                            </button>
+                                        </form>
+                                    <?php endif; ?>
 
                                 </td>
                             </tr>

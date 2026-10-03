@@ -108,6 +108,8 @@ if (isset($_POST['updateUserSystem'])) {
 }
 
 $currentUser = $usersmanagement->getUserById($userId);
+$isDefaultOwnerAccount = strtolower(trim((string) ($currentUser['username'] ?? ''))) === 'owner'
+    && strtolower(trim((string) ($currentUser['position'] ?? ''))) === 'owner';
 ?>
 <?php if ($result): ?>
     <script>
@@ -158,7 +160,11 @@ $currentUser = $usersmanagement->getUserById($userId);
                         <div class="col-md-6">
                             <label class="form-label">Username</label>
                             <input type="text" class="form-control" name="username"
-                                value="<?= htmlspecialchars($currentUser['username'] ?? '') ?>" required>
+                                value="<?= htmlspecialchars($currentUser['username'] ?? '', ENT_QUOTES, 'UTF-8') ?>"
+                                <?= $isDefaultOwnerAccount ? 'readonly aria-describedby="defaultOwnerUsernameHelp"' : '' ?> required>
+                            <?php if ($isDefaultOwnerAccount): ?>
+                                <small id="defaultOwnerUsernameHelp" class="form-text text-muted">The system default username cannot be changed.</small>
+                            <?php endif; ?>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Email</label>
