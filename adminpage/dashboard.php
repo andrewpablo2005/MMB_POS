@@ -20,6 +20,9 @@ if (strtolower($_SESSION['position']) !== 'admin') {
 }
 
 $activeTab = $_GET['tab'] ?? 'dashboard';
+if ($activeTab === 'pendingaccount') {
+    $activeTab = 'users';
+}
 
 require_once __DIR__ . "/../conn/database.php";
 require_once __DIR__ . "/../conn/connection_links.php";
@@ -90,9 +93,6 @@ if (isset($_GET['added'])) {
                     <a class="nav-link <?= $activeTab === 'reports' ? 'active' : '' ?>"
                         href="?tab=reports"><i class="fas fa-file-alt"></i>Reports</a>
 
-                    <a class="nav-link <?= $activeTab === 'pendingaccount' ? 'active' : '' ?>"
-                        href="?tab=pendingaccount"><i class="fas fa-hourglass-half"></i>Pending Account</a>
-
                     <a class="nav-link <?= $activeTab === 'users' ? 'active' : '' ?>"
                         href="?tab=users"><i class="fas fa-users"></i>User Management</a>
 
@@ -122,12 +122,8 @@ if (isset($_GET['added'])) {
             <div class="tab-pane fade px-3 px-lg-4 py-4 <?= $activeTab === 'reports' ? 'show active' : '' ?>" id="v-pills-reports">
                 <?php if ($activeTab === 'reports') mmb_include_fragment(__DIR__ . "/../reusablepage/reports.php"); ?>
             </div>
-            <div class="tab-pane fade px-3 px-lg-4 py-4 <?= $activeTab === 'pendingaccount' ? 'show active' : '' ?>"
-                id="v-pills-pendingaccount">
-                <?php if ($activeTab === 'pendingaccount') mmb_include_fragment(__DIR__ . "/../reusablepage/pendingaccountadmin.php"); ?>
-            </div>
             <div class="tab-pane fade px-3 px-lg-4 py-4 <?= $activeTab === 'users' ? 'show active' : '' ?>" id="v-pills-users">
-                <?php if ($activeTab === 'users') mmb_include_fragment(__DIR__ . "/../reusablepage/adminaddaccount.php"); ?>
+                <?php if ($activeTab === 'users') mmb_include_fragment(__DIR__ . "/../reusablepage/adminusermanagement.php"); ?>
             </div>
             <div class="tab-pane fade px-3 px-lg-4 py-4 <?= $activeTab === 'system' ? 'show active' : '' ?>" id="v-pills-system">
                 <?php if ($activeTab === 'system') mmb_include_fragment(__DIR__ . "/../reusablepage/systemsettings.php"); ?>
