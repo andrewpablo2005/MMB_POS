@@ -31,8 +31,21 @@ if (isset($_POST['toggleUserStatus'])) {
     $result = $usersmanagement->setUserStatus($id, $status);
 }
 
+if (isset($_POST['action']) && in_array($_POST['action'], ['approve', 'reject'], true)) {
+    require_once __DIR__ . '/../function/userregistration.php';
+    $approvalManager = new \Classes\UserRegistration($db);
+    $_GET['id'] = (int) ($_POST['id'] ?? 0);
+
+    if ($_POST['action'] === 'approve') {
+        $approvalManager->approve();
+    } else {
+        $approvalManager->reject();
+    }
+}
+
 // FETCH
 $users = $usersmanagement->getAllUsers();
+$pendingApprovalCount = (int) $db->query('SELECT COUNT(*) FROM pre_approved_users')->fetchColumn();
 $currentUserId = (int) ($_SESSION['user_id'] ?? 0);
 $isDefaultOwnerActor = strtolower(trim((string) ($_SESSION['username'] ?? ''))) === 'owner';
 ?>
@@ -82,6 +95,11 @@ $isDefaultOwnerActor = strtolower(trim((string) ($_SESSION['username'] ?? ''))) 
                 <li class="nav-item" role="presentation">
                     <button class="nav-link" id="user-security-tab" data-bs-toggle="tab" data-bs-target="#user-security-pane" type="button" role="tab" aria-controls="user-security-pane" aria-selected="false">
                         Pending Approvals
+                        <?php if ($pendingApprovalCount > 0): ?>
+                            <span class="badge rounded-pill text-bg-danger ms-2" aria-label="<?= $pendingApprovalCount ?> pending approvals">
+                                <?= $pendingApprovalCount > 99 ? '99+' : $pendingApprovalCount ?>
+                            </span>
+                        <?php endif; ?>
                     </button>
                 </li>
             </ul>

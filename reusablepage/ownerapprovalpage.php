@@ -7,16 +7,6 @@ use Classes\UserRegistration;
 
 $userAction = new UserRegistration($db);
 
-// HANDLE ACTION
-if (isset($_POST['action'])) {
-    $_GET['id'] = $_POST['id']; // reuse your function
-
-    if ($_POST['action'] == 'approve')
-        $userAction->approve();
-    if ($_POST['action'] == 'reject')
-        $userAction->reject();
-}
-
 // USE FUNCTION HERE
 $users = $userAction->getAllPreUsers();
 ?>
@@ -73,7 +63,7 @@ $users = $userAction->getAllPreUsers();
                         <form method="POST">
                             <input type="hidden" name="id" value="<?= htmlspecialchars((string)($u['id']), ENT_QUOTES, 'UTF-8') ?>">
                             <button name="action" value="approve"
-                                class="btn btn-primary btn-sm">
+                                class="btn btn-success btn-sm">
                                 <i class="fas fa-check me-1"></i>Approve
                             </button>
                         </form>
