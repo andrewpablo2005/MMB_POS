@@ -120,6 +120,30 @@
     --bs-nav-tabs-link-active-color: var(--mmb-primary-hover);
 }
 
+#inventoryTabs .nav-link,
+#adminUserManagementTabs .nav-link,
+#userManagementTabs .nav-link {
+    color: var(--mmb-primary-hover);
+    font-weight: 600;
+    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+#inventoryTabs .nav-link:not(.active):hover,
+#adminUserManagementTabs .nav-link:not(.active):hover,
+#userManagementTabs .nav-link:not(.active):hover {
+    background: var(--mmb-primary-soft-2);
+    border-color: var(--mmb-primary-soft-2);
+}
+
+#inventoryTabs .nav-link.active,
+#adminUserManagementTabs .nav-link.active,
+#userManagementTabs .nav-link.active {
+    background: var(--mmb-primary);
+    border-color: var(--mmb-primary);
+    color: #fff;
+    font-weight: 700;
+}
+
 .dropdown-menu {
     --bs-dropdown-link-active-bg: var(--mmb-primary);
 }
