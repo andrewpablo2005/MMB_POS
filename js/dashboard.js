@@ -22,17 +22,62 @@
     }, 120);
   }
 
-  const periodSelect = document.getElementById('salesPeriod');
-  if (periodSelect) {
-    periodSelect.addEventListener('change', function () {
-      const p = periods[this.value];
-      if (!p) return;
-      swapText(document.getElementById('salesValue'), p.sales);
-      swapText(document.getElementById('salesSub'), p.sub);
-      swapText(document.getElementById('revenueValue'), p.revenue);
-      swapText(document.getElementById('revenueSub'), p.revSub);
-      swapText(document.getElementById('transactionsLabel'), p.transactionsLabel);
-      swapText(document.getElementById('transactionsValue'), p.transactions);
+  function applyPeriodValue(value) {
+    const p = periods[value];
+    if (!p) return;
+
+    const picker = document.getElementById('salesPeriodPicker');
+    const toggle = document.getElementById('salesPeriodToggle');
+    const label = toggle ? toggle.querySelector('.period-dropdown-label') : null;
+    const items = Array.from(document.querySelectorAll('.period-dropdown-item'));
+
+    if (label) {
+      label.textContent = value === 'today' ? 'Today' : value === 'month' ? 'This Month' : 'This Year';
+    }
+
+    items.forEach((item) => {
+      const isSelected = item.dataset.value === value;
+      item.classList.toggle('is-selected', isSelected);
+      item.setAttribute('aria-selected', String(isSelected));
+    });
+
+    if (picker) {
+      picker.classList.remove('is-open');
+      const toggleButton = picker.querySelector('.period-dropdown-toggle');
+      if (toggleButton) {
+        toggleButton.setAttribute('aria-expanded', 'false');
+      }
+    }
+
+    swapText(document.getElementById('salesValue'), p.sales);
+    swapText(document.getElementById('salesSub'), p.sub);
+    swapText(document.getElementById('revenueValue'), p.revenue);
+    swapText(document.getElementById('revenueSub'), p.revSub);
+    swapText(document.getElementById('transactionsLabel'), p.transactionsLabel);
+    swapText(document.getElementById('transactionsValue'), p.transactions);
+  }
+
+  const picker = document.getElementById('salesPeriodPicker');
+  const toggle = document.getElementById('salesPeriodToggle');
+  if (picker && toggle) {
+    toggle.addEventListener('click', function (event) {
+      event.stopPropagation();
+      const isOpen = picker.classList.contains('is-open');
+      picker.classList.toggle('is-open', !isOpen);
+      toggle.setAttribute('aria-expanded', String(!isOpen));
+    });
+
+    document.addEventListener('click', function (event) {
+      if (!picker.contains(event.target)) {
+        picker.classList.remove('is-open');
+        toggle.setAttribute('aria-expanded', 'false');
+      }
+    });
+
+    picker.querySelectorAll('.period-dropdown-item').forEach((item) => {
+      item.addEventListener('click', function () {
+        applyPeriodValue(this.dataset.value);
+      });
     });
   }
 

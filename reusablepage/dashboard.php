@@ -95,13 +95,19 @@ function dash_product_thumb(?string $image, string $sizeClass = 'mmb-thumb'): st
       <div class="stat-card stat-card--sales">
         <div class="stat-icon crimson"><i class="fas fa-peso-sign"></i></div>
         <div class="flex-grow-1 min-w-0">
-          <div class="d-flex align-items-center justify-content-between">
+          <div class="d-flex align-items-center justify-content-between gap-2">
             <div class="stat-label">Net Sales</div>
-            <select class="period-select" id="salesPeriod" aria-label="Sales period">
-              <option value="today" selected>Today</option>
-              <option value="month">This Month</option>
-              <option value="year">This Year</option>
-            </select>
+            <div class="custom-period-picker" id="salesPeriodPicker">
+              <button type="button" class="period-dropdown-toggle" id="salesPeriodToggle" aria-expanded="false" aria-haspopup="listbox" aria-label="Sales period">
+                <span class="period-dropdown-label">Today</span>
+                <span class="period-dropdown-caret" aria-hidden="true">▾</span>
+              </button>
+              <div class="period-dropdown-menu" role="listbox" aria-label="Sales period">
+                <button type="button" class="period-dropdown-item is-selected" data-value="today" role="option" aria-selected="true">Today</button>
+                <button type="button" class="period-dropdown-item" data-value="month" role="option" aria-selected="false">This Month</button>
+                <button type="button" class="period-dropdown-item" data-value="year" role="option" aria-selected="false">This Year</button>
+              </div>
+            </div>
           </div>
           <div class="stat-value stat-value--xl" id="salesValue">₱<?php echo number_format($netSalesToday, 2); ?></div>
           <div class="stat-sub" id="salesSub">Returns from today's sales: -₱<?php echo number_format($totalRefundToday, 2); ?></div>
