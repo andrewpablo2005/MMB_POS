@@ -59,7 +59,7 @@ function dash_product_thumb(?string $image, string $sizeClass = 'mmb-thumb'): st
         revenue: <?php echo json_encode('₱' . number_format($realRevenueToday, 2)); ?>,
         revSub:  'After refunds & product costs',
         transactions: <?php echo json_encode(number_format((float)$transactionsToday)); ?>,
-        transactionsLabel: 'Transactions Today'
+        transactionsLabel: 'Transactions Todasy'
       },
       month: {
         sales:   <?php echo json_encode('₱' . number_format($totalSalesMonth, 2)); ?>,
@@ -114,7 +114,7 @@ function dash_product_thumb(?string $image, string $sizeClass = 'mmb-thumb'): st
         <div class="min-w-0">
           <div class="stat-label">Profit</div>
           <div class="stat-value" id="revenueValue">₱<?php echo number_format($realRevenueToday, 2); ?></div>
-          <div class="stat-sub" id="revenueSub"></div>
+          <div class="stat-sub" id="revenueSub">After refunds & product costs</div>
         </div>
       </div>
     </div>
