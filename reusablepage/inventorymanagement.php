@@ -974,10 +974,15 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
                                 <?php foreach ($products as $product): ?>
                                     <?php
                                         $dosageFormName = trim((string) ($product['dosage_form'] ?? ''));
+                                        $servingAmount = trim(implode(' ', array_filter([
+                                            $product['strength'] ?? '',
+                                            $product['measurement_name'] ?? '',
+                                        ], static fn($value) => trim((string) $value) !== '')));
                                         $productLabel = trim(implode(' ', array_filter([
                                             $product['branded_name'] ?? '',
                                             $product['generic_name'] ?? '',
                                             $dosageFormName,
+                                            $servingAmount !== '' ? '(' . $servingAmount . ')' : '',
                                         ], static fn($value) => trim((string) $value) !== '')));
                                     ?>
                                     <button type="button" class="batch-product-option" data-id="<?= (int)($product['id'] ?? 0) ?>" data-label="<?= htmlspecialchars($productLabel, ENT_QUOTES, 'UTF-8') ?>">
