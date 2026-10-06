@@ -978,11 +978,16 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
                                             $product['strength'] ?? '',
                                             $product['measurement_name'] ?? '',
                                         ], static fn($value) => trim((string) $value) !== '')));
+                                        $packageAmount = trim(implode(' ', array_filter([
+                                            $product['strength_per_quantity'] ?? '',
+                                            $product['strength_per_quantity_unit'] ?? '',
+                                        ], static fn($value) => trim((string) $value) !== '')));
                                         $productLabel = trim(implode(' ', array_filter([
                                             $product['branded_name'] ?? '',
                                             $product['generic_name'] ?? '',
                                             $dosageFormName,
                                             $servingAmount !== '' ? '(' . $servingAmount . ')' : '',
+                                            $packageAmount !== '' ? '[Package: ' . $packageAmount . ']' : '',
                                         ], static fn($value) => trim((string) $value) !== '')));
                                     ?>
                                     <button type="button" class="batch-product-option" data-id="<?= (int)($product['id'] ?? 0) ?>" data-label="<?= htmlspecialchars($productLabel, ENT_QUOTES, 'UTF-8') ?>">
