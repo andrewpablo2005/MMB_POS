@@ -68,7 +68,7 @@ $dosageForms = $product->getDosageForms();
                         <div>
                             <span class="add-product-section-kicker">02</span>
                             <h6>Product/Dosage details</h6>
-                            <button type="button" class="mmb-help-badge" aria-label="How to enter package size and dosage details" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="right" title="<img src='<?= mmbpos_base_path() ?>/assets/sample.png' alt='Dosage and package size example' class='mmb-help-tooltip-image'>">?</button>
+                            <button type="button" class="mmb-help-badge" aria-label="How to enter package size and dosage details" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="right" title="<img src='<?= mmbpos_base_path() ?>/assets/sample.png' alt='Dosage and package size example' class='mmb-help-tooltip-image'><img src='<?= mmbpos_base_path() ?>/assets/sample2.png' alt='Example showing dosage, product form, and package units' class='mmb-help-tooltip-image' style='margin-top: 0.5rem;'>">?</button>
                         </div>
                         <span>Size, amount, and product form</span>
                     </div>
@@ -183,7 +183,7 @@ $dosageForms = $product->getDosageForms();
                     <div id="strengthQuantityFields" class="add-product-row">
                         <div class="add-product-field">
                             <label for="strength_per_quantity" class="form-label">Package Size<span
-                                    class="text-muted">(Leave blank if sold as 1 piece)</span></label>
+                                    class="text-muted"></span></label>
                             <input type="number" id="strength_per_quantity" name="strength_per_quantity" step="1"
                                 min="1" inputmode="numeric" class="form-control" placeholder="e.g., 500">
                             <div class="form-text text-muted">Total contents of one package — whole numbers only, e.g.,
@@ -191,7 +191,7 @@ $dosageForms = $product->getDosageForms();
                             </div>
                         </div>
                         <div class="add-product-field">
-                            <label for="strength_per_quantity_unit" class="form-label">Serving Unit per Package<span class="text-muted">(Leave blank if sold as 1 piece)</span></label>
+                            <label for="strength_per_quantity_unit" class="form-label">Serving Unit per Package<span class="text-muted"></span></label>
                             <div class="input-group batch-product-input-group">
                                 <div class="batch-product-search-wrap flex-grow-1">
                                     <input type="text" id="strength_per_quantity_unit" name="strength_per_quantity_unit"
