@@ -6,6 +6,7 @@ use Classes\ProductManagement;
 
 $inventoryManager = new ProductManagement($db);
 $nearExpiryDays = $inventoryManager->getNearExpiryDays();
+$lowStockThreshold = $inventoryManager->getLowStockThreshold(); //fd
 $inventoryBatches = $inventoryManager->getAllInventoryBatches();
 $inventoryBatchSequence = $inventoryManager->getAllInventoryBatchNumbersForSequence();
 $disposedBatches = $inventoryManager->getDisposedBatches();
@@ -332,7 +333,7 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
 
                                 if ($batchCurrentQuantity <= 0) {
                                     $stockStatusClass = 'inventory-status-no-stock';
-                                } elseif ($batchCurrentQuantity <= 15) {
+                                } elseif ($batchCurrentQuantity <= $lowStockThreshold) {
                                     $stockStatusClass = 'inventory-status-low-stock';
                                 }
 

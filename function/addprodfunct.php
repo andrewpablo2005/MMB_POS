@@ -1778,6 +1778,11 @@ class ProductManagement
         return $this->getInventoryAlertSetting('near_expiry_days', 60, 1, 3650);
     }
 
+    public function getLowStockThreshold(): int
+    {
+        return $this->getInventoryAlertSetting('low_stock_threshold', 15, 1, 100000);
+    }//fs
+
     public function getExpiryAlertItems()
     {
         $nearExpiryDays = $this->getNearExpiryDays();
