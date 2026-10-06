@@ -91,7 +91,7 @@ if ($product->addProduct()) {
                         $measurementName = trim((string) ($prod['measurement_name'] ?? ''));
                         $servingSize = $strength !== ''
                             ? $strength . ($measurementName !== '' ? ' ' . $measurementName : '')
-                            : '';
+                            : 'N/A';
                         $quantity = $prod['strength_per_quantity'] ?? null;
                         $quantityUnit = trim((string) ($prod['strength_per_quantity_unit'] ?? ''));
                         $packageQuantity = isset($quantity) && $quantity !== '' && (float) $quantity > 0
@@ -108,7 +108,7 @@ if ($product->addProduct()) {
                                     <img src="../img/<?= htmlspecialchars($prod['imageproduct'], ENT_QUOTES, 'UTF-8') ?>" alt="<?= htmlspecialchars((string)($prod['generic_name'] ?? 'Product'), ENT_QUOTES, 'UTF-8') ?>" loading="lazy">
                                 </span>
                             <?php else: ?>
-                                <span class="mmb-thumb mmb-thumb--md mmb-thumb--empty"><i class="fas fa-capsules"></i></span>
+                                <span class="mmb-thumb mmb-thumb--md mmb-thumb--empty">N/A</span>
                             <?php endif; ?>
                         </td>
                         <td data-label="Branded" class="product-name-cell"><?= htmlspecialchars($brandName !== '' ? $brandName : 'N/A', ENT_QUOTES, 'UTF-8') ?></td>
