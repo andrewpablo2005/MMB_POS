@@ -681,7 +681,7 @@ $dosageForms = $product->getDosageForms();
     </div>
 </div>
 
-<script src="../js/auto_generatebarcode.js?v=3"></script>
+<script src="../js/auto_generatebarcode.js?v=4"></script>
 
 <script>
     function previewImage(event) {

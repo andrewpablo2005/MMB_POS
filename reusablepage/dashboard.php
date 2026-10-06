@@ -46,7 +46,7 @@ function dash_product_thumb(?string $image, string $sizeClass = 'mmb-thumb'): st
 
 <!-- Inter Font & Dashboard CSS -->
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../css/dashboard.css?v=11">
+<link rel="stylesheet" href="../css/dashboard.css?v=12">
 
 <!-- Pass PHP data to dashboard.js without mixing PHP into the JS file -->
 <script>
