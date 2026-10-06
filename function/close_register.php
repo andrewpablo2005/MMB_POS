@@ -156,6 +156,14 @@ try {
     }
 
     $variance = round($countedCash - $systemCash, 2);
+    if ($variance < 0) {
+        echo json_encode([
+            'success' => false,
+            'error' => 'Register cannot be closed because counted cash is short by ' . number_format(abs($variance), 2) . '.'
+        ]);
+        exit;
+    }
+
     $insert = $db->prepare("INSERT INTO register_closings
         (user_id, business_date, system_cash, counted_cash, variance, notes)
         VALUES (?, ?, ?, ?, ?, ?)");
@@ -170,6 +178,7 @@ try {
     echo json_encode([
         'success' => true,
         'closed' => true,
+        'today' => $today,
         'system_cash' => $systemCash,
         'counted_cash' => $countedCash,
         'variance' => $variance,

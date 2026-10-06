@@ -629,6 +629,7 @@ if (!empty($_SESSION['user_id'])) {
     let weposClosingSystemCash = 0;
     let weposRegisterOpened = false;
     let weposRegisterClosed = false;
+    let weposClosingUnavailable = false;
 
     function weposFormatClosingCurrency(value) {
         return '₱' + Number(value || 0).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -716,6 +717,7 @@ if (!empty($_SESSION['user_id'])) {
         const error = document.getElementById('closingError');
         const date = document.getElementById('closingBusinessDate').value;
         error.style.display = 'none';
+        weposClosingUnavailable = false;
         document.getElementById('confirmClosingBtn').disabled = true;
         modal.style.display = 'flex';
 
@@ -730,6 +732,7 @@ if (!empty($_SESSION['user_id'])) {
 
             weposClosingSystemCash = Number(result.system_cash || 0);
             weposRegisterOpened = result.opening_exists === true;
+            weposClosingUnavailable = result.already_closed || weposClosingSystemCash <= 0;
             document.getElementById('closingTransactions').textContent = result.transaction_count;
             document.getElementById('closingOpeningCash').textContent = weposFormatClosingCurrency(result.opening_cash);
             document.getElementById('closingSales').textContent = weposFormatClosingCurrency(result.sales_total);
@@ -764,13 +767,14 @@ if (!empty($_SESSION['user_id'])) {
         }
 
         const variance = Math.round((counted - weposClosingSystemCash) * 100) / 100;
+        const shortage = variance < 0;
         varianceBox.textContent = variance === 0
             ? 'Counted cash matches the system amount.'
-            : (variance > 0 ? 'Overage: ' : 'Shortage: ') + weposFormatClosingCurrency(Math.abs(variance));
+            : (shortage ? 'Cannot close: cash shortage of ' : 'Overage: ') + weposFormatClosingCurrency(Math.abs(variance));
         varianceBox.style.display = 'block';
-        varianceBox.style.background = variance === 0 ? '#f1f5f9' : '#fef3c7';
-        varianceBox.style.color = variance === 0 ? '#334155' : '#92400e';
-        confirmButton.disabled = false;
+        varianceBox.style.background = shortage ? '#fef2f2' : (variance === 0 ? '#f1f5f9' : '#fef3c7');
+        varianceBox.style.color = shortage ? '#991b1b' : (variance === 0 ? '#334155' : '#92400e');
+        confirmButton.disabled = shortage || weposClosingUnavailable;
     }
 
     function weposConfirmRegisterClosing() {
@@ -780,6 +784,9 @@ if (!empty($_SESSION['user_id'])) {
         }
 
         const variance = Math.round((counted - weposClosingSystemCash) * 100) / 100;
+        if (variance < 0 || weposClosingUnavailable) {
+            return;
+        }
         document.getElementById('closingConfirmDate').textContent = document.getElementById('closingBusinessDate').value;
         document.getElementById('closingConfirmOpeningCash').textContent = document.getElementById('closingOpeningCash').textContent;
         document.getElementById('closingConfirmSystemCash').textContent = weposFormatClosingCurrency(weposClosingSystemCash);
@@ -818,7 +825,7 @@ if (!empty($_SESSION['user_id'])) {
             weposCart = {};
             if (typeof weposUpdateCart === 'function') weposUpdateCart();
             const closedBusinessDate = document.getElementById('closingBusinessDate').value;
-            const today = new Date().toISOString().slice(0, 10);
+            const today = result.today;
             if (closedBusinessDate < today) {
                 sessionStorage.setItem('showOpenRegisterAfterReload', '1');
                 mmbNotify({ type: 'success', title: 'Previous register closed', message: 'Variance: ' + weposFormatClosingCurrency(result.variance) + '. Refreshing POS…', duration: 2500 });
