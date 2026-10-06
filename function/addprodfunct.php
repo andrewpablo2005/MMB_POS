@@ -1191,6 +1191,7 @@ class ProductManagement
             $oldImage = $_POST['old_image'] ?? '';
 
             try {
+                $this->ensureMeasurementColumnOptional();
                 $this->ensureProductDescriptionColumn();
                 $this->ensureStrengthColumnOptional();
                 $this->con->beginTransaction();
@@ -1239,7 +1240,7 @@ class ProductManagement
                     $this->generic_name,
                     $this->branded_name,
                     trim((string) $this->strength) !== '' ? $this->strength : null,
-                    $this->unit_measurement,
+                    $this->unit_measurement > 0 ? $this->unit_measurement : null,
                     $this->barcode,
                     $this->category_id,
                     $this->units_per_package,
