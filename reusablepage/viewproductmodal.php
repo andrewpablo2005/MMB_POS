@@ -50,6 +50,7 @@ require_once __DIR__ . '/guard.php'; guard_require_roles(['owner','admin']);
                             </div>
                             <div class="mmb-view-item">
                                 <strong>Package Size</strong>
+                                <span>
                                 <?php
                                     $qty = $prod['strength_per_quantity'] ?? null;
                                     $unit = trim($prod['strength_per_quantity_unit'] ?? '');
@@ -59,6 +60,7 @@ require_once __DIR__ . '/guard.php'; guard_require_roles(['owner','admin']);
                                         echo 'N/A';
                                     }
                                 ?>
+                                </span>
                             </div>
                             <div class="mmb-view-item">
                                 <strong>Category</strong>
