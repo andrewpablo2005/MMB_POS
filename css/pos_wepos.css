@@ -654,6 +654,14 @@
     overflow-y: auto; /* allow the overlay itself to scroll if modal is too tall */
 }
 
+#verifyIdModal {
+    align-items: center;
+}
+
+#verifyIdModal .wepos-modal {
+    margin-bottom: 0;
+}
+
 .wepos-modal {
     background: #fff;
     border-radius: 4px;

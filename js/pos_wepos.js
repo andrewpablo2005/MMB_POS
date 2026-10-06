@@ -2058,7 +2058,15 @@ function weposOpenVerificationSite() {
     const verifyUrl = type === 'senior'
         ? 'https://www.ncsc.gov.ph/registration-verification'
         : 'https://pwd.doh.gov.ph/tbl_pwd_id_verificationlist.php';
-    window.open(verifyUrl, '_blank', 'width=900,height=600');
+    const availableWidth = window.screen.availWidth;
+    const availableHeight = window.screen.availHeight;
+    const popupWidth = Math.min(900, Math.max(320, availableWidth - 40));
+    const popupHeight = Math.min(600, Math.max(320, availableHeight - 80));
+    const screenLeft = window.screen.availLeft || 0;
+    const screenTop = window.screen.availTop || 0;
+    const left = screenLeft + Math.max(0, (availableWidth - popupWidth) / 2);
+    const top = screenTop + Math.max(0, (availableHeight - popupHeight) / 2);
+    window.open(verifyUrl, '_blank', `width=${popupWidth},height=${popupHeight},left=${left},top=${top},resizable=yes,scrollbars=yes`);
 }
 
 async function weposApproveVerify() {
