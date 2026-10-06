@@ -1702,6 +1702,18 @@ table.dataTable.dtr-column > tbody > tr > td.dtr-control {
 .add-product-row--single { grid-template-columns: minmax(0, 1fr); }
 .add-product-row--three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .add-product-field { min-width: 0; }
+.add-product-supplier-button {
+    --bs-btn-color: #ffffff;
+    --bs-btn-bg: #16a34a;
+    --bs-btn-border-color: #16a34a;
+    --bs-btn-hover-color: #ffffff;
+    --bs-btn-hover-bg: #15803d;
+    --bs-btn-hover-border-color: #15803d;
+    --bs-btn-active-color: #ffffff;
+    --bs-btn-active-bg: #166534;
+    --bs-btn-active-border-color: #166534;
+    --bs-btn-focus-shadow-rgb: 22, 163, 74;
+}
 .add-product-field .form-label { margin-bottom: 0.4rem; font-weight: 700; color: var(--mmb-text); }
 .mmb-label-with-help { display: inline-flex; align-items: center; gap: 0.45rem; flex-wrap: wrap; }
 .mmb-help-badge {

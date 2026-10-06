@@ -362,7 +362,7 @@ $dosageForms = $product->getDosageForms();
                         </div>
 
                         <div class="add-product-row">
-                            <div class="add-product-field add-product-field--full">
+                            <div class="add-product-field">
                                 <label for="batch_supplier_search" class="form-label">Supplier (optional)</label>
                                 <input type="hidden" id="batch_supplier_id_hidden" name="supplier_id" value="">
                                 <div class="d-flex gap-2 align-items-start">
@@ -411,7 +411,7 @@ $dosageForms = $product->getDosageForms();
                                         }
                                         ?>
                                     </select>
-                                    <button type="button" class="btn btn-danger btn-sm d-inline-flex align-items-center justify-content-center"
+                                    <button type="button" class="btn btn-sm d-inline-flex align-items-center justify-content-center add-product-supplier-button"
                                         data-bs-toggle="modal" data-bs-target="#addProductSupplierModal"
                                         aria-label="Add supplier" title="Add supplier">
                                         <i class="fas fa-plus" aria-hidden="true"></i>
@@ -421,9 +421,7 @@ $dosageForms = $product->getDosageForms();
                                     Select the supplier for this inventory batch, if known.
                                 </div>
                             </div>
-                        </div>
 
-                        <div class="add-product-row add-product-row--three">
                             <div class="add-product-field">
                                 <label for="batch_quantity" class="form-label">Quantity Received</label>
                                 <input type="number" id="batch_quantity" name="received_quantity" class="form-control"
@@ -432,6 +430,9 @@ $dosageForms = $product->getDosageForms();
                                     Enter the number of packages received into stock.
                                 </div>
                             </div>
+                        </div>
+
+                        <div class="add-product-row add-product-row--three">
                             <div class="add-product-field">
                                 <label for="batch_purchase_cost" class="form-label">Purchase Cost per Unit</label>
                                 <input type="number" id="batch_purchase_cost" name="purchase_cost" class="form-control"
@@ -448,17 +449,17 @@ $dosageForms = $product->getDosageForms();
                                     Enter the percentage added to the purchase cost.
                                 </div>
                             </div>
-                        </div>
-
-                        <div class="add-product-row">
                             <div class="add-product-field">
-                                 <label for="batch_sale_price" class="form-label">Sale Price per Unit</label>
+                                <label for="batch_sale_price" class="form-label">Sale Price per Unit</label>
                                 <input type="number" id="batch_sale_price" name="sale_price" class="form-control"
                                     step="0.01" min="0" placeholder="e.g. 75.00">
                                 <div class="form-text text-muted mt-1">
                                     This price is calculated from purchase cost and markup.
                                 </div>
                             </div>
+                        </div>
+
+                        <div class="add-product-row">
                             <div class="add-product-field">
                                 <label for="batch_expiry_date" class="form-label">Expiry Date</label>
                                 <input type="date" id="batch_expiry_date" name="expiry_date" class="form-control">
@@ -615,7 +616,7 @@ $dosageForms = $product->getDosageForms();
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Add Supplier</button>
+                    <button type="submit" class="btn btn-primary add-product-supplier-button">Add Supplier</button>
                 </div>
             </form>
         </div>
