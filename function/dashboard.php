@@ -190,8 +190,8 @@ class DashboardManager
             if (!$parsedDate || $parsedDate->format('Y-m-d') !== $value) {
                 $value = date('Y-m-d');
             }
-            $indexColumn = 'HOUR(created_at)';
-            $where = 'DATE(created_at) = ?';
+            $indexColumn = 'HOUR(t.created_at)';
+            $where = 'DATE(t.created_at) = ?';
             $parameters = [$value];
             $labels = array_map(static function (int $hour): string {
                 return date('g A', strtotime(sprintf('%02d:00', $hour)));
@@ -203,8 +203,8 @@ class DashboardManager
             }
             [$year, $month] = array_map('intval', explode('-', $value));
             $dayCount = (int) date('t', strtotime($value . '-01'));
-            $indexColumn = 'DAY(created_at)';
-            $where = 'YEAR(created_at) = ? AND MONTH(created_at) = ?';
+            $indexColumn = 'DAY(t.created_at)';
+            $where = 'YEAR(t.created_at) = ? AND MONTH(t.created_at) = ?';
             $parameters = [$year, $month];
             $labels = array_map('strval', range(1, $dayCount));
             $trend = array_fill(0, $dayCount, 0.0);
@@ -212,15 +212,21 @@ class DashboardManager
             if (!preg_match('/^\d{4}$/', $value)) {
                 $value = date('Y');
             }
-            $indexColumn = 'MONTH(created_at)';
-            $where = 'YEAR(created_at) = ?';
+            $indexColumn = 'MONTH(t.created_at)';
+            $where = 'YEAR(t.created_at) = ?';
             $parameters = [(int) $value];
             $labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
             $trend = array_fill(0, 12, 0.0);
         }
 
-        $stmt = $this->db->prepare("SELECT {$indexColumn} AS chart_index, COALESCE(SUM(total_amount), 0) AS total
-            FROM transactions
+        $stmt = $this->db->prepare("SELECT {$indexColumn} AS chart_index,
+                COALESCE(SUM(GREATEST(t.total_amount - COALESCE(r.refund_total, 0), 0)), 0) AS total
+            FROM transactions t
+            LEFT JOIN (
+                SELECT original_transaction_id, SUM(refund_amount) AS refund_total
+                FROM return_transactions
+                GROUP BY original_transaction_id
+            ) r ON r.original_transaction_id = t.id
             WHERE {$where}
             GROUP BY chart_index");
         $stmt->execute($parameters);
