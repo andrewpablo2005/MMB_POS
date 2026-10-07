@@ -30,6 +30,28 @@ class DashboardManager
         return $result['total'] ?? 0;
     }
 
+    public function getTotalRefundMonth()
+    {
+        $sql = "SELECT COALESCE(SUM(rt.refund_amount), 0) AS total
+            FROM return_transactions rt
+            JOIN transactions t ON t.id = rt.original_transaction_id
+            WHERE MONTH(t.created_at) = MONTH(CURDATE()) AND YEAR(t.created_at) = YEAR(CURDATE())";
+        $stmt = $this->db->query($sql);
+        $result = $stmt->fetch();
+        return $result['total'] ?? 0;
+    }
+
+    public function getTotalRefundYear()
+    {
+        $sql = "SELECT COALESCE(SUM(rt.refund_amount), 0) AS total
+            FROM return_transactions rt
+            JOIN transactions t ON t.id = rt.original_transaction_id
+            WHERE YEAR(t.created_at) = YEAR(CURDATE())";
+        $stmt = $this->db->query($sql);
+        $result = $stmt->fetch();
+        return $result['total'] ?? 0;
+    }
+
     public function getTotalSalesMonth()
     {
         $sql = "SELECT SUM(total_amount) as total FROM transactions WHERE MONTH(created_at) = MONTH(CURDATE()) AND YEAR(created_at) = YEAR(CURDATE())";
