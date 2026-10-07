@@ -629,7 +629,7 @@ async function weposSubmitOverride() {
     }
     if (!Number.isFinite(rate) || rate <= 0 || rate >= 100) {
         if (errorEl) {
-            errorEl.textContent = 'Enter a valid override percentage between 0% and 100%.';
+            errorEl.textContent = 'Enter a valid override percentage between 0% and 99%.';
             errorEl.style.display = 'block';
         }
         return;
