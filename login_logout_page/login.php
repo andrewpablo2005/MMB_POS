@@ -61,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
                     <div class="login-card">
                     <div class="login-header">
                         <h2>Welcome Back</h2>
-                        <p>Login to your Pharmacy Management System</p>
+                        <p>Login to your Drugstore Management System</p>
                     </div>
 
                     <?php if ($error_message): ?>
@@ -135,7 +135,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
                 <div class="login-hero-copy text-white text-center position-relative" style="z-index: 2; padding: 60px 40px;">
                     <div class="mb-5">
                         <div class="brand-logo-tile">
-                            <img src="<?= mmbpos_base_path() ?>/assets/logo.png" alt="MMB Drugmart">
+                            <img src="<?= mmbpos_base_path() ?>/assets/MMB.png" alt="MMB Drugmart">
                         </div>
                     </div>
                     <h3 class="fw-bold mb-3" style="font-size: 28px;">Pharmacy Management</h3>
