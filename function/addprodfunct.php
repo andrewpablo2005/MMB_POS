@@ -1434,11 +1434,6 @@ class ProductManagement
             return false;
         }
 
-        if ($lotNumber === '') {
-            $this->response = "Lot number is required.";
-            return false;
-        }
-
         if ($expiryDate === null) {
             $this->response = "Expiry date is required.";
             return false;
