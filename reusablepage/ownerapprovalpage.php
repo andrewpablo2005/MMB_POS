@@ -8,10 +8,10 @@ use Classes\UserRegistration;
 $userAction = new UserRegistration($db);
 
 // USE FUNCTION HERE
-$users = $userAction->getAllPreUsers();
+$pendingUsers = $userAction->getAllPreUsers();
 ?>
 
-<?php if (empty($users)): ?>
+<?php if (empty($pendingUsers)): ?>
     <div class="empty-panel">
         <div class="empty-panel-icon"><i class="fas fa-user-check"></i></div>
         <h6>No pending approvals</h6>
@@ -37,7 +37,7 @@ $users = $userAction->getAllPreUsers();
 
         <!-- ONLY ONE TBODY -->
         <tbody>
-            <?php foreach ($users as $u): ?>
+            <?php foreach ($pendingUsers as $u): ?>
             <tr>
 
                 <td><?= htmlspecialchars((string)($u['username']), ENT_QUOTES, 'UTF-8') ?></td>
