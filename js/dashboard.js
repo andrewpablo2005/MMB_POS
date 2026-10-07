@@ -6,9 +6,10 @@
  */
 (function () {
   const data = window.dashboardData || {};
-  const salesData = data.monthlySalesTrend ?? Array(12).fill(0);
+  const salesTrend = data.salesTrend || {};
+  const salesData = salesTrend.values ?? Array(12).fill(0);
   const periods = data.periods || {};
-  const labels = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const labels = salesTrend.labels ?? ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
   const peso = (n) => '₱' + Number(n).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
@@ -153,22 +154,26 @@
     }
   });
 
-  /* ── Chart range dropdown (6M / 12M) ── */
-  const totalChip = document.getElementById('chartTotal');
-  const rangeSelect = document.getElementById('chartRange');
-  if (rangeSelect) {
-    rangeSelect.addEventListener('change', function () {
-      const months = parseInt(this.value, 10) || 12;
-      const slice = salesData.slice(12 - months);
-      const sliceLabels = labels.slice(12 - months);
-
-      chart.data.labels = sliceLabels;
-      chart.data.datasets[0].data = slice;
-      chart.update();
-
-      if (totalChip) {
-        totalChip.textContent = (months === 12 ? 'YTD ' : months + 'M ') + peso(slice.reduce((a, b) => a + b, 0));
+  const chartPeriod = document.getElementById('chartPeriod');
+  const chartValue = document.getElementById('chartValue');
+  const chartFilterForm = chartPeriod?.closest('form');
+  if (chartPeriod && chartValue && chartFilterForm) {
+    chartPeriod.addEventListener('change', function () {
+      const period = chartPeriod.value;
+      chartValue.type = period === 'date' ? 'date' : period === 'month' ? 'month' : 'number';
+      if (period === 'year') {
+        chartValue.min = '2000';
+        chartValue.max = '2100';
+      } else {
+        chartValue.removeAttribute('min');
+        chartValue.removeAttribute('max');
       }
+      chartValue.value = (data.chartDefaults || {})[period] || '';
+      if (chartValue.checkValidity()) chartFilterForm.requestSubmit();
+    });
+
+    chartValue.addEventListener('change', function () {
+      if (chartValue.value && chartValue.checkValidity()) chartFilterForm.requestSubmit();
     });
   }
 })();

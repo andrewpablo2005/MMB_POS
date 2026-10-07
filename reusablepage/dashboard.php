@@ -29,7 +29,16 @@ $averageTransactionValue = $dashboardManager->getAverageTransactionValue();
 
 $recentTransactions  = $dashboardManager->getRecentTransactions(5);
 $topProducts         = $dashboardManager->getTopSellingProducts(5);
-$monthlySalesTrend   = $dashboardManager->getMonthlySalesTrend();
+$salesTrend = $dashboardManager->getSalesTrend(
+  (string) ($_GET['chart_period'] ?? 'year'),
+  (string) ($_GET['chart_value'] ?? date('Y'))
+);
+$chartPeriodLabel = $salesTrend['period'] === 'date'
+  ? date('M j, Y', strtotime($salesTrend['value']))
+  : ($salesTrend['period'] === 'month'
+    ? date('F Y', strtotime($salesTrend['value'] . '-01'))
+    : $salesTrend['value']);
+$chartInputType = $salesTrend['period'] === 'date' ? 'date' : ($salesTrend['period'] === 'month' ? 'month' : 'number');
 
 date_default_timezone_set('Asia/Manila');
 
@@ -51,7 +60,12 @@ function dash_product_thumb(?string $image, string $sizeClass = 'mmb-thumb'): st
 <!-- Pass PHP data to dashboard.js without mixing PHP into the JS file -->
 <script>
   window.dashboardData = {
-    monthlySalesTrend: <?php echo json_encode($monthlySalesTrend); ?>,
+    salesTrend: <?php echo json_encode($salesTrend); ?>,
+    chartDefaults: {
+      date: <?php echo json_encode(date('Y-m-d')); ?>,
+      month: <?php echo json_encode(date('Y-m')); ?>,
+      year: <?php echo json_encode(date('Y')); ?>
+    },
     periods: {
       today: {
         sales:   <?php echo json_encode('₱' . number_format($netSalesToday, 2)); ?>,
@@ -143,11 +157,18 @@ function dash_product_thumb(?string $image, string $sizeClass = 'mmb-thumb'): st
         <div class="dash-card-header">
           <h6>Sales Performance</h6>
           <div class="d-flex align-items-center gap-2">
-            <span class="pill pill-gray" id="chartTotal">YTD ₱<?php echo number_format(array_sum($monthlySalesTrend), 2); ?></span>
-            <select class="period-select period-select--sm" id="chartRange" aria-label="Chart range">
-              <option value="6">Last 6 months</option>
-              <option value="12" selected>Last 12 months</option>
-            </select>
+            <span class="pill pill-gray" id="chartTotal"><?= htmlspecialchars($chartPeriodLabel, ENT_QUOTES, 'UTF-8') ?> · ₱<?= number_format((float) $salesTrend['total'], 2) ?></span>
+            <form method="GET" action="dashboard.php" class="dashboard-chart-filters d-flex align-items-center gap-2">
+              <input type="hidden" name="tab" value="dashboard">
+              <label class="visually-hidden" for="chartPeriod">Sales chart period</label>
+              <select class="form-select form-select-sm" id="chartPeriod" name="chart_period">
+                <option value="date" <?= $salesTrend['period'] === 'date' ? 'selected' : '' ?>>Date</option>
+                <option value="month" <?= $salesTrend['period'] === 'month' ? 'selected' : '' ?>>Month</option>
+                <option value="year" <?= $salesTrend['period'] === 'year' ? 'selected' : '' ?>>Year</option>
+              </select>
+              <label class="visually-hidden" for="chartValue">Choose chart date, month, or year</label>
+              <input class="form-control form-control-sm" id="chartValue" name="chart_value" type="<?= $chartInputType ?>" value="<?= htmlspecialchars($salesTrend['value'], ENT_QUOTES, 'UTF-8') ?>" <?= $salesTrend['period'] === 'year' ? 'min="2000" max="2100"' : '' ?> required>
+            </form>
           </div>
         </div>
         <div class="dash-card-body">
@@ -269,4 +290,4 @@ function dash_product_thumb(?string $image, string $sizeClass = 'mmb-thumb'): st
 </div><!-- end .dash-wrapper -->
 
 <!-- Dashboard Chart -->
-<script src="../js/dashboard.js?v=9"></script>
+<script src="../js/dashboard.js?v=11"></script>

@@ -180,6 +180,67 @@ class DashboardManager
         return array_values($salesTrend); // Return as index 0-11 for JS
     }
 
+    public function getSalesTrend(string $period, string $value): array
+    {
+        $period = in_array($period, ['date', 'month', 'year'], true) ? $period : 'year';
+        $value = trim($value);
+
+        if ($period === 'date') {
+            $parsedDate = \DateTime::createFromFormat('!Y-m-d', $value);
+            if (!$parsedDate || $parsedDate->format('Y-m-d') !== $value) {
+                $value = date('Y-m-d');
+            }
+            $indexColumn = 'HOUR(created_at)';
+            $where = 'DATE(created_at) = ?';
+            $parameters = [$value];
+            $labels = array_map(static function (int $hour): string {
+                return date('g A', strtotime(sprintf('%02d:00', $hour)));
+            }, range(0, 23));
+            $trend = array_fill(0, 24, 0.0);
+        } elseif ($period === 'month') {
+            if (!preg_match('/^\d{4}-(0[1-9]|1[0-2])$/', $value)) {
+                $value = date('Y-m');
+            }
+            [$year, $month] = array_map('intval', explode('-', $value));
+            $dayCount = (int) date('t', strtotime($value . '-01'));
+            $indexColumn = 'DAY(created_at)';
+            $where = 'YEAR(created_at) = ? AND MONTH(created_at) = ?';
+            $parameters = [$year, $month];
+            $labels = array_map('strval', range(1, $dayCount));
+            $trend = array_fill(0, $dayCount, 0.0);
+        } else {
+            if (!preg_match('/^\d{4}$/', $value)) {
+                $value = date('Y');
+            }
+            $indexColumn = 'MONTH(created_at)';
+            $where = 'YEAR(created_at) = ?';
+            $parameters = [(int) $value];
+            $labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            $trend = array_fill(0, 12, 0.0);
+        }
+
+        $stmt = $this->db->prepare("SELECT {$indexColumn} AS chart_index, COALESCE(SUM(total_amount), 0) AS total
+            FROM transactions
+            WHERE {$where}
+            GROUP BY chart_index");
+        $stmt->execute($parameters);
+        foreach ($stmt->fetchAll() as $row) {
+            $index = (int) $row['chart_index'];
+            $offset = $period === 'date' ? $index : $index - 1;
+            if (isset($trend[$offset])) {
+                $trend[$offset] = (float) $row['total'];
+            }
+        }
+
+        return [
+            'period' => $period,
+            'value' => $value,
+            'labels' => $labels,
+            'values' => $trend,
+            'total' => array_sum($trend),
+        ];
+    }
+
     public function getTotalDiscountToday()
     {
         $sql = "SELECT SUM(discount_total) as total FROM transactions WHERE DATE(created_at) = CURDATE()";
