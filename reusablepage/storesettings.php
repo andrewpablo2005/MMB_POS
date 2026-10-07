@@ -65,7 +65,10 @@ try {
         $postedVatRate = (float)($_POST['vat_rate'] ?? -1);
         $postedSeniorRate = (float)($_POST['senior_discount_rate'] ?? -1);
         $postedPwdRate = (float)($_POST['pwd_discount_rate'] ?? -1);
-        $postedCap = (float)($_POST['statutory_discount_cap'] ?? -1);
+        $postedCapInput = trim((string)($_POST['statutory_discount_cap'] ?? ''));
+        $postedCap = $postedCapInput === ''
+            ? (float) $statutoryDiscountCap
+            : (is_numeric($postedCapInput) ? (float) $postedCapInput : -1);
         $postedWeeklyDiscountEnabled = isset($_POST['weekly_discount_enabled']) ? '1' : '0';
         $postedLowStock = filter_var($_POST['low_stock_threshold'] ?? null, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1, 'max_range' => 100000]]);
         $postedNearExpiry = filter_var($_POST['near_expiry_days'] ?? null, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1, 'max_range' => 3650]]);
@@ -170,17 +173,17 @@ try {
                             <div class="input-group">
                                 <span class="input-group-text">PHP</span>
                                 <input type="number" class="form-control" id="statutoryDiscountCap" name="statutory_discount_cap"
-                                    min="0" max="100000" step="0.01" value="<?= htmlspecialchars($statutoryDiscountCap, ENT_QUOTES, 'UTF-8') ?>" required>
+                                    min="0" max="100000" step="0.01" value="<?= htmlspecialchars($statutoryDiscountCap, ENT_QUOTES, 'UTF-8') ?>">
                             </div>
-                            <small class="text-muted">Maximum Senior/PWD discount amount per customer per week.</small>
-                        </div> -->
-                        <!-- <div class="col-md-6 d-flex align-items-center">
+                            <small class="text-muted">Maximum Senior/PWD discount amount per customer per week. Leave blank to keep the current limit.</small>
+                        </div>
+                        <div class="col-md-6 d-flex align-items-center">
                             <div class="form-check form-switch mt-3">
                                 <input type="checkbox" class="form-check-input" id="weeklyDiscountEnabled" name="weekly_discount_enabled" value="1" <?= $weeklyDiscountEnabled ? 'checked' : '' ?>>
                                 <label class="form-check-label" for="weeklyDiscountEnabled">Enforce weekly discount limit</label>
                                 <div class="form-text">When off, previous weekly totals are ignored. Statutory discount rates and the per-sale eligible-purchase limit still apply.</div>
                             </div>
-                        </div> -->
+                        </div>  -->
                     </div>
                 </div>
 
