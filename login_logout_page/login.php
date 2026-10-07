@@ -140,7 +140,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
                     </div>
                     <h3 class="fw-bold mb-3" style="font-size: 28px;">Drugstore Management</h3>
                     <p class="mb-5" style="font-size: 16px; line-height: 1.6; max-width: 300px; opacity: 0.95; margin-left: auto; margin-right: auto; text-align: center;">
-                        Streamline your pharmacy operations with our comprehensive management system designed for modern healthcare
+                        Streamline your drugstore operations with our comprehensive management system designed for modern healthcare
                     </p>
                     
                     <div class="d-flex justify-content-center gap-5 mb-5">
