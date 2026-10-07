@@ -46,7 +46,7 @@ function dash_product_thumb(?string $image, string $sizeClass = 'mmb-thumb'): st
 
 <!-- Inter Font & Dashboard CSS -->
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../css/dashboard.css?v=12">
+<link rel="stylesheet" href="../css/dashboard.css?v=13">
 
 <!-- Pass PHP data to dashboard.js without mixing PHP into the JS file -->
 <script>
@@ -167,9 +167,10 @@ function dash_product_thumb(?string $image, string $sizeClass = 'mmb-thumb'): st
           <div class="stat-value"><?php echo number_format((float)$totalProducts); ?> products</div>
         </div>
       </div>
-      <div class="dash-card flex-grow-1">
+      <div class="dash-card dash-card--discounts">
         <div class="dash-card-header">
           <h6>Discounts & VAT</h6>
+          <a class="btn btn-sm btn-outline-primary" href="dashboard.php?tab=reports&amp;vat_period=date&amp;vat_value=<?= htmlspecialchars(date('Y-m-d'), ENT_QUOTES, 'UTF-8') ?>#v-pills-reports">See all</a>
         </div>
         <div class="dash-card-body py-3">
           <div class="mini-stat-row">

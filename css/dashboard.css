@@ -264,6 +264,10 @@
   height: 100%;
   min-width: 0;
 }
+.dash-card--discounts {
+  height: auto;
+  flex: 0 0 auto;
+}
 .dash-card-header {
   padding: 18px 20px 0;
   display: flex;
