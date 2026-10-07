@@ -165,7 +165,7 @@ try {
                                 <span class="input-group-text">%</span>
                             </div>
                         </div>
-                        <div class="col-md-6">
+                        <!-- <div class="col-md-6">
                             <label class="form-label" for="statutoryDiscountCap">Weekly Discount Limit</label>
                             <div class="input-group">
                                 <span class="input-group-text">PHP</span>
@@ -173,14 +173,14 @@ try {
                                     min="0" max="100000" step="0.01" value="<?= htmlspecialchars($statutoryDiscountCap, ENT_QUOTES, 'UTF-8') ?>" required>
                             </div>
                             <small class="text-muted">Maximum Senior/PWD discount amount per customer per week.</small>
-                        </div>
-                        <div class="col-md-6 d-flex align-items-center">
+                        </div> -->
+                        <!-- <div class="col-md-6 d-flex align-items-center">
                             <div class="form-check form-switch mt-3">
                                 <input type="checkbox" class="form-check-input" id="weeklyDiscountEnabled" name="weekly_discount_enabled" value="1" <?= $weeklyDiscountEnabled ? 'checked' : '' ?>>
                                 <label class="form-check-label" for="weeklyDiscountEnabled">Enforce weekly discount limit</label>
                                 <div class="form-text">When off, previous weekly totals are ignored. Statutory discount rates and the per-sale eligible-purchase limit still apply.</div>
                             </div>
-                        </div>
+                        </div> -->
                     </div>
                 </div>
 
