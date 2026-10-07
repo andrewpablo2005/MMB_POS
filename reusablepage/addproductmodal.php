@@ -423,11 +423,11 @@ $dosageForms = $product->getDosageForms();
                             </div>
 
                             <div class="add-product-field">
-                                <label for="batch_quantity" class="form-label">Quantity Received</label>
+                                <label for="batch_quantity" class="form-label">Quantity received per piece (pc)</label>
                                 <input type="number" id="batch_quantity" name="received_quantity" class="form-control"
                                     min="1" placeholder="e.g. 10">
                                 <div class="form-text text-muted mt-1">
-                                    Enter the number of packages received into stock.
+                                    Enter the number of pcs received into stock.
                                 </div>
                             </div>
                         </div>

@@ -1075,8 +1075,8 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
                     </div>
                     <div class="add-product-row">
                     <div class="add-product-field">
-                        <label for="batch_quantity" class="form-label">Quantity Received <span class="text-danger">*</span></label>
-                        <input type="number" id="batch_quantity" name="quantity" class="form-control" min="1" required>
+                        <label for="batch_quantity" class="form-label">Quantity received per piece (pc)<span class="text-danger">*</span></label>
+                        <input type="number" id="batch_quantity" name="quantity" class="form-control" min="1" placeholder="e.g 100"required>
                     </div>
                     </div>
 
