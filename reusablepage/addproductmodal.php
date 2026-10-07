@@ -79,7 +79,7 @@ $dosageForms = $product->getDosageForms();
                                     class="text-muted">(optional)</span></label>
                             <div class="input-group">
                                 <input type="number" id="strength" name="strength" class="form-control"
-                                    placeholder="e.g., 250" min="0">
+                                    placeholder="e.g., 0.5" min="0" step="0.01">
                             </div>
                             <div class="form-text text-muted">Use this for a measured serving or portion, such as 250
                                 mg, 30 g, or 1 piece.

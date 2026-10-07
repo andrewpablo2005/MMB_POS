@@ -44,8 +44,8 @@ $dosageForms = $product->getDosageForms(); ?>
                         <div class="add-product-row">
                             <div class="add-product-field">
                                 <label for="edit_strength_<?= $prod['id'] ?>" class="form-label">Amount per Serving <span class="text-muted">(if applicable)</span></label>
-                                <input type="number" id="edit_strength_<?= $prod['id'] ?>" name="strength" class="form-control" min="0"
-                                    placeholder="e.g., 250" value="<?= htmlspecialchars((string) ($prod['strength'] ?? '')) ?>">
+                                <input type="number" id="edit_strength_<?= $prod['id'] ?>" name="strength" class="form-control" min="0" step="0.01"
+                                    placeholder="e.g., 0.5" value="<?= htmlspecialchars((string) ($prod['strength'] ?? '')) ?>">
                                 <div class="form-text text-muted mt-1">Use this for a measured serving or portion, such as 250 mg, 30 g, or 1 piece.</div>
                             </div>
                             <div class="add-product-field">
