@@ -59,7 +59,7 @@ if (!empty($_SESSION['user_id'])) {
 ?>
 
 <!-- wePOS Inspired CSS -->
-<link rel="stylesheet" href="../css/pos_wepos.css?v=1.12">
+<link rel="stylesheet" href="../css/pos_wepos.css?v=1.13">
 
 <div class="wepos-wrapper" id="weposApp">
     
@@ -120,6 +120,7 @@ if (!empty($_SESSION['user_id'])) {
                         $salePrice = (float)($row['total_price'] ?? $row['sale_price'] ?? 0);
                         $costPrice = (float)($row['net_price'] ?? $row['purchase_cost'] ?? $salePrice);
                         $productDescription = trim((string) ($row['product_description'] ?? ''));
+                        $isPrescriptionMedicine = strcasecmp(trim((string) ($row['category_name'] ?? '')), 'Prescription Medicines') === 0;
                     ?>
                     <div class="wepos-product-card <?= $isOut ? 'out-of-stock' : '' ?><?= $isExpired ? ' expired' : '' ?>"
                          data-id="<?= $row['id'] ?>"
@@ -141,6 +142,9 @@ if (!empty($_SESSION['user_id'])) {
                          onclick="event.stopPropagation(); weposAddToCart(this)">
                         
                         <div class="wepos-card-img">
+                            <?php if ($isPrescriptionMedicine): ?>
+                                <span class="wepos-rx-badge" title="Prescription medicine" aria-label="Prescription medicine">Rx</span>
+                            <?php endif; ?>
                             <?php if ($image): ?>
                                 <img src="<?= $image ?>" alt="">
                             <?php else: ?>

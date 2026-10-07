@@ -283,6 +283,25 @@
     border-radius: 12px;
 }
 
+.wepos-rx-badge {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    z-index: 2;
+    min-width: 26px;
+    padding: 2px 6px;
+    border: 1px solid #b91c1c;
+    border-radius: 4px;
+    background: #dc2626;
+    color: #fff;
+    font-family: Georgia, serif;
+    font-size: 12px;
+    font-style: italic;
+    font-weight: 700;
+    line-height: 1.2;
+    text-align: center;
+}
+
 .wepos-stock-badge.empty {
     background: #fee2e2;
     color: #b91c1c;
