@@ -231,9 +231,9 @@ class Reports
             $value = date('Y');
         }
 
-        $createdWhere = $period === 'date' ? 'DATE(u.created_at) = ?' : ($period === 'month' ? "DATE_FORMAT(u.created_at, '%Y-%m') = ?" : 'YEAR(u.created_at) = ?');
+        $transactionPeriodWhere = $period === 'date' ? 'DATE(t.created_at) = ?' : ($period === 'month' ? "DATE_FORMAT(t.created_at, '%Y-%m') = ?" : 'YEAR(t.created_at) = ?');
         $parameters = [$period === 'year' ? (int) $value : $value];
-        $userWhere = "WHERE {$createdWhere} AND LOWER(u.username) <> 'owner'";
+        $userWhere = "WHERE LOWER(u.username) <> 'owner'";
         if ($cashierId > 0) {
             $userWhere .= $userWhere === '' ? 'WHERE u.id = ?' : ' AND u.id = ?';
             $parameters[] = $cashierId;
@@ -245,7 +245,7 @@ class Reports
                    COALESCE(SUM(t.total_amount), 0) AS total_sales
             FROM users u
             LEFT JOIN users_info ui ON ui.user_id = u.id
-            LEFT JOIN transactions t ON t.user_id = u.id
+            LEFT JOIN transactions t ON t.user_id = u.id AND {$transactionPeriodWhere}
             {$userWhere}
             GROUP BY u.id, u.username, u.position, u.status, u.created_at, account_name
             ORDER BY u.created_at ASC, u.id ASC");
