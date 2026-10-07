@@ -1069,8 +1069,8 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
                         <div class="form-text text-muted mt-1">The system will automatically assign the next batch number for this item.</div>
                     </div>
                     <div class="add-product-field">
-                        <label for="batch_lot_number" class="form-label">Lot Number <span class="text-danger">*</span></label>
-                        <input type="text" id="batch_lot_number" name="lot_number" class="form-control" placeholder="e.g. LOT-2026-01" maxlength="255" required>
+                        <label for="batch_lot_number" class="form-label">Lot Number </label>
+                        <input type="text" id="batch_lot_number" name="lot_number" class="form-control" placeholder="e.g. LOT-2026-01" maxlength="255">
                     </div>
                     </div>
                     <div class="add-product-row">
