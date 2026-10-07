@@ -166,7 +166,7 @@ function dash_product_thumb(?string $image, string $sizeClass = 'mmb-thumb'): st
               <input type="hidden" name="tab" value="dashboard">
               <label class="visually-hidden" for="chartPeriod">Sales chart period</label>
               <select class="form-select form-select-sm" id="chartPeriod" name="chart_period">
-                <option value="date" <?= $salesTrend['period'] === 'date' ? 'selected' : '' ?>>Date</option>
+                <option value="date" <?= $salesTrend['period'] === 'date' ? 'selected' : '' ?>>Day</option>
                 <option value="month" <?= $salesTrend['period'] === 'month' ? 'selected' : '' ?>>Month</option>
                 <option value="year" <?= $salesTrend['period'] === 'year' ? 'selected' : '' ?>>Year</option>
               </select>
