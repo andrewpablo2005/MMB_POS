@@ -203,7 +203,7 @@ if ($showAlertsAfterLogin && !empty($globalAlertItems)) {
                         </div>
                     </div>
                 </div>
-                <span class="text-muted toggle-chevron"><i class="fas fa-chevron-up" style="font-size: 0.8rem;"></i></span>
+               
             </div>
         </button>
 
