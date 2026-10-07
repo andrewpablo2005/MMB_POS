@@ -159,6 +159,7 @@
 .wepos-products-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    align-items: start;
     gap: 12px;
     width: 100%;
 }

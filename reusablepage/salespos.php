@@ -59,7 +59,7 @@ if (!empty($_SESSION['user_id'])) {
 ?>
 
 <!-- wePOS Inspired CSS -->
-<link rel="stylesheet" href="../css/pos_wepos.css?v=1.13">
+<link rel="stylesheet" href="../css/pos_wepos.css?v=1.14">
 
 <div class="wepos-wrapper" id="weposApp">
     
