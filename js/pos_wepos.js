@@ -879,13 +879,6 @@ function weposUpdateCart() {
         rawVat += c.vatAmount;
         totalFinalAmount += c.final;
 
-        const quantityPresets = [1, 6, 12]
-            .filter(quantity => quantity <= item.stock)
-            .concat(item.qty > 0 && ![1, 6, 12].includes(item.qty) ? [item.qty] : [])
-            .filter((quantity, index, values) => values.indexOf(quantity) === index)
-            .sort((first, second) => first - second);
-
-
              //Minus Product
         const overrideBadge = Number(item.overrideRate || 0) > 0
             ? `<div class="text-warning" style="font-size:10px; margin-top:2px;">-${(Number(item.overrideRate) * 100).toFixed(0)}% mgr</div>`
@@ -908,11 +901,6 @@ function weposUpdateCart() {
                             oninput="weposHandleQtyInput(event, this)"
                             style="width: 3rem; text-align:center; border:1px solid #d1d5db; border-radius:4px; padding:2px;">
                         <button onclick="weposUpdateQty('${item.id}', 1)"><i class="fas fa-plus"></i></button>
-                    </div>
-                    <div style="margin-top:6px;">
-                        <select class="wepos-qty-preset" onchange="weposSetQty('${item.id}', this.value)" style="width:100%; padding:4px; border:1px solid #d1d5db; border-radius:4px;">
-                            ${quantityPresets.map(q => `<option value="${q}"${item.qty === q ? ' selected' : ''}>${q} pcs</option>`).join('')}
-                        </select>
                     </div>
                 </td>
                 <td class="wepos-col-total">
