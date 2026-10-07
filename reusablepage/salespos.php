@@ -615,7 +615,7 @@ if (!empty($_SESSION['user_id'])) {
                 Print Receipt
             </button>
             <button class="wepos-btn wepos-btn-primary" onclick="weposCloseReceipt()">
-                Done <kbd>Enter</kbd>
+                Done <kbd>Shift</kbd>
             </button>
         </div>
     </div>
