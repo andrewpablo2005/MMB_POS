@@ -169,10 +169,7 @@ if (!empty($_SESSION['user_id'])) {
                                 <?= htmlspecialchars($row['branded_name']) ?> <?= htmlspecialchars($row['generic_name']) ?> <?= htmlspecialchars($row['strength'] ?? '') ?> <?= htmlspecialchars($row['measurement_name'] ?? '') ?><?= !empty(trim($row['dosage_form'] ?? '')) ? ' ' . htmlspecialchars(trim($row['dosage_form'])) : '' ?><?= isset($row['strength_per_quantity']) && $row['strength_per_quantity'] > 0 ? ' (' . htmlspecialchars((string)$row['strength_per_quantity']) . ' ' . htmlspecialchars(trim($row['strength_per_quantity_unit'] ?? '')) . ' per unit)' : '' ?>
                             </div>
                             <?php if ($productDescription !== ''): ?>
-                                <details class="wepos-card-description">
-                                    <summary onclick="event.stopPropagation()">See purpose</summary>
-                                    <div class="wepos-card-description-text"><?= nl2br(htmlspecialchars($productDescription, ENT_QUOTES, 'UTF-8')) ?></div>
-                                </details>
+                                <div class="wepos-card-description-text" hidden><?= nl2br(htmlspecialchars($productDescription, ENT_QUOTES, 'UTF-8')) ?></div>
                             <?php endif; ?>
                         </div>
                     </div>

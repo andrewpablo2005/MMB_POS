@@ -110,20 +110,31 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function weposSetupProductNameToggles() {
-    document.querySelectorAll('.wepos-card-name').forEach(name => {
-        if (name.scrollHeight <= name.clientHeight + 1) return;
+    document.querySelectorAll('.wepos-card-info').forEach(info => {
+        const name = info.querySelector('.wepos-card-name');
+        const purpose = info.querySelector('.wepos-card-description-text');
+        if (!name) return;
+
+        const nameIsClipped = name.scrollHeight > name.clientHeight + 1;
+        if (!nameIsClipped && !purpose) return;
 
         const toggle = document.createElement('button');
         toggle.type = 'button';
         toggle.className = 'wepos-card-name-toggle';
         toggle.textContent = 'See more';
         toggle.setAttribute('aria-expanded', 'false');
+        if (purpose) {
+            purpose.id = `wepos-card-purpose-${info.closest('.wepos-product-card')?.dataset.id || ''}`;
+            toggle.setAttribute('aria-controls', purpose.id);
+        }
         name.after(toggle);
 
         toggle.addEventListener('click', event => {
             event.preventDefault();
             event.stopPropagation();
-            const expanded = name.classList.toggle('is-expanded');
+            const expanded = toggle.getAttribute('aria-expanded') !== 'true';
+            if (nameIsClipped) name.classList.toggle('is-expanded', expanded);
+            if (purpose) purpose.hidden = !expanded;
             toggle.textContent = expanded ? 'See less' : 'See more';
             toggle.setAttribute('aria-expanded', expanded ? 'true' : 'false');
         });

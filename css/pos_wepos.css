@@ -340,24 +340,6 @@
     cursor: pointer;
 }
 
-.wepos-card-description {
-    margin-top: 6px;
-    text-align: left;
-    font-size: 11px;
-}
-
-.wepos-card-description summary {
-    width: fit-content;
-    margin: 0 auto;
-    color: var(--wp-primary);
-    cursor: pointer;
-    font-weight: 600;
-}
-
-.wepos-card-description summary::marker {
-    color: var(--wp-primary);
-}
-
 .wepos-card-description-text {
     margin-top: 6px;
     padding: 7px;
@@ -366,9 +348,11 @@
     color: var(--wp-text-light);
     line-height: 1.4;
     overflow-wrap: anywhere;
+    text-align: left;
+    font-size: 11px;
 }
 
-.wepos-product-card:has(.wepos-card-description[open]) .wepos-card-add-overlay {
+.wepos-product-card:has(.wepos-card-description-text:not([hidden])) .wepos-card-add-overlay {
     opacity: 0;
 }
 
