@@ -112,7 +112,7 @@ $isDefaultOwnerActor = strtolower(trim((string) ($_SESSION['username'] ?? ''))) 
 
                     <thead class="table-dark">
                         <tr>
-                            <th class="col-id">ID</th>
+                            <!-- <th class="col-id">ID</th> -->
                             <th class="col-name">Name</th>
                             <th class="col-position">Position</th>
                             <th>Status</th>
@@ -130,7 +130,7 @@ $isDefaultOwnerActor = strtolower(trim((string) ($_SESSION['username'] ?? ''))) 
                                 $isActive = ($u['status'] ?? 'active') === 'active';
                             ?>
                             <tr>
-                                <td class="col-id"><?= htmlspecialchars((string)($u['id']), ENT_QUOTES, 'UTF-8') ?></td>
+                                <!-- <td class="col-id"><?= htmlspecialchars((string)($u['id']), ENT_QUOTES, 'UTF-8') ?></td> -->
 
                                 <td class="col-name"><?= ($u['firstname']), " ", ($u['lastname']) ?></td>
 
