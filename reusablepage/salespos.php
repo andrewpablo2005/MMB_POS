@@ -547,7 +547,7 @@ if (!empty($_SESSION['user_id'])) {
             <!-- Printable Receipt -->
             <div id="weposReceiptPrint" style="padding:20px; font-family:'Courier New',monospace; font-size:13px;">
                 <div style="text-align:center; margin-bottom:12px;">
-                    <div style="font-size:16px; font-weight:700;">MMB'SS DRUGSTORE</div>
+                    <div style="font-size:16px; font-weight:700;">MMB DRUGSTORE</div>
                     <div style="font-size:11px; color:#64748b;">8VFW+7CP, Provincial Road, Jaen, Nueva Ecija</div>
                     <div style="font-size:11px; color:#64748b;">0965-845-2485</div>
                     <div style="font-size:11px; color:#64748b;">Official Receipt</div>
