@@ -105,6 +105,7 @@ $detailDiscountTotal = 0.0;
 $detailVatTotal = 0.0;
 $detailNetTotal = 0.0;
 $detailRefundTotal = 0.0;
+$detailNetSalesTotal = 0.0;
 $detailRealRevenueTotal = 0.0;
 function report_text($value): string
 {
@@ -119,6 +120,7 @@ foreach ($salesDetailRows as $detailRow) {
     $detailVatTotal += (float)($detailRow['total_vat_exemption'] ?? 0);
     $detailNetTotal += (float)($detailRow['total_amount'] ?? 0);
     $detailRefundTotal += (float)($detailRow['refund_total'] ?? 0);
+    $detailNetSalesTotal += (float)($detailRow['net_after_refund'] ?? 0);
     $detailRealRevenueTotal += (float)($detailRow['real_revenue'] ?? 0);
 }
 ?>
@@ -259,10 +261,10 @@ foreach ($salesDetailRows as $detailRow) {
                         </form>
                         <div class="table-responsive">
                             <table id="salesDetailTable" class="table table-striped table-hover table-sm align-middle myTableExport" data-empty="<?= !$salesDetailRows ? '1' : '0' ?>" data-no-responsive="1">
-                                <thead class="table-dark"><tr><th>Ref #</th><th>Date & Time</th><th>Cashier</th><th>Items</th><th>Before Discount/VAT</th><th>Override Discount</th><th>Discount</th><th>VAT Exempt</th><th>Total Amount</th><th>Returned to Customer</th><th>Profit</th><th>Receipt</th></tr></thead>
+                                <thead class="table-dark"><tr><th>Ref #</th><th>Date & Time</th><th>Cashier</th><th>Items</th><th>Gross Sales</th><th>Owner/Admin Discount</th><th>Discount</th><th>VAT Exempt</th><th>Total Amount</th><th>Returned to Customer</th><th>Net Sales</th><th>Profit</th><th>Receipt</th></tr></thead>
                                 <tbody>
                                     <?php if (!$salesDetailRows): ?>
-                                        <tr><td colspan="12" class="text-center text-muted">No sales found for this period.</td></tr>
+                                        <tr><td colspan="13" class="text-center text-muted">No sales found for this period.</td></tr>
                                     <?php else: foreach ($salesDetailRows as $detailRow): ?>
                                         <tr>
                                             <td>#<?= (int)$detailRow['id'] ?></td>
@@ -286,12 +288,13 @@ foreach ($salesDetailRows as $detailRow) {
                                                     <span class="text-muted">—</span>
                                                 <?php endif; ?>
                                             </td>
+                                            <td class="sales-detail-positive"><strong>₱<?= number_format((float)$detailRow['net_after_refund'], 2) ?></strong></td>
                                             <td class="sales-detail-positive"><strong>₱<?= number_format((float)$detailRow['real_revenue'], 2) ?></strong></td>
                                             <td><button type="button" class="btn btn-sm sales-detail-view-button" onclick="openSalesReceipt(<?= (int)$detailRow['id'] ?>)" aria-label="View receipt for transaction #<?= (int)$detailRow['id'] ?>"><i class="fas fa-receipt me-1" aria-hidden="true"></i>View</button></td>
                                         </tr>
                                     <?php endforeach; endif; ?>
                                 </tbody>
-                                <tfoot class="table-light fw-bold"><tr><td colspan="4">Period totals</td><td class="sales-detail-positive">₱<?= number_format($detailGrossTotal, 2) ?></td><td class="sales-detail-negative">-₱<?= number_format($detailOverrideDiscountTotal, 2) ?></td><td class="sales-detail-negative">-₱<?= number_format($detailDiscountTotal, 2) ?></td><td class="sales-detail-negative">-₱<?= number_format($detailVatTotal, 2) ?></td><td class="sales-detail-positive">₱<?= number_format($detailNetTotal, 2) ?></td><td class="sales-detail-negative">-₱<?= number_format($detailRefundTotal, 2) ?></td><td class="sales-detail-positive">₱<?= number_format($detailRealRevenueTotal, 2) ?></td><td></td></tr></tfoot>
+                                <tfoot class="table-light fw-bold"><tr><td colspan="4">Period totals</td><td class="sales-detail-positive">₱<?= number_format($detailGrossTotal, 2) ?></td><td class="sales-detail-negative">-₱<?= number_format($detailOverrideDiscountTotal, 2) ?></td><td class="sales-detail-negative">-₱<?= number_format($detailDiscountTotal, 2) ?></td><td class="sales-detail-negative">-₱<?= number_format($detailVatTotal, 2) ?></td><td class="sales-detail-positive">₱<?= number_format($detailNetTotal, 2) ?></td><td class="sales-detail-negative">-₱<?= number_format($detailRefundTotal, 2) ?></td><td class="sales-detail-positive">₱<?= number_format($detailNetSalesTotal, 2) ?></td><td class="sales-detail-positive">₱<?= number_format($detailRealRevenueTotal, 2) ?></td><td></td></tr></tfoot>
                             </table>
                         </div>
                         <div class="alert alert-light border mt-3 mb-0 small">
