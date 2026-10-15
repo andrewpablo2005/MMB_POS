@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/guard.php'; guard_require_roles(['owner']);
+require_once __DIR__ . '/guard.php'; guard_require_roles(['owner', 'admin']);
 require_once __DIR__ . "/../conn/basepath.php";
 require_once __DIR__ . "/../conn/database.php";
 require_once __DIR__ . "/../function/usermanagement.php";
@@ -7,6 +7,8 @@ require_once __DIR__ . "/../function/usermanagement.php";
 use Classes\UserManagement;
 
 $usersmanagement = new UserManagement($db);
+$isAdminActor = strtolower(trim((string) ($_SESSION['position'] ?? ''))) === 'admin';
+$activeUserTab = $isAdminActor && (($_GET['user_tab'] ?? '') === 'pending') ? 'pending' : 'accounts';
 
 $result = null;
 
@@ -31,7 +33,7 @@ if (isset($_POST['toggleUserStatus'])) {
     $result = $usersmanagement->setUserStatus($id, $status);
 }
 
-if (isset($_POST['action']) && in_array($_POST['action'], ['approve', 'reject'], true)) {
+if (!$isAdminActor && isset($_POST['action']) && in_array($_POST['action'], ['approve', 'reject'], true)) {
     require_once __DIR__ . '/../function/userregistration.php';
     $approvalManager = new \Classes\UserRegistration($db);
     $_GET['id'] = (int) ($_POST['id'] ?? 0);
@@ -48,6 +50,7 @@ $users = $usersmanagement->getAllUsers();
 $pendingApprovalCount = (int) $db->query('SELECT COUNT(*) FROM pre_approved_users')->fetchColumn();
 $currentUserId = (int) ($_SESSION['user_id'] ?? 0);
 $isDefaultOwnerActor = strtolower(trim((string) ($_SESSION['username'] ?? ''))) === 'owner';
+$canDeleteUsers = $isDefaultOwnerActor && !$isAdminActor;
 ?>
 
 <!-- ALERT + REDIRECT -->
@@ -77,7 +80,7 @@ $isDefaultOwnerActor = strtolower(trim((string) ($_SESSION['username'] ?? ''))) 
             <div class="page-head">
                 <div>
                     <h4>User Management</h4>
-                    <p class="page-sub">Accounts, roles and access status for the whole team.</p>
+                    <p class="page-sub"><?= $isAdminActor ? 'Manage Staff accounts and access status.' : 'Accounts, roles and access status for the whole team.' ?></p>
                 </div>
 
                 <button class="btn user-add-button btn-sm" data-bs-toggle="modal" data-bs-target="#adduser">
@@ -88,13 +91,13 @@ $isDefaultOwnerActor = strtolower(trim((string) ($_SESSION['username'] ?? ''))) 
 
             <ul class="nav nav-tabs mb-4" id="userManagementTabs" role="tablist">
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link active" id="user-accounts-tab" data-bs-toggle="tab" data-bs-target="#user-accounts-pane" type="button" role="tab" aria-controls="user-accounts-pane" aria-selected="true">
+                    <button class="nav-link <?= $activeUserTab === 'accounts' ? 'active' : '' ?>" id="user-accounts-tab" data-bs-toggle="tab" data-bs-target="#user-accounts-pane" type="button" role="tab" aria-controls="user-accounts-pane" aria-selected="<?= $activeUserTab === 'accounts' ? 'true' : 'false' ?>">
                         User Accounts
                     </button>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="user-security-tab" data-bs-toggle="tab" data-bs-target="#user-security-pane" type="button" role="tab" aria-controls="user-security-pane" aria-selected="false">
-                        Pending Approvals
+                    <button class="nav-link <?= $activeUserTab === 'pending' ? 'active' : '' ?>" id="user-security-tab" data-bs-toggle="tab" data-bs-target="#user-security-pane" type="button" role="tab" aria-controls="user-security-pane" aria-selected="<?= $activeUserTab === 'pending' ? 'true' : 'false' ?>">
+                        <?= $isAdminActor ? 'For Approvals' : 'Pending Approvals' ?>
                         <?php if ($pendingApprovalCount > 0): ?>
                             <span class="badge rounded-pill text-bg-danger ms-2" aria-label="<?= $pendingApprovalCount ?> pending approvals">
                                 <?= $pendingApprovalCount > 99 ? '99+' : $pendingApprovalCount ?>
@@ -105,7 +108,7 @@ $isDefaultOwnerActor = strtolower(trim((string) ($_SESSION['username'] ?? ''))) 
             </ul>
 
             <div class="tab-content" id="userManagementTabContent">
-                <div class="tab-pane fade show active" id="user-accounts-pane" role="tabpanel" aria-labelledby="user-accounts-tab" tabindex="0">
+                <div class="tab-pane fade <?= $activeUserTab === 'accounts' ? 'show active' : '' ?>" id="user-accounts-pane" role="tabpanel" aria-labelledby="user-accounts-tab" tabindex="0">
             <!-- TABLE -->
             <div class="table-responsive">
                 <table class="table table-striped table-hover align-middle w-100 myTable userstable">
@@ -207,7 +210,7 @@ $isDefaultOwnerActor = strtolower(trim((string) ($_SESSION['username'] ?? ''))) 
                                     </form>
                                     <?php endif; ?>
 
-                                    <?php if ($isDefaultOwnerActor): ?>
+                                    <?php if ($canDeleteUsers): ?>
                                         <form method="POST" class="d-inline">
                                             <input type="hidden" name="id" value="<?= htmlspecialchars((string)($u['id']), ENT_QUOTES, 'UTF-8') ?>">
                                             <button type="submit" name="deleteUser" class="btn btn-danger btn-sm"
@@ -229,8 +232,12 @@ $isDefaultOwnerActor = strtolower(trim((string) ($_SESSION['username'] ?? ''))) 
 
                 </div>
 
-                <div class="tab-pane fade" id="user-security-pane" role="tabpanel" aria-labelledby="user-security-tab" tabindex="0">
-                    <?php include 'userauthentication.php'; ?>
+                <div class="tab-pane fade <?= $activeUserTab === 'pending' ? 'show active' : '' ?>" id="user-security-pane" role="tabpanel" aria-labelledby="user-security-tab" tabindex="0">
+                    <?php if ($isAdminActor): ?>
+                        <?php include __DIR__ . '/pendingaccountadmin.php'; ?>
+                    <?php else: ?>
+                        <?php include __DIR__ . '/userauthentication.php'; ?>
+                    <?php endif; ?>
                 </div>
             </div>
 
@@ -243,6 +250,20 @@ $isDefaultOwnerActor = strtolower(trim((string) ($_SESSION['username'] ?? ''))) 
 <?php include __DIR__ . '/editaccount.php'; ?>
 
 <script>
+    <?php if ($isAdminActor): ?>
+    document.addEventListener('DOMContentLoaded', function () {
+        const tabs = document.getElementById('userManagementTabs');
+        if (!tabs) return;
+
+        tabs.addEventListener('shown.bs.tab', function (event) {
+            const url = new URL(window.location.href);
+            url.searchParams.set('tab', 'users');
+            url.searchParams.set('user_tab', event.target.id === 'user-security-tab' ? 'pending' : 'staff');
+            window.history.replaceState(null, '', url.pathname + url.search + url.hash);
+        });
+    });
+    <?php endif; ?>
+
     window.mmbOpenUserModal = function (trigger) {
         const selector = trigger?.getAttribute('data-bs-target');
         const modal = selector ? document.querySelector(selector) : null;

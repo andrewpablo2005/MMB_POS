@@ -4,6 +4,7 @@ namespace Classes;
 
 require_once "../conn/database.php";
 require_once __DIR__ . "/../conn/activity_log.php"; // audit trail (Task 42)
+require_once __DIR__ . "/birthdate.php";
 
 class UserManagement
 {
@@ -24,6 +25,9 @@ class UserManagement
         if (!in_array($position, $allowedPositions, true)) {
             $position = 'Staff';
         }
+        if ($this->isAdminActor()) {
+            $position = 'Staff';
+        }
 
         return [
             'username' => trim((string)($data['username'] ?? '')),
@@ -33,7 +37,7 @@ class UserManagement
             'firstname' => $data['firstname'] ?? '',
             'middlename' => $data['middlename'] ?? '',
             'lastname' => $data['lastname'] ?? '',
-            'age' => (int) ($data['age'] ?? 0),
+            'age' => mmb_birthdate_to_storage($data['age'] ?? ''),
 
             'street' => $data['street'] ?? '',
             'barangay' => $data['barangay'] ?? '',
@@ -64,10 +68,33 @@ class UserManagement
         return password_hash($pin, PASSWORD_BCRYPT);
     }
 
+    private function isAdminActor(): bool
+    {
+        return strtolower(trim((string) ($_SESSION['position'] ?? ''))) === 'admin';
+    }
+
+    private function canManageTarget(int $userId): bool
+    {
+        if (!$this->isAdminActor()) {
+            return true;
+        }
+
+        $stmt = $this->con->prepare(
+            "SELECT 1 FROM users WHERE id = ? AND LOWER(TRIM(position)) = 'staff' LIMIT 1"
+        );
+        $stmt->execute([$userId]);
+
+        return (bool) $stmt->fetchColumn();
+    }
+
     // ADD USER (TRANSACTION SAFE.)
    public function addUser(array $data): array
 {
     $d = $this->input($data);
+
+    if ($d['age'] === null) {
+        return ['success' => false, 'message' => 'Enter a valid birth date that is not in the future'];
+    }
 
     try {
         $this->con->beginTransaction();
@@ -173,6 +200,10 @@ class UserManagement
         return ['success' => false, 'message' => 'Invalid user ID'];
     }
 
+    if (!$this->canManageTarget($userId)) {
+        return ['success' => false, 'message' => 'Admins can manage Staff accounts only'];
+    }
+
     if ($this->isProtectedOwner($userId) && !$this->isDefaultOwnerActor()) {
         return ['success' => false, 'message' => 'You cannot edit another Owner account.'];
     }
@@ -186,7 +217,8 @@ class UserManagement
         !$d['firstname'] ||
         !$d['lastname'] ||
         !$d['email'] ||
-        !$d['username']
+        !$d['username'] ||
+        $d['age'] === null
     ) {
         return ['success' => false, 'message' => 'Required fields missing'];
     }
@@ -307,7 +339,7 @@ class UserManagement
             $d['username'] = $currentAccount['username'];
         }
 
-        if (!$d['firstname'] || !$d['lastname'] || !$d['email']) {
+        if (!$d['firstname'] || !$d['lastname'] || !$d['email'] || $d['age'] === null) {
             return ['success' => false, 'message' => 'Required fields missing'];
         }
 
@@ -384,6 +416,14 @@ class UserManagement
     {
         if (!$userId) {
             return ['success' => false, 'message' => 'Invalid ID'];
+        }
+
+        if ($this->isAdminActor()) {
+            return ['success' => false, 'message' => 'Admins cannot delete user accounts'];
+        }
+
+        if (!$this->canManageTarget($userId)) {
+            return ['success' => false, 'message' => 'Admins can manage Staff accounts only'];
         }
 
         // SAFETY: block deleting your own account and the last Owner
@@ -491,6 +531,10 @@ class UserManagement
             return ['success' => false, 'message' => 'Invalid account status request'];
         }
 
+        if (!$this->canManageTarget($userId)) {
+            return ['success' => false, 'message' => 'Admins can manage Staff accounts only'];
+        }
+
         if ($status === 'disabled' && $this->isProtectedOwner($userId) && !$this->isDefaultOwnerActor()) {
             return ['success' => false, 'message' => 'You cannot disable another Owner account.'];
         }
@@ -513,10 +557,12 @@ class UserManagement
     // GET ALL
     public function getAllUsers(): array
     {
-        return $this->con
-            ->query("SELECT u.*, ui.* FROM users u 
-                     LEFT JOIN users_info ui ON u.id = ui.user_id")
-            ->fetchAll();
+        $sql = "SELECT u.*, ui.* FROM users u LEFT JOIN users_info ui ON u.id = ui.user_id";
+        if ($this->isAdminActor()) {
+            $sql .= " WHERE LOWER(TRIM(u.position)) = 'staff'";
+        }
+
+        return $this->con->query($sql)->fetchAll();
     }
 
     // GET ONE

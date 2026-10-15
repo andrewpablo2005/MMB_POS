@@ -25,7 +25,6 @@ if ($activeTab === 'pendingaccount') {
 }
 
 require_once __DIR__ . "/../conn/database.php";
-require_once __DIR__ . "/../conn/connection_links.php";
 require_once __DIR__ . "/../function/userregistration.php";
 
 use Classes\UserRegistration;
@@ -42,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 // ALERT AFTER REDIRECT
 if (isset($_GET['added'])) {
-    echo "<script>document.addEventListener('DOMContentLoaded', function(){ mmbNotify({type:'success', title:'User added successfully'}); });</script>";
+    echo "<script>document.addEventListener('DOMContentLoaded', function(){ mmbNotify({type:'success', title:'Staff account submitted for Owner approval'}); });</script>";
 }
 ?>
 <!DOCTYPE html>

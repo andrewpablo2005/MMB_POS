@@ -63,8 +63,8 @@ include("../conn/connection_links.php");
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">Age</label>
-                    <input type="number" name="age" class="form-control">
+                    <label class="form-label">Birth Date</label>
+                    <input type="date" name="age" class="form-control" max="<?= date('Y-m-d') ?>" required>
                 </div>
 
                 <!-- CONTACT -->

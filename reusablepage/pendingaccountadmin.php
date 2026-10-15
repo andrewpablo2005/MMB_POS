@@ -2,6 +2,7 @@
 require_once __DIR__ . '/guard.php'; guard_require_roles(['admin']);
 require_once __DIR__ . "/../conn/database.php";
 require_once __DIR__ . "/../function/userregistration.php";
+require_once __DIR__ . '/../function/birthdate.php';
 
 use Classes\UserRegistration;
 
@@ -36,7 +37,7 @@ $users = $userAction->getAllPreUsers();
                     <tr>
                         <th>Username</th>
                         <th>Name</th>
-                        <th>Age</th>
+                        <th>Birth Date</th>
                         <th>Address</th>
                         <th>Email</th>
                     </tr>
@@ -53,7 +54,7 @@ $users = $userAction->getAllPreUsers();
                                 <?= ($u['firstname']) . ' ' . ($u['lastname']) ?>
                             </td>
 
-                            <td><?= htmlspecialchars((string)($u['age']), ENT_QUOTES, 'UTF-8') ?></td>
+                            <td><?= htmlspecialchars(mmb_birthdate_for_display($u['age']), ENT_QUOTES, 'UTF-8') ?></td>
 
                             <td>
                                 <?= ($u['city']) . ', ' . ($u['province']) ?>

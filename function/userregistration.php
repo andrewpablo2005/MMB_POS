@@ -4,6 +4,7 @@ namespace Classes;
 // PDO DB
 require_once "../conn/database.php";
 require_once __DIR__ . "/../conn/activity_log.php"; // audit trail (Task 42)
+require_once __DIR__ . "/birthdate.php";
 
 class UserRegistration
 {
@@ -19,7 +20,7 @@ class UserRegistration
     public string $firstname;
     public string $middlename;
     public string $lastname;
-    public int $age;
+    public ?int $age = null;
     public string $street;
     public string $barangay;
     public string $city;
@@ -52,7 +53,7 @@ class UserRegistration
         $this->firstname = $_POST['firstname'];
         $this->middlename = $_POST['middlename'];
         $this->lastname = $_POST['lastname'];
-        $this->age = (int) ($_POST['age']);
+        $this->age = mmb_birthdate_to_storage($_POST['age'] ?? '');
 
         $this->street = $_POST['street'];
         $this->barangay = $_POST['barangay'];
@@ -68,6 +69,12 @@ public function pre_addUser()
 {
     if (isset($_POST['pre_addUser'])) {
         $this->getPost();
+
+        if ($this->age === null) {
+            $this->response = "Enter a valid birth date";
+            echo "<script>document.addEventListener('DOMContentLoaded', function(){ mmbNotify({type:'danger', title:'Invalid birth date', message:'Enter a valid date that is not in the future.'}); });</script>";
+            return false;
+        }
 
         // Check if username already exists in both users and pre_approved_users tables
         $stmt = $this->con->prepare("
@@ -121,11 +128,19 @@ public function pre_addUser()
         ]);
 
         if ($stmtInfo) {
-            // AUDIT (Task 42) — public signup, no session: actor override
+            $actorId = (int) ($_SESSION['user_id'] ?? 0);
+            $actorOverride = $actorId > 0
+                ? [
+                    'user_id' => $actorId,
+                    'username' => (string) ($_SESSION['username'] ?? 'authenticated user'),
+                    'role' => (string) ($_SESSION['position'] ?? 'user'),
+                ]
+                : ['user_id' => null, 'username' => $this->username, 'role' => 'guest'];
+
             mmb_log_activity($this->con, 'users', 'user_registration',
                 "New registration submitted for '" . $this->username . "' (pending approval)",
                 'pre_user', (int) $pre_user_id,
-                ['user_id' => null, 'username' => $this->username, 'role' => 'guest']);
+                $actorOverride);
 
             $this->response = "Success";
             return true;

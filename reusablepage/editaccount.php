@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/guard.php'; guard_require_roles(['owner','admin']);
+require_once __DIR__ . '/../function/birthdate.php';
 $modalUsers = $users ?? [];
 if (!$modalUsers && isset($usersmanagement)) {
     $modalUsers = $usersmanagement->getAllUsers();
@@ -43,6 +44,7 @@ foreach ($modalUsers as $u): ?>
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Position</label>
                             <select name="position" class="form-control" required>
+                                <?php if (!$isAdminActor): ?>
                                 <option value="Admin"
                                     <?= $u['position'] == 'Admin' ? 'selected' : '' ?>>
                                     Admin
@@ -52,6 +54,7 @@ foreach ($modalUsers as $u): ?>
                                     <?= $u['position'] == 'Owner' ? 'selected' : '' ?>>
                                     Owner
                                 </option>
+                                <?php endif; ?>
 
                                 <option value="Staff"
                                     <?= $u['position'] == 'Staff' ? 'selected' : '' ?>>
@@ -114,12 +117,13 @@ foreach ($modalUsers as $u): ?>
 
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label class="form-label">Age</label>
+                            <label class="form-label">Birth Date</label>
                             <input
-                                type="number"
+                                type="date"
                                 name="age"
                                 class="form-control"
-                                value="<?= htmlspecialchars((string)($u['age']), ENT_QUOTES, 'UTF-8') ?>"
+                                value="<?= htmlspecialchars(mmb_birthdate_to_input($u['age']), ENT_QUOTES, 'UTF-8') ?>"
+                                max="<?= date('Y-m-d') ?>"
                                 required
                             >
                         </div>

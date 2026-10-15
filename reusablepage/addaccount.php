@@ -21,8 +21,10 @@
                             <label for="position" class="form-label">Position <span class="text-danger">*</span></label>
                             <select id="position" name="position" class="form-control" required>
                                 <option value="">Select Position</option>
+                                <?php if (!$isAdminActor): ?>
                                 <option>Admin</option>
                                 <option>Owner</option>
+                                <?php endif; ?>
                                 <option selected>Staff</option>
                             </select>
                         </div>
@@ -56,8 +58,8 @@
 
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label for="age" class="form-label">Age <span class="text-danger">*</span></label>
-                            <input id="age" type="number" name="age" class="form-control" placeholder="e.g., 28" required>
+                            <label for="age" class="form-label">Birth Date <span class="text-danger">*</span></label>
+                            <input id="age" type="date" name="age" class="form-control" max="<?= date('Y-m-d') ?>" required>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="email" class="form-label">Email Address <span class="text-danger">*</span></label>
@@ -101,19 +103,21 @@
                         </div>
                     </div>
 
-                    <hr class="my-4">
+                    <?php if (!$isAdminActor): ?>
+                        <hr class="my-4">
 
-                    <!-- Security Section -->
-                    <h6 class="mb-3 text-secondary fw-bold">Security PIN</h6>
-                    <div class="mb-3">
-                        <label for="void_password" class="form-label">Manager PIN (7 digits) Owner/Admin Only <span class="text-danger">*</span></label>
-                        <input id="void_password" name="void_password" class="form-control" minlength="7" maxlength="7" placeholder="e.g., 1234567">
-                    </div>
+                        <!-- Security Section -->
+                        <h6 class="mb-3 text-secondary fw-bold">Security PIN</h6>
+                        <div class="mb-3">
+                            <label for="void_password" class="form-label">Manager PIN (7 digits) Owner/Admin Only <span class="text-danger">*</span></label>
+                            <input id="void_password" name="void_password" class="form-control" minlength="7" maxlength="7" placeholder="e.g., 1234567">
+                        </div>
+                    <?php endif; ?>
                 </div>
 
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" name="addUser" class="btn user-save-button">
+                    <button type="submit" name="<?= $isAdminActor ? 'pre_addUser' : 'addUser' ?>" class="btn user-save-button">
                         <i class="fas fa-save me-1" aria-hidden="true"></i>
                         Save User
                     </button>
