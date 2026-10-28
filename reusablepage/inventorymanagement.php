@@ -85,6 +85,67 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
             </script>
         <?php endif; ?>
         <style>
+            .inventory-current-controls {
+                display: flex;
+                justify-content: flex-end;
+                margin-bottom: 1rem;
+            }
+            @media (max-width: 767.98px) {
+                .inventory-current-controls {
+                    display: grid;
+                    grid-template-columns: minmax(0, 1fr) auto;
+                    align-items: start;
+                    gap: 0.5rem;
+                }
+                #inventoryMobileStatusFilter {
+                    min-width: 0;
+                    margin-bottom: 0 !important;
+                }
+                .inventory-add-action .inventory-add-button {
+                    flex-shrink: 0;
+                    white-space: nowrap;
+                }
+            }
+            @media (max-width: 420px) {
+                .inventory-current-controls {
+                    grid-template-columns: minmax(0, 1fr);
+                }
+                .inventory-add-action .inventory-add-button {
+                    width: 100%;
+                }
+            }
+            .inventory-mobile-tab-menu {
+                display: flex;
+                flex-direction: column;
+                margin-top: 0.375rem;
+                padding: 0.25rem;
+                border: 1px solid var(--bs-border-color);
+                border-radius: 0.5rem;
+                background: var(--bs-body-bg);
+                box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.12);
+                box-sizing: border-box;
+                max-width: 100%;
+            }
+            #inventoryMobileTabMenu[hidden] {
+                display: none !important;
+            }
+            .inventory-mobile-tab-option {
+                width: 100%;
+                min-width: 0;
+                padding: 0.6rem 0.75rem;
+                border: 0;
+                border-radius: 0.3rem;
+                background: transparent;
+                color: var(--bs-body-color);
+                text-align: left;
+                white-space: normal;
+                overflow-wrap: anywhere;
+            }
+            .inventory-mobile-tab-option[aria-pressed="true"] {
+                background: #fff1f2;
+                color: #b91c1c;
+                font-weight: 600;
+            }
             .inventory-action-column {
                 width: 18%;
                 min-width: 190px;
@@ -245,6 +306,41 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
                 #currentInventoryTable td:nth-child(n) {
                     width: 100% !important;
                 }
+                .inventory-data-table.mmb-stack td {
+                    display: grid;
+                    grid-template-columns: minmax(0, 38%) minmax(0, 1fr);
+                    column-gap: 0.85rem;
+                    align-items: center;
+                    width: 100% !important;
+                    min-width: 0 !important;
+                    text-align: right;
+                }
+                .inventory-data-table.mmb-stack td::before {
+                    flex: initial;
+                    text-align: left;
+                }
+                .inventory-data-table.mmb-stack td > .d-flex {
+                    width: 100%;
+                    min-width: 0;
+                    justify-content: flex-end;
+                }
+                .inventory-data-table.mmb-stack td > .d-flex > span:last-child {
+                    min-width: 0;
+                    overflow-wrap: anywhere;
+                    text-align: right;
+                }
+                .inventory-data-table.mmb-stack td[colspan] {
+                    display: block;
+                    text-align: center;
+                }
+                .inventory-data-table.mmb-stack td[colspan]::before {
+                    display: none;
+                }
+                #currentInventoryTable.mmb-stack .inventory-action-stack {
+                    width: max-content;
+                    max-width: 100%;
+                    margin-left: auto;
+                }
                 #currentInventoryTable .inventory-action-stack {
                     flex-direction: column;
                 }
@@ -258,15 +354,21 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
                 <h4>Inventory Management</h4>
                 <p class="page-sub">Manage current stock batches and review disposed or expired inventory.</p>
             </div>
-            <div class="d-flex gap-2 flex-wrap">
-                <button class="btn inventory-add-button" data-bs-toggle="modal" data-bs-target="#addBatchModal">
-                    <i class="fas fa-plus me-1" aria-hidden="true"></i>
-                    Add Batch
-                </button>
-            </div>
         </div>
 
-        <ul class="nav nav-tabs mb-4" id="inventoryTabs" role="tablist">
+        <div class="d-md-none mb-3">
+            <button type="button" class="btn btn-outline-secondary w-100 d-flex justify-content-between align-items-center text-start" id="inventoryMobileTabToggle" aria-label="Inventory section" aria-expanded="false" aria-controls="inventoryMobileTabMenu">
+                <span id="inventoryMobileTabLabel"><?= $requestedInventoryTab === 'current' ? 'Current Inventory' : ($requestedInventoryTab === 'disposed' ? 'Disposed / Expired' : ($requestedInventoryTab === 'no-stock' ? 'No Stock' : 'Returned Products')) ?></span>
+                <i class="fas fa-chevron-down ms-2" aria-hidden="true"></i>
+            </button>
+            <div class="inventory-mobile-tab-menu" id="inventoryMobileTabMenu" role="group" aria-label="Inventory sections" hidden>
+                <button type="button" class="inventory-mobile-tab-option" data-tab-id="current-inventory-tab" aria-pressed="<?= $requestedInventoryTab === 'current' ? 'true' : 'false' ?>">Current Inventory</button>
+                <button type="button" class="inventory-mobile-tab-option" data-tab-id="disposed-inventory-tab" aria-pressed="<?= $requestedInventoryTab === 'disposed' ? 'true' : 'false' ?>">Disposed / Expired</button>
+                <button type="button" class="inventory-mobile-tab-option" data-tab-id="no-stock-tab" aria-pressed="<?= $requestedInventoryTab === 'no-stock' ? 'true' : 'false' ?>">No Stock</button>
+                <button type="button" class="inventory-mobile-tab-option" data-tab-id="returned-products-tab" aria-pressed="<?= $requestedInventoryTab === 'returned' ? 'true' : 'false' ?>">Returned Products</button>
+            </div>
+        </div>
+        <ul class="nav nav-tabs mb-4 d-none d-md-flex" id="inventoryTabs" role="tablist">
             <li class="nav-item" role="presentation">
                 <button class="nav-link <?= $requestedInventoryTab === 'current' ? 'active' : '' ?>" id="current-inventory-tab" data-bs-toggle="tab" data-bs-target="#current-inventory-pane" type="button" role="tab" aria-controls="current-inventory-pane" aria-selected="<?= $requestedInventoryTab === 'current' ? 'true' : 'false' ?>">
                     Current Inventory
@@ -289,9 +391,72 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
             </li>
         </ul>
 
+        <script>
+            (function () {
+                const inventoryMobileTabToggle = document.getElementById('inventoryMobileTabToggle');
+                const inventoryMobileTabLabel = document.getElementById('inventoryMobileTabLabel');
+                const inventoryMobileTabMenu = document.getElementById('inventoryMobileTabMenu');
+                const inventoryTabs = document.getElementById('inventoryTabs');
+
+                inventoryMobileTabToggle.addEventListener('click', function () {
+                    const isExpanded = this.getAttribute('aria-expanded') === 'true';
+                    this.setAttribute('aria-expanded', String(!isExpanded));
+                    inventoryMobileTabMenu.hidden = isExpanded;
+                });
+
+                inventoryMobileTabMenu.addEventListener('click', function (event) {
+                    const option = event.target.closest('[data-tab-id]');
+                    if (option) {
+                        document.getElementById(option.dataset.tabId).click();
+                    }
+                });
+
+                document.addEventListener('click', function (event) {
+                    if (!inventoryMobileTabToggle.parentElement.contains(event.target)) {
+                        inventoryMobileTabToggle.setAttribute('aria-expanded', 'false');
+                        inventoryMobileTabMenu.hidden = true;
+                    }
+                });
+
+                inventoryTabs.addEventListener('shown.bs.tab', function (event) {
+                    inventoryMobileTabLabel.textContent = event.target.textContent.trim();
+                    inventoryMobileTabMenu.querySelectorAll('[data-tab-id]').forEach(function (option) {
+                        option.setAttribute('aria-pressed', String(option.dataset.tabId === event.target.id));
+                    });
+                    inventoryMobileTabToggle.setAttribute('aria-expanded', 'false');
+                    inventoryMobileTabMenu.hidden = true;
+                });
+            })();
+        </script>
+
         <div class="tab-content" id="inventoryTabContent">
             <div class="tab-pane fade <?= $requestedInventoryTab === 'current' ? 'show active' : '' ?>" id="current-inventory-pane" role="tabpanel" aria-labelledby="current-inventory-tab" tabindex="0">
-            <div id="inventoryStatusFilters" class="d-flex flex-wrap align-items-center gap-2 mb-3" role="group" aria-label="Filter inventory by status">
+            <div class="inventory-current-controls">
+            <div class="d-md-none" id="inventoryMobileStatusFilter">
+                <button type="button" class="btn btn-outline-secondary w-100 d-flex justify-content-between align-items-center text-start" id="inventoryMobileStatusFilterToggle" aria-label="Filter inventory by status" aria-expanded="false" aria-controls="inventoryMobileStatusFilterMenu">
+                    <span class="d-flex align-items-center gap-2">
+                        <span class="inventory-status-swatch" id="inventoryMobileStatusSwatch" aria-hidden="true" hidden></span>
+                        <span id="inventoryMobileStatusFilterLabel">All</span>
+                        <span class="inventory-status-count" id="inventoryMobileStatusSelectedCount">0</span>
+                    </span>
+                    <i class="fas fa-chevron-down ms-2" aria-hidden="true"></i>
+                </button>
+                <div class="inventory-mobile-tab-menu" id="inventoryMobileStatusFilterMenu" role="group" aria-label="Inventory status filters" hidden>
+                    <button type="button" class="inventory-mobile-tab-option" data-mobile-status-filter="all" aria-pressed="true">All <span class="inventory-status-count" data-mobile-status-count="all">0</span></button>
+                    <button type="button" class="inventory-mobile-tab-option" data-mobile-status-filter="expired" aria-pressed="false"><span class="inventory-status-swatch inventory-status-swatch-expired" aria-hidden="true"></span>Expired <span class="inventory-status-count" data-mobile-status-count="expired">0</span></button>
+                    <button type="button" class="inventory-mobile-tab-option" data-mobile-status-filter="near-expiry" aria-pressed="false"><span class="inventory-status-swatch inventory-status-swatch-near-expiry" aria-hidden="true"></span>Near Expiry <span class="inventory-status-count" data-mobile-status-count="near-expiry">0</span></button>
+                    <button type="button" class="inventory-mobile-tab-option" data-mobile-status-filter="low-stock" aria-pressed="false"><span class="inventory-status-swatch inventory-status-swatch-low-stock" aria-hidden="true"></span>Low Stock <span class="inventory-status-count" data-mobile-status-count="low-stock">0</span></button>
+                    <button type="button" class="inventory-mobile-tab-option" data-mobile-status-filter="no-stock" aria-pressed="false"><span class="inventory-status-swatch inventory-status-swatch-no-stock" aria-hidden="true"></span>No Stock <span class="inventory-status-count" data-mobile-status-count="no-stock">0</span></button>
+                </div>
+            </div>
+            <div class="inventory-add-action">
+                <button class="btn inventory-add-button" data-bs-toggle="modal" data-bs-target="#addBatchModal">
+                    <i class="fas fa-plus me-1" aria-hidden="true"></i>
+                    Add Batch
+                </button>
+            </div>
+            </div>
+            <div id="inventoryStatusFilters" class="d-none d-md-flex flex-wrap align-items-center gap-2 mb-3" role="group" aria-label="Filter inventory by status">
                 <button type="button" class="btn btn-sm btn-outline-secondary inventory-status-filter active" data-status-filter="all" aria-pressed="true">All <span class="inventory-status-count" data-status-count="all">0</span></button>
                 <button type="button" class="btn btn-sm btn-outline-secondary inventory-status-filter" data-status-filter="expired" aria-pressed="false"><span class="inventory-status-swatch inventory-status-swatch-expired" aria-hidden="true"></span>Expired <span class="inventory-status-count" data-status-count="expired">0</span></button>
                 <button type="button" class="btn btn-sm btn-outline-secondary inventory-status-filter" data-status-filter="near-expiry" title="Warning: Product is approaching its expiry date." aria-pressed="false"><span class="inventory-status-swatch inventory-status-swatch-near-expiry" aria-hidden="true"></span>Near Expiry <span class="inventory-status-count" data-status-count="near-expiry">0</span></button>
@@ -763,6 +928,35 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
         const currentInventoryTable = document.getElementById('currentInventoryTable');
         const currentInventorySearch = document.getElementById('currentInventorySearch');
         const inventoryStatusFilters = document.getElementById('inventoryStatusFilters');
+        const mobileStatusFilter = document.getElementById('inventoryMobileStatusFilter');
+        const mobileStatusFilterToggle = document.getElementById('inventoryMobileStatusFilterToggle');
+        const mobileStatusFilterLabel = document.getElementById('inventoryMobileStatusFilterLabel');
+        const mobileStatusFilterMenu = document.getElementById('inventoryMobileStatusFilterMenu');
+        const mobileStatusSwatch = document.getElementById('inventoryMobileStatusSwatch');
+        const mobileStatusSelectedCount = document.getElementById('inventoryMobileStatusSelectedCount');
+        const inventoryStatusLabels = {
+            all: 'All',
+            expired: 'Expired',
+            'near-expiry': 'Near Expiry',
+            'low-stock': 'Low Stock',
+            'no-stock': 'No Stock'
+        };
+
+        function syncMobileInventoryStatusFilter(status) {
+            if (!mobileStatusFilterLabel || !inventoryStatusLabels[status]) return;
+
+            mobileStatusFilterLabel.textContent = inventoryStatusLabels[status];
+            const countElement = inventoryStatusFilters.querySelector('[data-status-count="' + status + '"]');
+            mobileStatusSelectedCount.textContent = countElement ? countElement.textContent : '0';
+            mobileStatusSwatch.className = status === 'all'
+                ? 'inventory-status-swatch'
+                : 'inventory-status-swatch inventory-status-swatch-' + status;
+            mobileStatusSwatch.hidden = status === 'all';
+
+            mobileStatusFilterMenu.querySelectorAll('[data-mobile-status-filter]').forEach(function (option) {
+                option.setAttribute('aria-pressed', String(option.dataset.mobileStatusFilter === status));
+            });
+        }
 
         function updateInventoryStatusCounts() {
             if (!currentInventoryTable || !inventoryStatusFilters) return;
@@ -780,7 +974,15 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
                     }).length;
                 const countElement = inventoryStatusFilters.querySelector('[data-status-count="' + status + '"]');
                 if (countElement) countElement.textContent = String(count);
+                document.querySelectorAll('[data-mobile-status-count="' + status + '"]').forEach(function (mobileCountElement) {
+                    mobileCountElement.textContent = String(count);
+                });
             });
+
+            const selectedCountElement = inventoryStatusFilters.querySelector('[data-status-count="' + currentInventoryStatusFilter + '"]');
+            if (mobileStatusSelectedCount && selectedCountElement) {
+                mobileStatusSelectedCount.textContent = selectedCountElement.textContent;
+            }
         }
 
         updateInventoryStatusCounts();
@@ -853,11 +1055,43 @@ if (isset($_GET['success']) && $_GET['success'] === '1') {
         });
 
         if (inventoryStatusFilters && currentInventoryTable) {
+            mobileStatusFilterToggle.addEventListener('click', function () {
+                const isExpanded = this.getAttribute('aria-expanded') === 'true';
+                this.setAttribute('aria-expanded', String(!isExpanded));
+                mobileStatusFilterMenu.hidden = isExpanded;
+            });
+
+            mobileStatusFilterMenu.addEventListener('click', function (event) {
+                const option = event.target.closest('[data-mobile-status-filter]');
+                if (!option) return;
+
+                const filterButton = inventoryStatusFilters.querySelector('[data-status-filter="' + option.dataset.mobileStatusFilter + '"]');
+                if (filterButton) filterButton.click();
+                mobileStatusFilterToggle.setAttribute('aria-expanded', 'false');
+                mobileStatusFilterMenu.hidden = true;
+            });
+
+            mobileStatusFilterMenu.addEventListener('keydown', function (event) {
+                if (event.key === 'Escape') {
+                    mobileStatusFilterToggle.setAttribute('aria-expanded', 'false');
+                    mobileStatusFilterMenu.hidden = true;
+                    mobileStatusFilterToggle.focus();
+                }
+            });
+
+            document.addEventListener('click', function (event) {
+                if (!mobileStatusFilter.contains(event.target)) {
+                    mobileStatusFilterToggle.setAttribute('aria-expanded', 'false');
+                    mobileStatusFilterMenu.hidden = true;
+                }
+            });
+
             inventoryStatusFilters.addEventListener('click', function (event) {
                 const filterButton = event.target.closest('[data-status-filter]');
                 if (!filterButton) return;
 
                 currentInventoryStatusFilter = filterButton.dataset.statusFilter;
+                syncMobileInventoryStatusFilter(currentInventoryStatusFilter);
                 inventoryStatusFilters.querySelectorAll('[data-status-filter]').forEach(function (button) {
                     const isActive = button === filterButton;
                     button.classList.toggle('active', isActive);
