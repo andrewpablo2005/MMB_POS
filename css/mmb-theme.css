@@ -1006,12 +1006,12 @@ thead.table-dark th,
 .page-head h2,
 .page-head h3,
 .page-head h4 {
-    font-size: 1.28rem;
-    font-weight: 700;
+    font-size: clamp(1.5rem, 2vw, 2rem);
+    font-weight: 800;
     color: var(--mmb-heading);
-    letter-spacing: -0.2px;
+    letter-spacing: -0.04em;
     margin: 0 0 0.35rem;
-    line-height: 1.25;
+    line-height: 1.2;
 }
 
 .page-head .text-muted,
@@ -1102,10 +1102,15 @@ thead.table-dark th,
     display: inline-flex;
     align-items: center;
     gap: 0.45rem;
-    font-size: 0.8rem;
-    font-weight: 600;
+    font-size: 0.78rem;
+    font-weight: 700;
     color: #475569;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 999px;
+    padding: 0.4rem 0.7rem;
     white-space: nowrap;
+    line-height: 1;
 }
 .user-status .status-dot {
     width: 0.5rem;
@@ -1113,20 +1118,68 @@ thead.table-dark th,
     border-radius: 50%;
     background: #94a3b8;
     box-shadow: 0 0 0 3px rgba(148, 163, 184, 0.18);
+    flex-shrink: 0;
 }
 .user-status.is-active .status-dot {
     background: #16a34a;
     box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.15);
 }
 .user-status.is-active {
-    color: #16a34a;
+    color: #166534;
+    background: #ecfdf5;
+    border-color: #bbf7d0;
 }
 .user-status.is-disabled {
-    color: #dc2626;
+    color: #b91c1c;
+    background: #fef2f2;
+    border-color: #fecaca;
 }
 .user-status.is-disabled .status-dot {
     background: #dc2626;
     box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15);
+}
+
+.mmb-product-actions {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0.45rem;
+}
+.mmb-product-action-btn {
+    min-width: 0;
+    white-space: nowrap;
+    border-radius: 0.7rem;
+    font-weight: 600;
+    flex-shrink: 0;
+}
+.mmb-product-toggle-form {
+    display: inline-flex;
+    margin: 0;
+}
+
+@media (max-width: 767.98px) {
+    .mmb-product-actions {
+        flex-wrap: wrap;
+        justify-content: flex-end;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .page-head {
+        align-items: flex-start;
+    }
+    .page-head .product-add-button {
+        width: 100%;
+        justify-content: center;
+    }
+    .mmb-product-actions {
+        width: 100%;
+    }
+    .mmb-product-action-btn {
+        flex: 1 1 auto;
+        min-width: 92px;
+    }
 }
 
 .product-add-button {
@@ -1140,7 +1193,10 @@ thead.table-dark th,
     --bs-btn-active-color: #ffffff;
     --bs-btn-active-border-color: transparent;
     --bs-btn-focus-shadow-rgb: 22, 163, 74;
-    font-weight: 600;
+    font-weight: 700;
+    padding: 0.7rem 1.2rem;
+    border-radius: 0.8rem;
+    box-shadow: 0 10px 18px rgba(22, 163, 74, 0.18);
 }
 
 .product-add-save-button {
@@ -1593,6 +1649,19 @@ table.dataTable.dtr-column > tbody > tr > td.dtr-control {
     }
     table.mmb-stack td:empty::before { display: none; }
     table.mmb-stack td:last-child { border-bottom: 0; }
+    table.mmb-stack td[data-label="Action"] {
+        align-items: center;
+    }
+    table.mmb-stack td[data-label="Action"]::before {
+        align-self: center;
+    }
+    table.mmb-stack td[data-label="Action"] .mmb-product-actions {
+        width: 100%;
+        justify-content: flex-end;
+    }
+    table.mmb-stack td[data-label="Action"] .mmb-product-action-btn {
+        flex: 0 0 auto;
+    }
     /* keep thumbnails+labels on one line inside a stacked cell */
     table.mmb-stack td .d-flex { display: flex !important; }
     .table-responsive { overflow-x: visible; }

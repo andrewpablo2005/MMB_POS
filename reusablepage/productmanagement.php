@@ -124,31 +124,32 @@ if ($product->addProduct()) {
                         </td>
                        
                         <td data-label="Action">
-                           
-                            <!-- VIEW -->
-                            <button class="btn btn-info btn-sm" data-bs-toggle="modal"
-                                data-bs-target="#viewProduct<?= htmlspecialchars((string)($prod['id']), ENT_QUOTES, 'UTF-8') ?>">
-                                <i class="fas fa-eye me-1" aria-hidden="true"></i>
-                                View
-                            </button>
-                            <!-- EDIT -->
-                            <button class="btn btn-warning btn-sm" data-bs-toggle="modal"
-                                data-bs-target="#editProduct<?= htmlspecialchars((string)($prod['id']), ENT_QUOTES, 'UTF-8') ?>">
-                                <i class="fas fa-pen me-1" aria-hidden="true"></i>
-                                Edit
-                            </button>
-                            <!-- Activate / Deactivate -->
-                            <form method="post" class="d-inline">
-                                <input type="hidden" name="toggleProductStatus" value="1">
-                                <input type="hidden" name="product_id" value="<?= (int) $prod['id'] ?>">
-                                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
-                                <button type="submit" class="btn btn-sm <?= $isProductDeactivated ? 'btn-success' : 'btn-danger' ?>"
-                                    data-mmb-confirm="<?= $isProductDeactivated ? 'Activate this product for POS?' : 'Deactivate this product from POS?' ?>"
-                                    data-mmb-ok="<?= $isProductDeactivated ? 'Yes, Activate' : 'Yes, Deactivate' ?>">
-                                    <i class="fas <?= $isProductDeactivated ? 'fa-check-circle' : 'fa-ban' ?> me-1" aria-hidden="true"></i>
-                                    <?= $isProductDeactivated ? 'Activate' : 'Deactivate' ?>
+                            <div class="mmb-product-actions">
+                                <!-- VIEW -->
+                                <button class="btn btn-info btn-sm mmb-product-action-btn" data-bs-toggle="modal"
+                                    data-bs-target="#viewProduct<?= htmlspecialchars((string)($prod['id']), ENT_QUOTES, 'UTF-8') ?>">
+                                    <i class="fas fa-eye me-1" aria-hidden="true"></i>
+                                    View
                                 </button>
-                            </form>
+                                <!-- EDIT -->
+                                <button class="btn btn-warning btn-sm mmb-product-action-btn" data-bs-toggle="modal"
+                                    data-bs-target="#editProduct<?= htmlspecialchars((string)($prod['id']), ENT_QUOTES, 'UTF-8') ?>">
+                                    <i class="fas fa-pen me-1" aria-hidden="true"></i>
+                                    Edit
+                                </button>
+                                <!-- Activate / Deactivate -->
+                                <form method="post" class="mmb-product-toggle-form">
+                                    <input type="hidden" name="toggleProductStatus" value="1">
+                                    <input type="hidden" name="product_id" value="<?= (int) $prod['id'] ?>">
+                                    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
+                                    <button type="submit" class="btn btn-sm mmb-product-action-btn <?= $isProductDeactivated ? 'btn-success' : 'btn-danger' ?>"
+                                        data-mmb-confirm="<?= $isProductDeactivated ? 'Activate this product for POS?' : 'Deactivate this product from POS?' ?>"
+                                        data-mmb-ok="<?= $isProductDeactivated ? 'Yes, Activate' : 'Yes, Deactivate' ?>">
+                                        <i class="fas <?= $isProductDeactivated ? 'fa-check-circle' : 'fa-ban' ?> me-1" aria-hidden="true"></i>
+                                        <?= $isProductDeactivated ? 'Activate' : 'Deactivate' ?>
+                                    </button>
+                                </form>
+                            </div>
                         </td>
                     </tr>
                 <?php endforeach; ?>
