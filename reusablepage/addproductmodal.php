@@ -272,9 +272,9 @@ $dosageForms = $product->getDosageForms();
                         </div>
 
                         <div class="add-product-field">
-                            <label for="product_description" class="form-label">Product Description / Purpose</label>
+                            <label for="product_description" class="form-label">Product Description / Purpose / Shelf Info</label>
                             <textarea id="product_description" name="product_description" class="form-control" rows="3" maxlength="150"
-                                placeholder="Describe what this product is for, who it is for, or how staff should know it. e.g. For fever and body aches."></textarea>
+                                placeholder="Describe what this product is for, who it is for, or how staff should know it. e.g. For fever and body aches or where the product store."></textarea>
                             <div class="form-text text-muted mt-1">
                                 This helps staff identify what the item is used for when helping customers. Maximum 150 characters.
                             </div>

@@ -7,7 +7,6 @@ let currentPayMethod = 'Cash';
 let pendingVoid = null;           // stores cart item id pending void auth
 let pendingVoidAction = null;     // 'delete', 'decrement', or 'set'
 let pendingVoidTargetQty = null;  // target quantity for set actions
-let pendingClearCart = false;     // tracks if void auth is for clearing entire cart
 let pendingDiscountIndex = null;  // stores previous discount index if user cancels verify
 let pendingOverrideItemId = null; // item currently being manager-overridden
 let weposVerified = false;        // tracks if Senior/PWD customer has been verified this session
@@ -405,9 +404,12 @@ function weposUpdateQty(id, delta) {
         return;
     }
 
-    // Require void auth for any decrement action
     if (delta < 0) {
-        weposRequestVoidAuth(id, 'decrement');
+        weposCart[id].qty = Math.max(Number(weposCart[id].qty) + delta, 0);
+        if (weposCart[id].qty <= 0) {
+            delete weposCart[id];
+        }
+        weposUpdateCart();
         return;
     }
 
@@ -436,20 +438,8 @@ function weposSetQty(id, value) {
     }
 
     if (qty <= 0) {
-        weposRequestVoidAuth(id, 'delete');
-        // Restore the original quantity immediately until auth completes
-        const input = document.querySelector(`input[data-cart-item="${id}"]`);
-        if (input) input.value = originalQty;
-        return;
-    }
-
-    if (qty < originalQty) {
-        // require void auth for decreasing quantity
-        pendingVoidTargetQty = qty;
-        weposRequestVoidAuth(id, 'set');
-        // Restore the original quantity immediately until auth completes
-        const input = document.querySelector(`input[data-cart-item="${id}"]`);
-        if (input) input.value = originalQty;
+        delete weposCart[id];
+        weposUpdateCart();
         return;
     }
 
@@ -462,43 +452,11 @@ function weposSetQty(id, value) {
     weposUpdateCart();
 }
 
-function weposStoreQtyOriginal(input) {
-    input.dataset.originalQty = input.value;
-}
-
-function weposHandleQtyKey(event, input) {
-    const id = input.getAttribute('data-cart-item');
-    if (!id || !weposCart[id]) return;
-    const originalQty = Number(input.dataset.originalQty || weposCart[id].qty);
-
-    if (event.key === 'ArrowDown' || event.key === 'PageDown') {
-        event.preventDefault();
-        if (originalQty > 1) {
-            pendingVoidTargetQty = originalQty - 1;
-            weposRequestVoidAuth(id, 'set');
-        } else {
-            weposRequestVoidAuth(id, 'delete');
-        }
-        input.value = originalQty;
-    }
-}
-
 function weposHandleQtyInput(event, input) {
     const id = input.getAttribute('data-cart-item');
     if (!id || !weposCart[id]) return;
-    const originalQty = Number(input.dataset.originalQty || weposCart[id].qty);
+
     const newQty = parseInt(String(input.value).replace(/[^0-9]/g, ''), 10);
-
-    if (Number.isNaN(newQty) || newQty === originalQty) {
-        return;
-    }
-
-    if (newQty < originalQty) {
-        pendingVoidTargetQty = newQty;
-        weposRequestVoidAuth(id, 'set');
-        input.value = originalQty;
-        return;
-    }
 
     if (newQty > weposCart[id].stock) {
         input.value = weposCart[id].stock;
@@ -698,41 +656,30 @@ async function weposSubmitOverride() {
     }
 }
 
-function weposClearCart() {
+async function weposClearCart() {
     if (Object.keys(weposCart).length === 0) return;
-    
-    // Show void auth modal for clearing entire cart
-    pendingClearCart = true;
-    const cartItems = Object.values(weposCart);
-    const cartTotal = cartItems.reduce((sum, item) => sum + (item.price * item.qty), 0);
-    const itemCount = cartItems.length;
-    
-    document.getElementById('voidItemPreview').innerHTML =
-        `<strong><i class="fas fa-exclamation-triangle" style="color: #dc2626; margin-right: 8px;"></i>Clear Entire Cart</strong><br><br>` +
-        `<small>${itemCount} item(s) • Total: &#8369;${cartTotal.toFixed(2)}</small>`;
-    document.getElementById('voidAuthPin').value = '';
-    document.getElementById('voidAuthError').style.display = 'none';
-    
-    const btn = document.getElementById('voidAuthBtn');
-    if (btn) {
-        btn.disabled = false;
-        btn.innerHTML = 'Clear Cart';
-    }
-    
-    // Update modal title
-    const modalHead = document.querySelector('#voidAuthModal .wepos-modal-head h5');
-    if (modalHead) {
-        modalHead.innerHTML = 'Clear Cart Authorization';
-    }
-    
-    // Update modal instructions
-    const instructions = document.querySelector('#voidAuthModal .wepos-modal-body p');
-    if (instructions) {
-        instructions.textContent = 'Please enter the 7-digit Manager Void PIN to clear the entire cart.';
-    }
-    
-    document.getElementById('voidAuthModal').style.display = 'flex';
-    setTimeout(() => document.getElementById('voidAuthPin')?.focus(), 100);
+
+    const confirmed = await mmbConfirm({
+        title: 'Clear Cart?',
+        message: 'Remove all items from the current cart?',
+        okLabel: 'Clear Cart',
+        cancelLabel: 'Cancel',
+        danger: true
+    });
+    if (!confirmed) return;
+
+    Object.keys(weposCart).forEach(key => delete weposCart[key]);
+    weposVerified = false;
+    weposCustomerType = null;
+    weposCustomerName = null;
+    weposCustomerId = null;
+
+    const discountSel = document.getElementById('weposDiscount');
+    if (discountSel) discountSel.selectedIndex = 0;
+    const customerInput = document.getElementById('weposCustomer');
+    if (customerInput) customerInput.value = '';
+
+    weposUpdateCart();
 }
 
 // ═════ MATH & DISCOUNT CALCULATION ═════
@@ -895,8 +842,6 @@ function weposUpdateCart() {
                         <button onclick="weposUpdateQty('${item.id}', -1)"><i class="fas fa-minus"></i></button>
                         <input type="number" min="1" max="${item.stock}" value="${item.qty}"
                             data-cart-item="${item.id}"
-                            onfocus="weposStoreQtyOriginal(this)"
-                            onkeydown="weposHandleQtyKey(event, this)"
                             onchange="weposSetQty('${item.id}', this.value)"
                             oninput="weposHandleQtyInput(event, this)"
                             style="width: 3rem; text-align:center; border:1px solid #d1d5db; border-radius:4px; padding:2px;">
@@ -2127,7 +2072,6 @@ async function weposApproveVerify() {
 // ═════ VOID AUTH MODAL (CART ITEM REMOVE) ═════
 function weposCancelVoidAuth() {
     pendingVoid = null;
-    pendingClearCart = false;
     document.getElementById('voidAuthModal').style.display = 'none';
 }
 
@@ -2161,24 +2105,8 @@ async function weposSubmitVoidAuth() {
             return;
         }
 
-        // Authorized — remove the item, decrement it, or clear cart
-        if (pendingClearCart) {
-            // Clear all cart items
-            for (let key in weposCart) {
-                delete weposCart[key];
-            }
-            // Reset verification state
-            weposVerified = false;
-            weposCustomerType = null;
-            weposCustomerName = null;
-            weposCustomerId = null;
-            // Reset UI elements
-            const discountSel = document.getElementById('weposDiscount');
-            if (discountSel) discountSel.selectedIndex = 0;
-            const customerInput = document.getElementById('weposCustomer');
-            if (customerInput) customerInput.value = '';
-            pendingClearCart = false;
-        } else if (pendingVoid && weposCart[pendingVoid]) {
+        // Authorized — remove the item or apply a typed quantity decrease
+        if (pendingVoid && weposCart[pendingVoid]) {
             const action = pendingVoidAction;
             const item = weposCart[pendingVoid];
 
@@ -2211,7 +2139,6 @@ async function weposSubmitVoidAuth() {
     } finally {
         // Always reset button so it doesn't get stuck
         btn.disabled = false;
-        const buttonText = pendingClearCart ? 'Clear Cart' : 'Confirm Remove';
-        btn.innerHTML = buttonText;
+        btn.innerHTML = 'Confirm Remove';
     }
 }
